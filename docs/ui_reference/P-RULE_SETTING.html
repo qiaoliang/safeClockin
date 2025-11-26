@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全守护 - 自定义打卡规则</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FAE9DB',
+                        secondary: '#F48224', 
+                        accent: '#624731',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 12px rgba(0, 0, 0, 0.08)',
+                        'button': '0 2px 8px rgba(244, 130, 36, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+        }
+        
+        .add-button {
+            background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+            box-shadow: 0 4px 16px rgba(244, 130, 36, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 130, 36, 0.5);
+        }
+        
+        .rule-item {
+            transition: all 0.3s ease;
+        }
+        
+        .rule-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+        }
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            animation: modalSlideUp 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- iOS状态栏 -->
+    <div id="status-bar" class="status-bar text-white text-sm flex justify-between items-center px-4 py-1">
+        <div class="flex items-center space-x-1">
+            <span>9:41</span>
+        </div>
+        <div class="flex items-center space-x-1">
+            <i class="fas fa-signal text-xs"></i>
+            <i class="fas fa-wifi text-xs"></i>
+            <i class="fas fa-battery-three-quarters text-xs"></i>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="min-h-screen gradient-bg pb-24">
+        <!-- 顶部导航栏 -->
+        <header id="page-header" class="px-6 pt-6 pb-4">
+            <div class="flex items-center justify-between">
+                <button id="back-button" class="w-10 h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center shadow-sm">
+                    <i class="fas fa-arrow-left text-accent"></i>
+                </button>
+                <h1 id="page-title" class="text-xl font-bold text-accent">自定义打卡规则</h1>
+                <div class="w-10"></div> <!-- 占位元素保持标题居中 -->
+            </div>
+        </header>
+
+        <!-- 页面说明 -->
+        <section id="page-description" class="px-6 mb-6">
+            <div class="bg-white bg-opacity-60 rounded-2xl p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700">您可以自定义日常打卡事项，设置完成后系统会在指定时间提醒您打卡。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 已设置规则列表 -->
+        <section id="rules-section" class="px-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-card p-5">
+                <h2 id="rules-title" class="text-lg font-semibold text-accent mb-4">已设置规则</h2>
+                
+                <div id="rules-list" class="space-y-3">
+                    <!-- 规则项1 -->
+                    <div id="rule-item-1" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-001">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sun text-orange-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">起床打卡</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>07:00-08:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项2 -->
+                    <div id="rule-item-2" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-002">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-utensils text-green-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">早餐打卡</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>08:00-09:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项3 -->
+                    <div id="rule-item-3" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-003">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-pills text-purple-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">上午服药</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>09:00-09:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项4 -->
+                    <div id="rule-item-4" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-004">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-utensils text-green-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">午餐打卡</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>12:00-13:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项5 -->
+                    <div id="rule-item-5" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-005">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-pills text-purple-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">下午服药</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>15:00-15:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项6 -->
+                    <div id="rule-item-6" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-006">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-utensils text-green-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">晚餐打卡</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>18:00-19:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则项7 -->
+                    <div id="rule-item-7" class="rule-item bg-gray-50 rounded-xl p-4 border border-gray-200" data-rule-id="rule-007">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-moon text-indigo-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800">睡觉打卡</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                        <span><i class="fas fa-calendar-alt mr-1"></i>每天</span>
+                                        <span><i class="fas fa-clock mr-1"></i>21:00-22:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="edit-rule-btn w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
+                                <button class="delete-rule-btn w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 空状态提示（当没有规则时显示） -->
+        <section id="empty-state" class="px-6 mb-6 hidden">
+            <div class="bg-white rounded-2xl shadow-card p-8 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-plus text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-800 mb-2">暂无打卡规则</h3>
+                <p class="text-sm text-gray-500 mb-6">点击下方按钮添加您的第一个打卡事项</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- 添加事项悬浮按钮 -->
+    <button id="add-rule-btn" class="add-button fixed bottom-20 right-6 w-14 h-14 rounded-full text-white flex items-center justify-center z-30">
+        <i class="fas fa-plus text-xl"></i>
+    </button>
+
+    <!-- 删除确认弹窗 -->
+    <div id="delete-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">确认删除</h3>
+                    <p class="text-sm text-gray-600 mb-6">删除后该打卡规则将不再生效，确定要删除吗？</p>
+                    <div class="flex space-x-3">
+                        <button id="cancel-delete-btn" class="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                            取消
+                        </button>
+                        <button id="confirm-delete-btn" class="flex-1 py-3 px-4 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 transition-colors">
+                            删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentDeleteRuleId = null;
+
+            // 返回按钮点击事件
+            document.querySelector('#back-button').addEventListener('click', function() {
+                window.location.href = 'P-PROFILE.html';
+            });
+
+            // 添加事项按钮点击事件
+            document.querySelector('#add-rule-btn').addEventListener('click', function() {
+                window.location.href = 'P-ADD_RULE.html';
+            });
+
+            // 编辑规则按钮点击事件
+            document.querySelectorAll('.edit-rule-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const ruleItem = this.closest('[data-rule-id]');
+                    const ruleId = ruleItem.dataset.ruleId;
+                    window.location.href = `P-ADD_RULE.html?ruleId=${ruleId}`;
+                });
+            });
+
+            // 删除规则按钮点击事件
+            document.querySelectorAll('.delete-rule-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const ruleItem = this.closest('[data-rule-id]');
+                    currentDeleteRuleId = ruleItem.dataset.ruleId;
+                    document.querySelector('#delete-modal').classList.remove('hidden');
+                });
+            });
+
+            // 取消删除按钮点击事件
+            document.querySelector('#cancel-delete-btn').addEventListener('click', function() {
+                document.querySelector('#delete-modal').classList.add('hidden');
+                currentDeleteRuleId = null;
+            });
+
+            // 确认删除按钮点击事件
+            document.querySelector('#confirm-delete-btn').addEventListener('click', function() {
+                if (currentDeleteRuleId) {
+                    // 删除规则项
+                    const ruleItem = document.querySelector(`[data-rule-id="${currentDeleteRuleId}"]`);
+                    if (ruleItem) {
+                        ruleItem.remove();
+                        
+                        // 检查是否还有规则项，如果没有则显示空状态
+                        const remainingRules = document.querySelectorAll('#rules-list > [data-rule-id]');
+                        if (remainingRules.length === 0) {
+                            document.querySelector('#rules-section').classList.add('hidden');
+                            document.querySelector('#empty-state').classList.remove('hidden');
+                        }
+                    }
+                    
+                    // 关闭弹窗
+                    document.querySelector('#delete-modal').classList.add('hidden');
+                    currentDeleteRuleId = null;
+                    
+                    // 显示删除成功提示
+                    showToast('删除成功');
+                }
+            });
+
+            // 点击弹窗背景关闭弹窗
+            document.querySelector('.modal-overlay').addEventListener('click', function() {
+                document.querySelector('#delete-modal').classList.add('hidden');
+                currentDeleteRuleId = null;
+            });
+
+            // 显示提示消息
+            function showToast(message) {
+                // 创建提示元素
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-50';
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // 3秒后自动移除
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 3000);
+            }
+
+            // 模拟实时时间更新
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                document.querySelector('#status-bar span').textContent = timeString;
+            }
+
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>

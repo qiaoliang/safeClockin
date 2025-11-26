@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全守护 - 个人中心</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FAE9DB',
+                        secondary: '#F48224', 
+                        accent: '#624731',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 12px rgba(0, 0, 0, 0.08)',
+                        'button': '0 2px 8px rgba(244, 130, 36, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+        }
+        
+        .profile-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .menu-item {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(244, 130, 36, 0.05);
+            border-left-color: #F48224;
+            transform: translateX(4px);
+        }
+        
+        .menu-item:active {
+            transform: translateX(2px);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .logout-button {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+        
+        .logout-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- iOS状态栏 -->
+    <div id="status-bar" class="status-bar text-white text-sm flex justify-between items-center px-4 py-1">
+        <div class="flex items-center space-x-1">
+            <span>9:41</span>
+        </div>
+        <div class="flex items-center space-x-1">
+            <i class="fas fa-signal text-xs"></i>
+            <i class="fas fa-wifi text-xs"></i>
+            <i class="fas fa-battery-three-quarters text-xs"></i>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="min-h-screen gradient-bg pb-20">
+        <!-- 顶部导航栏 -->
+        <header id="top-nav" class="px-6 pt-8 pb-4">
+            <div class="flex items-center justify-between">
+                <button id="back-button" class="w-10 h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center shadow-md">
+                    <i class="fas fa-arrow-left text-accent"></i>
+                </button>
+                <h1 id="page-title" class="text-xl font-bold text-accent">个人中心</h1>
+                <div class="w-10"></div> <!-- 占位元素保持居中 -->
+            </div>
+        </header>
+
+        <!-- 用户信息卡片 -->
+        <section id="user-info-section" class="px-6 mb-8">
+            <div id="user-info-card" class="profile-card rounded-3xl p-6 text-center">
+                <img id="user-avatar" 
+                     src="https://s.coze.cn/image/JKQspPCbs_4/" 
+                     alt="用户头像" 
+                     data-category="人物"
+                     class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
+                <h2 id="user-nickname" class="text-2xl font-bold text-accent mb-2">张阿姨</h2>
+                <p id="user-role" class="text-lg text-secondary font-medium mb-3">独居者</p>
+                <div id="user-stats" class="flex justify-center space-x-6 pt-4 border-t border-gray-100">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-success">15</div>
+                        <div class="text-sm text-gray-500">连续打卡</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-warning">92%</div>
+                        <div class="text-sm text-gray-500">完成率</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-accent">3</div>
+                        <div class="text-sm text-gray-500">监督人</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能菜单 -->
+        <section id="menu-section" class="px-6 mb-8">
+            <div id="menu-card" class="bg-white rounded-2xl shadow-card overflow-hidden">
+                <!-- 独居者特有功能 -->
+                <div id="solo-specific-menu" class="border-b border-gray-100">
+                    <h3 class="px-6 py-4 text-sm font-medium text-gray-500 uppercase tracking-wider">我的设置</h3>
+                    <div class="space-y-1">
+                        <div id="menu-rule-setting" class="menu-item px-6 py-4 flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-secondary bg-opacity-10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-cog text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800">自定义打卡规则</div>
+                                    <div class="text-sm text-gray-500">设置您的日常打卡事项</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                        
+                        <div id="menu-supervisor-manage" class="menu-item px-6 py-4 flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800">监督人管理</div>
+                                    <div class="text-sm text-gray-500">管理您的亲友监督人</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 亲友监督人特有功能 -->
+                <div id="supervisor-specific-menu" class="border-b border-gray-100 hidden">
+                    <h3 class="px-6 py-4 text-sm font-medium text-gray-500 uppercase tracking-wider">通知设置</h3>
+                    <div class="space-y-1">
+                        <div id="menu-notification-settings" class="menu-item px-6 py-4 flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bell text-green-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800">通知设置</div>
+                                    <div class="text-sm text-gray-500">管理您的通知偏好</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 通用功能 -->
+                <div id="general-menu">
+                    <h3 class="px-6 py-4 text-sm font-medium text-gray-500 uppercase tracking-wider">其他</h3>
+                    <div class="space-y-1">
+                        <div id="menu-about" class="menu-item px-6 py-4 flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-info-circle text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800">关于我们</div>
+                                    <div class="text-sm text-gray-500">了解安全守护App</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                        
+                        <div id="menu-logout" class="menu-item px-6 py-4 flex items-center justify-center cursor-pointer">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-danger bg-opacity-10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sign-out-alt text-danger"></i>
+                                </div>
+                                <div class="font-medium text-danger">退出登录</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5 font-medium">个人中心</span>
+        </a>
+    </nav>
+
+    <!-- 退出登录确认弹窗 -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 mx-6 w-full max-w-sm">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-danger bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-sign-out-alt text-danger text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">确认退出登录</h3>
+                <p class="text-gray-600 mb-6">退出后需要重新登录才能使用App</p>
+                <div class="flex space-x-3">
+                    <button id="cancel-logout" class="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-gray-700 font-medium">
+                        取消
+                    </button>
+                    <button id="confirm-logout" class="logout-button flex-1 py-3 px-4 text-white font-medium rounded-xl transition-all duration-300">
+                        退出登录
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            const userRole = params.role || 'solo'; // 默认显示独居者界面
+
+            // 根据用户角色显示相应的功能菜单
+            function showRoleSpecificMenu(role) {
+                const soloMenu = document.querySelector('#solo-specific-menu');
+                const supervisorMenu = document.querySelector('#supervisor-specific-menu');
+                const userRoleElement = document.querySelector('#user-role');
+                
+                if (role === 'solo') {
+                    soloMenu.classList.remove('hidden');
+                    supervisorMenu.classList.add('hidden');
+                    userRoleElement.textContent = '独居者';
+                } else if (role === 'supervisor') {
+                    soloMenu.classList.add('hidden');
+                    supervisorMenu.classList.remove('hidden');
+                    userRoleElement.textContent = '亲友监督人';
+                } else if (role === 'community') {
+                    soloMenu.classList.add('hidden');
+                    supervisorMenu.classList.add('hidden');
+                    userRoleElement.textContent = '社区工作人员';
+                }
+            }
+
+            // 初始化角色菜单
+            showRoleSpecificMenu(userRole);
+
+            // 返回按钮点击事件
+            document.querySelector('#back-button').addEventListener('click', function() {
+                // 根据用户角色返回对应的首页
+                if (userRole === 'solo') {
+                    window.location.href = 'P-HOME_SOLO.html';
+                } else if (userRole === 'supervisor') {
+                    window.location.href = 'P-HOME_SUPERVISOR.html';
+                } else if (userRole === 'community') {
+                    window.location.href = 'P-HOME_COMMUNITY.html';
+                }
+            });
+
+            // 自定义打卡规则点击事件
+            document.querySelector('#menu-rule-setting').addEventListener('click', function() {
+                window.location.href = 'P-RULE_SETTING.html';
+            });
+
+            // 监督人管理点击事件
+            document.querySelector('#menu-supervisor-manage').addEventListener('click', function() {
+                window.location.href = 'P-SUPERVISOR_MANAGE.html';
+            });
+
+            // 通知设置点击事件
+            document.querySelector('#menu-notification-settings').addEventListener('click', function() {
+                window.location.href = 'P-NOTIFICATION_SETTINGS.html';
+            });
+
+            // 关于我们点击事件
+            document.querySelector('#menu-about').addEventListener('click', function() {
+                // 这里可以跳转到关于我们页面，暂时用alert代替
+                alert('安全守护App v1.0\n\n一款为独居者提供安全监护的移动应用\n让关爱无处不在');
+            });
+
+            // 退出登录点击事件
+            document.querySelector('#menu-logout').addEventListener('click', function() {
+                document.querySelector('#logout-modal').classList.remove('hidden');
+            });
+
+            // 取消退出登录
+            document.querySelector('#cancel-logout').addEventListener('click', function() {
+                document.querySelector('#logout-modal').classList.add('hidden');
+            });
+
+            // 确认退出登录
+            document.querySelector('#confirm-logout').addEventListener('click', function() {
+                // 清除本地存储的用户信息（如果有的话）
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userRole');
+                
+                // 跳转到登录页
+                window.location.href = 'P-LOGIN.html';
+            });
+
+            // 点击弹窗背景关闭弹窗
+            document.querySelector('#logout-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+
+            // 底部导航点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 根据用户角色跳转到对应的首页
+                if (userRole === 'solo') {
+                    window.location.href = 'P-HOME_SOLO.html';
+                } else if (userRole === 'supervisor') {
+                    window.location.href = 'P-HOME_SUPERVISOR.html';
+                } else if (userRole === 'community') {
+                    window.location.href = 'P-HOME_COMMUNITY.html';
+                }
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在个人中心页面，无需操作
+            });
+
+            // 模拟实时时间更新
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                document.querySelector('#status-bar span').textContent = timeString;
+            }
+
+            // 每分钟更新一次时间
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>

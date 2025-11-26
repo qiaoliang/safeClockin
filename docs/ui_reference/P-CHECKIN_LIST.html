@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全守护 - 今日待办</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FAE9DB',
+                        secondary: '#F48224', 
+                        accent: '#624731',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 12px rgba(0, 0, 0, 0.08)',
+                        'button': '0 2px 8px rgba(244, 130, 36, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+        }
+        
+        .checkin-button {
+            background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+            box-shadow: 0 2px 8px rgba(244, 130, 36, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .checkin-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 130, 36, 0.4);
+        }
+        
+        .completed-item {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border-left: 4px solid #10B981;
+        }
+        
+        .pending-item {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-left: 4px solid #F59E0B;
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+        }
+        
+        .undo-button {
+            background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .undo-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- iOS状态栏 -->
+    <div id="status-bar" class="status-bar text-white text-sm flex justify-between items-center px-4 py-1">
+        <div class="flex items-center space-x-1">
+            <span>9:41</span>
+        </div>
+        <div class="flex items-center space-x-1">
+            <i class="fas fa-signal text-xs"></i>
+            <i class="fas fa-wifi text-xs"></i>
+            <i class="fas fa-battery-three-quarters text-xs"></i>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="min-h-screen gradient-bg pb-8">
+        <!-- 顶部导航栏 -->
+        <header id="top-nav" class="flex items-center justify-between px-6 py-4 bg-white bg-opacity-90 backdrop-blur-sm">
+            <button id="back-btn" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                <i class="fas fa-arrow-left text-gray-600"></i>
+            </button>
+            <h1 id="page-title" class="text-xl font-bold text-accent">今日待办</h1>
+            <div class="w-10"></div> <!-- 占位元素，保持标题居中 -->
+        </header>
+
+        <!-- 今日概览 -->
+        <section id="overview-section" class="px-6 mb-6">
+            <div id="overview-card" class="bg-white rounded-2xl shadow-card p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-accent">今日进度</h2>
+                    <div class="text-sm text-gray-500">
+                        <span id="completed-count">4</span>/<span id="total-count">7</span>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                    <div id="progress-bar" class="bg-gradient-to-r from-secondary to-orange-400 h-3 rounded-full transition-all duration-500" style="width: 57%"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div id="stat-completed" class="text-2xl font-bold text-success">4</div>
+                        <div class="text-xs text-gray-500">已完成</div>
+                    </div>
+                    <div>
+                        <div id="stat-pending" class="text-2xl font-bold text-warning">3</div>
+                        <div class="text-xs text-gray-500">待完成</div>
+                    </div>
+                    <div>
+                        <div id="stat-total" class="text-2xl font-bold text-accent">7</div>
+                        <div class="text-xs text-gray-500">总事项</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 打卡事项列表 -->
+        <section id="checkin-list-section" class="px-6">
+            <h2 class="text-lg font-semibold text-accent mb-4">打卡事项</h2>
+            
+            <!-- 已完成事项 -->
+            <div id="completed-items" class="space-y-4 mb-6">
+                <div id="item-1" class="completed-item rounded-xl p-4 flex items-center justify-between" data-status="completed">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-sun text-success text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">起床打卡</div>
+                            <div class="text-sm text-gray-500">计划时间：07:00-08:00</div>
+                            <div class="text-sm text-success font-medium">已完成 · 07:30</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-success text-xl"></i>
+                    </div>
+                </div>
+
+                <div id="item-2" class="completed-item rounded-xl p-4 flex items-center justify-between" data-status="completed">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-success text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">早餐打卡</div>
+                            <div class="text-sm text-gray-500">计划时间：08:00-09:00</div>
+                            <div class="text-sm text-success font-medium">已完成 · 08:15</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-success text-xl"></i>
+                    </div>
+                </div>
+
+                <div id="item-3" class="completed-item rounded-xl p-4 flex items-center justify-between" data-status="completed">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-pills text-success text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">上午服药</div>
+                            <div class="text-sm text-gray-500">计划时间：09:00-09:30</div>
+                            <div class="text-sm text-success font-medium">已完成 · 09:10</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-success text-xl"></i>
+                    </div>
+                </div>
+
+                <div id="item-4" class="completed-item rounded-xl p-4 flex items-center justify-between" data-status="completed">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-success text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">午餐打卡</div>
+                            <div class="text-sm text-gray-500">计划时间：12:00-13:00</div>
+                            <div class="text-sm text-success font-medium">已完成 · 12:30</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-success text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 待完成事项 -->
+            <div id="pending-items" class="space-y-4">
+                <div id="item-5" class="pending-item rounded-xl p-4 flex items-center justify-between" data-status="pending" data-item-id="5">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-warning bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-pills text-warning text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">下午服药</div>
+                            <div class="text-sm text-gray-500">计划时间：15:00-15:30</div>
+                            <div class="text-sm text-warning font-medium">待完成</div>
+                        </div>
+                    </div>
+                    <button id="checkin-btn-5" class="checkin-button px-6 py-2 rounded-full text-white font-medium text-sm">
+                        打卡
+                    </button>
+                </div>
+
+                <div id="item-6" class="pending-item rounded-xl p-4 flex items-center justify-between" data-status="pending" data-item-id="6">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-warning bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-warning text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">晚餐打卡</div>
+                            <div class="text-sm text-gray-500">计划时间：18:00-19:00</div>
+                            <div class="text-sm text-warning font-medium">待完成</div>
+                        </div>
+                    </div>
+                    <button id="checkin-btn-6" class="checkin-button px-6 py-2 rounded-full text-white font-medium text-sm">
+                        打卡
+                    </button>
+                </div>
+
+                <div id="item-7" class="pending-item rounded-xl p-4 flex items-center justify-between" data-status="pending" data-item-id="7">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-12 h-12 bg-warning bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-moon text-warning text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">睡觉打卡</div>
+                            <div class="text-sm text-gray-500">计划时间：21:00-22:00</div>
+                            <div class="text-sm text-warning font-medium">待完成</div>
+                        </div>
+                    </div>
+                    <button id="checkin-btn-7" class="checkin-button px-6 py-2 rounded-full text-white font-medium text-sm">
+                        打卡
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 全部完成提示 -->
+        <section id="all-completed-section" class="px-6 mt-8 hidden">
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 text-center border border-green-100">
+                <div class="w-16 h-16 bg-success bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-trophy text-success text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-success mb-2">恭喜您！</h3>
+                <p class="text-gray-600 mb-4">今日所有打卡事项已完成，您的健康管理做得很棒！</p>
+                <button id="back-home-btn" class="checkin-button px-8 py-3 rounded-full text-white font-medium">
+                    返回首页
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 打卡记录数据
+            let checkinData = {
+                1: { status: 'completed', time: '07:30' },
+                2: { status: 'completed', time: '08:15' },
+                3: { status: 'completed', time: '09:10' },
+                4: { status: 'completed', time: '12:30' },
+                5: { status: 'pending', time: null },
+                6: { status: 'pending', time: null },
+                7: { status: 'pending', time: null }
+            };
+
+            // 撤销倒计时（30分钟）
+            let undoTimers = {};
+
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_SOLO.html';
+            });
+
+            // 返回首页按钮点击事件
+            document.querySelector('#back-home-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_SOLO.html';
+            });
+
+            // 打卡按钮点击事件
+            function handleCheckin(itemId) {
+                if (checkinData[itemId].status === 'completed') {
+                    return;
+                }
+
+                // 执行打卡
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+
+                checkinData[itemId].status = 'completed';
+                checkinData[itemId].time = timeString;
+
+                // 更新UI
+                updateItemStatus(itemId);
+                updateProgress();
+
+                // 显示打卡成功提示
+                showToast('打卡成功！');
+
+                // 启动撤销倒计时
+                startUndoTimer(itemId);
+            }
+
+            // 撤销打卡按钮点击事件
+            function handleUndo(itemId) {
+                checkinData[itemId].status = 'pending';
+                checkinData[itemId].time = null;
+
+                // 清除撤销倒计时
+                if (undoTimers[itemId]) {
+                    clearTimeout(undoTimers[itemId]);
+                    delete undoTimers[itemId];
+                }
+
+                // 更新UI
+                updateItemStatus(itemId);
+                updateProgress();
+
+                showToast('已撤销打卡');
+            }
+
+            // 更新事项状态UI
+            function updateItemStatus(itemId) {
+                const item = document.querySelector(`#item-${itemId}`);
+                const button = document.querySelector(`#checkin-btn-${itemId}`);
+                
+                if (checkinData[itemId].status === 'completed') {
+                    // 切换到已完成状态
+                    item.className = item.className.replace('pending-item', 'completed-item');
+                    item.setAttribute('data-status', 'completed');
+                    
+                    // 更新内容
+                    const statusElement = item.querySelector('.text-warning.font-medium');
+                    if (statusElement) {
+                        statusElement.className = 'text-sm text-success font-medium';
+                        statusElement.textContent = `已完成 · ${checkinData[itemId].time}`;
+                    }
+                    
+                    // 更新图标
+                    const icon = item.querySelector('i');
+                    if (icon) {
+                        icon.className = icon.className.replace('text-warning', 'text-success');
+                    }
+                    
+                    const iconContainer = item.querySelector('.w-12.h-12');
+                    if (iconContainer) {
+                        iconContainer.className = iconContainer.className.replace('bg-warning', 'bg-success');
+                    }
+                    
+                    // 移除打卡按钮，添加撤销按钮和完成图标
+                    if (button) {
+                        button.remove();
+                    }
+                    
+                    const actionContainer = item.querySelector('.flex.items-center.space-x-2');
+                    if (!actionContainer) {
+                        const newActionContainer = document.createElement('div');
+                        newActionContainer.className = 'flex items-center space-x-2';
+                        newActionContainer.innerHTML = `
+                            <button id="undo-btn-${itemId}" class="undo-button px-4 py-1 rounded-full text-white text-xs">
+                                撤销(30)
+                            </button>
+                            <i class="fas fa-check-circle text-success text-xl"></i>
+                        `;
+                        item.appendChild(newActionContainer);
+                        
+                        // 绑定撤销按钮事件
+                        document.querySelector(`#undo-btn-${itemId}`).addEventListener('click', function() {
+                            handleUndo(itemId);
+                        });
+                    }
+                } else {
+                    // 切换到待完成状态
+                    item.className = item.className.replace('completed-item', 'pending-item');
+                    item.setAttribute('data-status', 'pending');
+                    
+                    // 更新内容
+                    const statusElement = item.querySelector('.text-success.font-medium');
+                    if (statusElement) {
+                        statusElement.className = 'text-sm text-warning font-medium';
+                        statusElement.textContent = '待完成';
+                    }
+                    
+                    // 更新图标
+                    const icon = item.querySelector('i');
+                    if (icon && !icon.classList.contains('fa-check-circle')) {
+                        icon.className = icon.className.replace('text-success', 'text-warning');
+                    }
+                    
+                    const iconContainer = item.querySelector('.w-12.h-12');
+                    if (iconContainer) {
+                        iconContainer.className = iconContainer.className.replace('bg-success', 'bg-warning');
+                    }
+                    
+                    // 移除撤销按钮和完成图标，添加打卡按钮
+                    const actionContainer = item.querySelector('.flex.items-center.space-x-2');
+                    if (actionContainer) {
+                        actionContainer.remove();
+                    }
+                    
+                    const newButton = document.createElement('button');
+                    newButton.id = `checkin-btn-${itemId}`;
+                    newButton.className = 'checkin-button px-6 py-2 rounded-full text-white font-medium text-sm';
+                    newButton.textContent = '打卡';
+                    newButton.addEventListener('click', function() {
+                        handleCheckin(itemId);
+                    });
+                    item.appendChild(newButton);
+                }
+            }
+
+            // 更新进度条和统计
+            function updateProgress() {
+                const completed = Object.values(checkinData).filter(item => item.status === 'completed').length;
+                const total = Object.keys(checkinData).length;
+                const pending = total - completed;
+                const progress = (completed / total * 100).toFixed(0);
+
+                // 更新统计数字
+                document.querySelector('#completed-count').textContent = completed;
+                document.querySelector('#total-count').textContent = total;
+                document.querySelector('#stat-completed').textContent = completed;
+                document.querySelector('#stat-pending').textContent = pending;
+                document.querySelector('#stat-total').textContent = total;
+
+                // 更新进度条
+                document.querySelector('#progress-bar').style.width = `${progress}%`;
+
+                // 如果全部完成，显示完成提示
+                if (completed === total) {
+                    document.querySelector('#checkin-list-section').classList.add('hidden');
+                    document.querySelector('#all-completed-section').classList.remove('hidden');
+                }
+            }
+
+            // 启动撤销倒计时
+            function startUndoTimer(itemId) {
+                let countdown = 30;
+                const undoButton = document.querySelector(`#undo-btn-${itemId}`);
+                
+                undoTimers[itemId] = setInterval(function() {
+                    countdown--;
+                    undoButton.textContent = `撤销(${countdown})`;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(undoTimers[itemId]);
+                        delete undoTimers[itemId];
+                        undoButton.remove();
+                    }
+                }, 60000); // 每分钟更新一次
+            }
+
+            // 显示提示消息
+            function showToast(message) {
+                // 创建提示元素
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg z-50';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                // 3秒后移除
+                setTimeout(function() {
+                    toast.remove();
+                }, 3000);
+            }
+
+            // 绑定所有打卡按钮事件
+            for (let i = 5; i <= 7; i++) {
+                const button = document.querySelector(`#checkin-btn-${i}`);
+                if (button) {
+                    button.addEventListener('click', function() {
+                        handleCheckin(i);
+                    });
+                }
+            }
+
+            // 模拟实时时间更新
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                document.querySelector('#status-bar span').textContent = timeString;
+            }
+
+            updateTime();
+            setInterval(updateTime, 60000);
+
+            // 初始化进度显示
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

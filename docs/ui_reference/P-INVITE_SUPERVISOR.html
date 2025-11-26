@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全守护 - 邀请监督人</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FAE9DB',
+                        secondary: '#F48224', 
+                        accent: '#624731',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 12px rgba(0, 0, 0, 0.08)',
+                        'button': '0 2px 8px rgba(244, 130, 36, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+        }
+        
+        .primary-button {
+            background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+            box-shadow: 0 4px 16px rgba(244, 130, 36, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 130, 36, 0.5);
+        }
+        
+        .secondary-button {
+            background: linear-gradient(135deg, #624731 0%, #5A3F2B 100%);
+            box-shadow: 0 4px 16px rgba(98, 71, 49, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .secondary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(98, 71, 49, 0.4);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+        }
+        
+        .input-focus:focus {
+            outline: none;
+            border-color: #F48224;
+            box-shadow: 0 0 0 2px rgba(244, 130, 36, 0.2);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            animation: modalSlideUp 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- iOS状态栏 -->
+    <div id="status-bar" class="status-bar text-white text-sm flex justify-between items-center px-4 py-1">
+        <div class="flex items-center space-x-1">
+            <span>9:41</span>
+        </div>
+        <div class="flex items-center space-x-1">
+            <i class="fas fa-signal text-xs"></i>
+            <i class="fas fa-wifi text-xs"></i>
+            <i class="fas fa-battery-three-quarters text-xs"></i>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="min-h-screen gradient-bg">
+        <!-- 顶部导航栏 -->
+        <header id="page-header" class="flex items-center justify-between px-6 py-4 bg-white bg-opacity-80 backdrop-blur-sm">
+            <button id="back-button" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                <i class="fas fa-arrow-left text-gray-600"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-accent">邀请监督人</h1>
+            <div class="w-10"></div> <!-- 占位元素保持标题居中 -->
+        </header>
+
+        <!-- 页面内容 -->
+        <main id="page-content" class="px-6 py-6 space-y-6">
+            <!-- 页面说明 -->
+            <section id="description-section" class="bg-white rounded-2xl shadow-card p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-12 h-12 bg-secondary bg-opacity-20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-secondary text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-accent">邀请亲友成为您的监督人</h2>
+                        <p class="text-sm text-gray-600">他们将能够关注您的日常打卡情况</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                        <p class="text-sm text-blue-800">监督人可以查看您的打卡记录，但无法修改您的设置。您可以随时移除监督人。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 微信好友分享 -->
+            <section id="wechat-share-section" class="bg-white rounded-2xl shadow-card p-6">
+                <h3 class="text-lg font-semibold text-accent mb-4">通过微信邀请</h3>
+                <button id="wechat-share-button" class="secondary-button w-full py-4 rounded-xl text-white font-medium flex items-center justify-center space-x-3">
+                    <i class="fab fa-weixin text-2xl"></i>
+                    <span>分享给微信好友</span>
+                </button>
+                <p class="text-sm text-gray-500 mt-3 text-center">点击后将生成邀请链接，发送给您的亲友</p>
+            </section>
+
+            <!-- 通过手机号邀请 -->
+            <section id="phone-invite-section" class="bg-white rounded-2xl shadow-card p-6">
+                <h3 class="text-lg font-semibold text-accent mb-4">通过手机号邀请</h3>
+                <form id="phone-invite-form" class="space-y-4">
+                    <div>
+                        <label for="phone-input" class="block text-sm font-medium text-gray-700 mb-2">亲友手机号</label>
+                        <input type="tel" 
+                               id="phone-input" 
+                               name="phone" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl input-focus text-gray-900 placeholder-gray-500"
+                               placeholder="请输入11位手机号码"
+                               maxlength="11"
+                               required>
+                        <p id="phone-error" class="text-sm text-danger mt-1 hidden">请输入正确的手机号码</p>
+                    </div>
+                    <button type="submit" 
+                            id="send-invite-button" 
+                            class="primary-button w-full py-4 rounded-xl text-white font-medium flex items-center justify-center space-x-2">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>发送邀请</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- 邀请记录 -->
+            <section id="invite-history-section" class="bg-white rounded-2xl shadow-card p-6">
+                <h3 class="text-lg font-semibold text-accent mb-4">最近邀请</h3>
+                <div id="invite-history-list" class="space-y-3">
+                    <div id="invite-item-1" class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-success text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-800">李小明</div>
+                                <div class="text-sm text-gray-500">138****5678</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-success">已接受</div>
+                            <div class="text-xs text-gray-500">2小时前</div>
+                        </div>
+                    </div>
+                    
+                    <div id="invite-item-2" class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-warning bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-warning text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-800">王阿姨</div>
+                                <div class="text-sm text-gray-500">139****9876</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-warning">待接受</div>
+                            <div class="text-xs text-gray-500">1天前</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 微信分享弹窗 -->
+    <div id="wechat-share-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative z-10 flex items-end justify-center min-h-screen">
+            <div class="modal-content bg-white rounded-t-3xl w-full max-w-md mx-4 p-6">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fab fa-weixin text-3xl text-accent"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-accent mb-2">分享邀请链接</h3>
+                    <p class="text-sm text-gray-600">选择要分享的微信好友</p>
+                </div>
+                
+                <!-- 模拟微信好友列表 -->
+                <div id="wechat-friends-list" class="space-y-3 mb-6">
+                    <div class="wechat-friend-item flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100" data-friend-name="张小明">
+                        <img src="https://s.coze.cn/image/eh8XssBWygk/" alt="张小明头像" data-category="人物" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">张小明</div>
+                            <div class="text-sm text-gray-500">表弟</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                    
+                    <div class="wechat-friend-item flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100" data-friend-name="李阿姨">
+                        <img src="https://s.coze.cn/image/77sEqNQTTIE/" alt="李阿姨头像" data-category="人物" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">李阿姨</div>
+                            <div class="text-sm text-gray-500">邻居</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                    
+                    <div class="wechat-friend-item flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100" data-friend-name="王医生">
+                        <img src="https://s.coze.cn/image/Dy_wwZkYj48/" alt="王医生头像" data-category="人物" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">王医生</div>
+                            <div class="text-sm text-gray-500">家庭医生</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <button id="close-wechat-modal" class="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示弹窗 -->
+    <div id="success-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-success text-white px-6 py-3 rounded-xl shadow-lg z-50 hidden">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-check-circle"></i>
+            <span id="success-message">邀请已发送</span>
+        </div>
+    </div>
+
+    <!-- 错误提示弹窗 -->
+    <div id="error-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-danger text-white px-6 py-3 rounded-xl shadow-lg z-50 hidden">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-message">发送失败，请重试</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮点击事件
+            document.querySelector('#back-button').addEventListener('click', function() {
+                window.location.href = 'P-SUPERVISOR_MANAGE.html';
+            });
+
+            // 微信分享按钮点击事件
+            document.querySelector('#wechat-share-button').addEventListener('click', function() {
+                console.log('需要调用第三方接口实现微信分享功能');
+                // 注释：此功能需要调用微信SDK，在原型阶段仅做UI展示
+                document.querySelector('#wechat-share-modal').classList.remove('hidden');
+            });
+
+            // 关闭微信分享弹窗
+            document.querySelector('#close-wechat-modal').addEventListener('click', function() {
+                document.querySelector('#wechat-share-modal').classList.add('hidden');
+            });
+
+            // 点击弹窗背景关闭
+            document.querySelector('#wechat-share-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#wechat-share-modal').classList.add('hidden');
+            });
+
+            // 微信好友选择事件
+            document.querySelectorAll('.wechat-friend-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const friendName = this.dataset.friendName;
+                    console.log(`分享给微信好友: ${friendName}`);
+                    document.querySelector('#wechat-share-modal').classList.add('hidden');
+                    showSuccessToast(`已分享给${friendName}`);
+                });
+            });
+
+            // 手机号邀请表单提交事件
+            document.querySelector('#phone-invite-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const phoneInput = document.querySelector('#phone-input');
+                const phoneError = document.querySelector('#phone-error');
+                const phoneNumber = phoneInput.value.trim();
+                
+                // 手机号验证
+                const phoneRegex = /^1[3-9]\d{9}$/;
+                if (!phoneRegex.test(phoneNumber)) {
+                    phoneError.classList.remove('hidden');
+                    phoneInput.focus();
+                    return;
+                }
+                
+                phoneError.classList.add('hidden');
+                
+                // 模拟发送邀请
+                const sendButton = document.querySelector('#send-invite-button');
+                sendButton.disabled = true;
+                sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>发送中...</span>';
+                
+                setTimeout(() => {
+                    sendButton.disabled = false;
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i><span>发送邀请</span>';
+                    phoneInput.value = '';
+                    showSuccessToast('邀请已发送');
+                    
+                    // 添加到邀请记录
+                    addToInviteHistory(phoneNumber, '待接受');
+                }, 1500);
+            });
+
+            // 手机号输入格式化
+            document.querySelector('#phone-input').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+                e.target.value = value;
+            });
+
+            // 显示成功提示
+            function showSuccessToast(message) {
+                const toast = document.querySelector('#success-toast');
+                const messageElement = document.querySelector('#success-message');
+                messageElement.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // 显示错误提示
+            function showErrorToast(message) {
+                const toast = document.querySelector('#error-toast');
+                const messageElement = document.querySelector('#error-message');
+                messageElement.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // 添加到邀请记录
+            function addToInviteHistory(phoneNumber, status) {
+                const historyList = document.querySelector('#invite-history-list');
+                const maskedPhone = phoneNumber.slice(0, 3) + '****' + phoneNumber.slice(-4);
+                
+                const statusClass = status === '已接受' ? 'success' : 'warning';
+                const statusIcon = status === '已接受' ? 'check' : 'clock';
+                
+                const newItem = document.createElement('div');
+                newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-xl';
+                newItem.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-${statusClass} bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-${statusIcon} text-${statusClass} text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800">新邀请</div>
+                            <div class="text-sm text-gray-500">${maskedPhone}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-${statusClass}">${status}</div>
+                        <div class="text-xs text-gray-500">刚刚</div>
+                    </div>
+                `;
+                
+                historyList.insertBefore(newItem, historyList.firstChild);
+            }
+
+            // 模拟实时时间更新
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                document.querySelector('#status-bar span').textContent = timeString;
+            }
+
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>
