@@ -1,9 +1,16 @@
 // api/request.js
-const baseURL = 'https://jsonplaceholder.typicode.com' // 测试API地址
+const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
 
 export const request = (options) => {
   return new Promise((resolve, reject) => {
     const token = uni.getStorageSync('token')
+    const fullUrl = baseURL + options.url
+    
+    console.log('发起请求:', {
+      url: fullUrl,
+      method: options.method || 'GET',
+      data: options.data
+    })
     
     const headers = {
       'Content-Type': 'application/json',
@@ -15,22 +22,25 @@ export const request = (options) => {
     }
     
     uni.request({
-      url: baseURL + options.url,
+      url: fullUrl,
       method: options.method || 'GET',
       data: options.data || {},
       header: headers,
       success: (res) => {
+        console.log('请求响应:', res)
         if (res.statusCode === 200) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
           handleTokenExpired()
           reject(new Error('登录已过期'))
         } else {
-          reject(new Error(res.data?.message || '请求失败'))
+          console.error('服务器返回错误:', res.statusCode, res.data)
+          reject(new Error(`请求失败: ${res.statusCode} - ${JSON.stringify(res.data)}`))
         }
       },
       fail: (error) => {
-        reject(new Error('网络请求失败'))
+        console.error('请求失败:', error)
+        reject(new Error(`网络请求失败: ${JSON.stringify(error)}`))
       }
     })
   })

@@ -1,7 +1,7 @@
 // store/modules/user.js
 import { defineStore } from 'pinia'
 import { storage } from './storage'
-import { authApi } from '@/api'
+import { authApi } from '@/api/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -23,14 +23,14 @@ export const useUserStore = defineStore('user', {
       this.isLoading = true
       try {
         // 使用真实API调用
-        const apiResponse = await authApi.login({ code, userInfo })
+        const apiResponse = await authApi.login(code)
         
         // 适配测试API响应格式为我们的数据格式
         const response = {
-          token: 'test_token_' + apiResponse.id,
+          token: 'test_token_' + apiResponse.data,
           data: {
             ...userInfo,
-            userId: 'user_' + apiResponse.id,
+            userId: 'user_' + Date.now(),
             role: null, // 新用户默认没有角色
             isVerified: false,
             createdAt: new Date().toISOString()

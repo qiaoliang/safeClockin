@@ -75,6 +75,9 @@ const onWechatLogin = async () => {
 		})
 		
 		console.log(loginData)
+		const {code,data} = await authApi.count()
+		console.log(code)
+		console.log(data)
 		const {token} = await authApi.login(loginData.code)
 		console.log(token)
 		//uni.setStorageSync('token',token)
