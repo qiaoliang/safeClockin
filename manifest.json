@@ -50,11 +50,19 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx55a59cbcd4156ce4",
+        "appid" : "your-weixin-appid",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : true,
+            "minified" : true,
+            "postcss" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {
+            "scope.userInfo" : {
+                "desc" : "用于获取用户头像和昵称"
+            }
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true
