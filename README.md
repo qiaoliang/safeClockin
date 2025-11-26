@@ -10,9 +10,10 @@
 
 # 开发环境与技术框架
 
-1. 使用 uni-app + vue3 + pinia + scss + typescript 和 uview-plus 开发。 
-2. 如果不必要，也可以使用 uni-app 的内部组件和扩展组件。
-3. 如果需要使用除上面提到的组件外的其它组件或库文件，需要停下来，询问用户是否允许使用额外的组件或库文件。
+1. 使用 uni-app + vue3 + pinia + scss + typescript 和 uview-plus 开发。
+2. **使用 VUE3 的写法**：所有组件和页面必须使用 Vue3 的 Composition API 写法（`<script setup>` 语法）。
+3. 如果不必要，也可以使用 uni-app 的内部组件和扩展组件。
+4. 如果需要使用除上面提到的组件外的其它组件或库文件，需要停下来，询问用户是否允许使用额外的组件或库文件。
 
 # 详细说明
 

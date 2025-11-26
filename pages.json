@@ -10,6 +10,46 @@
 			}
 		},
 		{
+			"path": "pages/role-select/role-select",
+			"style": {
+				"navigationBarTitleText": "选择角色",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/community-auth/community-auth",
+			"style": {
+				"navigationBarTitleText": "社区身份验证",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/home-solo/home-solo",
+			"style": {
+				"navigationBarTitleText": "独居者首页",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/home-supervisor/home-supervisor",
+			"style": {
+				"navigationBarTitleText": "监护人首页",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/home-community/home-community",
+			"style": {
+				"navigationBarTitleText": "社区数据看板",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "uni-app"
