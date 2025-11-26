@@ -1,4 +1,4 @@
-// store/api/auth.js
+// api/auth.js
 import { request } from './request'
 
 export const authApi = {

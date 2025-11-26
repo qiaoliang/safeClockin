@@ -1,7 +1,7 @@
 // store/modules/user.js
 import { defineStore } from 'pinia'
 import { storage } from './storage'
-import { authApi } from '../api/auth'
+import { authApi } from '@/api'
 
 export const useUserStore = defineStore('user', {
   state: () => ({

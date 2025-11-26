@@ -1,36 +1,39 @@
-<script setup>
-import { onLaunch, onShow, onHide } from 'vue'
+<script>
 import { useUserStore } from '@/store/modules/user'
 import { getHomePageByRole } from '@/utils/router'
 
-onLaunch(() => {
-  console.log('App Launch')
-  
-  const userStore = useUserStore()
-  userStore.initUserState()
-  
-  checkLaunchScene()
-})
-
-onShow(() => {
-  console.log('App Show')
-})
-
-onHide(() => {
-  console.log('App Hide')
-})
-
-const checkLaunchScene = () => {
-  const userStore = useUserStore()
-  
-  if (userStore.isLoggedIn && userStore.userInfo.role) {
-    const homePage = getHomePageByRole(userStore.userInfo.role)
+export default {
+  onLaunch() {
+    console.log('App Launch')
     
-    setTimeout(() => {
-      uni.switchTab({
-        url: homePage
-      })
-    }, 100)
+    const userStore = useUserStore()
+    userStore.initUserState()
+    
+    this.checkLaunchScene()
+  },
+  
+  onShow() {
+    console.log('App Show')
+  },
+  
+  onHide() {
+    console.log('App Hide')
+  },
+  
+  methods: {
+    checkLaunchScene() {
+      const userStore = useUserStore()
+      
+      if (userStore.isLoggedIn && userStore.userInfo.role) {
+        const homePage = getHomePageByRole(userStore.userInfo.role)
+        
+        setTimeout(() => {
+          uni.switchTab({
+            url: homePage
+          })
+        }, 100)
+      }
+    }
   }
 }
 </script>

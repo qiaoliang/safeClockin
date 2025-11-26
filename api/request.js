@@ -1,4 +1,4 @@
-// store/api/request.js
+// api/request.js
 const baseURL = 'https://your-api-domain.com/api'
 
 export const request = (options) => {
