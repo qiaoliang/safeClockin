@@ -1,5 +1,5 @@
 // api/request.js
-const baseURL = 'https://your-api-domain.com/api'
+const baseURL = 'https://jsonplaceholder.typicode.com' // 测试API地址
 
 export const request = (options) => {
   return new Promise((resolve, reject) => {

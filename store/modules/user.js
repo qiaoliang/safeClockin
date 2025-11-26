@@ -22,12 +22,15 @@ export const useUserStore = defineStore('user', {
     async login(code, userInfo) {
       this.isLoading = true
       try {
-        // 模拟API调用，直接返回成功
+        // 使用真实API调用
+        const apiResponse = await authApi.login({ code, userInfo })
+        
+        // 适配测试API响应格式为我们的数据格式
         const response = {
-          token: 'mock_token_' + Date.now(),
+          token: 'test_token_' + apiResponse.id,
           data: {
             ...userInfo,
-            userId: 'user_' + Date.now(),
+            userId: 'user_' + apiResponse.id,
             role: null, // 新用户默认没有角色
             isVerified: false,
             createdAt: new Date().toISOString()

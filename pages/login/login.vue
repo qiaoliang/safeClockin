@@ -4,7 +4,7 @@
     <!-- Logo和标题 -->
     <view class="logo-section">
       <image class="app-logo" src="/static/logo.png" mode="aspectFit"></image>
-      <text class="app-title">安卡小习惯</text>
+      <text class="app-title">安卡守护</text>
       <text class="app-subtitle">让关爱无处不在</text>
     </view>
     
@@ -13,6 +13,7 @@
       class="wechat-login-button"
       @click="onWechatLogin"
       :disabled="isLoading"
+	  open-type="getUserProfile"
     >
       <text class="wechat-icon">🟢</text>
       <text class="button-text">微信快捷登录</text>
@@ -50,6 +51,10 @@ import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
 
 const isLoading = ref(false)
 const userStore = useUserStore()
+const userInfo = ref({
+	nickName:'',
+	avatarUrl:''
+})
 
 const onWechatLogin = async () => {
   if (isLoading.value) return
@@ -57,6 +62,19 @@ const onWechatLogin = async () => {
   isLoading.value = true
   
   try {
+	uni.showModal({
+		title:'哈哈',
+		content:'亲！授权登录一下。',
+		success(res){
+			if(res.confirm){
+				uni.login({
+					success(data){
+						console.log(data)
+					}
+				})
+			}
+		}
+	})
     // 先获取微信登录凭证
     const loginRes = await uni.login()
     

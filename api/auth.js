@@ -3,18 +3,22 @@ import { request } from './request'
 
 export const authApi = {
   login: (data) => request({
-    url: '/auth/wechat-login',
+    url: '/posts', // 使用测试API端点
     method: 'POST',
-    data
+    data: {
+      title: 'Login Request',
+      body: JSON.stringify(data),
+      userId: 1
+    }
   }),
   
   getUserInfo: () => request({
-    url: '/auth/user-info',
+    url: '/users/1', // 获取测试用户信息
     method: 'GET'
   }),
   
   logout: () => request({
-    url: '/auth/logout',
-    method: 'POST'
+    url: '/posts/1', // 模拟logout请求
+    method: 'DELETE'
   })
 }

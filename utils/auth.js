@@ -6,8 +6,8 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    // 模拟登录API调用
-    await mockLoginAPI(response.code, response.userInfo)
+    // 使用真实的登录API
+    await userStore.login(response.code, response.userInfo)
     
     if (!userStore.userInfo.role) {
       uni.redirectTo({
