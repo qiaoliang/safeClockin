@@ -11,8 +11,7 @@
     <!-- 微信登录按钮 -->
     <button 
       class="wechat-login-button"
-      open-type="getUserInfo"
-      @getuserinfo="onGetUserInfo"
+      @click="onWechatLogin"
       :disabled="isLoading"
     >
       <text class="wechat-icon">🟢</text>
@@ -52,36 +51,42 @@ import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
 const isLoading = ref(false)
 const userStore = useUserStore()
 
-const onGetUserInfo = async (e) => {
+const onWechatLogin = async () => {
   if (isLoading.value) return
-  
-  const { userInfo } = e.detail
-  
-  if (!userInfo) {
-    uni.showToast({
-      title: '需要您的授权才能使用完整功能',
-      icon: 'none'
-    })
-    return
-  }
   
   isLoading.value = true
   
   try {
+    // 先获取微信登录凭证
     const loginRes = await uni.login()
     
     if (!loginRes.code) {
       throw new Error('获取微信登录凭证失败')
     }
     
+    // 获取用户信息
+    const userInfoRes = await uni.getUserProfile({
+      desc: '用于完善用户资料'
+    })
+    
+    if (!userInfoRes.userInfo) {
+      throw new Error('获取用户信息失败')
+    }
+    
     await handleLoginSuccess({
       code: loginRes.code,
-      userInfo
+      userInfo: userInfoRes.userInfo
     })
     
   } catch (error) {
     console.error('登录失败:', error)
-    handleLoginError(error)
+    
+    // 如果用户拒绝授权
+    if (error.errMsg && error.errMsg.includes('getUserProfile:fail auth deny')) {
+      handleLoginError({ type: 'USER_DENIED' })
+    } else {
+      handleLoginError(error)
+    }
   } finally {
     isLoading.value = false
   }

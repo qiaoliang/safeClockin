@@ -22,7 +22,18 @@ export const useUserStore = defineStore('user', {
     async login(code, userInfo) {
       this.isLoading = true
       try {
-        const response = await authApi.login({ code, userInfo })
+        // 模拟API调用，直接返回成功
+        const response = {
+          token: 'mock_token_' + Date.now(),
+          data: {
+            ...userInfo,
+            userId: 'user_' + Date.now(),
+            role: null, // 新用户默认没有角色
+            isVerified: false,
+            createdAt: new Date().toISOString()
+          }
+        }
+        
         this.setToken(response.token)
         this.setUserInfo(response.data)
         this.isLoggedIn = true

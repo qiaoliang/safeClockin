@@ -6,7 +6,8 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    await userStore.login(response.code, response.userInfo)
+    // 模拟登录API调用
+    await mockLoginAPI(response.code, response.userInfo)
     
     if (!userStore.userInfo.role) {
       uni.redirectTo({
@@ -29,6 +30,35 @@ export async function handleLoginSuccess(response) {
       icon: 'none'
     })
   }
+}
+
+// 模拟登录API
+async function mockLoginAPI(code, userInfo) {
+  const userStore = useUserStore()
+  
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  
+  // 模拟登录响应
+  const mockResponse = {
+    token: 'mock_token_' + Date.now(),
+    data: {
+      ...userInfo,
+      userId: 'user_' + Date.now(),
+      role: null, // 新用户默认没有角色
+      isVerified: false,
+      createdAt: new Date().toISOString()
+    }
+  }
+  
+  // 设置用户信息
+  userStore.setToken(mockResponse.token)
+  userStore.setUserInfo(mockResponse.data)
+  userStore.isLoggedIn = true
+  
+  // 保存到本地存储
+  uni.setStorageSync('token', mockResponse.token)
+  uni.setStorageSync('userInfo', mockResponse.data)
 }
 
 export function handleLoginError(error) {
