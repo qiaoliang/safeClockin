@@ -20,7 +20,7 @@
 		{
 			"path": "pages/community-auth/community-auth",
 			"style": {
-				"navigationBarTitleText": "社区身份验证",
+				"navigationBarTitleText": "身份验证",
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
