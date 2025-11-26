@@ -103,11 +103,8 @@ const onSubmit = async (e) => {
   isLoading.value = true
   
   try {
-    // 上传头像到服务器获取永久链接
-    if (formData.value.avatarUrl.startsWith('http://tmp/')) {
-      const permanentUrl = await uploadAvatar(formData.value.avatarUrl)
-      formData.value.avatarUrl = permanentUrl
-    }
+    // 暂时跳过头像上传，直接使用临时路径
+    // TODO: 后续需要实现头像上传功能
     
     // 提交用户信息
     emit('confirm', {
