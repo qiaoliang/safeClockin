@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 实现"安卡小习惯"微信小程序的注册与登录功能，包括微信快捷登录、角色选择和权限控制。
+**Goal:** 实现"安卡好习惯"微信小程序的注册与登录功能，包括微信快捷登录、角色选择和权限控制。
 
 **Architecture:** 基于uni-app + Vue3 + Pinia架构，使用Composition API实现状态管理，通过微信授权实现用户登录，根据用户角色进行权限控制和页面跳转。
 
@@ -17,8 +17,8 @@
 **Files:**
 - Create: `store/modules/user.js`
 - Create: `store/modules/storage.js`
-- Create: `store/api/request.js`
-- Create: `store/api/auth.js`
+- Create: `api/request.js`
+- Create: `api/auth.js`
 - Create: `store/index.js`
 - Create: `utils/router.js`
 - Create: `utils/auth.js`
@@ -28,7 +28,7 @@
 在项目根目录创建store目录结构：
 ```bash
 mkdir -p store/modules
-mkdir -p store/api
+mkdir -p api
 mkdir -p utils
 ```
 
@@ -82,7 +82,7 @@ export const storage = {
 
 **Step 3: 创建请求封装模块**
 
-**File:** `store/api/request.js`
+**File:** `api/request.js`
 ```javascript
 // store/api/request.js
 const baseURL = 'https://your-api-domain.com/api'
@@ -138,7 +138,7 @@ function handleTokenExpired() {
 
 **Step 4: 创建认证API模块**
 
-**File:** `store/api/auth.js`
+**File:** `api/auth.js`
 ```javascript
 // store/api/auth.js
 import { request } from './request'
@@ -169,7 +169,7 @@ export const authApi = {
 // store/modules/user.js
 import { defineStore } from 'pinia'
 import { storage } from './storage'
-import { authApi } from '../api/auth'
+import { authApi } from '@/api/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -371,27 +371,49 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
+    // 调用用户store的登录方法，传递code和用户信息
     await userStore.login(response.code, response.userInfo)
     
+    // 根据用户状态进行页面跳转
     if (!userStore.userInfo.role) {
+      // 新用户需要选择角色
       uni.redirectTo({
         url: '/pages/role-select/role-select'
       })
     } else if (userStore.userInfo.role === 'community' && !userStore.userInfo.isVerified) {
+      // 社区工作人员需要身份验证
       uni.redirectTo({
         url: '/pages/community-auth/community-auth'
       })
     } else {
+      // 已有角色的用户直接跳转到对应首页
       const homePage = getHomePageByRole(userStore.userInfo.role)
       uni.switchTab({
         url: homePage
       })
+      
+      // 显示登录成功提示
+      uni.showToast({
+        title: '登录成功',
+        icon: 'success',
+        duration: 1500
+      })
     }
   } catch (error) {
     console.error('登录成功处理失败:', error)
+    
+    // 根据错误类型显示不同提示
+    let errorMessage = '登录失败，请重试'
+    if (error.message.includes('网络')) {
+      errorMessage = '网络连接失败，请检查网络设置'
+    } else if (error.message.includes('服务器')) {
+      errorMessage = '服务器繁忙，请稍后重试'
+    }
+    
     uni.showToast({
-      title: '登录失败，请重试',
-      icon: 'none'
+      title: errorMessage,
+      icon: 'none',
+      duration: 2000
     })
   }
 }
@@ -464,15 +486,14 @@ git commit -m "feat: 实现路由守卫和认证处理工具"
     <!-- Logo和标题 -->
     <view class="logo-section">
       <image class="app-logo" src="/static/logo.png" mode="aspectFit"></image>
-      <text class="app-title">安卡小习惯</text>
+      <text class="app-title">安卡好习惯</text>
       <text class="app-subtitle">让关爱无处不在</text>
     </view>
     
     <!-- 微信登录按钮 -->
     <button 
       class="wechat-login-button"
-      open-type="getUserInfo"
-      @getuserinfo="onGetUserInfo"
+      @click="onWechatLogin"
       :disabled="isLoading"
     >
       <text class="wechat-icon">🟢</text>
@@ -512,39 +533,33 @@ import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
 const isLoading = ref(false)
 const userStore = useUserStore()
 
-const onGetUserInfo = async (e) => {
+const onWechatLogin = async () => {
   if (isLoading.value) return
-  
-  const { userInfo } = e.detail
-  
-  if (!userInfo) {
-    uni.showToast({
-      title: '需要您的授权才能使用完整功能',
-      icon: 'none'
-    })
-    return
-  }
   
   isLoading.value = true
   
   try {
+    // 第一步：获取微信登录凭证
     const loginRes = await uni.login()
     
     if (!loginRes.code) {
       throw new Error('获取微信登录凭证失败')
     }
     
-    await handleLoginSuccess({
-      code: loginRes.code,
-      userInfo
-    })
+    // 第二步：显示头像昵称填写界面
+    showUserInfoModal(loginRes.code)
     
   } catch (error) {
     console.error('登录失败:', error)
     handleLoginError(error)
-  } finally {
     isLoading.value = false
   }
+}
+
+const showUserInfoModal = (code) => {
+  // 显示头像昵称填写弹窗
+  // 这里需要实现一个弹窗组件，让用户选择头像和填写昵称
+  // 具体实现见下方的"头像昵称填写功能"部分
 }
 
 const showPhoneLogin = () => {
@@ -699,7 +714,358 @@ const showPrivacyPolicy = () => {
 </style>
 ```
 
-**Step 3: 提交登录页面**
+### 头像昵称填写功能实现
+
+#### 微信小程序用户信息获取规则更新说明
+
+**重要更新**: 自2022年10月25日24时起，微信小程序用户头像昵称获取规则已调整：
+- `wx.getUserProfile` 接口已被收回，获取到的头像为默认灰色头像，昵称为"微信用户"
+- 新的获取方式需要用户主动选择头像和填写昵称
+- 使用「头像昵称填写能力」（基础库2.21.2版本开始支持）
+
+#### 实现方案
+
+**Step 1: 创建头像昵称填写组件**
+
+**File:** `components/user-info-form/user-info-form.vue`
+```vue
+<!-- components/user-info-form/user-info-form.vue -->
+<template>
+  <view class="user-info-modal" v-if="visible">
+    <view class="modal-mask" @click="onCancel"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">完善个人信息</text>
+      </view>
+      
+      <form @submit="onSubmit">
+        <!-- 头像选择 -->
+        <view class="form-item">
+          <text class="form-label">头像</text>
+          <button 
+            class="avatar-button" 
+            open-type="chooseAvatar" 
+            @chooseavatar="onChooseAvatar"
+          >
+            <image 
+              class="avatar-image" 
+              :src="formData.avatarUrl || defaultAvatarUrl"
+              mode="aspectFill"
+            ></image>
+            <text class="avatar-tip">点击选择头像</text>
+          </button>
+        </view>
+        
+        <!-- 昵称填写 -->
+        <view class="form-item">
+          <text class="form-label">昵称</text>
+          <input 
+            class="nickname-input"
+            type="nickname" 
+            name="nickname"
+            :value="formData.nickName"
+            placeholder="请输入昵称"
+            @input="onNicknameInput"
+            @blur="onNicknameBlur"
+          />
+        </view>
+        
+        <!-- 操作按钮 -->
+        <view class="form-actions">
+          <button class="cancel-btn" @click="onCancel">取消</button>
+          <button 
+            class="confirm-btn" 
+            form-type="submit"
+            :disabled="!isFormValid || isLoading"
+          >
+            {{ isLoading ? '提交中...' : '确认' }}
+          </button>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  },
+  code: {
+    type: String,
+    default: ''
+  }
+})
+
+const emit = defineEmits(['cancel', 'confirm'])
+
+const isLoading = ref(false)
+const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+
+const formData = ref({
+  avatarUrl: '',
+  nickName: ''
+})
+
+const isFormValid = computed(() => {
+  return formData.value.avatarUrl && formData.value.nickName.trim()
+})
+
+const onChooseAvatar = (e) => {
+  const { avatarUrl } = e.detail
+  formData.value.avatarUrl = avatarUrl
+}
+
+const onNicknameInput = (e) => {
+  formData.value.nickName = e.detail.value
+}
+
+const onNicknameBlur = (e) => {
+  // 昵称安全检测在blur事件后异步进行
+  formData.value.nickName = e.detail.value
+}
+
+const onSubmit = async (e) => {
+  if (!isFormValid.value) return
+  
+  isLoading.value = true
+  
+  try {
+    // 上传头像到服务器获取永久链接
+    if (formData.value.avatarUrl.startsWith('http://tmp/')) {
+      const permanentUrl = await uploadAvatar(formData.value.avatarUrl)
+      formData.value.avatarUrl = permanentUrl
+    }
+    
+    // 提交用户信息
+    emit('confirm', {
+      code: props.code,
+      avatarUrl: formData.value.avatarUrl,
+      nickName: formData.value.nickName
+    })
+    
+  } catch (error) {
+    console.error('提交用户信息失败:', error)
+    uni.showToast({
+      title: '提交失败，请重试',
+      icon: 'none'
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const uploadAvatar = (tempPath) => {
+  return new Promise((resolve, reject) => {
+    uni.uploadFile({
+      url: 'https://your-api-domain.com/api/upload-avatar',
+      filePath: tempPath,
+      name: 'avatar',
+      success: (res) => {
+        try {
+          const data = JSON.parse(res.data)
+          resolve(data.url)
+        } catch (error) {
+          reject(error)
+        }
+      },
+      fail: reject
+    })
+  })
+}
+
+const onCancel = () => {
+  emit('cancel')
+}
+</script>
+
+<style scoped>
+.user-info-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600rpx;
+  background: white;
+  border-radius: 24rpx;
+  padding: 48rpx;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 48rpx;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.avatar-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.avatar-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin-bottom: 16rpx;
+}
+
+.avatar-tip {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.nickname-input {
+  width: 100%;
+  height: 80rpx;
+  background: #F8F8F8;
+  border: 2rpx solid #E5E5E5;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+}
+
+.form-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 48rpx;
+}
+
+.cancel-btn, .confirm-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 20rpx;
+  font-size: 32rpx;
+}
+
+.cancel-btn {
+  background: #F5F5F5;
+  color: #666;
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  color: white;
+}
+
+.confirm-btn:disabled {
+  background: #CCCCCC;
+}
+</style>
+```
+
+**Step 2: 更新登录页面使用头像昵称填写组件**
+
+**File:** `pages/login/login.vue` (更新script部分)
+```vue
+<script setup>
+import { ref } from 'vue'
+import { useUserStore } from '@/store/modules/user'
+import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
+
+const isLoading = ref(false)
+const showUserInfoForm = ref(false)
+const loginCode = ref('')
+const userStore = useUserStore()
+
+const onWechatLogin = async () => {
+  if (isLoading.value) return
+  
+  isLoading.value = true
+  
+  try {
+    // 第一步：获取微信登录凭证
+    const loginRes = await uni.login()
+    
+    if (!loginRes.code) {
+      throw new Error('获取微信登录凭证失败')
+    }
+    
+    // 第二步：显示头像昵称填写界面
+    loginCode.value = loginRes.code
+    showUserInfoForm.value = true
+    
+  } catch (error) {
+    console.error('登录失败:', error)
+    handleLoginError(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const onUserInfoConfirm = async (userInfo) => {
+  try {
+    await handleLoginSuccess({
+      code: userInfo.code,
+      userInfo: {
+        avatarUrl: userInfo.avatarUrl,
+        nickName: userInfo.nickName
+      }
+    })
+    
+    showUserInfoForm.value = false
+  } catch (error) {
+    console.error('登录失败:', error)
+    handleLoginError(error)
+  }
+}
+
+const onUserInfoCancel = () => {
+  showUserInfoForm.value = false
+}
+
+// 其他方法保持不变...
+</script>
+```
+
+**Step 3: 提交头像昵称填写功能**
+
+```bash
+git add components/user-info-form/
+git commit -m "feat: 实现头像昵称填写功能"
+```
+
+**Step 4: 提交登录页面**
 
 ```bash
 git add pages/login/login.vue pages.json
