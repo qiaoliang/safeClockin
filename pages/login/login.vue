@@ -75,11 +75,8 @@ const onWechatLogin = async () => {
 		})
 		
 		console.log(loginData)
-		const {code,data} = await authApi.count()
-		console.log(code)
-		console.log(data)
-		const {token} = await authApi.login(loginData.code)
-		console.log(token)
+		const response = await authApi.login(loginData.code)
+		console.log(response)
 		//uni.setStorageSync('token',token)
 		// 获取用户信息
 		//userInfoRes.value = await authApi.getUserProfile()

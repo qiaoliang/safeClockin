@@ -24,15 +24,16 @@ export const useUserStore = defineStore('user', {
       try {
         // 使用真实API调用
         const apiResponse = await authApi.login(code)
+        console.log('登录API响应:', apiResponse)
         
-        // 适配测试API响应格式为我们的数据格式
+        // 适配真实API响应格式
         const response = {
-          token: 'test_token_' + apiResponse.data,
+          token: apiResponse.token || 'default_token_' + Date.now(),
           data: {
             ...userInfo,
-            userId: 'user_' + Date.now(),
-            role: null, // 新用户默认没有角色
-            isVerified: false,
+            userId: apiResponse.userId || 'user_' + Date.now(),
+            role: apiResponse.role || null, // 新用户默认没有角色
+            isVerified: apiResponse.isVerified || false,
             createdAt: new Date().toISOString()
           }
         }
