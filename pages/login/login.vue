@@ -13,7 +13,6 @@
       class="wechat-login-button"
       @click="onWechatLogin"
       :disabled="isLoading"
-	  open-type="getUserProfile"
     >
       <text class="wechat-icon">🟢</text>
       <text class="button-text">微信快捷登录</text>
@@ -48,13 +47,10 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
+import {authApi} from '@/api/auth'
 
 const isLoading = ref(false)
 const userStore = useUserStore()
-const userInfo = ref({
-	nickName:'',
-	avatarUrl:''
-})
 
 const onWechatLogin = async () => {
   if (isLoading.value) return
@@ -62,39 +58,31 @@ const onWechatLogin = async () => {
   isLoading.value = true
   
   try {
-	uni.showModal({
-		title:'哈哈',
-		content:'亲！授权登录一下。',
-		success(res){
-			if(res.confirm){
-				uni.login({
-					success(data){
-						console.log(data)
-					}
-				})
-			}
-		}
+	const res = await new Promise((resolve) => {
+		uni.showModal({
+			title:'哈哈',
+			content:'亲！授权登录一下。',
+			success: resolve
+		})
 	})
-    // 先获取微信登录凭证
-    const loginRes = await uni.login()
+	
+	if(res.confirm){
+		const loginData = await new Promise((resolve, reject) => {
+			uni.login({
+				success: resolve,
+				fail: reject
+			})
+		})
+		
+		console.log(loginData)
+		const {token} = await authApi.login(loginData.code)
+		console.log(token)
+		//uni.setStorageSync('token',token)
+		// 获取用户信息
+		//userInfoRes.value = await authApi.getUserProfile()
+		//console.log(userInfoRes.value)
+	}
     
-    if (!loginRes.code) {
-      throw new Error('获取微信登录凭证失败')
-    }
-    
-    // 获取用户信息
-    const userInfoRes = await uni.getUserProfile({
-      desc: '用于完善用户资料'
-    })
-    
-    if (!userInfoRes.userInfo) {
-      throw new Error('获取用户信息失败')
-    }
-    
-    await handleLoginSuccess({
-      code: loginRes.code,
-      userInfo: userInfoRes.userInfo
-    })
     
   } catch (error) {
     console.error('登录失败:', error)
