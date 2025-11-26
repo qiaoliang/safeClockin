@@ -4,7 +4,7 @@
     <!-- Logo和标题 -->
     <view class="logo-section">
       <image class="app-logo" src="/static/logo.png" mode="aspectFit"></image>
-      <text class="app-title">安卡守护</text>
+      <text class="app-title">安卡好习惯</text>
       <text class="app-subtitle">让关爱无处不在</text>
     </view>
     
@@ -40,6 +40,14 @@
         <text class="link" @click="showPrivacyPolicy">《隐私政策》</text>
       </text>
     </view>
+    
+    <!-- 头像昵称填写组件 -->
+    <user-info-form 
+      :visible="showUserInfoForm"
+      :code="loginCode"
+      @confirm="onUserInfoConfirm"
+      @cancel="onUserInfoCancel"
+    />
   </view>
 </template>
 
@@ -47,9 +55,11 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
-import {authApi} from '@/api/auth'
+import UserInfoForm from '@/components/user-info-form/user-info-form.vue'
 
 const isLoading = ref(false)
+const showUserInfoForm = ref(false)
+const loginCode = ref('')
 const userStore = useUserStore()
 
 const onWechatLogin = async () => {
@@ -58,44 +68,44 @@ const onWechatLogin = async () => {
   isLoading.value = true
   
   try {
-	const res = await new Promise((resolve) => {
-		uni.showModal({
-			title:'哈哈',
-			content:'亲！授权登录一下。',
-			success: resolve
-		})
-	})
-	
-	if(res.confirm){
-		const loginData = await new Promise((resolve, reject) => {
-			uni.login({
-				success: resolve,
-				fail: reject
-			})
-		})
-		
-		console.log(loginData)
-		const response = await authApi.login(loginData.code)
-		console.log(response)
-		//uni.setStorageSync('token',token)
-		// 获取用户信息
-		//userInfoRes.value = await authApi.getUserProfile()
-		//console.log(userInfoRes.value)
-	}
+    // 第一步：获取微信登录凭证
+    const loginRes = await uni.login()
     
+    if (!loginRes.code) {
+      throw new Error('获取微信登录凭证失败')
+    }
+    
+    // 第二步：显示头像昵称填写界面
+    loginCode.value = loginRes.code
+    showUserInfoForm.value = true
     
   } catch (error) {
     console.error('登录失败:', error)
-    
-    // 如果用户拒绝授权
-    if (error.errMsg && error.errMsg.includes('getUserProfile:fail auth deny')) {
-      handleLoginError({ type: 'USER_DENIED' })
-    } else {
-      handleLoginError(error)
-    }
+    handleLoginError(error)
   } finally {
     isLoading.value = false
   }
+}
+
+const onUserInfoConfirm = async (userInfo) => {
+  try {
+    await handleLoginSuccess({
+      code: userInfo.code,
+      userInfo: {
+        avatarUrl: userInfo.avatarUrl,
+        nickName: userInfo.nickName
+      }
+    })
+    
+    showUserInfoForm.value = false
+  } catch (error) {
+    console.error('登录失败:', error)
+    handleLoginError(error)
+  }
+}
+
+const onUserInfoCancel = () => {
+  showUserInfoForm.value = false
 }
 
 const showPhoneLogin = () => {
