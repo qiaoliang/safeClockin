@@ -6,28 +6,49 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    // 使用真实的登录API
+    // 调用用户store的登录方法，传递code和用户信息
     await userStore.login(response.code, response.userInfo)
     
+    // 根据用户状态进行页面跳转
     if (!userStore.userInfo.role) {
+      // 新用户需要选择角色
       uni.redirectTo({
         url: '/pages/role-select/role-select'
       })
     } else if (userStore.userInfo.role === 'community' && !userStore.userInfo.isVerified) {
+      // 社区工作人员需要身份验证
       uni.redirectTo({
         url: '/pages/community-auth/community-auth'
       })
     } else {
+      // 已有角色的用户直接跳转到对应首页
       const homePage = getHomePageByRole(userStore.userInfo.role)
       uni.switchTab({
         url: homePage
       })
+      
+      // 显示登录成功提示
+      uni.showToast({
+        title: '登录成功',
+        icon: 'success',
+        duration: 1500
+      })
     }
   } catch (error) {
     console.error('登录成功处理失败:', error)
+    
+    // 根据错误类型显示不同提示
+    let errorMessage = '登录失败，请重试'
+    if (error.message.includes('网络')) {
+      errorMessage = '网络连接失败，请检查网络设置'
+    } else if (error.message.includes('服务器')) {
+      errorMessage = '服务器繁忙，请稍后重试'
+    }
+    
     uni.showToast({
-      title: '登录失败，请重试',
-      icon: 'none'
+      title: errorMessage,
+      icon: 'none',
+      duration: 2000
     })
   }
 }
