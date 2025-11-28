@@ -15,9 +15,22 @@ export const authApi = {
     url: '/api/user/profile',
     method: 'GET'
   }),
-  updateUserProfile:(data) => request({
-    url: '/api/user/profile',
-    method: 'POST',
-    data: data
-  })
+  updateUserProfile:(data) => {
+    // 将前端的驼峰命名转换为后端的下划线命名
+    const transformedData = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (key === 'avatarUrl') {
+        transformedData['avatar_url'] = value
+      } else if (key === 'nickName') {
+        transformedData['nickname'] = value
+      } else {
+        transformedData[key] = value
+      }
+    }
+    return request({
+      url: '/api/user/profile',
+      method: 'POST',
+      data: transformedData
+    })
+  }
 }
