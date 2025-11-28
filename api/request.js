@@ -19,6 +19,9 @@ export const request = (options) => {
     
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
+      console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`) // 只打印token前20个字符用于调试
+    } else {
+      console.log('请求发送 - 未找到本地存储的token')
     }
     
     uni.request({
