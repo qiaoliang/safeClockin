@@ -31,10 +31,18 @@ export const request = (options) => {
         console.log('请求响应:', res)
         if (res.statusCode === 200) {
           // 检查业务层面的错误 - 如果code为0表示错误
-          if (res.data && res.data.code === 0 && res.data.msg && res.data.msg.includes('token')) {
-            // 检查是否是token相关的错误
-            handleTokenExpired()
-            reject(new Error('登录已过期或token无效'))
+          if (res.data && res.data.code === 0) {
+            // 检查是否是token相关的错误（更精确的匹配）
+            if (res.data.msg && 
+                (res.data.msg.includes('token无效') || 
+                 res.data.msg.includes('token已过期') || 
+                 res.data.msg.includes('登录已过期'))) {
+              handleTokenExpired()
+              reject(new Error('登录已过期或token无效'))
+            } else {
+              // 不是token相关的错误，直接返回响应
+              resolve(res.data)
+            }
           } else {
             resolve(res.data)
           }

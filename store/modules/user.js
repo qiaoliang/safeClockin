@@ -26,16 +26,27 @@ export const useUserStore = defineStore('user', {
         const apiResponse = await authApi.login(code)
         console.log('登录API响应:', apiResponse)
         
+        // 检查API响应是否成功
+        if (apiResponse.code !== 1) {
+          console.error('登录API返回错误:', apiResponse)
+          throw new Error(`登录失败: ${apiResponse.msg || '未知错误'}`)
+        }
+        
         // 适配真实API响应格式 - 从data中获取token和其他信息
         const response = {
-          token: apiResponse.data?.token || 'default_token_' + Date.now(),
+          token: apiResponse.data?.token,
           data: {
-            userId: apiResponse.data?.user_id || 'user_' + Date.now(),
+            userId: apiResponse.data?.user_id,
             role: apiResponse.data?.role || null, // 新用户默认没有角色
             isVerified: apiResponse.data?.isVerified || false,
             createdAt: new Date().toISOString(),
             is_new_user: apiResponse.data?.is_new_user || false
           }
+        }
+        
+        // 验证必需的字段是否存在
+        if (!response.token) {
+          throw new Error('登录响应中缺少token')
         }
         
         this.setToken(response.token)
@@ -47,6 +58,7 @@ export const useUserStore = defineStore('user', {
         
         return response
       } catch (error) {
+        console.error('登录过程发生错误:', error)
         throw error
       } finally {
         this.isLoading = false
@@ -59,8 +71,14 @@ export const useUserStore = defineStore('user', {
         const response = await authApi.updateUserProfile(userData)
         console.log('更新用户信息响应:', response)
         
+        // 检查API响应是否成功
+        if (response.code !== 1) {
+          console.error('更新用户信息API返回错误:', response)
+          throw new Error(`更新用户信息失败: ${response.msg || '未知错误'}`)
+        }
+        
         // 更新本地存储的用户信息 - 现在使用更新后的用户信息
-        if (response.code === 1 && this.userInfo) {
+        if (this.userInfo) {
           // 对于更新用户信息，我们可能需要重新获取用户信息
           // 或者直接更新传入的字段
           Object.assign(this.userInfo, userData)
@@ -82,11 +100,14 @@ export const useUserStore = defineStore('user', {
         const response = await authApi.getUserProfile()
         console.log('获取用户信息响应:', response)
         
-        // 正确处理API响应格式
-        if (response.code === 1) {
-          this.setUserInfo(response.data)
-          storage.set('userInfo', response.data)
+        // 检查API响应是否成功
+        if (response.code !== 1) {
+          console.error('获取用户信息API返回错误:', response)
+          throw new Error(`获取用户信息失败: ${response.msg || '未知错误'}`)
         }
+        
+        this.setUserInfo(response.data)
+        storage.set('userInfo', response.data)
         
         return response
       } catch (error) {
