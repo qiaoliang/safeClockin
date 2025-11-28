@@ -30,7 +30,14 @@ export const request = (options) => {
 		console.log('fullUrl',fullUrl)
         console.log('请求响应:', res)
         if (res.statusCode === 200) {
-          resolve(res.data)
+          // 检查业务层面的错误 - 如果code为0表示错误
+          if (res.data && res.data.code === 0 && res.data.msg && res.data.msg.includes('token')) {
+            // 检查是否是token相关的错误
+            handleTokenExpired()
+            reject(new Error('登录已过期或token无效'))
+          } else {
+            resolve(res.data)
+          }
         } else if (res.statusCode === 401) {
           handleTokenExpired()
           reject(new Error('登录已过期'))

@@ -15,7 +15,7 @@ export async function handleLoginSuccess(response) {
     }
     
     // 根据用户状态进行页面跳转
-    if (!userStore.userInfo.role) {
+    if (!userStore.userInfo?.role) {
       // 新用户需要选择角色
       uni.redirectTo({
         url: '/pages/role-select/role-select'
@@ -44,10 +44,12 @@ export async function handleLoginSuccess(response) {
     
     // 根据错误类型显示不同提示
     let errorMessage = '登录失败，请重试'
-    if (error.message.includes('网络')) {
+    if (error.message?.includes('网络')) {
       errorMessage = '网络连接失败，请检查网络设置'
-    } else if (error.message.includes('服务器')) {
-      errorMessage = '服务器繁忙，请稍后重试'
+    } else if (error.message?.includes('服务器') || error.message?.includes('登录API')) {
+      errorMessage = '服务器繁忙或网络问题，请稍后重试'
+    } else if (error.message?.includes('微信API')) {
+      errorMessage = '微信登录服务暂时不可用，请稍后重试'
     }
     
     uni.showToast({
