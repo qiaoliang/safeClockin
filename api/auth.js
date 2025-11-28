@@ -10,5 +10,14 @@ export const authApi = {
   count:() => request({
 	  url: '/api/count',
 	  method:'GET'
+  }),
+  getUserProfile:() => request({
+    url: '/api/user/profile',
+    method: 'GET'
+  }),
+  updateUserProfile:(data) => request({
+    url: '/api/user/profile',
+    method: 'POST',
+    data: data
   })
 }

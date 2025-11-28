@@ -89,6 +89,7 @@ const onWechatLogin = async () => {
 
 const onUserInfoConfirm = async (userInfo) => {
   try {
+    // 执行登录流程，包括登录和更新用户信息
     await handleLoginSuccess({
       code: userInfo.code,
       userInfo: {

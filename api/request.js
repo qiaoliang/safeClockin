@@ -27,6 +27,7 @@ export const request = (options) => {
       data: options.data || {},
       header: headers,
       success: (res) => {
+		console.log('fullUrl',fullUrl)
         console.log('请求响应:', res)
         if (res.statusCode === 200) {
           resolve(res.data)
@@ -35,7 +36,7 @@ export const request = (options) => {
           reject(new Error('登录已过期'))
         } else {
           console.error('服务器返回错误:', res.statusCode, res.data)
-          reject(new Error(`请求失败: ${res.statusCode} - ${JSON.stringify(res.data)}`))
+          reject(new Error(`请求失败: ${res.statusCode} - FullURL:${fullUrl} - ${JSON.stringify(res.data)}`))
         }
       },
       fail: (error) => {

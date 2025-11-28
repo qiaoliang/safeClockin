@@ -6,8 +6,13 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    // 调用用户store的登录方法，传递code和用户信息
-    await userStore.login(response.code, response.userInfo)
+    // 调用用户store的登录方法，仅传递code，用户信息将通过专门的接口更新
+    await userStore.login(response.code)
+    
+    // 如果提供了用户信息，更新到用户资料中
+    if (response.userInfo) {
+      await userStore.updateUserInfo(response.userInfo)
+    }
     
     // 根据用户状态进行页面跳转
     if (!userStore.userInfo.role) {

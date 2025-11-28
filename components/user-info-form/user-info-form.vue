@@ -103,8 +103,6 @@ const onSubmit = async (e) => {
   isLoading.value = true
   
   try {
-    // 暂时跳过头像上传，直接使用临时路径
-    // TODO: 后续需要实现头像上传功能
     
     // 提交用户信息
     emit('confirm', {

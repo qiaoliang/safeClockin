@@ -19,7 +19,7 @@ export const useUserStore = defineStore('user', {
   },
   
   actions: {
-    async login(code, userInfo) {
+    async login(code) {
       this.isLoading = true
       try {
         // 使用真实API调用
@@ -30,7 +30,6 @@ export const useUserStore = defineStore('user', {
         const response = {
           token: apiResponse.token || 'default_token_' + Date.now(),
           data: {
-            ...userInfo,
             userId: apiResponse.userId || 'user_' + Date.now(),
             role: apiResponse.role || null, // 新用户默认没有角色
             isVerified: apiResponse.isVerified || false,
@@ -47,6 +46,45 @@ export const useUserStore = defineStore('user', {
         
         return response
       } catch (error) {
+        throw error
+      } finally {
+        this.isLoading = false
+      }
+    },
+    
+    async updateUserInfo(userData) {
+      this.isLoading = true
+      try {
+        const response = await authApi.updateUserProfile(userData)
+        console.log('更新用户信息响应:', response)
+        
+        // 更新本地存储的用户信息
+        if (this.userInfo) {
+          Object.assign(this.userInfo, userData)
+          storage.set('userInfo', this.userInfo)
+        }
+        
+        return response
+      } catch (error) {
+        console.error('更新用户信息失败:', error)
+        throw error
+      } finally {
+        this.isLoading = false
+      }
+    },
+    
+    async fetchUserInfo() {
+      this.isLoading = true
+      try {
+        const response = await authApi.getUserProfile()
+        console.log('获取用户信息响应:', response)
+        
+        this.setUserInfo(response)
+        storage.set('userInfo', response)
+        
+        return response
+      } catch (error) {
+        console.error('获取用户信息失败:', error)
         throw error
       } finally {
         this.isLoading = false
@@ -86,10 +124,11 @@ export const useUserStore = defineStore('user', {
     },
     
     async updateUserRole(role) {
-      // TODO: 调用API更新用户角色
+      // 更新角色
       this.role = role
       if (this.userInfo) {
         this.userInfo.role = role
+        await this.updateUserInfo({ role })
         storage.set('userInfo', this.userInfo)
       }
     }
