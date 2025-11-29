@@ -290,23 +290,33 @@ const submitAuth = async (e) => {
   isLoading.value = true
   
   try {
-    // TODO: 调用API提交身份验证信息
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    // 调用API提交身份验证信息
+    const response = await request({
+      url: '/api/community/verify',
+      method: 'POST',
+      data: {
+        name: formData.value.name,
+        workId: formData.value.workId,
+        workProof: formData.value.workProof
+      }
+    })
     
-    // 更新用户验证状态
-    if (userStore.userInfo) {
-      userStore.userInfo.isVerified = true
-      userStore.userInfo.verificationStatus = 'pending'
-      uni.setStorageSync('userInfo', userStore.userInfo)
+    if (response.code === 1) {
+      // 更新用户验证状态
+      if (userStore.userInfo) {
+        userStore.userInfo.verificationStatus = 1 // 待审核
+        uni.setStorageSync('userInfo', userStore.userInfo)
+      }
+      
+      // 显示成功弹窗
+      showSuccessModal.value = true
+    } else {
+      throw new Error(response.msg || '提交失败')
     }
-    
-    // 显示成功弹窗
-    showSuccessModal.value = true
     
   } catch (error) {
     console.error('身份验证提交失败:', error)
-    errorMessage.value = '提交失败，请检查信息是否完整并重试。'
+    errorMessage.value = error.message || '提交失败，请检查信息是否完整并重试。'
     showErrorModal.value = true
   } finally {
     isLoading.value = false

@@ -32,5 +32,45 @@ export const authApi = {
       method: 'POST',
       data: transformedData
     })
-  }
+  },
+  
+  // 打卡相关API
+  getTodayCheckinItems:() => request({
+    url: '/api/checkin/today',
+    method: 'GET'
+  }),
+  performCheckin:(data) => request({
+    url: '/api/checkin',
+    method: 'POST',
+    data: data
+  }),
+  cancelCheckin:(data) => request({
+    url: '/api/checkin/cancel',
+    method: 'POST',
+    data: data
+  }),
+  getCheckinHistory:(params) => request({
+    url: '/api/checkin/history',
+    method: 'GET',
+    data: params
+  }),
+  getCheckinRules:() => request({
+    url: '/api/checkin/rules',
+    method: 'GET'
+  }),
+  createCheckinRule:(data) => request({
+    url: '/api/checkin/rules',
+    method: 'POST',
+    data: data
+  }),
+  updateCheckinRule:(data) => request({
+    url: '/api/checkin/rules',
+    method: 'PUT',
+    data: data
+  }),
+  deleteCheckinRule:(data) => request({
+    url: '/api/checkin/rules',
+    method: 'DELETE',
+    data: data
+  })
 }

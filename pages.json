@@ -56,6 +56,70 @@
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/checkin-list/checkin-list",
+			"style": {
+				"navigationBarTitleText": "打卡事项",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/rule-setting/rule-setting",
+			"style": {
+				"navigationBarTitleText": "打卡规则",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/add-rule/add-rule",
+			"style": {
+				"navigationBarTitleText": "添加规则",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/supervisor-manage/supervisor-manage",
+			"style": {
+				"navigationBarTitleText": "监护人管理",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/invite-supervisor/invite-supervisor",
+			"style": {
+				"navigationBarTitleText": "邀请监护人",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/supervisor-detail/supervisor-detail",
+			"style": {
+				"navigationBarTitleText": "监护详情",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/notification-settings/notification-settings",
+			"style": {
+				"navigationBarTitleText": "通知设置",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/unchecked-detail/unchecked-detail",
+			"style": {
+				"navigationBarTitleText": "未打卡详情",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
 		}
 	],
 	"tabBar": {
