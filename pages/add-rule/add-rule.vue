@@ -107,7 +107,7 @@
         <view class="modal-body">
           <text class="modal-text" v-if="isEditing">修改打卡规则后，系统将自动通知您的监督人。确定要继续吗？</text>
           <text class="modal-text" v-else>确定要添加新的打卡规则吗？</text>
-        </div>
+        </view>
         <view class="modal-actions">
           <button class="modal-cancel-btn" @click="hideConfirmModal">取消</button>
           <button class="modal-confirm-btn" @click="confirmSubmit">确定</button>

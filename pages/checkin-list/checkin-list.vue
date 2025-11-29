@@ -63,7 +63,7 @@
         <view class="modal-body">
           <text class="modal-text">确定要撤销 "{{ selectedCheckinItem?.rule_name }}" 的打卡吗？</text>
           <text class="modal-subtext">撤销后，该事项将恢复为未打卡状态</text>
-        </div>
+        </view>
         <view class="modal-actions">
           <button class="modal-cancel-btn" @click="hideCancelModal">取消</button>
           <button class="modal-confirm-btn" @click="confirmCancel">确定</button>

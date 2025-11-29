@@ -72,5 +72,11 @@ export const authApi = {
     url: '/api/checkin/rules',
     method: 'DELETE',
     data: data
+  }),
+  
+  // 登出相关API
+  logout:() => request({
+    url: '/api/logout',
+    method: 'POST'
   })
 }

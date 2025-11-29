@@ -53,7 +53,7 @@
         <view class="modal-body">
           <text class="modal-text">确定要删除 "{{ selectedRule?.rule_name }}" 吗？</text>
           <text class="modal-subtext">删除后该打卡规则将不再生效</text>
-        </div>
+        </view>
         <view class="modal-actions">
           <button class="modal-cancel-btn" @click="hideDeleteModal">取消</button>
           <button class="modal-confirm-btn" @click="confirmDelete">删除</button>

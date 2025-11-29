@@ -49,7 +49,7 @@
         <view class="modal-body">
           <text class="modal-text">确定要移除 {{ selectedSupervisor?.nickname }} 作为您的监督人吗？</text>
           <text class="modal-subtext">移除后他们将无法查看您的打卡记录。</text>
-        </div>
+        </view>
         <view class="modal-actions">
           <button class="modal-cancel-btn" @click="hideRemoveModal">取消</button>
           <button class="modal-confirm-btn" @click="confirmRemove">确定</button>

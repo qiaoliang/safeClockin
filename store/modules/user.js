@@ -63,6 +63,10 @@ export const useUserStore = defineStore('user', {
         this.isLoggedIn = true
         
         storage.set('token', response.token)
+        // 如果响应中包含refresh token，也保存它
+        if (response.refresh_token) {
+          storage.set('refreshToken', response.refresh_token)
+        }
         storage.set('userInfo', response.data)
         
         return response
@@ -139,6 +143,7 @@ export const useUserStore = defineStore('user', {
       this.role = null
       
       storage.remove('token')
+      storage.remove('refreshToken')
       storage.remove('userInfo')
     },
     
@@ -153,6 +158,7 @@ export const useUserStore = defineStore('user', {
     
     initUserState() {
       const token = storage.get('token')
+      const refreshToken = storage.get('refreshToken')
       const userInfo = storage.get('userInfo')
       
       if (token && userInfo) {
