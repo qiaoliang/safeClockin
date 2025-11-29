@@ -23,9 +23,11 @@ export const useUserStore = defineStore('user', {
     
     async login(loginData) {
       this.isLoading = true
+      // 定义code变量在更广的作用域，确保finally块中可以访问
+      let code = null
       try {
         // 检查是否正在处理相同的code，防止重复请求
-        const code = typeof loginData === 'string' ? loginData : loginData.code;
+        code = typeof loginData === 'string' ? loginData : loginData.code;
         if (this.currentProcessingCode === code) {
           throw new Error('登录凭证正在处理中，请勿重复提交')
         }
@@ -43,41 +45,40 @@ export const useUserStore = defineStore('user', {
         }
         
         // 适配真实API响应格式 - 从data中获取token和其他信息
-        const response = {
+        const tokenData = {
           token: apiResponse.data?.token,
           refresh_token: apiResponse.data?.refresh_token,
-          data: {
-            userId: apiResponse.data?.user_id,
-            role: apiResponse.data?.role || null, // 从后端直接获取角色
-            isVerified: apiResponse.data?.is_verified || false,
-            createdAt: new Date().toISOString(),
-            is_new_user: apiResponse.data?.is_new_user || false
-          }
+          userId: apiResponse.data?.user_id,
+          role: apiResponse.data?.role || null, // 从后端直接获取角色
+          isVerified: apiResponse.data?.is_verified || false,
+          createdAt: new Date().toISOString(),
+          is_new_user: apiResponse.data?.is_new_user || false
         }
         
         // 验证必需的字段是否存在
-        if (!response.token) {
+        if (!tokenData.token) {
           throw new Error('登录响应中缺少token')
         }
         
-        this.setToken(response.token)
-        this.setUserInfo(response.data)
+        this.setToken(tokenData.token)
         this.isLoggedIn = true
         
-        storage.set('token', response.token)
+        storage.set('token', tokenData.token)
         // 如果响应中包含refresh token，也保存它
-        if (response.refresh_token) {
-          storage.set('refreshToken', response.refresh_token)
+        if (tokenData.refresh_token) {
+          storage.set('refreshToken', tokenData.refresh_token)
         }
-        storage.set('userInfo', response.data)
         
-        return response
+        // 登录成功后立即获取完整的用户信息，确保昵称等信息是最新的
+        await this.fetchUserInfo()
+        
+        return tokenData
       } catch (error) {
         console.error('登录过程发生错误:', error)
         throw error
       } finally {
         // 清除当前处理的code
-        if (this.currentProcessingCode === code) {
+        if (code && this.currentProcessingCode === code) {
           this.currentProcessingCode = null
         }
         this.isLoading = false
@@ -131,6 +132,15 @@ export const useUserStore = defineStore('user', {
         return response.data
       } catch (error) {
         console.error('获取用户信息失败:', error)
+        
+        // 如果获取用户信息失败，但是token仍然有效，我们可以尝试从本地存储中获取用户信息
+        // 或者至少保持当前的用户状态而不完全失败
+        const localUserInfo = storage.get('userInfo')
+        if (localUserInfo) {
+          this.setUserInfo(localUserInfo)
+          console.log('从本地存储恢复用户信息')
+        }
+        
         throw error
       } finally {
         this.isLoading = false

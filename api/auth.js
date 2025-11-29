@@ -21,10 +21,34 @@ export const authApi = {
 	  url: '/api/count',
 	  method:'GET'
   }),
-  getUserProfile:() => request({
-    url: '/api/user/profile',
-    method: 'GET'
-  }),
+  getUserProfile:() => {
+    return request({
+      url: '/api/user/profile',
+      method: 'GET'
+    }).then(response => {
+      // 如果请求成功，将后端的下划线命名转换为前端的驼峰命名
+      if (response && response.code === 1 && response.data) {
+        const transformedData = {}
+        for (const [key, value] of Object.entries(response.data)) {
+          if (key === 'nickname') {
+            transformedData['nickName'] = value
+          } else if (key === 'avatar_url') {
+            transformedData['avatarUrl'] = value
+          } else if (key === 'wechat_openid') {
+            transformedData['wechatOpenid'] = value
+          } else if (key === 'phone_number') {
+            transformedData['phoneNumber'] = value
+          } else if (key === 'community_id') {
+            transformedData['communityId'] = value
+          } else {
+            transformedData[key] = value
+          }
+        }
+        response.data = transformedData
+      }
+      return response
+    })
+  },
   updateUserProfile:(data) => {
     // 将前端的驼峰命名转换为后端的下划线命名
     const transformedData = {}

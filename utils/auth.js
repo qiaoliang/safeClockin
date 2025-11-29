@@ -21,8 +21,15 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    // 调用用户store的登录方法，传递code
-    await userStore.login(response.code)
+    // 确保response存在且包含code字段
+    if (!response || (typeof response !== 'string' && !response.code)) {
+      throw new Error('登录凭证无效或缺失')
+    }
+    
+    // 调用用户store的登录方法，传递微信登录凭证code
+    // response.code 是从微信登录API获取的登录凭证，不是后端API响应的code字段
+    const loginCode = typeof response === 'string' ? response : response.code
+    await userStore.login(loginCode)
     
     // 如果是首次登录（提供了用户信息），则更新用户信息
     if (response.userInfo) {
@@ -37,8 +44,15 @@ export async function handleLoginSuccess(response) {
       await userStore.updateUserInfo(response.userInfo)
     }
     
-    // 重新获取用户信息以确保获取最新状态
-    await userStore.fetchUserInfo()
+    // 用户信息应该已经在login方法中获取了，这里可以跳过或进行刷新
+    // 但为了确保获取最新的信息，我们仍然调用一次fetchUserInfo
+    try {
+      await userStore.fetchUserInfo()
+    } catch (fetchError) {
+      console.error('获取用户信息失败，但登录成功:', fetchError)
+      // 如果获取用户信息失败，但登录成功，继续执行后续逻辑
+      // 这样可以避免因获取用户信息失败导致整个登录流程失败
+    }
     
     // 根据用户状态进行页面跳转
     const userInfo = userStore.userInfo
@@ -93,6 +107,8 @@ export async function handleLoginSuccess(response) {
       errorMessage = '微信登录服务暂时不可用，请稍后重试'
     } else if (error.message?.includes('code been used')) {
       errorMessage = '登录凭证已失效，请重新登录'
+    } else if (error.message?.includes('JSON')) {
+      errorMessage = '服务器响应格式错误，请稍后重试'
     }
     
     uni.showToast({

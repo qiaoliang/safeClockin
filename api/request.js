@@ -162,6 +162,14 @@ export const request = (options) => {
 function handleResponse(res, fullUrl, resolve, reject) {
   console.log('fullUrl', fullUrl)
   console.log('请求响应:', res)
+  
+  // 检查响应是否包含HTML（可能后端返回了错误页面）
+  if (res.data && typeof res.data === 'string' && res.data.includes('<!DOCTYPE html')) {
+    console.error('服务器返回了HTML页面而不是JSON数据:', res.data)
+    reject(new Error('服务器返回了错误页面，不是预期的JSON格式'))
+    return
+  }
+  
   if (res.statusCode === 200) {
     // 检查业务层面的错误 - 如果code为0表示错误
     if (res.data && res.data.code === 0) {
