@@ -9,7 +9,8 @@ export const useUserStore = defineStore('user', {
     token: null,
     isLoggedIn: false,
     role: null,
-    isLoading: false
+    isLoading: false,
+    currentProcessingCode: null  // 用于存储当前正在处理的code，防止重复使用
   }),
   
   getters: {
@@ -19,9 +20,17 @@ export const useUserStore = defineStore('user', {
   },
   
   actions: {
+    
     async login(code) {
       this.isLoading = true
       try {
+        // 检查是否正在处理相同的code，防止重复请求
+        if (this.currentProcessingCode === code) {
+          throw new Error('登录凭证正在处理中，请勿重复提交')
+        }
+        
+        this.currentProcessingCode = code
+        
         // 使用真实API调用
         const apiResponse = await authApi.login(code)
         console.log('登录API响应:', apiResponse)
@@ -61,6 +70,10 @@ export const useUserStore = defineStore('user', {
         console.error('登录过程发生错误:', error)
         throw error
       } finally {
+        // 清除当前处理的code
+        if (this.currentProcessingCode === code) {
+          this.currentProcessingCode = null
+        }
         this.isLoading = false
       }
     },

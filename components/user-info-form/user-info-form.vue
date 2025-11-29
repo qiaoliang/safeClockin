@@ -98,12 +98,11 @@ const onNicknameBlur = (e) => {
 }
 
 const onSubmit = async (e) => {
-  if (!isFormValid.value) return
+  if (!isFormValid.value || isLoading.value) return
   
   isLoading.value = true
   
   try {
-    
     // 提交用户信息
     emit('confirm', {
       code: props.code,
@@ -118,6 +117,8 @@ const onSubmit = async (e) => {
       icon: 'none'
     })
   } finally {
+    // 在提交后重置isLoading状态，这将禁用提交按钮
+    // 即使页面跳转，这个状态更新也会生效
     isLoading.value = false
   }
 }

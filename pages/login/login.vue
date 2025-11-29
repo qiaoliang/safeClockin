@@ -62,10 +62,14 @@ const showUserInfoForm = ref(false)
 const loginCode = ref('')
 const userStore = useUserStore()
 
+// 添加一个标志来防止重复的微信登录请求
+let isWechatLoginProcessing = false
+
 const onWechatLogin = async () => {
-  if (isLoading.value) return
+  if (isLoading.value || isWechatLoginProcessing) return
   
   isLoading.value = true
+  isWechatLoginProcessing = true
   
   try {
     // 第一步：获取微信登录凭证
@@ -84,6 +88,7 @@ const onWechatLogin = async () => {
     handleLoginError(error)
   } finally {
     isLoading.value = false
+    isWechatLoginProcessing = false
   }
 }
 
