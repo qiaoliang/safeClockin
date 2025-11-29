@@ -29,20 +29,25 @@ export async function handleLoginSuccess(response) {
       await userStore.updateUserInfo(response.userInfo)
     }
     
+    // 重新获取用户信息以确保获取最新状态
+    await userStore.fetchUserInfo()
+    
     // 根据用户状态进行页面跳转
-    if (!userStore.userInfo?.role) {
+    const userInfo = userStore.userInfo
+    
+    if (!userInfo?.role) {
       // 新用户需要选择角色
       uni.redirectTo({
         url: '/pages/role-select/role-select'
       })
-    } else if (userStore.userInfo.role === 'community' && !userStore.userInfo.isVerified) {
+    } else if (userInfo.role === 'community' && !userInfo.isVerified) {
       // 社区工作人员需要身份验证
       uni.redirectTo({
         url: '/pages/community-auth/community-auth'
       })
     } else {
       // 已有角色的用户直接跳转到对应首页
-      const homePage = getHomePageByRole(userStore.userInfo.role)
+      const homePage = getHomePageByRole(userInfo.role)
       
       // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
       const tabbarPages = [

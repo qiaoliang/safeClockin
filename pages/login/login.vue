@@ -79,9 +79,20 @@ const onWechatLogin = async () => {
       throw new Error('获取微信登录凭证失败')
     }
     
-    // 第二步：显示头像昵称填写界面
-    loginCode.value = loginRes.code
-    showUserInfoForm.value = true
+    // 第二步：检查本地是否已缓存用户信息，如果已缓存则直接登录
+    const cachedUserInfo = uni.getStorageSync('cached_user_info')
+    
+    if (cachedUserInfo) {
+      // 如果本地已缓存用户信息，直接使用
+      await handleLoginSuccess({
+        code: loginRes.code,
+        userInfo: cachedUserInfo
+      })
+    } else {
+      // 否则显示头像昵称填写界面
+      loginCode.value = loginRes.code
+      showUserInfoForm.value = true
+    }
     
   } catch (error) {
     console.error('登录失败:', error)
@@ -94,13 +105,17 @@ const onWechatLogin = async () => {
 
 const onUserInfoConfirm = async (userInfo) => {
   try {
+    // 将用户信息缓存到本地
+    const cachedUserInfo = {
+      avatarUrl: userInfo.avatarUrl,
+      nickName: userInfo.nickName
+    }
+    uni.setStorageSync('cached_user_info', cachedUserInfo)
+    
     // 执行登录流程，包括登录和更新用户信息
     await handleLoginSuccess({
       code: userInfo.code,
-      userInfo: {
-        avatarUrl: userInfo.avatarUrl,
-        nickName: userInfo.nickName
-      }
+      userInfo: cachedUserInfo
     })
     
     showUserInfoForm.value = false

@@ -46,8 +46,8 @@ export const useUserStore = defineStore('user', {
           token: apiResponse.data?.token,
           data: {
             userId: apiResponse.data?.user_id,
-            role: apiResponse.data?.role || null, // 新用户默认没有角色
-            isVerified: apiResponse.data?.isVerified || false,
+            role: apiResponse.data?.role || null, // 从后端直接获取角色
+            isVerified: apiResponse.data?.is_verified || false,
             createdAt: new Date().toISOString(),
             is_new_user: apiResponse.data?.is_new_user || false
           }
@@ -126,7 +126,7 @@ export const useUserStore = defineStore('user', {
         this.setUserInfo(response.data)
         storage.set('userInfo', response.data)
         
-        return response
+        return response.data
       } catch (error) {
         console.error('获取用户信息失败:', error)
         throw error
