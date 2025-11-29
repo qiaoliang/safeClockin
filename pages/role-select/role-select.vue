@@ -158,17 +158,16 @@ const confirmSelection = async () => {
     // 隐藏加载提示
     uni.hideLoading()
 
-    // 根据角色跳转到对应页面
+    // 跳转到个人中心页面而不是角色对应的首页
     if (selectedRole.value === 'community') {
-      // 社区工作人员需要身份验证
+      // 社区工作人员需要身份验证，但先跳转到个人中心
       uni.redirectTo({
-        url: '/pages/community-auth/community-auth'
+        url: '/pages/profile/profile'
       })
     } else {
-      // 其他角色跳转到对应首页
-      const homePage = getHomePageByRole(selectedRole.value)
+      // 所有角色都跳转到个人中心页面
       uni.redirectTo({
-        url: homePage
+        url: '/pages/profile/profile'
       })
     }
 

@@ -16,6 +16,24 @@
       </view>
     </view>
     
+    <!-- 用户统计区域 -->
+    <view class="user-stats-section" v-if="userInfo">
+      <view class="user-stats-card">
+        <view class="stat-item">
+          <text class="stat-value success-color">{{ getConsecutiveCheckins() }}</text>
+          <text class="stat-label">连续打卡</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value warning-color">{{ getCompletionRate() }}%</text>
+          <text class="stat-label">完成率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value accent-color">{{ getSupervisorCount() }}</text>
+          <text class="stat-label">监督人</text>
+        </view>
+      </view>
+    </view>
+    
     <!-- 功能菜单列表 -->
     <view class="menu-section">
       <view class="menu-item" @click="navigateTo('/pages/checkin-list/checkin-list')">
@@ -99,6 +117,27 @@ const getRoleText = (role) => {
   return roleMap[role] || '未知角色'
 }
 
+// 获取连续打卡天数（对于新用户显示0）
+const getConsecutiveCheckins = () => {
+  // TODO: 从后端API获取实际的连续打卡天数
+  // 临时返回0，直到实现实际的打卡功能
+  return 0
+}
+
+// 获取完成率百分比（对于新用户显示0）
+const getCompletionRate = () => {
+  // TODO: 从后端API获取实际的完成率
+  // 临时返回0，直到实现实际的打卡功能
+  return 0
+}
+
+// 获取监督人数量（对于新用户显示0或根据实际关系显示）
+const getSupervisorCount = () => {
+  // TODO: 从后端API获取实际的监督人数量
+  // 临时返回0，直到实现实际的监护关系功能
+  return 0
+}
+
 const navigateTo = (url) => {
   routeGuard(url)
 }
@@ -150,6 +189,48 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.user-stats-section {
+  background: white;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.user-stats-card {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.success-color {
+  color: #10B981;
+}
+
+.warning-color {
+  color: #F59E0B;
+}
+
+.accent-color {
+  color: #624731;
 }
 
 .user-avatar {
