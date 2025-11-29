@@ -21,11 +21,19 @@ export async function handleLoginSuccess(response) {
   const userStore = useUserStore()
   
   try {
-    // 调用用户store的登录方法，仅传递code，用户信息将通过专门的接口更新
+    // 调用用户store的登录方法，传递code
     await userStore.login(response.code)
     
-    // 如果提供了用户信息，更新到用户资料中
+    // 如果是首次登录（提供了用户信息），则更新用户信息
     if (response.userInfo) {
+      // 将用户信息缓存到本地
+      const cachedUserInfo = {
+        avatarUrl: response.userInfo.avatarUrl,
+        nickName: response.userInfo.nickName
+      }
+      uni.setStorageSync('cached_user_info', cachedUserInfo)
+      
+      // 更新用户资料
       await userStore.updateUserInfo(response.userInfo)
     }
     

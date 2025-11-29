@@ -21,10 +21,11 @@ export const useUserStore = defineStore('user', {
   
   actions: {
     
-    async login(code) {
+    async login(loginData) {
       this.isLoading = true
       try {
         // 检查是否正在处理相同的code，防止重复请求
+        const code = typeof loginData === 'string' ? loginData : loginData.code;
         if (this.currentProcessingCode === code) {
           throw new Error('登录凭证正在处理中，请勿重复提交')
         }
@@ -32,7 +33,7 @@ export const useUserStore = defineStore('user', {
         this.currentProcessingCode = code
         
         // 使用真实API调用
-        const apiResponse = await authApi.login(code)
+        const apiResponse = await authApi.login(loginData)
         console.log('登录API响应:', apiResponse)
         
         // 检查API响应是否成功
@@ -44,6 +45,7 @@ export const useUserStore = defineStore('user', {
         // 适配真实API响应格式 - 从data中获取token和其他信息
         const response = {
           token: apiResponse.data?.token,
+          refresh_token: apiResponse.data?.refresh_token,
           data: {
             userId: apiResponse.data?.user_id,
             role: apiResponse.data?.role || null, // 从后端直接获取角色

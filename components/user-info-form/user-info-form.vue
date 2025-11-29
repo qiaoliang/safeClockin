@@ -106,8 +106,10 @@ const onSubmit = async (e) => {
     // 提交用户信息
     emit('confirm', {
       code: props.code,
-      avatarUrl: formData.value.avatarUrl,
-      nickName: formData.value.nickName
+      userInfo: {
+        avatarUrl: formData.value.avatarUrl,
+        nickName: formData.value.nickName
+      }
     })
     
   } catch (error) {

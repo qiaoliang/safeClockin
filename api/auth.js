@@ -2,11 +2,21 @@
 import { request } from './request'
 
 export const authApi = {
-  login:(code) => request({
-	  url: '/api/login',
-	  method: 'POST',
-	  data: { code }
-  }),
+  login:(loginData) => {
+    // 如果loginData是字符串，说明只传入了code（非首次登录）
+    // 如果loginData是对象，说明包含了code和用户信息（首次登录）
+    let requestData;
+    if (typeof loginData === 'string') {
+      requestData = { code: loginData };
+    } else {
+      requestData = loginData;
+    }
+    return request({
+      url: '/api/login',
+      method: 'POST',
+      data: requestData
+    });
+  },
   count:() => request({
 	  url: '/api/count',
 	  method:'GET'
