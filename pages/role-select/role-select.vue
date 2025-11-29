@@ -120,7 +120,7 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
-import { getHomePageByRole } from '@/utils/router'
+import { getHomePageByRole, routeGuard } from '@/utils/router'
 
 // 响应式数据
 const selectedRole = ref('')
@@ -158,18 +158,12 @@ const confirmSelection = async () => {
     // 隐藏加载提示
     uni.hideLoading()
 
-    // 跳转到个人中心页面而不是角色对应的首页
-    if (selectedRole.value === 'community') {
-      // 社区工作人员需要身份验证，但先跳转到个人中心
-      uni.redirectTo({
-        url: '/pages/profile/profile'
-      })
-    } else {
-      // 所有角色都跳转到个人中心页面
-      uni.redirectTo({
-        url: '/pages/profile/profile'
-      })
-    }
+    // 根据用户角色跳转到对应的首页
+    const homePage = getHomePageByRole(selectedRole.value)
+    
+    // 使用路由守卫来处理页面跳转（会自动判断是否为tabbar页面）
+    // 使用 redirectTo 替换当前页面，而不是添加到导航栈
+    routeGuard(homePage, { useRedirect: true })
 
     uni.showToast({
       title: '角色设置成功',
@@ -191,9 +185,8 @@ onLoad(() => {
   // 如果用户已经有角色，直接跳转到对应页面
   if (userStore.userInfo?.role) {
     const homePage = getHomePageByRole(userStore.userInfo.role)
-    uni.redirectTo({
-      url: homePage
-    })
+    // 使用路由守卫来处理页面跳转（会自动判断是否为tabbar页面）
+    routeGuard(homePage, { useRedirect: true })
   }
 })
 </script>

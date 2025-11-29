@@ -134,7 +134,7 @@ const goToSupervisorDetail = (person) => {
 
 // 跳转到个人中心
 const goToProfile = () => {
-  uni.navigateTo({
+  uni.switchTab({
     url: '/pages/profile/profile'
   })
 }

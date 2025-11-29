@@ -137,7 +137,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/store/modules/user'
-import { getHomePageByRole } from '@/utils/router'
+import { getHomePageByRole, routeGuard } from '@/utils/router'
 
 const isLoading = ref(false)
 const userStore = useUserStore()
@@ -332,9 +332,7 @@ const confirmSuccess = () => {
   
   // 跳转到社区首页
   const homePage = getHomePageByRole('community')
-  uni.switchTab({
-    url: homePage
-  })
+  routeGuard(homePage, { useRedirect: true })
 }
 
 const closeErrorModal = () => {

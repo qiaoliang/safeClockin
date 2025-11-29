@@ -19,10 +19,29 @@ export function routeGuard(url, options = {}) {
     return false
   }
   
-  uni.navigateTo({
-    url,
-    ...options
-  })
+  // 检查是否为tabbar页面，如果是则使用switchTab
+  const tabbarPages = [
+    '/pages/home-solo/home-solo',
+    '/pages/profile/profile'
+  ]
+  
+  if (tabbarPages.includes(url)) {
+    uni.switchTab({
+      url
+    })
+  } else {
+    // 如果 options 中指定了 useRedirect 为 true，则使用 redirectTo
+    if (options.useRedirect) {
+      uni.redirectTo({
+        url
+      })
+    } else {
+      uni.navigateTo({
+        url,
+        ...options
+      })
+    }
+  }
   
   return true
 }

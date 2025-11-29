@@ -43,9 +43,22 @@ export async function handleLoginSuccess(response) {
     } else {
       // 已有角色的用户直接跳转到对应首页
       const homePage = getHomePageByRole(userStore.userInfo.role)
-      uni.switchTab({
-        url: homePage
-      })
+      
+      // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
+      const tabbarPages = [
+        '/pages/home-solo/home-solo',
+        '/pages/profile/profile'
+      ]
+      
+      if (tabbarPages.includes(homePage)) {
+        uni.switchTab({
+          url: homePage
+        })
+      } else {
+        uni.redirectTo({
+          url: homePage
+        })
+      }
       
       // 显示登录成功提示
       uni.showToast({
