@@ -15,11 +15,12 @@
         v-for="rule in rules" 
         :key="rule.rule_id"
       >
+        <view class="rule-icon">{{ rule.icon_url }}</view>
         <view class="rule-info">
           <text class="rule-name">{{ rule.rule_name }}</text>
           <text class="rule-details">
-            {{ getFrequencyText(rule.frequency_type) }} • {{ getTimeSlotText(rule.time_slot_type) }}
-            <text v-if="rule.time_slot_type === 4 && rule.custom_time"> • {{ rule.custom_time }}</text>
+            {{ getFrequencyDetail(rule) }}
+            <text v-if="displayTimeSlot(rule)"> • {{ getTimeSlotDetail(rule) }}</text>
           </text>
         </view>
         
@@ -65,6 +66,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
 
@@ -84,15 +86,28 @@ const getFrequencyText = (type) => {
   return frequencyMap[type] || '未知'
 }
 
-// 获取时间段文本
-const getTimeSlotText = (type) => {
-  const timeSlotMap = {
-    1: '上午',
-    2: '下午',
-    3: '晚上',
-    4: '自定义时间'
+// 频率详情：自定义则显示日期范围，否则显示选项本身
+const getFrequencyDetail = (rule) => {
+  if (rule.frequency_type === 3) {
+    const start = rule.custom_start_date || '?'
+    const end = rule.custom_end_date || '?'
+    return `自定义 · ${start} 至 ${end}`
   }
-  return timeSlotMap[type] || '未知'
+  return getFrequencyText(rule.frequency_type)
+}
+
+// 是否显示时间段信息
+const displayTimeSlot = (rule) => {
+  return (rule.time_slot_type >= 1 && rule.time_slot_type <= 3) || (rule.time_slot_type === 4 && !!rule.custom_time)
+}
+
+// 时间段详情：1/2/3显示中文；4只显示时间，不显示“自定义时间”字样
+const getTimeSlotDetail = (rule) => {
+  if (rule.time_slot_type === 1) return '上午'
+  if (rule.time_slot_type === 2) return '下午'
+  if (rule.time_slot_type === 3) return '晚上'
+  if (rule.time_slot_type === 4) return rule.custom_time || ''
+  return ''
 }
 
 // 获取打卡规则列表
@@ -197,6 +212,10 @@ const confirmDelete = async () => {
 onMounted(() => {
   getCheckinRules()
 })
+
+onShow(() => {
+  getCheckinRules()
+})
 </script>
 
 <style scoped>
@@ -241,6 +260,19 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.rule-icon {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  background: #FFF7ED;
+  border: 2rpx solid #F59E0B;
+  border-radius: 16rpx;
+  margin-right: 24rpx;
 }
 
 .rule-info {
