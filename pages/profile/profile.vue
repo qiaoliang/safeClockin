@@ -18,7 +18,6 @@
 
     <view class="hint-section" v-if="needCompleteInfo">
       <text class="hint-text">完善头像、昵称、联系方式，提升使用体验</text>
-      <button class="hint-btn" @click="navigateTo('/pages/supervisor-manage/supervisor-manage')">去完善与邀请监护人</button>
     </view>
 
     <view class="hint-section" v-if="needCommunityVerify">
