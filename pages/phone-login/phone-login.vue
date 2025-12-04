@@ -26,8 +26,12 @@
       </view>
 
       <view v-if="activeTab==='register'" class="agreement">
-        <checkbox v-model="agree" />
-        <text>我已阅读并同意《用户协议》《隐私政策》</text>
+        <checkbox-group @change="onAgreeChange">
+          <label class="agree-label">
+            <checkbox value="agree" :checked="agree" />
+            <text>我已阅读并同意《用户协议》《隐私政策》</text>
+          </label>
+        </checkbox-group>
       </view>
 
       <button class="submit" :disabled="submitting" @click="onSubmit">{{ submitText }}</button>
@@ -145,6 +149,11 @@ async function afterLogin(res) {
   await userStore.fetchUserInfo()
   uni.switchTab({ url: '/pages/home-solo/home-solo' })
 }
+
+function onAgreeChange(e) {
+  const vals = e.detail && e.detail.value ? e.detail.value : []
+  agree.value = Array.isArray(vals) && vals.includes('agree')
+}
 </script>
 
 <style scoped>
@@ -158,5 +167,6 @@ async function afterLogin(res) {
 .input { flex:1; padding: 16rpx; border: 2rpx solid #ddd; border-radius: 8rpx }
 .code-btn { margin-left: 12rpx; padding: 16rpx; background:#F48224; color:#fff; border-radius: 8rpx }
 .agreement { display:flex; align-items:center; color:#666; margin: 12rpx 0 }
+.agree-label { display:flex; align-items:center; gap: 12rpx }
 .submit { width:100%; padding: 20rpx; background:#F48224; color:#fff; border-radius: 8rpx }
 </style>
