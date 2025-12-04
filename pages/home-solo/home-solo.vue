@@ -31,7 +31,7 @@
         
         <view class="overview-card completed-checkin">
           <text class="card-title">完成/错过</text>
-          <text class="card-number">{{ finishedOrMissedCount }}</text>
+          <text class="card-number">{{ completedCheckinCount }} / {{ missedCheckinCount }}</text>
           <text class="card-desc">项目</text>
         </view>
         
@@ -102,6 +102,10 @@ const finishedOrMissedCount = computed(() => checkinItems.value.filter(item => i
 // 计算属性：已完成打卡数量
 const completedCheckinCount = computed(() => {
   return checkinItems.value.filter(item => item.status === 'checked').length
+})
+
+const missedCheckinCount = computed(() => {
+  return checkinItems.value.filter(item => item.status === 'missed').length
 })
 
 // 计算属性：完成率
