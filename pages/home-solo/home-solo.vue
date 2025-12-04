@@ -11,7 +11,7 @@
       </view>
       <view class="user-details">
         <text class="user-name">{{ userInfo?.nickName || '未登录用户' }}</text>
-        <text class="user-role">独居者</text>
+        <text class="user-role">{{ getRoleText(userInfo?.role) }}</text>
       </view>
     </view>
 
@@ -72,9 +72,10 @@
           <text class="action-text">个人中心</text>
         </view>
         
-        <view class="quick-action-item" @click="goToSupervisorManage" v-if="userInfo?.role === 'solo'">
-          <view class="action-icon">👥</view>
-          <text class="action-text">监护人管理</text>
+        <!-- 监督功能：所有用户都可以使用 -->
+        <view class="quick-action-item" @click="goToSupervisionFeatures">
+          <view class="action-icon">👁️</view>
+          <text class="action-text">监督功能</text>
         </view>
       </view>
     </view>
@@ -107,6 +108,16 @@ const completionRate = computed(() => {
   if (todayCheckinCount.value === 0) return 100
   return Math.round((completedCheckinCount.value / todayCheckinCount.value) * 100)
 })
+
+// 获取用户角色文本
+const getRoleText = (role) => {
+  const roleMap = {
+    solo: '独居者',
+    supervisor: '监护人',
+    community: '社区工作人员'
+  }
+  return roleMap[role] || '用户'
+}
 
 // 获取今日打卡事项
 const getTodayCheckinItems = async () => {
@@ -147,10 +158,11 @@ const goToProfile = () => {
   })
 }
 
-// 跳转到监护人管理
-const goToSupervisorManage = () => {
+// 跳转到监督功能（新功能）
+const goToSupervisionFeatures = () => {
+  // 这里可以导航到一个新的监督功能页面，或者一个包含多个监督选项的页面
   uni.navigateTo({
-    url: '/pages/supervisor-manage/supervisor-manage'
+    url: '/pages/profile/profile' // 暂时导航到个人中心，后续可以创建专门的监督页面
   })
 }
 

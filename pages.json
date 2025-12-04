@@ -135,12 +135,6 @@
 				"selectedIconPath": "static/tabbar/home-active.png"
 			},
 			{
-				"pagePath": "pages/home-supervisor/home-supervisor",
-				"text": "监护人",
-				"iconPath": "static/tabbar/home.png",
-				"selectedIconPath": "static/tabbar/home-active.png"
-			},
-			{
 				"pagePath": "pages/home-community/home-community",
 				"text": "社区",
 				"iconPath": "static/tabbar/home.png",
