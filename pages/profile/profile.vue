@@ -48,32 +48,32 @@
       <view class="menu-item" @click="navigateTo('/pages/checkin-list/checkin-list')">
         <view class="menu-icon">📋</view>
         <text class="menu-text">打卡事项</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
       
       <view class="menu-item" @click="navigateTo('/pages/rule-setting/rule-setting')">
         <view class="menu-icon">⚙️</view>
         <text class="menu-text">打卡规则</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
       
       <!-- 监督功能菜单：所有用户都可以访问 -->
       <view class="menu-item" @click="navigateTo('/pages/supervisor-manage/supervisor-manage')">
         <view class="menu-icon">👥</view>
         <text class="menu-text">监护人管理</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
       
       <view class="menu-item" @click="navigateTo('/pages/home-supervisor/home-supervisor')">
         <view class="menu-icon">👁️</view>
         <text class="menu-text">我的监督</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
       
       <view class="menu-item" @click="navigateTo('/pages/notification-settings/notification-settings')">
         <view class="menu-icon">🔔</view>
         <text class="menu-text">通知设置</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
     </view>
     
@@ -82,7 +82,7 @@
       <view class="menu-item" @click="showAbout">
         <view class="menu-icon">ℹ️</view>
         <text class="menu-text">关于我们</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
       
       <view class="menu-item" @click="showHelp">
