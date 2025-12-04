@@ -67,7 +67,7 @@
             <text class="person-name">{{ person.nickname }}</text>
             <text class="person-checkin-status">{{ person.today_checkin_status }}</text>
           </view>
-          <text class="arrow">></text>
+          <text class="arrow">›</text>
         </view>
       </view>
     </view>

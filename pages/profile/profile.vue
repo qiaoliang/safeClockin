@@ -88,7 +88,7 @@
       <view class="menu-item" @click="showHelp">
         <view class="menu-icon">❓</view>
         <text class="menu-text">帮助中心</text>
-        <text class="menu-arrow">></text>
+        <text class="menu-arrow">›</text>
       </view>
     </view>
     
