@@ -19,12 +19,12 @@
     <view class="overview-section">
       <view class="section-header">
         <text class="section-title">数据概览</text>
-        <text class="section-subtitle">辖区内独居者情况</text>
+        <text class="section-subtitle">辖区内用户情况</text>
       </view>
       
       <view class="overview-cards">
         <view class="overview-card total-count">
-          <text class="card-title">独居者总数</text>
+          <text class="card-title">用户总数</text>
           <text class="card-number">{{ totalCount }}</text>
           <text class="card-desc">人</text>
         </view>
@@ -66,7 +66,7 @@
         @click="goToUncheckedDetail"
       >
         <text class="btn-text">查看未打卡详情</text>
-        <text class="btn-subtext">当前有{{ uncheckedCount }}位独居者未完成今日打卡，请及时关注并联系</text>
+        <text class="btn-subtext">当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系</text>
       </button>
     </view>
 

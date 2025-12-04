@@ -14,7 +14,7 @@
       <view class="setting-item">
         <view class="setting-info">
           <text class="setting-title">接收被监督人完成打卡通知</text>
-          <text class="setting-desc">当被监督的独居者完成打卡时，您会收到推送通知</text>
+          <text class="setting-desc">当被监督的用户完成打卡时，您会收到推送通知</text>
         </view>
         <switch 
           class="setting-switch"

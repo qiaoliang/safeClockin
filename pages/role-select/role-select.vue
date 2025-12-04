@@ -26,8 +26,8 @@
           <text class="role-icon-text">👤</text>
         </view>
         <view class="role-content">
-          <text class="role-title">独居者</text>
-          <text class="role-description">我是独居生活的朋友，希望通过打卡让家人放心</text>
+          <text class="role-title">普通用户</text>
+          <text class="role-description">我是日常使用者，希望通过打卡让家人放心</text>
           <view class="role-features">
             <view class="feature-item">
               <text class="feature-icon">✅</text>
@@ -77,7 +77,7 @@
         </view>
         <view class="role-content">
           <text class="role-title">社区工作人员</text>
-          <text class="role-description">我负责社区独居者管理，需要高效的工作工具</text>
+          <text class="role-description">我负责社区居民管理，需要高效的工作工具</text>
           <view class="role-features">
             <view class="feature-item">
               <text class="feature-icon">📊</text>

@@ -113,7 +113,7 @@ const userInfo = computed(() => userStore.userInfo)
 
 const getRoleText = (role) => {
   const roleMap = {
-    solo: '独居者',
+    solo: '普通用户',
     supervisor: '监护人',
     community: '社区工作人员'
   }
@@ -158,7 +158,7 @@ const needCommunityVerify = computed(() => {
 const showAbout = () => {
   uni.showModal({
     title: '关于安卡小习惯',
-    content: '安卡小习惯是一款专为独居者设计的安全监护小程序，通过日常打卡机制让关爱无处不在。',
+    content: '安卡小习惯是一款关注用户安全的监护小程序，通过日常打卡机制让关爱无处不在。',
     showCancel: false
   })
 }

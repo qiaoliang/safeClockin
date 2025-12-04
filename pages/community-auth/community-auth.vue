@@ -9,7 +9,7 @@
           </view>
           <view class="info-content">
             <text class="info-title">身份验证</text>
-            <text class="info-desc">为了确保社区服务的安全性和准确性，请您完成身份验证。验证通过后，您将获得社区管理权限，能够查看和管理辖区内独居者的相关信息。</text>
+            <text class="info-desc">为了确保社区服务的安全性和准确性，请您完成身份验证。验证通过后，您将获得社区管理权限，能够查看和管理辖区内用户的相关信息。</text>
           </view>
         </view>
       </view>

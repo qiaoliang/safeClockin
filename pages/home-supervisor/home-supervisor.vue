@@ -26,7 +26,7 @@
         <view class="overview-card supervised-count">
           <text class="card-title">监督人数</text>
           <text class="card-number">{{ supervisedCount }}</text>
-          <text class="card-desc">位独居者</text>
+          <text class="card-desc">位用户</text>
         </view>
         
         <view class="overview-card today-checkin">

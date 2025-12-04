@@ -112,7 +112,7 @@ const completionRate = computed(() => {
 // 获取用户角色文本
 const getRoleText = (role) => {
   const roleMap = {
-    solo: '独居者',
+    solo: '普通用户',
     supervisor: '监护人',
     community: '社区工作人员'
   }

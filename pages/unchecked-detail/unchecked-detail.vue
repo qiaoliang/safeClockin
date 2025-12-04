@@ -5,7 +5,7 @@
     <view class="header-section">
       <view class="header-content">
         <text class="back-btn" @click="goBack">←</text>
-        <text class="header-title">未打卡独居者详情</text>
+      <text class="header-title">未打卡用户详情</text>
       </view>
     </view>
 
@@ -18,7 +18,7 @@
       </view>
       
       <view class="overview-card warning-desc">
-        <text class="card-desc">当前有{{ uncheckedCount }}位独居者未完成今日打卡，请及时关注并联系。</text>
+      <text class="card-desc">当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系。</text>
       </view>
     </view>
 
@@ -179,7 +179,7 @@ const sendMessage = (person) => {
 const batchSendReminder = () => {
   uni.showModal({
     title: '批量发送提醒',
-    content: `确定要向这${uncheckedCount.value}位未打卡的独居者发送提醒吗？`,
+    content: `确定要向这${uncheckedCount.value}位未打卡的用户发送提醒吗？`,
     success: (res) => {
       if (res.confirm) {
         uni.showLoading({
