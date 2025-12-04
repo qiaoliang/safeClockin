@@ -29,6 +29,19 @@
           <text class="label">打卡频率</text>
           <uni-segmented-control class="seg-control" :current="freqIndex" :values="freqValues" styleType="text" activeColor="#F48224" @clickItem="onFreqClick" />
         </view>
+        <view v-if="freqIndex===3" class="custom-date-range">
+          <text class="label">选择日期范围</text>
+          <view class="date-row">
+            <view class="date-col">
+              <text class="sub-label">开始日期</text>
+              <uni-datetime-picker class="date-picker" type="date" v-model="formData.custom_start_date" />
+            </view>
+            <view class="date-col">
+              <text class="sub-label">结束日期</text>
+              <uni-datetime-picker class="date-picker" type="date" v-model="formData.custom_end_date" />
+            </view>
+          </view>
+        </view>
       </view>
 
       <!-- 时间段 -->
@@ -105,6 +118,8 @@ const formData = ref({
   frequency_type: 0, // 0-每天, 1-每周, 2-工作日, 3-自定义
   time_slot_type: 4, // 1-上午, 2-下午, 3-晚上, 4-自定义时间
   custom_time: '08:00', // 自定义时间
+  custom_start_date: '',
+  custom_end_date: '',
   icon_url: '⏰', // 默认图标
   status: 1
 })
@@ -181,9 +196,9 @@ const watchFormChanges = () => {
         if (rule) {
           formData.value.rule_name = rule.rule_name
           const ft = Number(rule.frequency_type)
-          const fixedFt = isNaN(ft) ? 0 : Math.min(Math.max(ft, 0), 3)
-          formData.value.frequency_type = fixedFt
-          freqIndex.value = fixedFt
+  const fixedFt = isNaN(ft) ? 0 : Math.min(Math.max(ft, 0), 3)
+  formData.value.frequency_type = fixedFt
+  freqIndex.value = fixedFt
 
           const ts = Number(rule.time_slot_type)
           const fixedTs = [1,2,3,4].includes(ts) ? ts : 4
@@ -193,6 +208,8 @@ const watchFormChanges = () => {
           const ct = typeof rule.custom_time === 'string' ? rule.custom_time : ''
           formData.value.custom_time = fixedTs === 4 && /^\d{2}:\d{2}/.test(ct) ? ct.slice(0,5) : '08:00'
 
+          formData.value.custom_start_date = rule.custom_start_date || ''
+          formData.value.custom_end_date = rule.custom_end_date || ''
           formData.value.icon_url = rule.icon_url || '⏰'
           formData.value.status = rule.status
         }

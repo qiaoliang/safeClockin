@@ -1,6 +1,9 @@
 <template>
   <view class="uni-dtp">
-    <picker mode="time" :value="modelValue" @change="onChange">
+    <picker v-if="type==='time'" mode="time" :value="modelValue" @change="onChange">
+      <view class="uni-dtp-input">{{ displayValue }}</view>
+    </picker>
+    <picker v-else mode="date" :value="modelValue" @change="onChange">
       <view class="uni-dtp-input">{{ displayValue }}</view>
     </picker>
   </view>
@@ -17,11 +20,21 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 
-const displayValue = computed(() => props.modelValue || '08:00')
+const displayValue = computed(() => {
+  if (props.type === 'time') return props.modelValue || '08:00'
+  return props.modelValue || formatDate(new Date())
+})
 
 const onChange = (e) => {
   const v = e.detail.value
   emit('update:modelValue', v)
+}
+
+function formatDate(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth()+1).padStart(2,'0')
+  const day = String(d.getDate()).padStart(2,'0')
+  return `${y}-${m}-${day}`
 }
 </script>
 
