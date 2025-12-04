@@ -9,9 +9,9 @@ graph TD
     D --> E[微信用户选择器]
     D --> F[微信授权登录]
     
-    B --> G[Supabase SDK]
-    G --> H[Supabase数据库]
-    G --> I[Supabase认证服务]
+    B --> G[Flask API服务]
+    G --> H[SQLite数据库]
+    G --> I[JWT认证服务]
     
     subgraph "前端层"
         B
@@ -38,7 +38,8 @@ graph TD
 
 - **前端框架**：uni-app + Vue3 + uview-plus
 - **初始化工具**：HBuilder X
-- **后端服务**：Supabase (PostgreSQL + Authentication)
+- **后端服务**：Flask + Python + SQLite
+- **认证方式**：JWT令牌认证
 - **组件库**：uview-plus (时间选择器、表单组件)
 - **微信API**：用户选择器、授权登录、消息推送
 
@@ -205,11 +206,11 @@ erDiagram
 ```sql
 -- 创建用户表
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     wechat_openid VARCHAR(100) UNIQUE NOT NULL,
     wechat_name VARCHAR(100) NOT NULL,
     avatar_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 创建索引
@@ -220,14 +221,14 @@ CREATE INDEX idx_users_wechat_openid ON users(wechat_openid);
 ```sql
 -- 创建规则表
 CREATE TABLE rules (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(200) NOT NULL,
     check_time TIME NOT NULL,
     repeat_type VARCHAR(20) NOT NULL CHECK (repeat_type IN ('daily', 'weekly', 'monthly')),
     description TEXT,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    is_active BOOLEAN DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 创建索引
@@ -239,11 +240,11 @@ CREATE INDEX idx_rules_check_time ON rules(check_time);
 ```sql
 -- 创建监护关系表
 CREATE TABLE rule_guardianships (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    rule_id UUID REFERENCES rules(id) ON DELETE CASCADE,
-    guardian_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rule_id INTEGER REFERENCES rules(id) ON DELETE CASCADE,
+    guardian_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(rule_id, guardian_id)
 );
 
@@ -256,15 +257,15 @@ CREATE INDEX idx_guardianships_guardian_id ON rule_guardianships(guardian_id);
 ```sql
 -- 创建打卡记录表
 CREATE TABLE checkins (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    rule_id UUID REFERENCES rules(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rule_id INTEGER REFERENCES rules(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     check_date DATE NOT NULL,
-    check_time TIMESTAMP WITH TIME ZONE,
+    check_time TIMESTAMP,
     status VARCHAR(20) NOT NULL CHECK (status IN ('completed', 'missed', 'late')),
     photo_url TEXT,
     note TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 创建索引
@@ -275,31 +276,28 @@ CREATE INDEX idx_checkins_check_date ON checkins(check_date);
 
 ### 6.3 权限配置
 
-```sql
--- 基本权限授予
-GRANT SELECT ON users TO anon;
-GRANT ALL PRIVILEGES ON users TO authenticated;
+```python
+# JWT认证配置
+JWT_SECRET_KEY = "your-secret-key"
+JWT_EXPIRATION_DELTA = timedelta(days=7)
+JWT_ALGORITHM = "HS256"
 
-GRANT SELECT ON rules TO anon;
-GRANT ALL PRIVILEGES ON rules TO authenticated;
-
-GRANT SELECT ON rule_guardianships TO anon;
-GRANT ALL PRIVILEGES ON rule_guardianships TO authenticated;
-
-GRANT SELECT ON checkins TO anon;
-GRANT ALL PRIVILEGES ON checkins TO authenticated;
-
--- RLS策略配置（基于用户ID的数据隔离）
-ALTER TABLE rules ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "用户只能查看自己的规则" ON rules
-    FOR ALL TO authenticated
-    USING (auth.uid() = user_id);
-
-ALTER TABLE rule_guardianships ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "监护关系权限控制" ON rule_guardianships
-    FOR ALL TO authenticated
-    USING (
-        auth.uid() = guardian_id OR 
-        auth.uid() IN (SELECT user_id FROM rules WHERE id = rule_id)
-    );
+# Flask权限装饰器示例
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'code': -1, 'msg': '未提供认证令牌'}), 401
+        
+        try:
+            payload = jwt.decode(token.split(' ')[1], JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+            g.current_user_id = payload['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({'code': -1, 'msg': '令牌已过期'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'code': -1, 'msg': '无效令牌'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
 ```
