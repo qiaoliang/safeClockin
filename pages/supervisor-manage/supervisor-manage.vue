@@ -83,6 +83,9 @@ const customTime = ref('08:00')
 const onSegClick = (e) => {
   const idx = e?.currentIndex ?? e?.detail?.current ?? e
   segIndex.value = Number(idx)
+  if (segIndex.value === 0) customTime.value = '08:00'
+  else if (segIndex.value === 1) customTime.value = '14:00'
+  else if (segIndex.value === 2) customTime.value = '20:00'
 }
 
 const showRemoveModal = (supervisor) => {

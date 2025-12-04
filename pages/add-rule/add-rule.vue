@@ -129,6 +129,9 @@ const onTimeClick = (e) => {
   const idx = e?.currentIndex ?? e?.detail?.current ?? e
   timeIndex.value = Number(idx)
   formData.value.time_slot_type = timeIndex.value + 1
+  if (timeIndex.value === 0) formData.value.custom_time = '08:00'
+  else if (timeIndex.value === 1) formData.value.custom_time = '14:00'
+  else if (timeIndex.value === 2) formData.value.custom_time = '20:00'
 }
 
 // 图标选项
