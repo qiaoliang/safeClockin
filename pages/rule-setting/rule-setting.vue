@@ -27,7 +27,7 @@
         <view class="rule-actions">
           <button class="edit-btn" @click="editRule(rule)">编辑</button>
           <button class="delete-btn" @click="showDeleteModal(rule)">删除</button>
-          <button class="invite-btn" @click="inviteForRule(rule)">邀请监护</button>
+          <button class="invite-btn" @click="inviteForRule(rule)">邀请</button>
         </view>
       </view>
     </view>
