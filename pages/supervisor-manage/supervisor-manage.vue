@@ -7,8 +7,14 @@
       <text class="header-subtitle">管理关注您的亲友监督人</text>
     </view>
 
-    <time-segment-picker :segment="timeSlot" :time="customTime" 
-      @update:segment="(v)=>timeSlot=v" @update:time="(v)=>customTime=v" />
+    <view class="time-section">
+      <text class="section-label">时间段</text>
+      <uni-segmented-control :current="segIndex" :values="segValues" styleType="text" activeColor="#F48224" @clickItem="onSegClick" />
+      <view v-if="segIndex===3" class="custom-row">
+        <text class="custom-label">自定义时间</text>
+        <uni-datetime-picker type="time" v-model="customTime" return-type="string" />
+      </view>
+    </view>
 
     <!-- 监护人列表 -->
     <view class="supervisor-list-section">
@@ -64,15 +70,20 @@
 
 <script setup>
 import { ref } from 'vue'
-import TimeSegmentPicker from '@/components/time-segment-picker/time-segment-picker.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useSupervisionStore } from '@/store/modules/supervision'
 
 const supervisionStore = useSupervisionStore()
 const showRemoveConfirm = ref(false)
 const selectedSupervisor = ref(null)
-const timeSlot = ref('custom')
+const segValues = ['上午','下午','晚上','自定义时间']
+const segIndex = ref(3)
 const customTime = ref('08:00')
+
+const onSegClick = (e) => {
+  const idx = e?.currentIndex ?? e?.detail?.current ?? e
+  segIndex.value = Number(idx)
+}
 
 const showRemoveModal = (supervisor) => {
   selectedSupervisor.value = supervisor
@@ -99,6 +110,10 @@ onLoad(async () => {
 </script>
 
 <style scoped>
+.time-section{background:#F7DCCB;padding:24rpx;border-radius:24rpx;margin-bottom:24rpx}
+.section-label{display:block;color:#624731;margin-bottom:12rpx}
+.custom-row{margin-top:12rpx}
+.custom-label{display:block;color:#624731;margin-bottom:8rpx}
  
 .supervisor-manage-container {
   min-height: 100vh;
