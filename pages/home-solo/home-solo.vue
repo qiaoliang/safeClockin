@@ -46,7 +46,8 @@
     <!-- 今日行动主按钮 -->
     <view class="today-tasks-section">
       <button 
-        class="today-tasks-btn"
+        :class="['today-tasks-btn', { disabled: disableMainBtn }]"
+        :disabled="disableMainBtn"
         @click="handleMainAction"
       >
         <text class="btn-icon">📋</text>
@@ -110,6 +111,12 @@ const completionRate = computed(() => {
   return Math.round((completedCheckinCount.value / total) * 100)
 })
 
+const disableMainBtn = computed(() => {
+  if (allRulesCount.value === 0) return false
+  if (todayCheckinCount.value === 0) return false
+  return !nearestPending.value
+})
+
 // 获取用户角色文本
 const getRoleText = (role) => {
   const roleMap = {
@@ -129,7 +136,8 @@ const getTodayCheckinItems = async () => {
     })
     
     if (response.code === 1) {
-      checkinItems.value = response.data.checkin_items || []
+      checkinItems.value = (response.data.checkin_items || []).map(it => ({ ...it }))
+      normalizeMissedStatuses()
       computeNearestPending()
       updateMainButton()
     } else {
@@ -158,6 +166,17 @@ const parseTodayTime = (hhmmss) => {
   return new Date(`${todayStr}T${t}`)
 }
 
+const normalizeMissedStatuses = () => {
+  const now = new Date()
+  checkinItems.value.forEach(it => {
+    const planned = parseTodayTime(it.planned_time)
+    const diffMin = (now - planned) / 60000
+    if (diffMin > 30 && it.status !== 'checked') {
+      it.status = 'missed'
+    }
+  })
+}
+
 const computeNearestPending = () => {
   const pending = checkinItems.value.filter(it => it.status !== 'checked' && it.status !== 'missed')
   if (!pending.length) { nearestPending.value = null; return }
@@ -179,8 +198,13 @@ const updateMainButton = () => {
     mainBtnText.value = '打卡'
     mainBtnSubtext.value = nearestPending.value.rule_name
   } else {
-    mainBtnText.value = '今日待办'
-    mainBtnSubtext.value = '点击进入打卡事项列表'
+    if (todayCheckinCount.value > 0) {
+      mainBtnText.value = '今日没有打卡任务了'
+      mainBtnSubtext.value = ''
+    } else {
+      mainBtnText.value = '今日待办'
+      mainBtnSubtext.value = '点击进入打卡事项列表'
+    }
   }
 }
 
@@ -188,6 +212,8 @@ const handleMainAction = async () => {
   if (clicking.value) return
   clicking.value = true
   setTimeout(()=> clicking.value=false, 300)
+
+  if (disableMainBtn.value) return
 
   if (allRulesCount.value === 0) {
     uni.navigateTo({ url: '/pages/add-rule/add-rule' })
@@ -388,6 +414,11 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   box-shadow: 0 16rpx 48rpx rgba(244, 130, 36, 0.4);
+}
+
+.today-tasks-btn.disabled {
+  background: linear-gradient(135deg, #D1D5DB 0%, #9CA3AF 100%);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
 }
 
 .btn-icon {

@@ -32,6 +32,10 @@
           </button>
         </view>
         
+        <view class="item-actions" v-else-if="item.status === 'missed'">
+          <text class="status-missed">✕ 已错过</text>
+        </view>
+        
         <button 
           class="checkin-btn" 
           v-else
@@ -112,7 +116,8 @@ const getTodayCheckinItems = async () => {
     })
     
     if (response.code === 1) {
-      checkinItems.value = response.data.checkin_items || []
+      checkinItems.value = (response.data.checkin_items || []).map(it => ({ ...it }))
+      normalizeMissedStatuses()
     } else {
       uni.showToast({
         title: response.msg || '获取打卡事项失败',
@@ -126,6 +131,23 @@ const getTodayCheckinItems = async () => {
       icon: 'none'
     })
   }
+}
+
+const parseTodayTime = (hhmmss) => {
+  const todayStr = new Date().toISOString().slice(0,10)
+  const t = hhmmss || '00:00:00'
+  return new Date(`${todayStr}T${t}`)
+}
+
+const normalizeMissedStatuses = () => {
+  const now = new Date()
+  checkinItems.value.forEach(it => {
+    const planned = parseTodayTime(it.planned_time)
+    const diffMin = (now - planned) / 60000
+    if (diffMin > 30 && it.status !== 'checked') {
+      it.status = 'missed'
+    }
+  })
 }
 
 // 执行打卡
@@ -312,6 +334,12 @@ onMounted(() => {
 .status-checked {
   font-size: 24rpx;
   color: #10B981;
+  font-weight: 500;
+}
+
+.status-missed {
+  font-size: 24rpx;
+  color: #EF4444;
   font-weight: 500;
 }
 
