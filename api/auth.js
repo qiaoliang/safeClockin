@@ -118,6 +118,16 @@ export const authApi = {
     method: 'POST',
     data
   }),
+  inviteSupervisorLink:(data) => request({
+    url: '/api/rules/supervision/invite_link',
+    method: 'POST',
+    data
+  }),
+  resolveInviteToken:(params) => request({
+    url: '/api/rules/supervision/invite/resolve',
+    method: 'GET',
+    data: params
+  }),
   getSupervisionInvitations:(params) => request({
     url: '/api/rules/supervision/invitations',
     method: 'GET',

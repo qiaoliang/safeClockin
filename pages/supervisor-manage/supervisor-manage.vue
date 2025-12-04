@@ -40,6 +40,7 @@
           <view class="inv-info">
             <text class="inv-name">{{ inv.solo_user.nickname }}</text>
             <text class="inv-rule">{{ inv.rule?.rule_name || '全部规则' }}</text>
+            <text class="inv-status">等待同意</text>
           </view>
           <text class="arrow">›</text>
         </view>
@@ -48,7 +49,7 @@
 
     <!-- 邀请监护人按钮 -->
     <view class="invite-section">
-      <button class="invite-btn" @click="goToInviteSupervisor">
+      <button class="invite-btn" @click="createInviteLink">
         <text class="invite-icon">+</text>
         <text class="invite-text">邀请监护人</text>
       </button>
@@ -72,6 +73,23 @@
         </view>
       </view>
     </view>
+
+    <!-- 分享链接弹窗 -->
+    <view class="modal-overlay" v-if="showShareModal">
+      <view class="modal-content">
+        <view class="modal-header">
+          <text class="modal-title">邀请链接</text>
+        </view>
+        <view class="modal-body">
+          <text class="modal-subtext">复制以下链接或使用微信分享</text>
+          <text class="modal-text">{{ lastInvitePath }}</text>
+        </view>
+        <view class="modal-actions">
+          <button class="modal-cancel-btn" @click="hideShareModal">关闭</button>
+          <button class="modal-confirm-btn" @click="copyInvitePath">复制</button>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -79,6 +97,7 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useSupervisionStore } from '@/store/modules/supervision'
+import { authApi } from '@/api/auth'
 
 const supervisionStore = useSupervisionStore()
 const mySupervised = ref([])
@@ -191,6 +210,7 @@ onLoad(async () => {
 .person-info{flex:1}
 .person-name,.inv-name{display:block;font-size:32rpx;font-weight:600;color:#333;margin-bottom:8rpx}
 .person-rules,.inv-rule{display:block;font-size:24rpx;color:#666}
+.inv-status{display:block;font-size:22rpx;color:#F48224;background:rgba(244,130,36,0.1);padding:4rpx 10rpx;border-radius:9999rpx;width:fit-content;margin-top:6rpx}
 .arrow{font-size:32rpx;color:#999}
 
 .invite-section {
@@ -234,3 +254,20 @@ onLoad(async () => {
 .modal-danger-btn {background:#FEE2E2;color:#EF4444;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
 .modal-cancel-btn {background:#F3F4F6;color:#374151;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
 </style>
+const showShareModal = ref(false)
+const lastInvitePath = ref('')
+const hideShareModal = () => { showShareModal.value = false }
+const copyInvitePath = () => {
+  if (!lastInvitePath.value) return
+  uni.setClipboardData({ data: lastInvitePath.value, success(){ uni.showToast({ title:'已复制', icon:'none' }) } })
+}
+
+const createInviteLink = async () => {
+  const res = await authApi.inviteSupervisorLink({ rule_ids: [] })
+  if (res.code === 1) {
+    lastInvitePath.value = res.data.mini_path
+    showShareModal.value = true
+  } else {
+    uni.showToast({ title: res.msg || '生成邀请失败', icon: 'none' })
+  }
+}

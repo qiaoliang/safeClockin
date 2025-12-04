@@ -97,14 +97,24 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
-		{
-			"path": "pages/supervisor-detail/supervisor-detail",
-			"style": {
-				"navigationBarTitleText": "监护详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
+        {
+            "path": "pages/supervisor-detail/supervisor-detail",
+            "style": {
+                "navigationBarTitleText": "监护详情",
+                "navigationBarBackgroundColor": "#FAE9DB",
+                "navigationBarTextStyle": "black"
+            }
+        },
+        {
+            "path": "pages/supervisor-invite/supervisor-invite",
+            "style": {
+                "navigationBarTitleText": "监督邀请",
+                "navigationBarBackgroundColor": "#FAE9DB",
+                "navigationBarTextStyle": "black",
+                "enableShareAppMessage": true,
+                "enableShareTimeline": true
+            }
+        },
 		{
 			"path": "pages/notification-settings/notification-settings",
 			"style": {
