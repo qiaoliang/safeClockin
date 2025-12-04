@@ -7,6 +7,22 @@
       <text class="header-subtitle">管理关注您的亲友监督人</text>
     </view>
 
+    <view class="time-section">
+      <text class="section-label">时间段</text>
+      <view class="btn-row">
+        <button class="seg-btn" :class="{active: timeSlot==='morning'}" @tap="selectSeg('morning')">上午</button>
+        <button class="seg-btn" :class="{active: timeSlot==='afternoon'}" @tap="selectSeg('afternoon')">下午</button>
+        <button class="seg-btn" :class="{active: timeSlot==='evening'}" @tap="selectSeg('evening')">晚上</button>
+        <button class="seg-btn" :class="{active: timeSlot==='custom'}" @tap="selectSeg('custom')">自定义时间</button>
+      </view>
+      <view v-if="timeSlot==='custom'" class="custom-row">
+        <text class="custom-label">自定义时间</text>
+        <picker mode="time" :value="customTime" @change="onTimeChange">
+          <view class="time-input">{{customTime}}</view>
+        </picker>
+      </view>
+    </view>
+
     <!-- 监护人列表 -->
     <view class="supervisor-list-section">
       <view class="list-title">我的监护人</view>
@@ -60,12 +76,23 @@
 </template>
 
 <script setup>
-import { ref, onLoad } from 'vue'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { useSupervisionStore } from '@/store/modules/supervision'
 
 const supervisionStore = useSupervisionStore()
 const showRemoveConfirm = ref(false)
 const selectedSupervisor = ref(null)
+const timeSlot = ref('custom')
+const customTime = ref('08:00')
+
+const selectSeg = (v) => {
+  timeSlot.value = v
+}
+
+const onTimeChange = (e) => {
+  customTime.value = e.detail.value
+}
 
 const showRemoveModal = (supervisor) => {
   selectedSupervisor.value = supervisor
@@ -92,6 +119,14 @@ onLoad(async () => {
 </script>
 
 <style scoped>
+.time-section{background:#F7DCCB;padding:24rpx;border-radius:24rpx;margin-bottom:24rpx}
+.section-label{display:block;color:#624731;margin-bottom:12rpx}
+.btn-row{display:flex;gap:16rpx;flex-wrap:wrap;margin-bottom:12rpx}
+.seg-btn{background:#fff;color:#6A6A6A;border:2rpx solid #E5E5E5;border-radius:9999rpx;padding:12rpx 20rpx;font-size:26rpx}
+.seg-btn.active{border-color:#F48224;color:#E49A2A;background:#FEF3C7}
+.custom-row{margin-top:8rpx}
+.custom-label{display:block;color:#624731;margin-bottom:8rpx}
+.time-input{height:80rpx;display:flex;align-items:center;border:2rpx solid #E5E5E5;border-radius:16rpx;background:#fff;padding:0 24rpx;color:#333}
 .supervisor-manage-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
