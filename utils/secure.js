@@ -55,30 +55,50 @@ function toBase64FromUint8(u8) {
 }
 
 function fromBase64ToUint8(str) {
+  function normalizeBase64(input) {
+    if (!input || typeof input !== 'string') return null
+    let s = input.trim().replace(/\s+/g, '')
+    s = s.replace(/-/g, '+').replace(/_/g, '/')
+    const pad = (4 - (s.length % 4)) % 4
+    if (pad) s += '='.repeat(pad)
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(s)) return null
+    return s
+  }
+
+  const normalized = normalizeBase64(str)
+  if (!normalized) {
+    return new Uint8Array(0)
+  }
   try {
     if (typeof uni !== 'undefined' && typeof uni.base64ToArrayBuffer === 'function') {
-      const ab = uni.base64ToArrayBuffer(str)
+      const ab = uni.base64ToArrayBuffer(normalized)
       return new Uint8Array(ab)
     }
   } catch(e) {}
   try {
     if (typeof Buffer !== 'undefined') {
-      return new Uint8Array(Buffer.from(str, 'base64'))
+      return new Uint8Array(Buffer.from(normalized, 'base64'))
     }
   } catch(e) {}
   let bin = ''
-  if (typeof atob === 'function') bin = atob(str)
+  if (typeof atob === 'function') {
+    try {
+      bin = atob(normalized)
+    } catch (_) {
+      return new Uint8Array(0)
+    }
+  }
   else {
     // 简易fallback：手写base64解码
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     const map = {}
     for (let i = 0; i < chars.length; i++) map[chars[i]] = i
     let i = 0
-    while (i < str.length) {
-      const c1 = map[str[i++]]
-      const c2 = map[str[i++]]
-      const c3 = map[str[i++]]
-      const c4 = map[str[i++]]
+    while (i < normalized.length) {
+      const c1 = map[normalized[i++]]
+      const c2 = map[normalized[i++]]
+      const c3 = map[normalized[i++]]
+      const c4 = map[normalized[i++]]
       const b1 = (c1 << 2) | (c2 >> 4)
       const b2 = ((c2 & 15) << 4) | (isNaN(c3) ? 0 : (c3 >> 2))
       const b3 = ((c3 & 3) << 6) | (isNaN(c4) ? 0 : c4)
@@ -124,6 +144,7 @@ export function decodeObject(str) {
   if (!str || typeof str !== 'string') return null
   try {
     const buf = fromBase64ToUint8(str)
+    if (!buf || buf.length === 0) return null
     const mask = prng(buf.length)
     for (let i = 0; i < buf.length; i++) buf[i] ^= mask[i]
     const json = utf8Decode(buf)

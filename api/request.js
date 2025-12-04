@@ -1,6 +1,7 @@
+import { storage } from '@/store/modules/storage'
 // api/request.js
-//const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
-const baseURL ='http://localhost:9999'
+const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
+//const baseURL ='http://localhost:9999'
 // 用于跟踪token刷新状态，防止并发刷新
 let isRefreshing = false
 let refreshSubscribers = []
@@ -16,8 +17,10 @@ function onRefreshed(newToken) {
 
 function decodeToken(token) {
   try {
-    const payload = token.split('.')[1]
-    // 补齐base64 padding
+    if (typeof token !== 'string') return null
+    const parts = token.split('.')
+    if (parts.length < 2) return null
+    const payload = parts[1]
     const padding = '='.repeat((4 - payload.length % 4) % 4)
     const decodedPayload = atob((payload + padding).replace(/-/g, '+').replace(/_/g, '/'))
     return JSON.parse(decodedPayload)
@@ -30,15 +33,14 @@ function decodeToken(token) {
 function isTokenExpired(token) {
   if (!token) return true
   const payload = decodeToken(token)
-  if (!payload || !payload.exp) return true
-  // 检查是否已过期（提前5分钟刷新，以防时间不同步）
+  if (!payload || !payload.exp) return false
   const currentTime = Date.now() / 1000
-  const bufferTime = 5 * 60 // 5分钟缓冲时间
+  const bufferTime = 5 * 60
   return payload.exp - bufferTime < currentTime
 }
 
 async function refreshToken() {
-  const refreshToken = uni.getStorageSync('refreshToken')
+  const refreshToken = storage.get('refreshToken') || uni.getStorageSync('refreshToken')
   if (!refreshToken) {
     return null
   }
@@ -59,9 +61,8 @@ async function refreshToken() {
       const newToken = response.data.data.token
       const newRefreshToken = response.data.data.refresh_token
       
-      // 更新本地存储
-      uni.setStorageSync('token', newToken)
-      uni.setStorageSync('refreshToken', newRefreshToken)
+      storage.set('token', newToken)
+      storage.set('refreshToken', newRefreshToken)
       
       return newToken
     }
@@ -75,14 +76,16 @@ async function refreshToken() {
 
 export const request = (options) => {
   return new Promise(async (resolve, reject) => {
-    let token = uni.getStorageSync('token')
+    let token = storage.get('token') || uni.getStorageSync('token')
     const fullUrl = baseURL + options.url
     
-    console.log('发起请求:', {
-      url: fullUrl,
-      method: options.method || 'GET',
-      data: options.data
-    })
+    if (!(options && options.suppressErrorLog)) {
+      console.log('发起请求:', {
+        url: fullUrl,
+        method: options.method || 'GET',
+        data: options.data
+      })
+    }
     
     // 检查token是否即将过期，如果是则刷新
     if (token && isTokenExpired(token)) {
@@ -120,10 +123,14 @@ export const request = (options) => {
                 ...options.header
               },
               success: (res) => {
-                handleResponse(res, fullUrl, resolve, reject)
+                handleResponse(res, fullUrl, resolve, reject, options)
               },
               fail: (error) => {
-                reject(new Error(`网络请求失败: ${JSON.stringify(error)}`))
+                if (options && options.nonBlocking) {
+                  resolve({ statusCode: 0, error })
+                } else {
+                  reject(new Error(`网络请求失败: ${JSON.stringify(error)}`))
+                }
               }
             })
           })
@@ -138,9 +145,13 @@ export const request = (options) => {
     
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
-      console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`) // 只打印token前20个字符用于调试
+      if (!(options && options.suppressErrorLog)) {
+        console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`)
+      }
     } else {
-      console.log('请求发送 - 未找到本地存储的token')
+      if (!(options && options.suppressErrorLog)) {
+        console.log('请求发送 - 未找到本地存储的token')
+      }
     }
     
     uni.request({
@@ -149,23 +160,33 @@ export const request = (options) => {
       data: options.data || {},
       header: headers,
       success: (res) => {
-        handleResponse(res, fullUrl, resolve, reject)
+        handleResponse(res, fullUrl, resolve, reject, options)
       },
       fail: (error) => {
-        console.error('请求失败:', error)
-        reject(new Error(`网络请求失败: ${JSON.stringify(error)}`))
+        if (!(options && options.suppressErrorLog)) console.error('请求失败:', error)
+        if (options && options.nonBlocking) {
+          resolve({ statusCode: 0, error })
+        } else {
+          reject(new Error(`网络请求失败: ${JSON.stringify(error)}`))
+        }
       }
     })
   })
 }
 
-function handleResponse(res, fullUrl, resolve, reject) {
-  console.log('fullUrl', fullUrl)
-  console.log('请求响应:', res)
+function handleResponse(res, fullUrl, resolve, reject, options = {}) {
+  if (!options.suppressErrorLog) {
+    console.log('fullUrl', fullUrl)
+    console.log('请求响应:', res)
+  }
   
   // 检查响应是否包含HTML（可能后端返回了错误页面）
   if (res.data && typeof res.data === 'string' && res.data.includes('<!DOCTYPE html')) {
-    console.error('服务器返回了HTML页面而不是JSON数据:', res.data)
+    if (options.nonBlocking) {
+      resolve({ statusCode: res.statusCode, data: res.data })
+      return
+    }
+    if (!options.suppressErrorLog) console.error('服务器返回了HTML页面而不是JSON数据:', res.data)
     reject(new Error('服务器返回了错误页面，不是预期的JSON格式'))
     return
   }
@@ -191,8 +212,12 @@ function handleResponse(res, fullUrl, resolve, reject) {
     handleTokenExpired()
     reject(new Error('登录已过期'))
   } else {
-    console.error('服务器返回错误:', res.statusCode, res.data)
-    reject(new Error(`请求失败: ${res.statusCode} - FullURL:${fullUrl} - ${JSON.stringify(res.data)}`))
+    if (options.nonBlocking) {
+      resolve({ statusCode: res.statusCode, data: res.data })
+    } else {
+      if (!options.suppressErrorLog) console.error('服务器返回错误:', res.statusCode, res.data)
+      reject(new Error(`请求失败: ${res.statusCode} - FullURL:${fullUrl} - ${JSON.stringify(res.data)}`))
+    }
   }
 }
 

@@ -57,7 +57,6 @@ import { useUserStore } from '@/store/modules/user'
 import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
 import UserInfoForm from '@/components/user-info-form/user-info-form.vue'
 import { storage } from '@/store/modules/storage'
-import { logLoginAttempt } from '@/utils/audit'
 
 const isLoading = ref(false)
 const showUserInfoForm = ref(false)
@@ -74,7 +73,6 @@ const onWechatLogin = async () => {
   isWechatLoginProcessing = true
   
   try {
-    await logLoginAttempt({ stage: 'start', method: 'wechat' })
     // 第一步：获取微信登录凭证
     const loginRes = await uni.login()
     
@@ -87,15 +85,13 @@ const onWechatLogin = async () => {
     const localUserInfo = storage.get('userInfo')
     const hasWechatBind = !!(localUserInfo && (localUserInfo.wechatOpenid || localUserInfo.wechat_openid))
     
-    if (cachedUserInfo && hasWechatBind) {
-      // 非首次登录：仅使用code进行登录，不需要用户头像和昵称
+    if (hasWechatBind) {
+      console.log('检测到已绑定微信，执行非首次登录流程')
+      await handleLoginSuccess({ code: loginRes.code })
+    } else if (cachedUserInfo) {
       console.log('检测到缓存的用户信息，执行非首次登录流程')
-      await logLoginAttempt({ stage: 'auto', method: 'wechat' })
-      await handleLoginSuccess({
-        code: loginRes.code
-      })
+      await handleLoginSuccess({ code: loginRes.code })
     } else {
-      // 首次登录：需要获取用户头像和昵称，显示头像昵称填写界面
       console.log('未检测到缓存的用户信息，执行首次登录流程')
       storage.remove('token')
       storage.remove('refreshToken')
@@ -105,7 +101,6 @@ const onWechatLogin = async () => {
     }
   } catch (error) {
     console.error('登录失败:', error)
-    try { await logLoginAttempt({ stage: 'error', method: 'wechat', message: String(error && error.message || error) }) } catch(e) {}
     handleLoginError(error)
   } finally {
     isLoading.value = false
