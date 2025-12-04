@@ -162,7 +162,7 @@ const goToProfile = () => {
 const goToSupervisionFeatures = () => {
   // 这里可以导航到一个新的监督功能页面，或者一个包含多个监督选项的页面
   uni.navigateTo({
-    url: '/pages/profile/profile' // 暂时导航到个人中心，后续可以创建专门的监督页面
+    url: '/pages/supervisor-manage/supervisor-manage'
   })
 }
 
