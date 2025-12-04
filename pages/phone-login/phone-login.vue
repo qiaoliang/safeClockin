@@ -41,11 +41,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { authApi } from '@/api/auth'
 import { useUserStore } from '@/store/modules/user'
 
 const userStore = useUserStore()
-const activeTab = ref('register')
+const activeTab = ref('sms')
 const countryCodes = ['+86', '+852', '+853', '+886']
 const countryIndex = ref(0)
 const phone = ref('')
@@ -154,6 +155,11 @@ function onAgreeChange(e) {
   const vals = e.detail && e.detail.value ? e.detail.value : []
   agree.value = Array.isArray(vals) && vals.includes('agree')
 }
+
+onLoad((opts)=>{
+  const m = String((opts && opts.mode) || '')
+  if(['register','sms','password'].includes(m)) activeTab.value = m
+})
 </script>
 
 <style scoped>

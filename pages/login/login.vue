@@ -124,7 +124,7 @@ const onUserInfoCancel = () => {
 }
 
 const showPhoneLogin = () => {
-  uni.navigateTo({ url: '/pages/phone-login/phone-login' })
+  uni.navigateTo({ url: '/pages/phone-login/phone-login?mode=sms' })
 }
 
 const showUserAgreement = () => {

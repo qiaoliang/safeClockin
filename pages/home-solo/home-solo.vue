@@ -24,9 +24,9 @@
       
       <view class="overview-cards">
         <view class="overview-card today-checkin">
-          <text class="card-title">今日待办</text>
-          <text class="card-number">{{ todayCheckinCount }}</text>
-          <text class="card-desc">项待打卡</text>
+          <text class="card-title">今日待打卡</text>
+          <text class="card-number">{{ pendingCheckinCount }}/{{ allRulesCount }}</text>
+          <text class="card-desc">项目</text>
         </view>
         
         <view class="overview-card completed-checkin">
@@ -99,9 +99,8 @@ const clicking = ref(false)
 const userInfo = computed(() => userStore.userInfo)
 
 // 计算属性：今日打卡数量
-const todayCheckinCount = computed(() => {
-  return checkinItems.value.length
-})
+const todayCheckinCount = computed(() => checkinItems.value.length)
+const pendingCheckinCount = computed(() => checkinItems.value.filter(item => item.status !== 'checked').length)
 
 // 计算属性：已完成打卡数量
 const completedCheckinCount = computed(() => {
@@ -163,15 +162,12 @@ const parseTodayTime = (hhmmss) => {
 }
 
 const computeNearestPending = () => {
-  const now = new Date()
   const pending = checkinItems.value.filter(it => it.status !== 'checked')
   if (!pending.length) { nearestPending.value = null; return }
   pending.sort((a,b)=>{
     const da = parseTodayTime(a.planned_time)
     const db = parseTodayTime(b.planned_time)
-    const diffA = Math.abs(da - now)
-    const diffB = Math.abs(db - now)
-    return diffA - diffB
+    return db - da // 时间倒序
   })
   nearestPending.value = pending[0]
 }
