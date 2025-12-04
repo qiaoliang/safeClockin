@@ -3,42 +3,45 @@
   <view class="supervisor-manage-container">
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title">监护人管理</text>
-      <text class="header-subtitle">管理关注您的亲友监督人</text>
+      <text class="header-title">监护管理</text>
+      <text class="header-subtitle">查看与处理您的监督关系与邀请</text>
     </view>
 
-    <view class="time-section">
-      <view class="time-row">
-        <text class="section-label">时间段</text>
-        <uni-segmented-control class="seg-control" :current="segIndex" :values="segValues" styleType="text" activeColor="#F48224" @clickItem="onSegClick" />
-      </view>
-      <view v-if="segIndex===3" class="custom-row">
-        <text class="custom-label">自定义时间</text>
-        <uni-datetime-picker class="time-picker" type="time" v-model="customTime" return-type="string" />
-      </view>
-    </view>
-
-    <!-- 监护人列表 -->
-    <view class="supervisor-list-section">
-      <view class="list-title">我的监护人</view>
-      <view class="supervisor-list">
-        <view 
-          class="supervisor-item"
-          v-for="supervisor in supervisionStore.myGuardians"
-          :key="supervisor.user_id"
+    <!-- 我的监护 -->
+    <view class="supervised-list-section">
+      <view class="list-title">我的监护</view>
+      <view class="supervised-list">
+        <view
+          class="supervised-item"
+          v-for="person in mySupervised"
+          :key="person.user_id"
+          @click="goToSupervisorDetail(person)"
         >
-          <view class="supervisor-avatar">
-            <image 
-              :src="supervisor.avatar_url || '/static/logo.png'" 
-              class="avatar-image"
-              mode="aspectFill"
-            ></image>
+          <view class="person-avatar">
+            <image :src="person.avatar_url || '/static/logo.png'" class="avatar-image" mode="aspectFill" />
           </view>
-          <view class="supervisor-info">
-            <text class="supervisor-name">{{ supervisor.nickname }}</text>
-            <text class="supervisor-status">可查看您的打卡记录</text>
+          <view class="person-info">
+            <text class="person-name">{{ person.nickname }}</text>
+            <text class="person-rules">{{ formatRules(person.rules) }}</text>
           </view>
-          <button class="remove-btn" @click="showRemoveModal(supervisor)">移除</button>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 邀请列表 -->
+    <view class="invitation-list-section">
+      <view class="list-title">监督邀请</view>
+      <view class="invitation-list">
+        <view class="invitation-item" v-for="inv in receivedInvitations" :key="inv.relation_id" @click="openInvitation(inv)">
+          <view class="person-avatar">
+            <image :src="inv.solo_user.avatar_url || '/static/logo.png'" class="avatar-image" mode="aspectFill" />
+          </view>
+          <view class="inv-info">
+            <text class="inv-name">{{ inv.solo_user.nickname }}</text>
+            <text class="inv-rule">{{ inv.rule?.rule_name || '全部规则' }}</text>
+          </view>
+          <text class="arrow">›</text>
         </view>
       </view>
     </view>
@@ -51,19 +54,21 @@
       </button>
     </view>
 
-    <!-- 移除确认弹窗 -->
-    <view class="modal-overlay" v-if="showRemoveConfirm">
+    <!-- 邀请详情弹窗 -->
+    <view class="modal-overlay" v-if="showInvitationModal">
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">移除监护人</text>
+          <text class="modal-title">监督邀请</text>
         </view>
         <view class="modal-body">
-          <text class="modal-text">确定要移除 {{ selectedSupervisor?.nickname }} 作为您的监督人吗？</text>
-          <text class="modal-subtext">移除后他们将无法查看您的打卡记录。</text>
+          <text class="modal-text">来自：{{ selectedInvitation?.solo_user?.nickname }}</text>
+          <text class="modal-subtext">规则：{{ selectedInvitation?.rule?.rule_name || '全部规则' }}</text>
+          <text class="modal-subtext">时间：若是具体规则请在详情页查看</text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideRemoveModal">取消</button>
-          <button class="modal-confirm-btn" @click="confirmRemove">确定</button>
+          <button class="modal-cancel-btn" @click="hideInvitation">搁置</button>
+          <button class="modal-danger-btn" @click="rejectSelected">拒绝</button>
+          <button class="modal-confirm-btn" @click="acceptSelected">同意</button>
         </view>
       </view>
     </view>
@@ -76,53 +81,71 @@ import { onLoad } from '@dcloudio/uni-app'
 import { useSupervisionStore } from '@/store/modules/supervision'
 
 const supervisionStore = useSupervisionStore()
-const showRemoveConfirm = ref(false)
-const selectedSupervisor = ref(null)
-const segValues = ['上午','下午','晚上','自定义时间']
-const segIndex = ref(3)
-const customTime = ref('08:00')
+const mySupervised = ref([])
+const receivedInvitations = ref([])
 
-const onSegClick = (e) => {
-  const idx = e?.currentIndex ?? e?.detail?.current ?? e
-  segIndex.value = Number(idx)
-  if (segIndex.value === 0) customTime.value = '08:00'
-  else if (segIndex.value === 1) customTime.value = '14:00'
-  else if (segIndex.value === 2) customTime.value = '20:00'
+const showInvitationModal = ref(false)
+const selectedInvitation = ref(null)
+
+const formatRules = (rules=[]) => {
+  const names = (rules || []).map(r => r.rule_name)
+  return names.length ? names.join(' · ') : '全部规则'
 }
 
-const showRemoveModal = (supervisor) => {
-  selectedSupervisor.value = supervisor
-  showRemoveConfirm.value = true
+const openInvitation = (inv) => {
+  selectedInvitation.value = inv
+  showInvitationModal.value = true
+}
+const hideInvitation = () => {
+  showInvitationModal.value = false
+  selectedInvitation.value = null
 }
 
-const hideRemoveModal = () => {
-  showRemoveConfirm.value = false
-  selectedSupervisor.value = null
+const acceptSelected = async () => {
+  if (!selectedInvitation.value) return
+  const res = await supervisionStore.acceptInvitation(selectedInvitation.value.relation_id)
+  if (res.code === 1) {
+    uni.showToast({ title: '已同意', icon: 'success' })
+    hideInvitation()
+    await supervisionStore.fetchInvitations('received')
+    await supervisionStore.fetchMySupervised()
+    receivedInvitations.value = supervisionStore.receivedInvitations
+    mySupervised.value = supervisionStore.mySupervised
+  } else {
+    uni.showToast({ title: res.msg || '操作失败', icon: 'none' })
+  }
 }
 
-const confirmRemove = async () => {
-  uni.showToast({ title: '暂不支持移除', icon: 'none' })
-  hideRemoveModal()
+const rejectSelected = async () => {
+  if (!selectedInvitation.value) return
+  const res = await supervisionStore.rejectInvitation(selectedInvitation.value.relation_id)
+  if (res.code === 1) {
+    uni.showToast({ title: '已拒绝', icon: 'success' })
+    hideInvitation()
+    await supervisionStore.fetchInvitations('received')
+    receivedInvitations.value = supervisionStore.receivedInvitations
+  } else {
+    uni.showToast({ title: res.msg || '操作失败', icon: 'none' })
+  }
 }
 
 const goToInviteSupervisor = () => {
   uni.navigateTo({ url: '/pages/invite-supervisor/invite-supervisor' })
 }
 
+const goToSupervisorDetail = (person) => {
+  uni.navigateTo({ url: `/pages/supervisor-detail/supervisor-detail?userId=${person.user_id}` })
+}
+
 onLoad(async () => {
-  await supervisionStore.fetchMyGuardians()
+  await supervisionStore.fetchMySupervised()
+  await supervisionStore.fetchInvitations('received')
+  mySupervised.value = supervisionStore.mySupervised
+  receivedInvitations.value = supervisionStore.receivedInvitations
 })
 </script>
 
 <style scoped>
-.time-section{background:#F7DCCB;padding:24rpx;border-radius:24rpx;margin-bottom:24rpx}
-.time-row{display:flex;align-items:center;gap:16rpx}
-.section-label{color:#624731;font-weight:600}
-.seg-control{flex:1}
-.custom-row{margin-top:16rpx}
-.custom-label{display:block;color:#624731;margin-bottom:8rpx;font-weight:600}
-.time-picker{width:100%}
- 
 .supervisor-manage-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
@@ -154,29 +177,6 @@ onLoad(async () => {
   color: #624731;
   margin-bottom: 32rpx;
 }
-
-.supervisor-list {
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-}
-
-.supervisor-item {
-  display: flex;
-  align-items: center;
-  padding: 24rpx 0;
-  border-bottom: 2rpx solid #F8F8F8;
-}
-
-.supervisor-item:last-child {
-  border-bottom: none;
-}
-
-.supervisor-avatar {
-  margin-right: 24rpx;
-}
-
 .avatar-image {
   width: 80rpx;
   height: 80rpx;
@@ -184,32 +184,14 @@ onLoad(async () => {
   border: 4rpx solid #F48224;
 }
 
-.supervisor-info {
-  flex: 1;
-}
-
-.supervisor-name {
-  display: block;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8rpx;
-}
-
-.supervisor-status {
-  display: block;
-  font-size: 24rpx;
-  color: #666;
-}
-
-.remove-btn {
-  background: #FEE2E2;
-  color: #EF4444;
-  border-radius: 16rpx;
-  padding: 16rpx 24rpx;
-  font-size: 24rpx;
-  border: none;
-}
+.supervised-list,.invitation-list{background:#fff;border-radius:24rpx;padding:32rpx;box-shadow:0 4rpx 16rpx rgba(0,0,0,0.08)}
+.supervised-item,.invitation-item{display:flex;align-items:center;padding:24rpx 0;border-bottom:2rpx solid #F8F8F8}
+.supervised-item:last-child,.invitation-item:last-child{border-bottom:none}
+.person-avatar{margin-right:24rpx}
+.person-info{flex:1}
+.person-name,.inv-name{display:block;font-size:32rpx;font-weight:600;color:#333;margin-bottom:8rpx}
+.person-rules,.inv-rule{display:block;font-size:24rpx;color:#666}
+.arrow{font-size:32rpx;color:#999}
 
 .invite-section {
   margin-top: 48rpx;
@@ -239,6 +221,19 @@ onLoad(async () => {
   font-weight: 600;
 }
 
+/* 邀请弹窗样式 */
+.modal-overlay {position: fixed;top: 0;left:0;width:100%;height:100%;background: rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:48rpx}
+.modal-content {background:#fff;border-radius:24rpx;padding:48rpx;width:100%;max-width:600rpx;box-shadow:0 24rpx 48rpx rgba(0,0,0,0.2)}
+.modal-header {text-align:center;margin-bottom:32rpx}
+.modal-title {font-size:36rpx;font-weight:600;color:#624731}
+.modal-body {margin-bottom:32rpx}
+.modal-text {display:block;font-size:32rpx;color:#333;margin-bottom:12rpx}
+.modal-subtext {display:block;font-size:28rpx;color:#666}
+.modal-actions {display:flex;gap:16rpx;justify-content:flex-end}
+.modal-confirm-btn {background:#E0F2FE;color:#0284C7;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
+.modal-danger-btn {background:#FEE2E2;color:#EF4444;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
+.modal-cancel-btn {background:#F3F4F6;color:#374151;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
+</style>
 /* 模态框样式 */
 .modal-overlay {
   position: fixed;

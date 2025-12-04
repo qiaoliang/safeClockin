@@ -81,14 +81,14 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
-		{
-			"path": "pages/supervisor-manage/supervisor-manage",
-			"style": {
-				"navigationBarTitleText": "监护人管理",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
+        {
+            "path": "pages/supervisor-manage/supervisor-manage",
+            "style": {
+                "navigationBarTitleText": "监护管理",
+                "navigationBarBackgroundColor": "#FAE9DB",
+                "navigationBarTextStyle": "black"
+            }
+        },
 		{
 			"path": "pages/invite-supervisor/invite-supervisor",
 			"style": {
