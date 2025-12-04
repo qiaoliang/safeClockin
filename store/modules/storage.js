@@ -1,8 +1,12 @@
 // store/modules/storage.js
+import { SENSITIVE_KEYS, encodeObject, decodeObject } from '@/utils/secure'
+
 export const storage = {
   set(key, value) {
     try {
-      uni.setStorageSync(key, JSON.stringify(value))
+      const isSensitive = SENSITIVE_KEYS.includes(key)
+      const payload = isSensitive ? encodeObject(value) : JSON.stringify(value)
+      uni.setStorageSync(key, payload)
       return true
     } catch (error) {
       console.error('存储失败:', error)
@@ -14,6 +18,11 @@ export const storage = {
     try {
       const value = uni.getStorageSync(key)
       if (!value) return null
+      const isSensitive = SENSITIVE_KEYS.includes(key)
+      if (isSensitive && typeof value === 'string') {
+        const decoded = decodeObject(value)
+        return decoded
+      }
       try {
         return typeof value === 'string' ? JSON.parse(value) : value
       } catch (e) {

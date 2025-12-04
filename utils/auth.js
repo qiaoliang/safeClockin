@@ -1,5 +1,6 @@
 // utils/auth.js
 import { useUserStore } from '@/store/modules/user'
+import { storage } from '@/store/modules/storage'
 import { getHomePageByRole } from './router'
 
 // 用于跟踪当前登录状态，防止重复提交
@@ -38,7 +39,7 @@ export async function handleLoginSuccess(response) {
         avatarUrl: response.userInfo.avatarUrl,
         nickName: response.userInfo.nickName
       }
-      uni.setStorageSync('cached_user_info', cachedUserInfo)
+      storage.set('cached_user_info', cachedUserInfo)
       
       // 更新用户资料
       await userStore.updateUserInfo(response.userInfo)
