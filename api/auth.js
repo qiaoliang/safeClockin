@@ -162,4 +162,25 @@ export const authApi = {
     url: '/api/logout',
     method: 'POST'
   })
+  ,
+  sendSmsCode: (data) => request({
+    url: '/api/sms/send_code',
+    method: 'POST',
+    data
+  }),
+  registerPhone: (data) => request({
+    url: '/api/auth/register_phone',
+    method: 'POST',
+    data
+  }),
+  loginPhoneCode: (data) => request({
+    url: '/api/auth/login_phone_code',
+    method: 'POST',
+    data
+  }),
+  loginPhonePassword: (data) => request({
+    url: '/api/auth/login_phone_password',
+    method: 'POST',
+    data
+  })
 }

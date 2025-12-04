@@ -10,6 +10,15 @@
 			}
 		},
 		{
+			"path": "pages/phone-login/phone-login",
+			"style": {
+				"navigationBarTitleText": "手机号注册/登录",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black",
+				"backgroundColor": "#FAE9DB"
+			}
+		},
+		{
 			"path": "pages/role-select/role-select",
 			"style": {
 				"navigationBarTitleText": "选择角色",

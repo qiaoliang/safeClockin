@@ -124,10 +124,7 @@ const onUserInfoCancel = () => {
 }
 
 const showPhoneLogin = () => {
-  uni.showToast({
-    title: '手机号登录功能开发中',
-    icon: 'none'
-  })
+  uni.navigateTo({ url: '/pages/phone-login/phone-login' })
 }
 
 const showUserAgreement = () => {
