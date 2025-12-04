@@ -26,42 +26,16 @@
       <!-- 打卡频率 -->
       <view class="form-group">
         <text class="label">打卡频率</text>
-        <view class="radio-group">
-          <view 
-            class="radio-item" 
-            v-for="freq in frequencyOptions" 
-            :key="freq.value"
-            :class="{ active: formData.frequency_type === freq.value }"
-            @click="formData.frequency_type = freq.value"
-          >
-            <text class="radio-text">{{ freq.label }}</text>
-          </view>
-        </view>
+        <uni-segmented-control :current="freqIndex" :values="freqValues" styleType="text" activeColor="#F48224" @clickItem="onFreqClick" />
       </view>
 
       <!-- 时间段 -->
       <view class="form-group">
         <text class="label">时间段</text>
-        <view class="radio-group">
-          <view 
-            class="radio-item" 
-            v-for="timeSlot in timeSlotOptions" 
-            :key="timeSlot.value"
-            :class="{ active: formData.time_slot_type === timeSlot.value }"
-            @click="formData.time_slot_type = timeSlot.value"
-          >
-            <text class="radio-text">{{ timeSlot.label }}</text>
-          </view>
-        </view>
-        
-        <!-- 自定义时间输入 -->
-        <view class="custom-time-input" v-if="formData.time_slot_type === 4">
+        <uni-segmented-control :current="timeIndex" :values="timeValues" styleType="text" activeColor="#F48224" @clickItem="onTimeClick" />
+        <view class="custom-time-input" v-if="timeIndex === 3">
           <text class="label">自定义时间</text>
-          <input 
-            class="input"
-            type="time"
-            v-model="formData.custom_time"
-          />
+          <uni-datetime-picker type="time" v-model="formData.custom_time" return-type="string" />
         </view>
       </view>
 
@@ -140,21 +114,22 @@ const submitCallback = ref(null) // 存储提交回调
 // 表单验证
 const isFormValid = ref(false)
 
-// 频率选项
-const frequencyOptions = ref([
-  { label: '每天', value: 0 },
-  { label: '每周', value: 1 },
-  { label: '工作日', value: 2 },
-  { label: '自定义', value: 3 }
-])
+const freqValues = ['每天','每周','工作日','自定义']
+const timeValues = ['上午','下午','晚上','自定义时间']
+const freqIndex = ref(0)
+const timeIndex = ref(3)
 
-// 时间段选项
-const timeSlotOptions = ref([
-  { label: '上午', value: 1 },
-  { label: '下午', value: 2 },
-  { label: '晚上', value: 3 },
-  { label: '自定义时间', value: 4 }
-])
+const onFreqClick = (e) => {
+  const idx = e?.currentIndex ?? e?.detail?.current ?? e
+  freqIndex.value = Number(idx)
+  formData.value.frequency_type = freqIndex.value
+}
+
+const onTimeClick = (e) => {
+  const idx = e?.currentIndex ?? e?.detail?.current ?? e
+  timeIndex.value = Number(idx)
+  formData.value.time_slot_type = timeIndex.value + 1
+}
 
 // 图标选项
 const iconOptions = ref([
@@ -307,6 +282,8 @@ onLoad((options) => {
   
   // 初始化表单验证
   validateForm()
+  freqIndex.value = formData.value.frequency_type
+  timeIndex.value = formData.value.time_slot_type - 1
 })
 
 onMounted(() => {
