@@ -27,6 +27,7 @@
         <view class="rule-actions">
           <button class="edit-btn" @click="editRule(rule)">编辑</button>
           <button class="delete-btn" @click="showDeleteModal(rule)">删除</button>
+          <button class="invite-btn" @click="inviteForRule(rule)">邀请监护</button>
         </view>
       </view>
     </view>
@@ -66,6 +67,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { authApi } from '@/api/auth'
 import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
@@ -297,6 +299,14 @@ onShow(() => {
   display: flex;
   gap: 16rpx;
 }
+.invite-btn {
+  background: #FFF7ED;
+  color: #F48224;
+  border-radius: 16rpx;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  border: 2rpx solid #F48224;
+}
 
 .edit-btn {
   background: #E0F2FE;
@@ -448,3 +458,47 @@ onShow(() => {
   font-weight: 500;
 }
 </style>
+// 生成某规则的邀请链接
+const showShareModal = ref(false)
+const lastInvitePath = ref('')
+const hideShareModal = () => { showShareModal.value = false }
+const copyInvitePath = () => {
+  if (!lastInvitePath.value) return
+  uni.setClipboardData({ data: lastInvitePath.value, success(){ uni.showToast({ title:'已复制', icon:'none' }) } })
+}
+
+const inviteForRule = async (rule) => {
+  const res = await authApi.inviteSupervisorLink({ rule_ids: [rule.rule_id] })
+  if (res.code === 1) {
+    lastInvitePath.value = res.data?.mini_path || ''
+    showShareModal.value = true
+  } else {
+    uni.showToast({ title: res.msg || '生成邀请失败', icon: 'none' })
+  }
+}
+.modal-overlay {position: fixed;top: 0;left:0;width:100%;height:100%;background: rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:48rpx}
+.modal-content {background:#fff;border-radius:24rpx;padding:48rpx;width:100%;max-width:600rpx;box-shadow:0 24rpx 48rpx rgba(0,0,0,0.2)}
+.modal-header {text-align:center;margin-bottom:32rpx}
+.modal-title {font-size:36rpx;font-weight:600;color:#624731}
+.modal-body {margin-bottom:32rpx}
+.modal-text {display:block;font-size:28rpx;color:#333;word-break:break-all}
+.modal-subtext {display:block;font-size:26rpx;color:#666;margin-bottom:12rpx}
+.modal-actions {display:flex;gap:16rpx;justify-content:flex-end}
+.modal-confirm-btn {background:#E0F2FE;color:#0284C7;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
+.modal-cancel-btn {background:#F3F4F6;color:#374151;border-radius:16rpx;padding:16rpx 24rpx;font-size:24rpx;border:none}
+<!-- 分享邀请链接弹窗 -->
+<view class="modal-overlay" v-if="showShareModal">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">邀请链接</text>
+    </view>
+    <view class="modal-body">
+      <text class="modal-subtext">复制以下链接或在微信中分享此页面</text>
+      <text class="modal-text">{{ lastInvitePath }}</text>
+    </view>
+    <view class="modal-actions">
+      <button class="modal-cancel-btn" @click="hideShareModal">关闭</button>
+      <button class="modal-confirm-btn" @click="copyInvitePath">复制</button>
+    </view>
+  </view>
+</view>
