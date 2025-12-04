@@ -72,10 +72,10 @@
           <text class="action-text">个人中心</text>
         </view>
         
-        <!-- 监督功能：所有用户都可以使用 -->
+        <!-- 监督管理：所有用户都可以使用 -->
         <view class="quick-action-item" @click="goToSupervisionFeatures">
           <view class="action-icon">👁️</view>
-          <text class="action-text">监督功能</text>
+          <text class="action-text">监督管理</text>
         </view>
       </view>
     </view>
@@ -158,9 +158,9 @@ const goToProfile = () => {
   })
 }
 
-// 跳转到监督功能（新功能）
+// 跳转到监督管理
 const goToSupervisionFeatures = () => {
-  // 这里可以导航到一个新的监督功能页面，或者一个包含多个监督选项的页面
+  // 这里可以导航到监督管理页面，或者一个包含多个监督选项的页面
   uni.navigateTo({
     url: '/pages/home-supervisor/home-supervisor'
   })
