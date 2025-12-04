@@ -1,4 +1,6 @@
+coverage/
 **/.DS_*
 unpa*/
 .worktrees/
 微信云托管*.*
+node_modules
