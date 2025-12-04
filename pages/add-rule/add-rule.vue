@@ -162,39 +162,47 @@ const watchFormChanges = () => {
 }
 
 // 获取规则详情（编辑模式）
-const getRuleDetail = async (id) => {
-  try {
-    const response = await request({
-      url: '/api/checkin/rules',
-      method: 'GET'
-    })
-    
-    if (response.code === 1) {
-      const rule = response.data.rules.find(r => r.rule_id == id)
-      if (rule) {
-        formData.value = {
-          rule_name: rule.rule_name,
-          frequency_type: rule.frequency_type,
-          time_slot_type: rule.time_slot_type,
-          custom_time: rule.custom_time || '08:00',
-          icon_url: rule.icon_url || '⏰',
-          status: rule.status
+  const getRuleDetail = async (id) => {
+    try {
+      const response = await request({
+        url: '/api/checkin/rules',
+        method: 'GET'
+      })
+      
+      if (response.code === 1) {
+        const rule = response.data.rules.find(r => r.rule_id == id)
+        if (rule) {
+          formData.value.rule_name = rule.rule_name
+          const ft = Number(rule.frequency_type)
+          const fixedFt = isNaN(ft) ? 0 : Math.min(Math.max(ft, 0), 3)
+          formData.value.frequency_type = fixedFt
+          freqIndex.value = fixedFt
+
+          const ts = Number(rule.time_slot_type)
+          const fixedTs = [1,2,3,4].includes(ts) ? ts : 4
+          formData.value.time_slot_type = fixedTs
+          timeIndex.value = fixedTs - 1
+
+          const ct = typeof rule.custom_time === 'string' ? rule.custom_time : ''
+          formData.value.custom_time = fixedTs === 4 && /^\d{2}:\d{2}/.test(ct) ? ct.slice(0,5) : '08:00'
+
+          formData.value.icon_url = rule.icon_url || '⏰'
+          formData.value.status = rule.status
         }
+      } else {
+        uni.showToast({
+          title: response.msg || '获取规则详情失败',
+          icon: 'none'
+        })
       }
-    } else {
+    } catch (error) {
+      console.error('获取规则详情失败:', error)
       uni.showToast({
-        title: response.msg || '获取规则详情失败',
+        title: '获取规则详情失败',
         icon: 'none'
       })
     }
-  } catch (error) {
-    console.error('获取规则详情失败:', error)
-    uni.showToast({
-      title: '获取规则详情失败',
-      icon: 'none'
-    })
   }
-}
 
 // 提交表单
 const submitForm = (e) => {
