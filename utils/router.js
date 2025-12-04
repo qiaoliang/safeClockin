@@ -79,6 +79,8 @@ const hasRequiredRole = (url, userRole) => {
 }
 
 export const getHomePageByRole = (role) => {
-  // 角色选择后统一跳转到个人中心进行资料完善与功能引导
-  return '/pages/profile/profile'
+  if (role === 'solo') return '/pages/home-solo/home-solo'
+  if (role === 'supervisor') return '/pages/home-supervisor/home-supervisor'
+  if (role === 'community') return '/pages/home-community/home-community'
+  return '/pages/home-solo/home-solo'
 }
