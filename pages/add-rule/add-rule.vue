@@ -25,17 +25,21 @@
 
       <!-- 打卡频率 -->
       <view class="form-group">
-        <text class="label">打卡频率</text>
-        <uni-segmented-control :current="freqIndex" :values="freqValues" styleType="text" activeColor="#F48224" @clickItem="onFreqClick" />
+        <view class="row">
+          <text class="label">打卡频率</text>
+          <uni-segmented-control class="seg-control" :current="freqIndex" :values="freqValues" styleType="text" activeColor="#F48224" @clickItem="onFreqClick" />
+        </view>
       </view>
 
       <!-- 时间段 -->
       <view class="form-group">
-        <text class="label">时间段</text>
-        <uni-segmented-control :current="timeIndex" :values="timeValues" styleType="text" activeColor="#F48224" @clickItem="onTimeClick" />
+        <view class="row">
+          <text class="label">时间段</text>
+          <uni-segmented-control class="seg-control" :current="timeIndex" :values="timeValues" styleType="text" activeColor="#F48224" @clickItem="onTimeClick" />
+        </view>
         <view class="custom-time-input" v-if="timeIndex === 3">
           <text class="label">自定义时间</text>
-          <uni-datetime-picker type="time" v-model="formData.custom_time" return-type="string" />
+          <uni-datetime-picker class="time-picker" type="time" v-model="formData.custom_time" return-type="string" />
         </view>
       </view>
 
@@ -349,6 +353,10 @@ onMounted(() => {
   color: #624731;
   margin-bottom: 16rpx;
 }
+
+.row{display:flex;align-items:center;gap:16rpx}
+.seg-control{flex:1}
+.time-picker{width:100%}
 
 .required {
   color: #EF4444;

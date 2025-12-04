@@ -26,5 +26,6 @@ const onChange = (e) => {
 </script>
 
 <style scoped>
-.uni-dtp-input{height:80rpx;display:flex;align-items:center;border:2rpx solid #E5E5E5;border-radius:16rpx;background:#fff;padding:0 24rpx;color:#333}
+.uni-dtp{width:100%}
+.uni-dtp-input{height:80rpx;display:flex;align-items:center;border:2rpx solid #E5E5E5;border-radius:16rpx;background:#fff;padding:0 24rpx;color:#333;width:100%}
 </style>

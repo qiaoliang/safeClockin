@@ -32,7 +32,8 @@ const onClick = (idx) => {
 const itemStyle = (idx) => {
   const active = idx === props.current
   return `border:2rpx solid ${active ? props.activeColor : '#E5E5E5'};`+
-         `background:${active ? '#FEF3C7' : '#FFFFFF'};`
+         `background:${active ? '#FEF3C7' : '#FFFFFF'};`+
+         `box-shadow:${active ? '0 4rpx 12rpx rgba(244,130,36,0.25)' : 'none'};`
 }
 
 const textStyle = (idx) => {
@@ -42,7 +43,8 @@ const textStyle = (idx) => {
 </script>
 
 <style scoped>
-.uni-seg-row{display:flex;gap:16rpx;flex-wrap:wrap}
+.uni-seg{width:100%}
+.uni-seg-row{display:flex;gap:12rpx;flex-wrap:wrap;justify-content:flex-start}
 .uni-seg-item{border-radius:9999rpx;padding:12rpx 20rpx}
 .uni-seg-text{font-size:26rpx}
 </style>

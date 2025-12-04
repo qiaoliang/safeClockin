@@ -8,11 +8,13 @@
     </view>
 
     <view class="time-section">
-      <text class="section-label">时间段</text>
-      <uni-segmented-control :current="segIndex" :values="segValues" styleType="text" activeColor="#F48224" @clickItem="onSegClick" />
+      <view class="time-row">
+        <text class="section-label">时间段</text>
+        <uni-segmented-control class="seg-control" :current="segIndex" :values="segValues" styleType="text" activeColor="#F48224" @clickItem="onSegClick" />
+      </view>
       <view v-if="segIndex===3" class="custom-row">
         <text class="custom-label">自定义时间</text>
-        <uni-datetime-picker type="time" v-model="customTime" return-type="string" />
+        <uni-datetime-picker class="time-picker" type="time" v-model="customTime" return-type="string" />
       </view>
     </view>
 
@@ -114,9 +116,12 @@ onLoad(async () => {
 
 <style scoped>
 .time-section{background:#F7DCCB;padding:24rpx;border-radius:24rpx;margin-bottom:24rpx}
-.section-label{display:block;color:#624731;margin-bottom:12rpx}
-.custom-row{margin-top:12rpx}
-.custom-label{display:block;color:#624731;margin-bottom:8rpx}
+.time-row{display:flex;align-items:center;gap:16rpx}
+.section-label{color:#624731;font-weight:600}
+.seg-control{flex:1}
+.custom-row{margin-top:16rpx}
+.custom-label{display:block;color:#624731;margin-bottom:8rpx;font-weight:600}
+.time-picker{width:100%}
  
 .supervisor-manage-container {
   min-height: 100vh;
