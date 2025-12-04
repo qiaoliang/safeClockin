@@ -22,7 +22,7 @@
       </view>
 
       <view v-if="activeTab==='password' || activeTab==='register'" class="row">
-        <input class="input" type="password" v-model="password" placeholder="设置/输入密码（至少8位，含字母和数字）" />
+        <input class="input" type="text" :password="true" v-model="password" placeholder="设置/输入密码（至少8位，含字母和数字）" />
       </view>
 
       <view v-if="activeTab==='register'" class="agreement">
