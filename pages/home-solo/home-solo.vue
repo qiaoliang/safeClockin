@@ -107,7 +107,7 @@ const completedCheckinCount = computed(() => {
 const completionRate = computed(() => {
   const total = todayCheckinCount.value
   if (total === 0) return 0
-  return Math.round((pendingCheckinCount.value / total) * 100)
+  return Math.round((completedCheckinCount.value / total) * 100)
 })
 
 // 获取用户角色文本
