@@ -183,4 +183,15 @@ export const authApi = {
     method: 'POST',
     data
   })
+  ,
+  bindPhone: (data) => request({
+    url: '/api/user/bind_phone',
+    method: 'POST',
+    data
+  }),
+  bindWechat: (data) => request({
+    url: '/api/user/bind_wechat',
+    method: 'POST',
+    data
+  })
 }

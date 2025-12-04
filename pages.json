@@ -67,6 +67,14 @@
 			}
 		},
 		{
+			"path": "pages/profile-edit/profile-edit",
+			"style": {
+				"navigationBarTitleText": "编辑个人信息",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
 			"path": "pages/checkin-list/checkin-list",
 			"style": {
 				"navigationBarTitleText": "打卡事项",

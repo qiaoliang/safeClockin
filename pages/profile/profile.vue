@@ -3,7 +3,7 @@
   <view class="profile-container">
     <!-- 用户信息区域 -->
     <view class="user-info-section">
-      <view class="user-avatar">
+      <view class="user-avatar" @click="editProfile">
         <image 
           :src="userInfo?.avatarUrl || '/static/logo.png'" 
           class="avatar-image"
@@ -142,6 +142,10 @@ const getSupervisorCount = () => {
 
 const navigateTo = (url) => {
   routeGuard(url)
+}
+
+const editProfile = () => {
+  routeGuard('/pages/profile-edit/profile-edit')
 }
 
 const needCompleteInfo = computed(() => {
