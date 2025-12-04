@@ -107,6 +107,45 @@ export const authApi = {
     method: 'DELETE',
     data: data
   }),
+  // 监督相关API
+  searchUsers:(params) => request({
+    url: '/api/users/search',
+    method: 'GET',
+    data: params
+  }),
+  inviteSupervisor:(data) => request({
+    url: '/api/rules/supervision/invite',
+    method: 'POST',
+    data
+  }),
+  getSupervisionInvitations:(params) => request({
+    url: '/api/rules/supervision/invitations',
+    method: 'GET',
+    data: params
+  }),
+  acceptSupervisionInvitation:(data) => request({
+    url: '/api/rules/supervision/accept',
+    method: 'POST',
+    data
+  }),
+  rejectSupervisionInvitation:(data) => request({
+    url: '/api/rules/supervision/reject',
+    method: 'POST',
+    data
+  }),
+  getMySupervisedUsers:() => request({
+    url: '/api/rules/supervision/my_supervised',
+    method: 'GET'
+  }),
+  getMyGuardians:() => request({
+    url: '/api/rules/supervision/my_guardians',
+    method: 'GET'
+  }),
+  getSupervisedRecords:(params) => request({
+    url: '/api/rules/supervision/records',
+    method: 'GET',
+    data: params
+  }),
   
   // 登出相关API
   logout:() => request({

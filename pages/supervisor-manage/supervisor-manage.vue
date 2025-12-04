@@ -13,7 +13,7 @@
       <view class="supervisor-list">
         <view 
           class="supervisor-item"
-          v-for="supervisor in supervisorList"
+          v-for="supervisor in supervisionStore.myGuardians"
           :key="supervisor.user_id"
         >
           <view class="supervisor-avatar">
@@ -60,86 +60,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onLoad } from 'vue'
+import { useSupervisionStore } from '@/store/modules/supervision'
 
-const supervisorList = ref([
-  {
-    user_id: 1,
-    nickname: '儿子-小明',
-    avatar_url: '/static/logo.png',
-    status: 'active'
-  },
-  {
-    user_id: 2,
-    nickname: '女儿-小红',
-    avatar_url: '/static/logo.png',
-    status: 'active'
-  },
-  {
-    user_id: 3,
-    nickname: '邻居-张阿姨',
-    avatar_url: '/static/logo.png',
-    status: 'active'
-  }
-])
-
+const supervisionStore = useSupervisionStore()
 const showRemoveConfirm = ref(false)
 const selectedSupervisor = ref(null)
 
-// 显示移除确认弹窗
 const showRemoveModal = (supervisor) => {
   selectedSupervisor.value = supervisor
   showRemoveConfirm.value = true
 }
 
-// 隐藏移除确认弹窗
 const hideRemoveModal = () => {
   showRemoveConfirm.value = false
   selectedSupervisor.value = null
 }
 
-// 确认移除监护人
 const confirmRemove = async () => {
-  try {
-    // 这里应调用API移除监护人关系
-    // 模拟API调用
-    uni.showLoading({
-      title: '移除中...'
-    })
-    
-    // 模拟API延迟
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    uni.hideLoading()
-    
-    // 从本地列表中移除
-    const index = supervisorList.value.findIndex(s => s.user_id === selectedSupervisor.value.user_id)
-    if (index !== -1) {
-      supervisorList.value.splice(index, 1)
-    }
-    
-    uni.showToast({
-      title: '移除成功',
-      icon: 'success'
-    })
-    
-    hideRemoveModal()
-  } catch (error) {
-    console.error('移除监护人失败:', error)
-    uni.hideLoading()
-    uni.showToast({
-      title: '移除失败',
-      icon: 'none'
-    })
-  }
+  uni.showToast({ title: '暂不支持移除', icon: 'none' })
+  hideRemoveModal()
 }
 
-// 跳转到邀请监护人页面
 const goToInviteSupervisor = () => {
-  uni.navigateTo({
-    url: '/pages/invite-supervisor/invite-supervisor'
-  })
+  uni.navigateTo({ url: '/pages/invite-supervisor/invite-supervisor' })
 }
+
+onLoad(async () => {
+  await supervisionStore.fetchMyGuardians()
+})
 </script>
 
 <style scoped>

@@ -15,7 +15,17 @@
         <text class="user-role">{{ getRoleText(userInfo?.role) }}</text>
       </view>
     </view>
-    
+
+    <view class="hint-section" v-if="needCompleteInfo">
+      <text class="hint-text">完善头像、昵称、联系方式，提升使用体验</text>
+      <button class="hint-btn" @click="navigateTo('/pages/supervisor-manage/supervisor-manage')">去完善与邀请监护人</button>
+    </view>
+
+    <view class="hint-section" v-if="needCommunityVerify">
+      <text class="hint-text">社区身份未验证，完成后可使用社区功能</text>
+      <button class="hint-btn" @click="navigateTo('/pages/community-auth/community-auth')">去验证</button>
+    </view>
+
     <!-- 用户统计区域 -->
     <view class="user-stats-section" v-if="userInfo">
       <view class="user-stats-card">
@@ -48,23 +58,16 @@
         <text class="menu-arrow">></text>
       </view>
       
-      <view 
-        v-if="userInfo?.role === 'solo'" 
-        class="menu-item" 
-        @click="navigateTo('/pages/supervisor-manage/supervisor-manage')"
-      >
+      <!-- 监督功能菜单：所有用户都可以访问 -->
+      <view class="menu-item" @click="navigateTo('/pages/supervisor-manage/supervisor-manage')">
         <view class="menu-icon">👥</view>
         <text class="menu-text">监护人管理</text>
         <text class="menu-arrow">></text>
       </view>
       
-      <view 
-        v-if="userInfo?.role === 'supervisor'" 
-        class="menu-item" 
-        @click="navigateTo('/pages/supervisor-detail/supervisor-detail')"
-      >
-        <view class="menu-icon">👤</view>
-        <text class="menu-text">监护详情</text>
+      <view class="menu-item" @click="navigateTo('/pages/home-supervisor/home-supervisor')">
+        <view class="menu-icon">👁️</view>
+        <text class="menu-text">我的监督</text>
         <text class="menu-arrow">></text>
       </view>
       
@@ -142,6 +145,16 @@ const navigateTo = (url) => {
   routeGuard(url)
 }
 
+const needCompleteInfo = computed(() => {
+  const u = userInfo.value || {}
+  return !u.avatarUrl || !u.nickName || !u.phoneNumber
+})
+
+const needCommunityVerify = computed(() => {
+  const u = userInfo.value || {}
+  return u.role === 'community' && u.verification_status !== 2
+})
+
 const showAbout = () => {
   uni.showModal({
     title: '关于安卡小习惯',
@@ -175,6 +188,9 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
+.hint-section{background:#FEF3C7;border-left:8rpx solid #F59E0B;border-radius:16rpx;padding:24rpx;margin-bottom:24rpx}
+.hint-text{display:block;color:#78350F;margin-bottom:12rpx}
+.hint-btn{background:#F48224;color:#fff;border:none;border-radius:16rpx;padding:12rpx 16rpx}
 .profile-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
