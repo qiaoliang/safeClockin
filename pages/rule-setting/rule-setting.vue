@@ -91,7 +91,7 @@ const getFrequencyDetail = (rule) => {
   if (rule.frequency_type === 3) {
     const start = rule.custom_start_date || '?'
     const end = rule.custom_end_date || '?'
-    return `自定义 · ${start} 至 ${end}`
+    return `${start} 至 ${end}`
   }
   return getFrequencyText(rule.frequency_type)
 }
