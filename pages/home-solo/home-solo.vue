@@ -30,9 +30,9 @@
         </view>
         
         <view class="overview-card completed-checkin">
-          <text class="card-title">已完成</text>
-          <text class="card-number">{{ completedCheckinCount }}</text>
-          <text class="card-desc">项打卡</text>
+          <text class="card-title">完成/错过</text>
+          <text class="card-number">{{ finishedOrMissedCount }}</text>
+          <text class="card-desc">项目</text>
         </view>
         
         <view class="overview-card completion-rate">
@@ -100,7 +100,8 @@ const userInfo = computed(() => userStore.userInfo)
 
 // 计算属性：今日打卡数量
 const todayCheckinCount = computed(() => checkinItems.value.length)
-const pendingCheckinCount = computed(() => checkinItems.value.filter(item => item.status !== 'checked').length)
+const pendingCheckinCount = computed(() => checkinItems.value.filter(item => item.status !== 'checked' && item.status !== 'missed').length)
+const finishedOrMissedCount = computed(() => checkinItems.value.filter(item => item.status === 'checked' || item.status === 'missed').length)
 
 // 计算属性：已完成打卡数量
 const completedCheckinCount = computed(() => {
@@ -109,8 +110,9 @@ const completedCheckinCount = computed(() => {
 
 // 计算属性：完成率
 const completionRate = computed(() => {
-  if (todayCheckinCount.value === 0) return 100
-  return Math.round((completedCheckinCount.value / todayCheckinCount.value) * 100)
+  const total = todayCheckinCount.value
+  if (total === 0) return 0
+  return Math.round((pendingCheckinCount.value / total) * 100)
 })
 
 // 获取用户角色文本
@@ -162,7 +164,7 @@ const parseTodayTime = (hhmmss) => {
 }
 
 const computeNearestPending = () => {
-  const pending = checkinItems.value.filter(it => it.status !== 'checked')
+  const pending = checkinItems.value.filter(it => it.status !== 'checked' && it.status !== 'missed')
   if (!pending.length) { nearestPending.value = null; return }
   pending.sort((a,b)=>{
     const da = parseTodayTime(a.planned_time)
