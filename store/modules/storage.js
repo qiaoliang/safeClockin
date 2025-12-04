@@ -21,7 +21,8 @@ export const storage = {
       const isSensitive = SENSITIVE_KEYS.includes(key)
       if (isSensitive && typeof value === 'string') {
         const decoded = decodeObject(value)
-        return decoded
+        if (decoded !== null && decoded !== undefined) return decoded
+        // 兼容历史未加密数据
       }
       try {
         return typeof value === 'string' ? JSON.parse(value) : value

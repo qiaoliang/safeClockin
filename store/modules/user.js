@@ -156,7 +156,10 @@ export const useUserStore = defineStore('user', {
       
       storage.remove('token')
       storage.remove('refreshToken')
-      storage.remove('userInfo')
+      const cached = storage.get('userInfo')
+      if (cached && (cached.wechatOpenid || cached.wechat_openid)) {
+        storage.set('userInfo', cached)
+      }
     },
     
     setUserInfo(userInfo) {
@@ -178,6 +181,11 @@ export const useUserStore = defineStore('user', {
         this.userInfo = userInfo
         this.role = userInfo.role
         this.isLoggedIn = true
+      }
+      if (!token && userInfo) {
+        this.userInfo = userInfo
+        this.role = userInfo.role
+        this.isLoggedIn = false
       }
     },
     
