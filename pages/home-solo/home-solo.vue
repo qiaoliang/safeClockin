@@ -43,15 +43,15 @@
       </view>
     </view>
 
-    <!-- 今日待办按钮 -->
+    <!-- 今日行动主按钮 -->
     <view class="today-tasks-section">
       <button 
         class="today-tasks-btn"
-        @click="goToCheckinList"
+        @click="handleMainAction"
       >
         <text class="btn-icon">📋</text>
-        <text class="btn-text">今日待办</text>
-        <text class="btn-subtext">点击进入打卡事项列表</text>
+        <text class="btn-text">{{ mainBtnText }}</text>
+        <text v-if="mainBtnSubtext" class="btn-subtext">{{ mainBtnSubtext }}</text>
       </button>
     </view>
 
@@ -89,6 +89,11 @@ import { request } from '@/api/request'
 
 const userStore = useUserStore()
 const checkinItems = ref([])
+const allRulesCount = ref(0)
+const nearestPending = ref(null)
+const mainBtnText = ref('今日待办')
+const mainBtnSubtext = ref('点击进入打卡事项列表')
+const clicking = ref(false)
 
 // 计算属性：用户信息
 const userInfo = computed(() => userStore.userInfo)
@@ -129,11 +134,102 @@ const getTodayCheckinItems = async () => {
     
     if (response.code === 1) {
       checkinItems.value = response.data.checkin_items || []
+      computeNearestPending()
+      updateMainButton()
     } else {
       console.error('获取今日打卡事项失败:', response.msg)
     }
   } catch (error) {
     console.error('获取今日打卡事项失败:', error)
+  }
+}
+
+const getAllRulesCount = async () => {
+  try {
+    const res = await request({ url: '/api/checkin/rules', method: 'GET' })
+    if (res.code === 1) {
+      allRulesCount.value = (res.data?.rules || []).length
+      updateMainButton()
+    }
+  } catch(e){
+    console.error(e)
+  }
+}
+
+const parseTodayTime = (hhmmss) => {
+  const todayStr = new Date().toISOString().slice(0,10)
+  const t = hhmmss || '00:00:00'
+  return new Date(`${todayStr}T${t}`)
+}
+
+const computeNearestPending = () => {
+  const now = new Date()
+  const pending = checkinItems.value.filter(it => it.status !== 'checked')
+  if (!pending.length) { nearestPending.value = null; return }
+  pending.sort((a,b)=>{
+    const da = parseTodayTime(a.planned_time)
+    const db = parseTodayTime(b.planned_time)
+    const diffA = Math.abs(da - now)
+    const diffB = Math.abs(db - now)
+    return diffA - diffB
+  })
+  nearestPending.value = pending[0]
+}
+
+const updateMainButton = () => {
+  if (allRulesCount.value === 0) {
+    mainBtnText.value = '马上行动吧'
+    mainBtnSubtext.value = ''
+    return
+  }
+  if (nearestPending.value) {
+    mainBtnText.value = '打卡'
+    mainBtnSubtext.value = nearestPending.value.rule_name
+  } else {
+    mainBtnText.value = '今日待办'
+    mainBtnSubtext.value = '点击进入打卡事项列表'
+  }
+}
+
+const handleMainAction = async () => {
+  if (clicking.value) return
+  clicking.value = true
+  setTimeout(()=> clicking.value=false, 300)
+
+  if (allRulesCount.value === 0) {
+    uni.navigateTo({ url: '/pages/add-rule/add-rule' })
+    return
+  }
+  if (!nearestPending.value) {
+    goToCheckinList()
+    return
+  }
+  const now = new Date()
+  const planned = parseTodayTime(nearestPending.value.planned_time)
+  const diffMs = now - planned
+  const diffMin = diffMs / 60000
+  if (diffMin < -30) {
+    uni.showToast({ title: '打卡时间未到，请于规定时间前30分钟内再来打卡', icon: 'none', duration: 3000 })
+    return
+  }
+  if (diffMin > 30) {
+    try {
+      await request({ url: '/api/checkin/miss', method: 'POST', data: { rule_id: nearestPending.value.rule_id } })
+    } catch(e){}
+    uni.showToast({ title: '已错过打卡时间', icon: 'none', duration: 3000 })
+    await getTodayCheckinItems()
+    return
+  }
+  try {
+    const res = await request({ url: '/api/checkin', method: 'POST', data: { rule_id: nearestPending.value.rule_id } })
+    if (res.code === 1) {
+      uni.showToast({ title: '打卡成功', icon: 'success' })
+      await getTodayCheckinItems()
+    } else {
+      uni.showToast({ title: res.msg || '打卡失败', icon: 'none' })
+    }
+  } catch(e){
+    uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' })
   }
 }
 
@@ -168,6 +264,7 @@ const goToSupervisionFeatures = () => {
 
 onMounted(() => {
   getTodayCheckinItems()
+  getAllRulesCount()
 })
 </script>
 
