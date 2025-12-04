@@ -8,7 +8,7 @@
 
     <view class="form">
       <view class="row">
-        <picker :range="countryCodes" v-model="countryIndex">
+        <picker mode="selector" :range="countryCodes" :value="countryIndex" @change="onCountryChange">
           <view class="picker">{{ countryCodes[countryIndex] }}</view>
         </picker>
         <input class="input" type="number" v-model="phone" placeholder="请输入手机号" />
@@ -69,6 +69,10 @@ function startCountdown() {
       timer = null
     }
   }, 1000)
+}
+
+function onCountryChange(e) {
+  countryIndex.value = Number(e.detail.value || 0)
 }
 
 async function onSendCode() {
