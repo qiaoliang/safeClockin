@@ -44,6 +44,7 @@ import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { authApi } from '@/api/auth'
 import { useUserStore } from '@/store/modules/user'
+import { storage } from '@/store/modules/storage'
 
 const userStore = useUserStore()
 const activeTab = ref('sms')
@@ -142,10 +143,10 @@ async function afterLogin(res) {
   const token = res.data?.token
   const refreshToken = res.data?.refresh_token
   if (token) {
-    uni.setStorageSync('token', token)
+    storage.set('token', token)
   }
   if (refreshToken) {
-    uni.setStorageSync('refreshToken', refreshToken)
+    storage.set('refreshToken', refreshToken)
   }
   await userStore.fetchUserInfo()
   uni.switchTab({ url: '/pages/home-solo/home-solo' })

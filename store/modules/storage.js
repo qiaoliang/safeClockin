@@ -13,7 +13,12 @@ export const storage = {
   get(key) {
     try {
       const value = uni.getStorageSync(key)
-      return value ? JSON.parse(value) : null
+      if (!value) return null
+      try {
+        return typeof value === 'string' ? JSON.parse(value) : value
+      } catch (e) {
+        return value
+      }
     } catch (error) {
       console.error('读取存储失败:', error)
       return null

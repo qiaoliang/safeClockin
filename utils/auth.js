@@ -146,8 +146,9 @@ async function mockLoginAPI(code, userInfo) {
   userStore.isLoggedIn = true
   
   // 保存到本地存储
-  uni.setStorageSync('token', mockResponse.token)
-  uni.setStorageSync('userInfo', mockResponse.data)
+  // 保持与storage模块兼容：字符串则使用storage.set
+  try { uni.setStorageSync('token', mockResponse.token) } catch(e) {}
+  try { uni.setStorageSync('userInfo', mockResponse.data) } catch(e) {}
 }
 
 export function handleLoginError(error) {
