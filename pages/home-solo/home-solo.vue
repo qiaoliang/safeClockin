@@ -67,11 +67,6 @@
           <text class="action-text">打卡规则</text>
         </view>
         
-        <view class="quick-action-item" @click="goToProfile">
-          <view class="action-icon">👤</view>
-          <text class="action-text">个人中心</text>
-        </view>
-        
         <!-- 监督管理：所有用户都可以使用 -->
         <view class="quick-action-item" @click="goToSupervisionFeatures">
           <view class="action-icon">👁️</view>
@@ -245,12 +240,6 @@ const goToRuleSetting = () => {
   })
 }
 
-// 跳转到个人中心
-const goToProfile = () => {
-  uni.switchTab({
-    url: '/pages/profile/profile'
-  })
-}
 
 // 跳转到监督管理
 const goToSupervisionFeatures = () => {
@@ -426,7 +415,7 @@ onMounted(() => {
 
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24rpx;
 }
 
