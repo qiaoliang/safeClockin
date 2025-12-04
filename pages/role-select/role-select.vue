@@ -35,7 +35,7 @@
             </view>
             <view class="feature-item">
               <text class="feature-icon">👥</text>
-              <text class="feature-text">亲友监督</text>
+          <text class="feature-text">监护功能</text>
             </view>
           </view>
         </view>
@@ -51,7 +51,7 @@
           <text class="role-icon-text">❤️</text>
         </view>
         <view class="role-content">
-          <text class="role-title">亲友监督人</text>
+          <text class="role-title">监护人</text>
           <text class="role-description">我关心独居的亲友，希望实时了解他们的状况</text>
           <view class="role-features">
             <view class="feature-item">
@@ -158,7 +158,7 @@ const confirmSelection = async () => {
     // 隐藏加载提示
     uni.hideLoading()
 
-    // 根据用户角色跳转到对应的首页
+    // 角色选择后统一跳转到个人中心进行资料完善
     const homePage = getHomePageByRole(selectedRole.value)
     
     // 使用路由守卫来处理页面跳转（会自动判断是否为tabbar页面）

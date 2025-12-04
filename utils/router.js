@@ -22,6 +22,7 @@ export function routeGuard(url, options = {}) {
   // 检查是否为tabbar页面，如果是则使用switchTab
   const tabbarPages = [
     '/pages/home-solo/home-solo',
+    '/pages/home-community/home-community',
     '/pages/profile/profile'
   ]
   
@@ -51,7 +52,8 @@ const isAuthRequired = (url) => {
     '/pages/home-solo/home-solo',
     '/pages/home-supervisor/home-supervisor',
     '/pages/home-community/home-community',
-    '/pages/profile/profile'
+    '/pages/profile/profile',
+    '/pages/supervisor-detail/supervisor-detail'
   ]
   
   return authPages.some(page => url.includes(page))
@@ -59,8 +61,6 @@ const isAuthRequired = (url) => {
 
 const isRoleRequired = (url) => {
   const rolePages = {
-    '/pages/home-solo/home-solo': 'solo',
-    '/pages/home-supervisor/home-supervisor': 'supervisor',
     '/pages/home-community/home-community': 'community'
   }
   
@@ -71,8 +71,6 @@ const isRoleRequired = (url) => {
 
 const hasRequiredRole = (url, userRole) => {
   const rolePages = {
-    '/pages/home-solo/home-solo': 'solo',
-    '/pages/home-supervisor/home-supervisor': 'supervisor',
     '/pages/home-community/home-community': 'community'
   }
   
@@ -81,11 +79,6 @@ const hasRequiredRole = (url, userRole) => {
 }
 
 export const getHomePageByRole = (role) => {
-  const homePages = {
-    solo: '/pages/home-solo/home-solo',
-    supervisor: '/pages/home-supervisor/home-supervisor',
-    community: '/pages/home-community/home-community'
-  }
-  
-  return homePages[role] || '/pages/login/login'
+  // 角色选择后统一跳转到个人中心进行资料完善与功能引导
+  return '/pages/profile/profile'
 }
