@@ -167,7 +167,11 @@ const iconOptions = ref([
 
 // 表单验证
 const validateForm = () => {
-  isFormValid.value = formData.value.rule_name.trim().length > 0
+  let ok = formData.value.rule_name.trim().length > 0
+  if (freqIndex.value === 3) {
+    ok = ok && !!formData.value.custom_start_date && !!formData.value.custom_end_date && (new Date(formData.value.custom_end_date) >= new Date(formData.value.custom_start_date))
+  }
+  isFormValid.value = ok
 }
 
 // 监听表单变化
@@ -231,6 +235,17 @@ const watchFormChanges = () => {
 // 提交表单
 const submitForm = (e) => {
   e.preventDefault()
+  // 自定义频率必须设置起止日期
+  if (freqIndex.value === 3) {
+    if (!formData.value.custom_start_date || !formData.value.custom_end_date) {
+      uni.showToast({ title: '请设置起止日期', icon: 'none' })
+      return
+    }
+    if (new Date(formData.value.custom_end_date) < new Date(formData.value.custom_start_date)) {
+      uni.showToast({ title: '结束日期不能早于开始日期', icon: 'none' })
+      return
+    }
+  }
   showConfirmModal.value = true
 }
 

@@ -1,6 +1,6 @@
 // api/request.js
 //const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
-const baseURL ='http://localhost:9090'
+const baseURL ='http://localhost:9999'
 // 用于跟踪token刷新状态，防止并发刷新
 let isRefreshing = false
 let refreshSubscribers = []
