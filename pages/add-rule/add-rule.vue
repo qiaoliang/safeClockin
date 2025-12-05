@@ -266,10 +266,17 @@ const performSubmit = async () => {
   
   isSubmitting.value = true
   
+  // Layer 1: 入口点验证 - 记录提交数据
+  console.log('=== Layer 1: 入口点验证 ===')
+  console.log('表单数据:', JSON.stringify(formData.value, null, 2))
+  console.log('是否编辑模式:', isEditing.value)
+  console.log('表单验证状态:', isFormValid.value)
+  
   try {
     let response
     if (isEditing.value) {
       // 更新规则
+      console.log('发送PUT请求到 /api/checkin/rules')
       response = await request({
         url: '/api/checkin/rules',
         method: 'PUT',
@@ -280,6 +287,7 @@ const performSubmit = async () => {
       })
     } else {
       // 创建规则
+      console.log('发送POST请求到 /api/checkin/rules')
       response = await request({
         url: '/api/checkin/rules',
         method: 'POST',
@@ -287,24 +295,46 @@ const performSubmit = async () => {
       })
     }
     
+    // Layer 2: 业务逻辑验证 - 检查响应
+    console.log('=== Layer 2: 业务逻辑验证 ===')
+    console.log('API响应:', JSON.stringify(response, null, 2))
+    
     if (response.code === 1) {
+      console.log('✅ 请求成功，规则ID:', response.data?.rule_id)
       uni.showToast({
         title: isEditing.value ? '更新成功' : '添加成功',
         icon: 'success'
       })
       
+      // Layer 3: 环境保护 - 确保数据同步
+      console.log('=== Layer 3: 开始数据同步处理 ===')
+      
       // 延迟返回，确保用户看到成功提示
       setTimeout(() => {
+        // Layer 4: 调试日志 - 记录返回操作
+        console.log('=== Layer 4: 执行页面返回，触发首页刷新 ===')
+        
+        // 触发全局事件，通知其他页面数据已更新
+        uni.$emit('checkinRulesUpdated', {
+          action: isEditing.value ? 'update' : 'create',
+          ruleId: response.data?.rule_id,
+          timestamp: Date.now()
+        })
+        
         uni.navigateBack()
       }, 1500)
     } else {
+      console.log('❌ 请求失败，错误信息:', response.msg)
       uni.showToast({
         title: response.msg || (isEditing.value ? '更新失败' : '添加失败'),
         icon: 'none'
       })
     }
   } catch (error) {
-    console.error(isEditing.value ? '更新规则失败:' : '添加规则失败:', error)
+    // Layer 3: 环境保护 - 网络错误处理
+    console.log('=== Layer 3: 环境保护 ===')
+    console.error('❌ 网络请求异常:', error)
+    console.error('错误堆栈:', error.stack)
     uni.showToast({
       title: isEditing.value ? '更新失败' : '添加失败',
       icon: 'none'

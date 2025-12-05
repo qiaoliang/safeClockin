@@ -143,10 +143,12 @@ async function afterLogin(res) {
   const token = res.data?.token
   const refreshToken = res.data?.refresh_token
   if (token) {
-    storage.set('token', token)
+    // token 和 refreshToken 会在 userStore.login 中自动处理
+    console.log('Token 会在 userStore.login 中自动保存')
   }
   if (refreshToken) {
-    storage.set('refreshToken', refreshToken)
+    // token 和 refreshToken 会在 userStore.login 中自动处理
+    console.log('RefreshToken 会在 userStore.login 中自动保存')
   }
   await userStore.fetchUserInfo()
   uni.switchTab({ url: '/pages/home-solo/home-solo' })

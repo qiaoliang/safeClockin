@@ -34,12 +34,13 @@ export async function handleLoginSuccess(response) {
     
     // 如果是首次登录（提供了用户信息），则更新用户信息
     if (response.userInfo) {
-      // 将用户信息缓存到本地
-      const cachedUserInfo = {
-        avatarUrl: response.userInfo.avatarUrl,
-        nickName: response.userInfo.nickName
-      }
-      storage.set('cached_user_info', cachedUserInfo)
+      // 将用户信息缓存到 userStore
+      userStore.updateCache({
+        cachedUserInfo: {
+          avatarUrl: response.userInfo.avatarUrl,
+          nickName: response.userInfo.nickName
+        }
+      })
       
       // 更新用户资料
       await userStore.updateUserInfo(response.userInfo)

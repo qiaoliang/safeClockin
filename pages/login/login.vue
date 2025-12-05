@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { handleLoginSuccess, handleLoginError } from '@/utils/auth'
 import UserInfoForm from '@/components/user-info-form/user-info-form.vue'
@@ -65,6 +65,15 @@ const userStore = useUserStore()
 
 // 添加一个标志来防止重复的微信登录请求
 let isWechatLoginProcessing = false
+
+// 页面加载时初始化用户状态
+onMounted(() => {
+  try {
+    userStore.initUserState()
+  } catch (error) {
+    console.error('初始化用户状态失败:', error)
+  }
+})
 
 const onWechatLogin = async () => {
   if (isLoading.value || isWechatLoginProcessing) return
@@ -82,8 +91,9 @@ const onWechatLogin = async () => {
     
     // 第二步：检查登录场景和用户状态
     const loginScenario = storage.get('login_scenario') || uni.getStorageSync('login_scenario')
-    const cachedUserInfo = storage.get('cached_user_info')
-    const localUserInfo = storage.get('userInfo') || uni.getStorageSync('userInfo')
+    // 安全访问 cachedUserInfo，确保 userState 和 cache 存在
+    const cachedUserInfo = userStore.userState?.cache?.cachedUserInfo
+    const localUserInfo = userStore.userInfo
     const hasWechatBind = !!(localUserInfo && (localUserInfo.wechatOpenid || localUserInfo.wechat_openid))
     
     console.log('登录场景:', loginScenario, '微信绑定状态:', hasWechatBind)
@@ -106,7 +116,11 @@ const onWechatLogin = async () => {
     } else {
       // 首次登录场景
       console.log('首次登录场景')
-      storage.remove('cached_user_info')
+      try {
+        userStore.clearCache()
+      } catch (error) {
+        console.warn('清理缓存时出错，但继续登录流程:', error)
+      }
       loginCode.value = loginRes.code
       showUserInfoForm.value = true
     }

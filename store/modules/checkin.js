@@ -266,24 +266,52 @@ export const useCheckinStore = defineStore('checkin', {
       storage.remove('checkinCache')
     },
     
-    // 初始化打卡数据
+    // 初始化打卡数据 - 添加多层防御
     async initCheckinData() {
+      // Layer 1: 入口点验证 - 记录初始化状态
+      console.log('=== Layer 1: 打卡数据初始化入口点验证 ===')
+      console.log('当前打卡项数量:', this.todayCheckinItems.length)
+      console.log('缓存过期状态:', this.isCacheExpired)
+      
       // 先尝试从缓存恢复
       if (this.restoreFromCache()) {
-        // 如果缓存未过期，直接使用缓存
+        // Layer 2: 业务逻辑验证 - 检查缓存有效性
         if (!this.isCacheExpired) {
+          console.log('✅ 使用有效缓存数据')
           return
+        } else {
+          console.log('⚠️ 缓存已过期，需要刷新')
         }
       }
       
-      // 缓存过期或无缓存，重新获取数据
+      // Layer 3: 环境保护 - 网络请求保护
+      console.log('=== Layer 3: 开始网络请求获取最新数据 ===')
       try {
         await Promise.all([
           this.fetchTodayCheckinItems(),
           this.fetchAllRulesCount()
         ])
+        
+        // Layer 4: 调试日志 - 验证数据完整性
+        console.log('=== Layer 4: 打卡数据初始化完成 ===')
+        console.log('最新打卡项数量:', this.todayCheckinItems.length)
+        console.log('规则总数:', this.allRulesCount)
+        
+        // 数据一致性检查
+        if (this.todayCheckinItems.length === 0 && this.allRulesCount > 0) {
+          console.warn('⚠️ 数据不一致：有规则但无今日打卡项')
+        }
+        
       } catch (error) {
-        console.error('初始化打卡数据失败:', error)
+        console.error('❌ 初始化打卡数据失败:', error)
+        
+        // 防御性处理：如果网络请求失败但有缓存数据，仍然使用缓存
+        if (this.todayCheckinItems.length > 0) {
+          console.log('🔄 网络失败，使用过期缓存作为兜底')
+          return
+        }
+        
+        throw error
       }
     },
     

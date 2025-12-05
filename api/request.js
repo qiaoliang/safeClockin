@@ -1,4 +1,5 @@
 import { storage } from '@/store/modules/storage'
+import { useUserStore } from '@/store/modules/user'
 // api/request.js
 //const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
 const baseURL ='http://localhost:9999'
@@ -136,7 +137,9 @@ const NO_TOKEN_REQUIRED_URLS = [
 
 export const request = (options) => {
   return new Promise(async (resolve, reject) => {
-    let token = storage.get('token') || uni.getStorageSync('token')
+    // 优先从 userStore 获取 token，兼容旧版本
+    const userStore = useUserStore()
+    let token = userStore.token || storage.get('token') || uni.getStorageSync('token')
     const fullUrl = baseURL + options.url
     
     if (!(options && options.suppressErrorLog)) {
@@ -185,10 +188,26 @@ export const request = (options) => {
         // 如果正在刷新，将请求加入队列
         return new Promise((queueResolve, queueReject) => {
           addRefreshSubscriber((newToken) => {
-            options.header = {
-              ...options.header,
-              'Authorization': `Bearer ${newToken}`
+            // 验证新 token 的有效性
+            let processedToken = newToken
+            if (newToken && /[\u0080-\uFFFF]/.test(newToken)) {
+              console.warn('新 Token 包含非 ASCII 字符，尝试清理...')
+              // 尝试清理 token：移除非 ASCII 字符
+              processedToken = newToken.replace(/[^\x00-\x7F]/g, '')
+              console.warn('新 Token 已清理，移除了非 ASCII 字符')
             }
+            
+            // 验证清理后的 token 是否有效
+            if (!processedToken || processedToken.length < 10) {
+              console.error('新 Token 清理后无效或过短，放弃使用')
+              // 不设置 Authorization header
+            } else {
+              options.header = {
+                ...options.header,
+                'Authorization': `Bearer ${processedToken}`
+              }
+            }
+            
             uni.request({
               url: fullUrl,
               method: options.method || 'GET',
@@ -219,9 +238,29 @@ export const request = (options) => {
     }
     
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-      if (!(options && options.suppressErrorLog)) {
-        console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`)
+      // 确保 token 是有效的 ASCII 字符串
+      try {
+        // 验证 token 是否包含非 ASCII 字符
+        if (/[\u0080-\uFFFF]/.test(token)) {
+          console.warn('Token 包含非 ASCII 字符，尝试清理...')
+          // 尝试清理 token：移除非 ASCII 字符
+          token = token.replace(/[^\x00-\x7F]/g, '')
+          console.warn('Token 已清理，移除了非 ASCII 字符')
+        }
+        
+        // 验证清理后的 token 是否有效
+        if (!token || token.length < 10) {
+          console.error('Token 清理后无效或过短，放弃使用')
+          delete headers['Authorization']
+        } else {
+          headers['Authorization'] = `Bearer ${token}`
+          if (!(options && options.suppressErrorLog)) {
+            console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`)
+          }
+        }
+      } catch (error) {
+        console.error('Token 处理失败:', error)
+        delete headers['Authorization']
       }
     } else {
       if (!(options && options.suppressErrorLog)) {

@@ -5,25 +5,201 @@ import { authApi } from '@/api/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    userInfo: null,
-    token: null,
+    // 核心用户状态 - 统一管理所有用户相关数据
+    userState: {
+      // 认证信息
+      auth: {
+        token: null,
+        refreshToken: null,
+        secureSeed: null,
+        loginTime: null,
+        expiresAt: null
+      },
+      // 用户基本信息
+      profile: {
+        userId: null,
+        nickname: null,
+        avatarUrl: null,
+        role: null,
+        phone: null,
+        wechatOpenid: null,
+        isVerified: false
+      },
+      // 缓存数据
+      cache: {
+        checkinData: null,
+        lastUpdate: null,
+        cachedUserInfo: null
+      }
+    },
+    
+    // 运行时状态
     isLoggedIn: false,
-    role: null,
     isLoading: false,
-    currentProcessingCode: null  // 用于存储当前正在处理的code，防止重复使用
+    currentProcessingCode: null
   }),
   
   getters: {
-    isSoloUser: (state) => state.role === 'solo',
-    isSupervisor: (state) => state.role === 'supervisor',
-    isCommunityWorker: (state) => state.role === 'community'
+    // 便捷访问器
+    token: (state) => state.userState.auth.token,
+    refreshToken: (state) => state.userState.auth.refreshToken,
+    userInfo: (state) => state.userState.profile,
+    role: (state) => state.userState.profile.role,
+    
+    // 角色判断
+    isSoloUser: (state) => state.userState.profile.role === 'solo',
+    isSupervisor: (state) => state.userState.profile.role === 'supervisor',
+    isCommunityWorker: (state) => state.userState.profile.role === 'community',
+    
+    // 认证状态
+    isTokenValid: (state) => {
+      const { token, expiresAt } = state.userState.auth
+      if (!token) return false
+      if (!expiresAt) return true // 没有过期时间则认为有效
+      return new Date() < new Date(expiresAt)
+    },
+    
+    // 缓存状态
+    isCacheExpired: (state) => {
+      const { lastUpdate } = state.userState.cache
+      if (!lastUpdate) return true
+      const CACHE_DURATION = 30 * 60 * 1000 // 30分钟
+      return Date.now() - lastUpdate > CACHE_DURATION
+    }
   },
   
   actions: {
+    // 持久化用户状态到 storage
+    _persistUserState() {
+      const userState = JSON.stringify(this.userState)
+      storage.set('userState', userState)
+      
+      // 为了兼容性，同时维护旧的 storage 键（逐步迁移）
+      storage.set('token', this.userState.auth.token)
+      storage.set('refreshToken', this.userState.auth.refreshToken)
+      storage.set('userInfo', this.userState.profile)
+      storage.set('cached_user_info', this.userState.cache.cachedUserInfo)
+      storage.set('secure_seed', this.userState.auth.secureSeed)
+    },
+    
+    // 从 storage 恢复用户状态
+    _restoreUserState() {
+      try {
+        // 确保 userState 结构完整
+        if (!this.userState) {
+          this.userState = {
+            auth: {
+              token: null,
+              refreshToken: null,
+              secureSeed: null,
+              loginTime: null,
+              expiresAt: null
+            },
+            profile: {
+              userId: null,
+              nickname: null,
+              avatarUrl: null,
+              role: null,
+              phone: null,
+              wechatOpenid: null,
+              isVerified: false
+            },
+            cache: {
+              checkinData: null,
+              lastUpdate: null,
+              cachedUserInfo: null
+            }
+          }
+        }
+        
+        // 优先尝试从新的 userState 恢复
+        const savedState = storage.get('userState')
+        if (savedState) {
+          this.userState = savedState
+          this.isLoggedIn = !!this.userState.auth.token
+          console.log('✅ 从 userState 恢复用户状态')
+          return true
+        }
+        
+        // 兼容性：从旧的 storage 键恢复
+        const token = storage.get('token')
+        const refreshToken = storage.get('refreshToken')
+        const userInfo = storage.get('userInfo')
+        const cachedUserInfo = storage.get('cached_user_info')
+        const secureSeed = storage.get('secure_seed')
+        
+        if (token && userInfo) {
+          this.userState = {
+            auth: {
+              token,
+              refreshToken,
+              secureSeed,
+              loginTime: null,
+              expiresAt: null
+            },
+            profile: userInfo,
+            cache: {
+              checkinData: null,
+              lastUpdate: null,
+              cachedUserInfo
+            }
+          }
+          this.isLoggedIn = true
+          console.log('✅ 从旧格式恢复用户状态')
+          
+          // 恢复后立即持久化为新格式
+          this._persistUserState()
+          return true
+        }
+        
+        console.log('📱 无有效用户状态，保持未登录')
+        return false
+      } catch (error) {
+        console.error('恢复用户状态失败:', error)
+        // 确保即使出错也有完整的 userState 结构
+        this.userState = {
+          auth: {
+            token: null,
+            refreshToken: null,
+            secureSeed: null,
+            loginTime: null,
+            expiresAt: null
+          },
+          profile: {
+            userId: null,
+            nickname: null,
+            avatarUrl: null,
+            role: null,
+            phone: null,
+            wechatOpenid: null,
+            isVerified: false
+          },
+          cache: {
+            checkinData: null,
+            lastUpdate: null,
+            cachedUserInfo: null
+          }
+        }
+        return false
+      }
+    },
+    
+    // 清理所有用户相关的 storage
+    _clearUserStorage() {
+      // 清理新的统一存储
+      storage.remove('userState')
+      
+      // 清理旧的分散存储
+      storage.remove('token')
+      storage.remove('refreshToken')
+      storage.remove('userInfo')
+      storage.remove('cached_user_info')
+      storage.remove('secure_seed')
+      storage.remove('checkinCache')
+    },
     
     async login(loginData) {
       this.isLoading = true
-      // 定义code变量在更广的作用域，确保finally块中可以访问
       let code = null
       try {
         // 检查是否正在处理相同的code，防止重复请求
@@ -44,35 +220,35 @@ export const useUserStore = defineStore('user', {
           throw new Error(`登录失败: ${apiResponse.msg || '未知错误'}`)
         }
         
-        // 适配真实API响应格式 - 从data中获取token和其他信息
-        const tokenData = {
+        // 更新用户状态
+        const now = new Date()
+        this.userState.auth = {
           token: apiResponse.data?.token,
-          refresh_token: apiResponse.data?.refresh_token,
+          refreshToken: apiResponse.data?.refresh_token,
+          secureSeed: this.userState.auth.secureSeed || storage.get('secure_seed'),
+          loginTime: now.toISOString(),
+          expiresAt: apiResponse.data?.expires_at || null
+        }
+        
+        this.userState.profile = {
           userId: apiResponse.data?.user_id,
-          role: apiResponse.data?.role || null, // 从后端直接获取角色
-          isVerified: apiResponse.data?.is_verified || false,
-          createdAt: new Date().toISOString(),
-          is_new_user: apiResponse.data?.is_new_user || false
+          nickname: apiResponse.data?.nickname || apiResponse.data?.nickName,
+          avatarUrl: apiResponse.data?.avatar_url,
+          role: apiResponse.data?.role || null,
+          phone: apiResponse.data?.phone_number,
+          wechatOpenid: apiResponse.data?.wechat_openid,
+          isVerified: apiResponse.data?.is_verified || false
         }
         
-        // 验证必需的字段是否存在
-        if (!tokenData.token) {
-          throw new Error('登录响应中缺少token')
-        }
-        
-        this.setToken(tokenData.token)
         this.isLoggedIn = true
         
-        storage.set('token', tokenData.token)
-        // 如果响应中包含refresh token，也保存它
-        if (tokenData.refresh_token) {
-          storage.set('refreshToken', tokenData.refresh_token)
-        }
+        // 持久化状态
+        this._persistUserState()
         
-        // 登录成功后立即获取完整的用户信息，确保昵称等信息是最新的
+        // 登录成功后立即获取完整的用户信息
         await this.fetchUserInfo()
         
-        return tokenData
+        return apiResponse.data
       } catch (error) {
         console.error('登录过程发生错误:', error)
         throw error
@@ -97,13 +273,11 @@ export const useUserStore = defineStore('user', {
           throw new Error(`更新用户信息失败: ${response.msg || '未知错误'}`)
         }
         
-        // 更新本地存储的用户信息 - 现在使用更新后的用户信息
-        if (this.userInfo) {
-          // 对于更新用户信息，我们可能需要重新获取用户信息
-          // 或者直接更新传入的字段
-          Object.assign(this.userInfo, userData)
-          storage.set('userInfo', this.userInfo)
-        }
+        // 更新用户状态
+        Object.assign(this.userState.profile, userData)
+        
+        // 持久化状态
+        this._persistUserState()
         
         return response
       } catch (error) {
@@ -126,19 +300,23 @@ export const useUserStore = defineStore('user', {
           throw new Error(`获取用户信息失败: ${response.msg || '未知错误'}`)
         }
         
-        this.setUserInfo(response.data)
-        storage.set('userInfo', response.data)
+        // 更新用户状态
+        this.userState.profile = {
+          ...this.userState.profile,
+          ...response.data
+        }
+        this.userState.cache.lastUpdate = Date.now()
+        
+        // 持久化状态
+        this._persistUserState()
         
         return response.data
       } catch (error) {
         console.error('获取用户信息失败:', error)
         
-        // 如果获取用户信息失败，但是token仍然有效，我们可以尝试从本地存储中获取用户信息
-        // 或者至少保持当前的用户状态而不完全失败
-        const localUserInfo = storage.get('userInfo')
-        if (localUserInfo) {
-          this.setUserInfo(localUserInfo)
-          console.log('从本地存储恢复用户信息')
+        // 如果获取用户信息失败，但token仍然有效，保持当前状态
+        if (this.isTokenValid) {
+          console.log('Token有效，保持当前用户状态')
         }
         
         throw error
@@ -148,54 +326,134 @@ export const useUserStore = defineStore('user', {
     },
     
     logout() {
+      // 调用登出API
       authApi.logout().catch(() => {})
-      this.userInfo = null
-      this.token = null
+      
+      // 保留必要信息用于快速重新登录
+      const wechatOpenid = this.userState.profile.wechatOpenid
+      
+      // 重置用户状态
+      this.userState = {
+        auth: {
+          token: null,
+          refreshToken: null,
+          secureSeed: this.userState.auth.secureSeed, // 保留安全种子
+          loginTime: null,
+          expiresAt: null
+        },
+        profile: {
+          userId: null,
+          nickname: null,
+          avatarUrl: null,
+          role: null,
+          phone: null,
+          wechatOpenid, // 保留微信OpenID用于快速登录
+          isVerified: false
+        },
+        cache: {
+          checkinData: null,
+          lastUpdate: null,
+          cachedUserInfo: null
+        }
+      }
+      
       this.isLoggedIn = false
-      this.role = null
       
-      storage.remove('token')
-      storage.remove('refreshToken')
-      const cached = storage.get('userInfo')
-      if (cached && (cached.wechatOpenid || cached.wechat_openid)) {
-        storage.set('userInfo', cached)
+      // 清理存储
+      this._clearUserStorage()
+      
+      // 保留必要信息
+      if (wechatOpenid) {
+        storage.set('userInfo', { wechatOpenid })
       }
     },
     
-    setUserInfo(userInfo) {
-      this.userInfo = userInfo
-      this.role = userInfo.role
-    },
-    
-    setToken(token) {
-      this.token = token
-    },
-    
+    // 初始化用户状态
     initUserState() {
-      const token = storage.get('token')
-      const refreshToken = storage.get('refreshToken')
-      const userInfo = storage.get('userInfo')
+      console.log('=== 开始初始化用户状态 ===')
       
-      if (token && userInfo) {
-        this.token = token
-        this.userInfo = userInfo
-        this.role = userInfo.role
-        this.isLoggedIn = true
+      // 尝试从存储恢复状态
+      const restored = this._restoreUserState()
+      
+      if (restored) {
+        console.log('✅ 用户状态恢复成功')
+        console.log('用户昵称:', this.userState.profile.nickname)
+        console.log('用户角色:', this.userState.profile.role)
+        console.log('Token有效:', this.isTokenValid)
+        
+        // 如果Token无效，清理状态
+        if (!this.isTokenValid) {
+          console.log('⚠️ Token已过期，清理用户状态')
+          this.logout()
+        }
+      } else {
+        console.log('📱 用户未登录，状态已清空')
       }
-      if (!token && userInfo) {
-        this.userInfo = userInfo
-        this.role = userInfo.role
-        this.isLoggedIn = false
-      }
+      
+      console.log('=== 用户状态初始化完成 ===')
     },
     
+    // 更新用户角色
     async updateUserRole(role) {
-      // 更新角色
-      this.role = role
-      if (this.userInfo) {
-        this.userInfo.role = role
-        await this.updateUserInfo({ role })
-        storage.set('userInfo', this.userInfo)
+      this.userState.profile.role = role
+      await this.updateUserInfo({ role })
+    },
+    
+    // 缓存管理
+    updateCache(cacheData) {
+      // 确保 userState 和 cache 存在
+      if (!this.userState) {
+        this.userState = { cache: {} }
+      }
+      if (!this.userState.cache) {
+        this.userState.cache = {}
+      }
+      
+      this.userState.cache = {
+        ...this.userState.cache,
+        ...cacheData,
+        lastUpdate: Date.now()
+      }
+      this._persistUserState()
+    },
+    
+    clearCache() {
+      // 确保 userState 存在
+      if (!this.userState) {
+        this.userState = {}
+      }
+      
+      this.userState.cache = {
+        checkinData: null,
+        lastUpdate: null,
+        cachedUserInfo: null
+      }
+      this._persistUserState()
+    },
+    
+    // 检查并刷新 Token
+    async refreshTokenIfNeeded() {
+      if (!this.userState.auth.refreshToken) {
+        throw new Error('无刷新Token')
+      }
+      
+      if (this.isTokenValid) {
+        return this.userState.auth.token
+      }
+      
+      try {
+        const response = await authApi.refreshToken(this.userState.auth.refreshToken)
+        if (response.code === 1) {
+          this.userState.auth.token = response.data.token
+          this.userState.auth.expiresAt = response.data.expires_at
+          this._persistUserState()
+          return response.data.token
+        }
+        throw new Error('刷新Token失败')
+      } catch (error) {
+        console.error('刷新Token失败:', error)
+        this.logout()
+        throw error
       }
     }
   }
