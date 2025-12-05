@@ -114,11 +114,26 @@ export const useUserStore = defineStore('user', {
         
         // 优先尝试从新的 userState 恢复
         const savedState = storage.get('userState')
+        console.log('🔍 诊断: savedState =', savedState)
+        console.log('🔍 诊断: savedState 类型 =', typeof savedState)
         if (savedState) {
-          this.userState = savedState
-          this.isLoggedIn = !!this.userState.auth.token
-          console.log('✅ 从 userState 恢复用户状态')
-          return true
+          console.log('🔍 诊断: savedState.auth =', savedState.auth)
+          console.log('🔍 诊断: savedState.auth 类型 =', typeof savedState.auth)
+          if (savedState.auth) {
+            console.log('🔍 诊断: savedState.auth.token =', savedState.auth.token)
+          }
+          
+          // 验证 savedState 结构完整性
+          if (savedState && typeof savedState === 'object' && savedState.auth) {
+            this.userState = savedState
+            this.isLoggedIn = !!this.userState.auth.token
+            console.log('✅ 从 userState 恢复用户状态')
+            return true
+          } else {
+            console.warn('⚠️ userState 结构不完整，尝试从旧格式恢复')
+            // 删除损坏的数据
+            storage.remove('userState')
+          }
         }
         
         // 兼容性：从旧的 storage 键恢复

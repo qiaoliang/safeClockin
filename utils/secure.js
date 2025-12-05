@@ -163,8 +163,21 @@ export function decodeObject(str) {
     const mask = prng(buf.length)
     for (let i = 0; i < buf.length; i++) buf[i] ^= mask[i]
     const json = utf8Decode(buf)
-    try { return JSON.parse(json) } catch(e) { return json }
+    try { 
+      const parsed = JSON.parse(json)
+      // 验证解析后的对象结构完整性
+      if (parsed && typeof parsed === 'object') {
+        return parsed
+      } else {
+        console.warn('decodeObject: 解析的对象结构不完整', parsed)
+        return null
+      }
+    } catch(e) { 
+      console.warn('decodeObject: JSON解析失败', e)
+      return json 
+    }
   } catch(e) {
+    console.error('decodeObject: 解码失败', e)
     return null
   }
 }
