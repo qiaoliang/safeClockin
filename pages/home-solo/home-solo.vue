@@ -23,15 +23,21 @@
       </view>
       
       <view class="overview-cards">
-        <view class="overview-card today-checkin">
-          <text class="card-title">今日待打卡</text>
-          <text class="card-number">{{ pendingCheckinCount }}/{{ allRulesCount }}</text>
+        <view class="overview-card pending-checkin">
+          <text class="card-title">待打卡</text>
+          <text class="card-number">{{ pendingCheckinCount }}</text>
           <text class="card-desc">项目</text>
         </view>
         
         <view class="overview-card completed-checkin">
-          <text class="card-title">完成/错过</text>
-          <text class="card-number">{{ completedCheckinCount }} / {{ missedCheckinCount }}</text>
+          <text class="card-title">已完成</text>
+          <text class="card-number">{{ completedCheckinCount }}</text>
+          <text class="card-desc">项目</text>
+        </view>
+        
+        <view class="overview-card missed-checkin">
+          <text class="card-title">已错过</text>
+          <text class="card-number">{{ missedCheckinCount }}</text>
           <text class="card-desc">项目</text>
         </view>
         
@@ -358,17 +364,22 @@ onMounted(() => {
 }
 
 .overview-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 24rpx;
 }
 
 .overview-card {
-  flex: 1;
   background: white;
   border-radius: 24rpx;
-  padding: 32rpx;
+  padding: 32rpx 24rpx;
   text-align: center;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160rpx;
 }
 
 .card-title {
@@ -376,6 +387,7 @@ onMounted(() => {
   font-size: 24rpx;
   color: #666;
   margin-bottom: 16rpx;
+  font-weight: 500;
 }
 
 .card-number {
@@ -384,6 +396,7 @@ onMounted(() => {
   font-weight: bold;
   color: #624731;
   margin-bottom: 8rpx;
+  line-height: 1;
 }
 
 .card-desc {
@@ -392,16 +405,20 @@ onMounted(() => {
   color: #999;
 }
 
-.today-checkin {
-  border-top: 8rpx solid #F48224;
+.pending-checkin {
+  border-top: 8rpx solid #FF7A3D;
 }
 
 .completed-checkin {
-  border-top: 8rpx solid #10B981;
+  border-top: 8rpx solid #4CAF50;
+}
+
+.missed-checkin {
+  border-top: 8rpx solid #F44336;
 }
 
 .completion-rate {
-  border-top: 8rpx solid #3B82F6;
+  border-top: 8rpx solid #2196F3;
 }
 
 .today-tasks-section {
