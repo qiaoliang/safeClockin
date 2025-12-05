@@ -1,7 +1,7 @@
 import { storage } from '@/store/modules/storage'
 // api/request.js
-const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
-//const baseURL ='http://localhost:9999'
+//const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
+const baseURL ='http://localhost:9999'
 // 用于跟踪token刷新状态，防止并发刷新
 let isRefreshing = false
 let refreshSubscribers = []
@@ -74,6 +74,66 @@ async function refreshToken() {
   return null
 }
 
+// 检查token是否为空或无效
+function validateToken(token) {
+  return token !== undefined && token !== null && token !== '' && 
+         (typeof token !== 'string' || token.trim() !== '')
+}
+
+// 导出测试需要的函数
+export { validateToken, decodeToken, isTokenExpired, refreshToken, NO_TOKEN_REQUIRED_URLS }
+
+// 显示过期确认对话框
+function showExpiredTokenDialog() {
+  return new Promise((resolve) => {
+    uni.showModal({
+      title: '提示',
+      content: '用户登录已过期，请重新登录',
+      showCancel: false,
+      confirmText: '确定',
+      success: () => {
+        resolve()
+      }
+    })
+    
+    // 5秒后自动跳转
+    setTimeout(() => {
+      uni.hideToast()
+      uni.hideLoading()
+      resolve()
+    }, 5000)
+  })
+}
+
+// 处理token过期
+async function handleTokenExpired() {
+  // 保存用户基本信息，不清除微信绑定状态
+  const userInfo = storage.get('userInfo') || uni.getStorageSync('userInfo')
+  
+  // 只清除认证相关信息，保留用户基本信息
+  uni.removeStorageSync('token')
+  uni.removeStorageSync('refreshToken')
+  
+  // 标记为重新登录场景
+  storage.set('login_scenario', 'relogin')
+  uni.setStorageSync('login_scenario', 'relogin')
+  
+  await showExpiredTokenDialog()
+  
+  // 重新定向到登录页，但保留用户信息以便识别
+  uni.redirectTo({
+    url: '/pages/login/login'
+  })
+}
+
+// 不需要token验证的API白名单
+const NO_TOKEN_REQUIRED_URLS = [
+  '/api/login',           // 微信登录
+  '/api/send_sms',        // 发送短信验证码
+  '/api/login_phone',     // 手机号登录
+  '/api/user/profile'     // 获取用户信息（首次登录时需要）
+]
+
 export const request = (options) => {
   return new Promise(async (resolve, reject) => {
     let token = storage.get('token') || uni.getStorageSync('token')
@@ -85,6 +145,21 @@ export const request = (options) => {
         method: options.method || 'GET',
         data: options.data
       })
+    }
+    
+    // 检查是否为不需要token的API
+    const isNoTokenRequired = NO_TOKEN_REQUIRED_URLS.some(url => 
+      options.url.includes(url)
+    )
+    
+    // 只对需要token的请求进行验证
+    if (!isNoTokenRequired) {
+      // 检查token是否存在且有效
+      if (!token || !validateToken(token)) {
+        handleTokenExpired()
+        reject(new Error('Token无效或不存在'))
+        return
+      }
     }
     
     // 检查token是否即将过期，如果是则刷新
@@ -221,16 +296,4 @@ function handleResponse(res, fullUrl, resolve, reject, options = {}) {
   }
 }
 
-function handleTokenExpired() {
-  uni.removeStorageSync('token')
-  uni.removeStorageSync('refreshToken')
-  uni.removeStorageSync('userInfo')
-  uni.redirectTo({
-    url: '/pages/login/login'
-  })
-  uni.showToast({
-    title: '登录已过期，请重新登录',
-    icon: 'none',
-    duration: 2000
-  })
-}
+

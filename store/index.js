@@ -6,3 +6,4 @@ const pinia = createPinia()
 export default pinia
 
 export { useUserStore } from './modules/user'
+export { useCheckinStore } from './modules/checkin'

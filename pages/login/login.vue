@@ -80,21 +80,32 @@ const onWechatLogin = async () => {
       throw new Error('获取微信登录凭证失败')
     }
     
-    // 第二步：检查本地是否已缓存用户信息及微信绑定
+    // 第二步：检查登录场景和用户状态
+    const loginScenario = storage.get('login_scenario') || uni.getStorageSync('login_scenario')
     const cachedUserInfo = storage.get('cached_user_info')
-    const localUserInfo = storage.get('userInfo')
+    const localUserInfo = storage.get('userInfo') || uni.getStorageSync('userInfo')
     const hasWechatBind = !!(localUserInfo && (localUserInfo.wechatOpenid || localUserInfo.wechat_openid))
     
-    if (hasWechatBind) {
-      console.log('检测到已绑定微信，执行非首次登录流程')
+    console.log('登录场景:', loginScenario, '微信绑定状态:', hasWechatBind)
+    
+    if (loginScenario === 'relogin' && hasWechatBind) {
+      // 重新登录场景：直接使用微信绑定信息登录
+      console.log('重新登录场景，使用微信绑定信息')
+      await handleLoginSuccess({ code: loginRes.code })
+      // 清除场景标记
+      storage.remove('login_scenario')
+      uni.removeStorageSync('login_scenario')
+    } else if (hasWechatBind) {
+      // 已有微信绑定：非首次登录
+      console.log('检测到微信绑定，执行非首次登录流程')
       await handleLoginSuccess({ code: loginRes.code })
     } else if (cachedUserInfo) {
+      // 有缓存的用户信息
       console.log('检测到缓存的用户信息，执行非首次登录流程')
       await handleLoginSuccess({ code: loginRes.code })
     } else {
-      console.log('未检测到缓存的用户信息，执行首次登录流程')
-      storage.remove('token')
-      storage.remove('refreshToken')
+      // 首次登录场景
+      console.log('首次登录场景')
       storage.remove('cached_user_info')
       loginCode.value = loginRes.code
       showUserInfoForm.value = true

@@ -20,6 +20,9 @@
       <view class="section-header">
         <text class="section-title">今日打卡概览</text>
         <text class="section-subtitle">完成打卡，让关爱无处不在</text>
+        <view class="refresh-btn" @click="refreshCheckinData" :class="{ loading: checkinStore.isLoading }">
+          <text class="refresh-icon">{{ checkinStore.isLoading ? '⏳' : '🔄' }}</text>
+        </view>
       </view>
       
       <view class="overview-cards">
@@ -87,12 +90,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/store/modules/user'
-import { request } from '@/api/request'
+import { useCheckinStore } from '@/store/modules/checkin'
 
 const userStore = useUserStore()
-const checkinItems = ref([])
-const allRulesCount = ref(0)
-const nearestPending = ref(null)
+const checkinStore = useCheckinStore()
+
 const mainBtnText = ref('今日待办')
 const mainBtnSubtext = ref('点击进入打卡事项列表')
 const clicking = ref(false)
@@ -100,26 +102,14 @@ const clicking = ref(false)
 // 计算属性：用户信息
 const userInfo = computed(() => userStore.userInfo)
 
-// 计算属性：今日打卡数量
-const todayCheckinCount = computed(() => checkinItems.value.length)
-const pendingCheckinCount = computed(() => checkinItems.value.filter(item => item.status !== 'checked' && item.status !== 'missed').length)
-const finishedOrMissedCount = computed(() => checkinItems.value.filter(item => item.status === 'checked' || item.status === 'missed').length)
-
-// 计算属性：已完成打卡数量
-const completedCheckinCount = computed(() => {
-  return checkinItems.value.filter(item => item.status === 'checked').length
-})
-
-const missedCheckinCount = computed(() => {
-  return checkinItems.value.filter(item => item.status === 'missed').length
-})
-
-// 计算属性：完成率
-const completionRate = computed(() => {
-  const total = todayCheckinCount.value
-  if (total === 0) return 0
-  return Math.round((completedCheckinCount.value / total) * 100)
-})
+// 计算属性：今日打卡数量（从store获取）
+const todayCheckinCount = computed(() => checkinStore.todayCheckinCount)
+const pendingCheckinCount = computed(() => checkinStore.pendingCheckinCount)
+const completedCheckinCount = computed(() => checkinStore.completedCheckinCount)
+const missedCheckinCount = computed(() => checkinStore.missedCheckinCount)
+const allRulesCount = computed(() => checkinStore.allRulesCount)
+const nearestPending = computed(() => checkinStore.nearestPending)
+const completionRate = computed(() => checkinStore.completionRate)
 
 const disableMainBtn = computed(() => {
   if (allRulesCount.value === 0) return false
@@ -137,36 +127,25 @@ const getRoleText = (role) => {
   return roleMap[role] || '用户'
 }
 
-// 获取今日打卡事项
-const getTodayCheckinItems = async () => {
+// 初始化打卡数据
+const initCheckinData = async () => {
   try {
-    const response = await request({
-      url: '/api/checkin/today',
-      method: 'GET'
-    })
-    
-    if (response.code === 1) {
-      checkinItems.value = (response.data.checkin_items || []).map(it => ({ ...it }))
-      normalizeMissedStatuses()
-      computeNearestPending()
-      updateMainButton()
-    } else {
-      console.error('获取今日打卡事项失败:', response.msg)
-    }
+    await checkinStore.initCheckinData()
+    updateMainButton()
   } catch (error) {
-    console.error('获取今日打卡事项失败:', error)
+    console.error('初始化打卡数据失败:', error)
   }
 }
 
-const getAllRulesCount = async () => {
+// 刷新打卡数据
+const refreshCheckinData = async () => {
   try {
-    const res = await request({ url: '/api/checkin/rules', method: 'GET' })
-    if (res.code === 1) {
-      allRulesCount.value = (res.data?.rules || []).length
-      updateMainButton()
-    }
-  } catch(e){
-    console.error(e)
+    await checkinStore.refreshData()
+    updateMainButton()
+    uni.showToast({ title: '数据已更新', icon: 'success' })
+  } catch (error) {
+    console.error('刷新打卡数据失败:', error)
+    uni.showToast({ title: '刷新失败', icon: 'none' })
   }
 }
 
@@ -174,28 +153,6 @@ const parseTodayTime = (hhmmss) => {
   const todayStr = new Date().toISOString().slice(0,10)
   const t = hhmmss || '00:00:00'
   return new Date(`${todayStr}T${t}`)
-}
-
-const normalizeMissedStatuses = () => {
-  const now = new Date()
-  checkinItems.value.forEach(it => {
-    const planned = parseTodayTime(it.planned_time)
-    const diffMin = (now - planned) / 60000
-    if (diffMin > 30 && it.status !== 'checked') {
-      it.status = 'missed'
-    }
-  })
-}
-
-const computeNearestPending = () => {
-  const pending = checkinItems.value.filter(it => it.status !== 'checked' && it.status !== 'missed')
-  if (!pending.length) { nearestPending.value = null; return }
-  pending.sort((a,b)=>{
-    const da = parseTodayTime(a.planned_time)
-    const db = parseTodayTime(b.planned_time)
-    return db - da // 时间倒序
-  })
-  nearestPending.value = pending[0]
 }
 
 const updateMainButton = () => {
@@ -233,31 +190,32 @@ const handleMainAction = async () => {
     goToCheckinList()
     return
   }
+  
   const now = new Date()
   const planned = parseTodayTime(nearestPending.value.planned_time)
   const diffMs = now - planned
   const diffMin = diffMs / 60000
+  
   if (diffMin < -30) {
     uni.showToast({ title: '打卡时间未到，请于规定时间前30分钟内再来打卡', icon: 'none', duration: 3000 })
     return
   }
+  
   if (diffMin > 30) {
     try {
-      await request({ url: '/api/checkin/miss', method: 'POST', data: { rule_id: nearestPending.value.rule_id } })
-    } catch(e){}
+      await checkinStore.markAsMissed(nearestPending.value.rule_id)
+      updateMainButton()
+    } catch(e) {}
     uni.showToast({ title: '已错过打卡时间', icon: 'none', duration: 3000 })
-    await getTodayCheckinItems()
     return
   }
+  
   try {
-    const res = await request({ url: '/api/checkin', method: 'POST', data: { rule_id: nearestPending.value.rule_id } })
-    if (res.code === 1) {
-      uni.showToast({ title: '打卡成功', icon: 'success' })
-      await getTodayCheckinItems()
-    } else {
-      uni.showToast({ title: res.msg || '打卡失败', icon: 'none' })
-    }
-  } catch(e){
+    await checkinStore.performCheckin(nearestPending.value.rule_id)
+    updateMainButton()
+    uni.showToast({ title: '打卡成功', icon: 'success' })
+  } catch(e) {
+    console.error('打卡失败:', e)
     uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' })
   }
 }
@@ -286,8 +244,7 @@ const goToSupervisionFeatures = () => {
 }
 
 onMounted(() => {
-  getTodayCheckinItems()
-  getAllRulesCount()
+  initCheckinData()
 })
 </script>
 
@@ -347,6 +304,9 @@ onMounted(() => {
 
 .section-header {
   margin-bottom: 24rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .section-title {
@@ -363,62 +323,84 @@ onMounted(() => {
   color: #666;
 }
 
+.refresh-btn {
+  padding: 8rpx 16rpx;
+  background: rgba(244, 130, 36, 0.1);
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  transform: scale(0.95);
+  background: rgba(244, 130, 36, 0.2);
+}
+
+.refresh-btn.loading {
+  opacity: 0.6;
+}
+
+.refresh-icon {
+  font-size: 24rpx;
+}
+
 .overview-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24rpx;
+  display: flex;
+  gap: 12rpx;
+  overflow-x: auto;
+  padding-bottom: 4rpx;
 }
 
 .overview-card {
   background: white;
-  border-radius: 24rpx;
-  padding: 32rpx 24rpx;
+  border-radius: 12rpx;
+  padding: 16rpx 12rpx;
   text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 160rpx;
+  min-width: 140rpx;
+  flex: 1;
 }
 
 .card-title {
   display: block;
-  font-size: 24rpx;
+  font-size: 18rpx;
   color: #666;
-  margin-bottom: 16rpx;
+  margin-bottom: 6rpx;
   font-weight: 500;
 }
 
 .card-number {
   display: block;
-  font-size: 48rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: #624731;
-  margin-bottom: 8rpx;
+  margin-bottom: 2rpx;
   line-height: 1;
 }
 
 .card-desc {
   display: block;
-  font-size: 20rpx;
+  font-size: 16rpx;
   color: #999;
 }
 
 .pending-checkin {
-  border-top: 8rpx solid #FF7A3D;
+  border-top: 4rpx solid #FF7A3D;
 }
 
 .completed-checkin {
-  border-top: 8rpx solid #4CAF50;
+  border-top: 4rpx solid #4CAF50;
 }
 
 .missed-checkin {
-  border-top: 8rpx solid #F44336;
+  border-top: 4rpx solid #F44336;
 }
 
 .completion-rate {
-  border-top: 8rpx solid #2196F3;
+  border-top: 4rpx solid #2196F3;
 }
 
 .today-tasks-section {
