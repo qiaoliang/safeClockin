@@ -15,6 +15,7 @@ export default defineConfig({
       'node_modules/',
       'tests/unit/',
       'tests/e2e/',
+      'tests/integration/disabled/',
       'unpackage/',
       'coverage/',
       '**/*.d.ts',
