@@ -575,30 +575,3 @@ export const useUserStore = defineStore('user', {
     }
   }
 })
-    
-    // 强制清理损坏的用户状态（用于调试和异常恢复）
-    forceClearUserState() {
-      console.log('🧹 强制清理用户状态')
-      this._clearUserStorage()
-      this._ensureUserStateIntegrity()
-      this.isLoggedIn = false
-      this.currentProcessingCode = null
-    },
-    
-    // 诊断用户状态（用于调试）
-    diagnoseUserState() {
-      const diagnosis = {
-        isLoggedIn: this.isLoggedIn,
-        hasToken: !!this.userState.auth.token,
-        tokenValid: this.isTokenValid,
-        hasProfile: !!this.userState.profile.userId,
-        hasNickname: !!this.userState.profile.nickname,
-        role: this.userState.profile.role,
-        storageData: storage.get('userState'),
-        encryptionSeed: uni.getStorageSync('secure_seed')
-      }
-      console.log('🔍 用户状态诊断:', diagnosis)
-      return diagnosis
-    }
-  }
-})
