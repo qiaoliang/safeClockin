@@ -6,14 +6,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./tests/setup.js'],
+    setupFiles: ['./tests/setup.integration.js'],
     include: [
-      'tests/unit/**/*.test.js',
-      'tests/unit/**/*.spec.js'
+      'tests/integration/**/*.test.js',
+      'tests/integration/**/*.spec.js'
     ],
     exclude: [
       'node_modules/',
-      'tests/integration/',
+      'tests/unit/',
       'tests/e2e/',
       'unpackage/',
       'coverage/',
@@ -31,7 +31,9 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.config.*'
       ]
-    }
+    },
+    testTimeout: 10000, // 集成测试超时时间设为10秒
+    hookTimeout: 10000
   },
   resolve: {
     alias: {

@@ -4,27 +4,32 @@
   "description": "SafeGuard Frontend - uni-app based safety monitoring app",
   "scripts": {
     "test": "vitest",
+    "test:unit": "vitest --config vitest.config.js",
+    "test:func": "vitest --config vitest.integration.config.js",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:run": "vitest run",
+    "test:unit:run": "vitest run --config vitest.config.js",
+    "test:func:run": "vitest run --config vitest.integration.config.js",
     "lint": "eslint . --ext .vue,.js,.ts",
     "lint:fix": "eslint . --ext .vue,.js,.ts --fix",
     "build:mp-weixin": "./mpbuild.sh"
   },
   "dependencies": {
-    "vue": "^3.0.0",
-    "pinia": "^2.0.0"
+    "pinia": "^2.0.0",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vue/test-utils": "^2.0.0",
-    "vitest": "^1.0.0",
-    "jsdom": "^23.0.0",
-    "eslint": "^8.0.0",
-    "eslint-plugin-vue": "^9.0.0",
-    "eslint-plugin-vitest": "^0.3.0",
     "@vitest/coverage-v8": "^1.0.0",
-    "@vitest/ui": "^1.0.0"
+    "@vitest/ui": "^1.0.0",
+    "@vue/test-utils": "^2.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-vitest": "^0.3.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "jsdom": "^23.0.0",
+    "msw": "^2.12.4",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
