@@ -139,36 +139,13 @@ export const useUserStore = defineStore('user', {
     _restoreUserState() {
       try {
         // 确保 userState 结构完整
-        if (!this.userState) {
-          this.userState = {
-            auth: {
-              token: null,
-              refreshToken: null,
-              secureSeed: null,
-              loginTime: null,
-              expiresAt: null
-            },
-            profile: {
-              userId: null,
-              nickname: null,
-              avatarUrl: null,
-              role: null,
-              phone: null,
-              wechatOpenid: null,
-              isVerified: false
-            },
-            cache: {
-              checkinData: null,
-              lastUpdate: null,
-              cachedUserInfo: null
-            }
-          }
-        }
+        this._ensureUserStateIntegrity()
         
         // 优先尝试从新的 userState 恢复
         const savedState = storage.get('userState')
         console.log('🔍 诊断: savedState =', savedState)
         console.log('🔍 诊断: savedState 类型 =', typeof savedState)
+        
         if (savedState) {
           console.log('🔍 诊断: savedState.auth =', savedState.auth)
           console.log('🔍 诊断: savedState.auth 类型 =', typeof savedState.auth)
@@ -176,49 +153,57 @@ export const useUserStore = defineStore('user', {
             console.log('🔍 诊断: savedState.auth.token =', savedState.auth.token)
           }
           
-          // 验证 savedState 结构完整性
-          if (savedState && typeof savedState === 'object' && savedState.auth) {
-            this.userState = savedState
+          // 更宽松的验证逻辑 - 只要是对象就尝试恢复
+          if (savedState && typeof savedState === 'object') {
+            // 确保基本结构存在，如果缺失则补充
+            const restoredState = {
+              auth: savedState.auth || {
+                token: null,
+                refreshToken: null,
+                secureSeed: null,
+                loginTime: null,
+                expiresAt: null
+              },
+              profile: savedState.profile || {
+                userId: null,
+                nickname: null,
+                avatarUrl: null,
+                role: null,
+                phone: null,
+                wechatOpenid: null,
+                isVerified: false
+              },
+              cache: savedState.cache || {
+                checkinData: null,
+                lastUpdate: null,
+                cachedUserInfo: null
+              }
+            }
+            
+            this.userState = restoredState
             this.isLoggedIn = !!this.userState.auth.token
             console.log('✅ 从 userState 恢复用户状态')
             return true
           } else {
-            console.warn('⚠️ userState 结构不完整，尝试从旧格式恢复')
-            // 删除损坏的数据
+            console.warn('⚠️ userState 数据格式异常，清理并重置')
+            // 删除损坏的数据，但先备份关键信息
+            const wechatOpenid = savedState?.profile?.wechatOpenid
             storage.remove('userState')
+            
+            // 重新初始化状态，保留微信OpenID
+            this._ensureUserStateIntegrity()
+            if (wechatOpenid) {
+              this.userState.profile.wechatOpenid = wechatOpenid
+            }
           }
         }
-        
-        // 不再支持旧格式恢复，强制使用新格式
         
         console.log('📱 无有效用户状态，保持未登录')
         return false
       } catch (error) {
         console.error('恢复用户状态失败:', error)
         // 确保即使出错也有完整的 userState 结构
-        this.userState = {
-          auth: {
-            token: null,
-            refreshToken: null,
-            secureSeed: null,
-            loginTime: null,
-            expiresAt: null
-          },
-          profile: {
-            userId: null,
-            nickname: null,
-            avatarUrl: null,
-            role: null,
-            phone: null,
-            wechatOpenid: null,
-            isVerified: false
-          },
-          cache: {
-            checkinData: null,
-            lastUpdate: null,
-            cachedUserInfo: null
-          }
-        }
+        this._ensureUserStateIntegrity()
         return false
       }
     },
@@ -519,6 +504,101 @@ export const useUserStore = defineStore('user', {
       this.isLoggedIn = false
       
       this._persistUserState()
+    },
+
+    // 强制清理用户状态（用于调试和异常恢复）
+    forceClearUserState() {
+      console.log('🧹 强制清理用户状态')
+      this.userState = {
+        auth: {
+          token: null,
+          refreshToken: null,
+          secureSeed: null,
+          loginTime: null,
+          expiresAt: null
+        },
+        profile: {
+          userId: null,
+          nickname: null,
+          avatarUrl: null,
+          role: null,
+          phone: null,
+          wechatOpenid: null,
+          isVerified: false
+        },
+        cache: {
+          checkinData: null,
+          lastUpdate: null,
+          cachedUserInfo: null
+        }
+      }
+      this.isLoggedIn = false
+      this.isLoading = false
+      this.currentProcessingCode = null
+      
+      // 清理存储
+      storage.clear()
+      uni.clearStorageSync()
+      
+      console.log('✅ 用户状态已强制清理')
+    },
+
+    // 诊断用户状态（用于调试）
+    diagnoseUserState() {
+      console.log('🔍 用户状态诊断开始')
+      
+      // 检查 userState 结构
+      console.log('诊断: userState 类型 =', typeof this.userState)
+      if (this.userState) {
+        console.log('诊断: userState.auth =', this.userState.auth)
+        console.log('诊断: userState.auth.token =', this.userState.auth.token)
+        console.log('诊断: userState.profile =', this.userState.profile)
+      }
+      
+      // 检查存储状态
+      const storedUserState = storage.get('userState')
+      console.log('诊断: 存储的userState =', storedUserState ? '存在' : '不存在')
+      
+      // 检查运行时状态
+      console.log('诊断: isLoggedIn =', this.isLoggedIn)
+      console.log('诊断: isTokenValid =', this.isTokenValid)
+      
+      console.log('🔍 用户状态诊断结束')
+      
+      return {
+        hasUserState: !!this.userState,
+        hasToken: !!this.userState?.auth?.token,
+        isLoggedIn: this.isLoggedIn,
+        isTokenValid: this.isTokenValid,
+        hasStoredData: !!storedUserState
+      }
+    }
+  }
+})
+    
+    // 强制清理损坏的用户状态（用于调试和异常恢复）
+    forceClearUserState() {
+      console.log('🧹 强制清理用户状态')
+      this._clearUserStorage()
+      this._ensureUserStateIntegrity()
+      this.isLoggedIn = false
+      this.currentProcessingCode = null
+    },
+    
+    // 诊断用户状态（用于调试）
+    diagnoseUserState() {
+      const diagnosis = {
+        isLoggedIn: this.isLoggedIn,
+        hasToken: !!this.userState.auth.token,
+        tokenValid: this.isTokenValid,
+        hasProfile: !!this.userState.profile.userId,
+        hasNickname: !!this.userState.profile.nickname,
+        role: this.userState.profile.role,
+        storageData: storage.get('userState'),
+        encryptionSeed: uni.getStorageSync('secure_seed')
+      }
+      console.log('🔍 用户状态诊断:', diagnosis)
+      return diagnosis
     }
   }
 })

@@ -147,6 +147,14 @@
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/debug/user-debug",
+			"style": {
+				"navigationBarTitleText": "用户调试",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
 		}
 	],
 	"easycom": {

@@ -2,7 +2,7 @@ import { storage } from '@/store/modules/storage'
 import { useUserStore } from '@/store/modules/user'
 // api/request.js
 //const baseURL = 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com' // 真实API地址
-const baseURL ='http://localhost:8080'
+const baseURL ='http://localhost:9999'
 // 用于跟踪token刷新状态，防止并发刷新
 let isRefreshing = false
 let refreshSubscribers = []
@@ -125,9 +125,15 @@ async function handleTokenExpired() {
 // 不需要token验证的API白名单
 const NO_TOKEN_REQUIRED_URLS = [
   '/api/login',           // 微信登录
-  '/api/send_sms',        // 发送短信验证码
+  '/api/send_sms',        // 发送短信验证码（旧接口）
+  '/api/sms/send_code',   // 发送短信验证码（新接口）
   '/api/login_phone',     // 手机号登录
-  '/api/user/profile'     // 获取用户信息（首次登录时需要）
+  '/api/auth/login_phone', // 手机号登录（新接口）
+  '/api/auth/login_phone_code', // 验证码登录
+  '/api/auth/login_phone_password', // 密码登录
+  '/api/auth/register_phone', // 手机号注册
+  '/api/user/profile',    // 获取用户信息（首次登录时需要）
+  '/api/logout'           // 登出（可能token已失效）
 ]
 
 export const request = (options) => {
@@ -151,14 +157,19 @@ export const request = (options) => {
       options.url.includes(url)
     )
     
+    console.log('🔍 请求URL:', options.url, '是否需要Token:', !isNoTokenRequired, '当前Token:', token ? '存在' : '不存在')
+    
     // 只对需要token的请求进行验证
     if (!isNoTokenRequired) {
       // 检查token是否存在且有效
       if (!token || !validateToken(token)) {
+        console.warn('⚠️ Token验证失败，触发登出流程')
         handleTokenExpired()
         reject(new Error('Token无效或不存在'))
         return
       }
+    } else {
+      console.log('✅ 该请求不需要Token验证')
     }
     
     // 检查token是否即将过期，如果是则刷新

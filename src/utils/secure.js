@@ -165,19 +165,25 @@ export function decodeObject(str) {
     const json = utf8Decode(buf)
     try { 
       const parsed = JSON.parse(json)
-      // 验证解析后的对象结构完整性
-      if (parsed && typeof parsed === 'object') {
+      // 更宽松的验证：只要有数据就返回
+      if (parsed !== null && parsed !== undefined) {
+        console.log('✅ decodeObject: 解码成功，数据类型:', typeof parsed)
         return parsed
       } else {
-        console.warn('decodeObject: 解析的对象结构不完整', parsed)
-        return null
+        console.warn('decodeObject: 解析结果为空，返回原始字符串')
+        return json
       }
     } catch(e) { 
-      console.warn('decodeObject: JSON解析失败', e)
+      console.warn('decodeObject: JSON解析失败，返回原始字符串', e.message)
       return json 
     }
   } catch(e) {
-    console.error('decodeObject: 解码失败', e)
-    return null
+    console.error('decodeObject: 解码失败，尝试兼容性处理', e)
+    // 尝试直接解析原始字符串（兼容未加密的历史数据）
+    try {
+      return JSON.parse(str)
+    } catch {
+      return null
+    }
   }
 }

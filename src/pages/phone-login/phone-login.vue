@@ -85,15 +85,33 @@ async function onSendCode() {
   try {
     sending.value = true
     const purpose = activeTab.value==='register' ? 'register' : 'login'
+    console.log('🔍 发送验证码请求:', { phone: fullPhone.value, purpose })
+    
     const res = await authApi.sendSmsCode({ phone: fullPhone.value, purpose })
+    console.log('🔍 发送验证码响应:', res)
+    
     if (res.code === 1) {
       startCountdown()
       uni.showToast({ title: '验证码已发送', icon: 'none' })
     } else {
+      console.error('发送验证码失败:', res.msg)
       uni.showToast({ title: res.msg || '发送失败', icon: 'none' })
     }
   } catch (e) {
-    uni.showToast({ title: '网络错误', icon: 'none' })
+    console.error('发送验证码网络错误:', e)
+    // 更详细的错误处理
+    let errorMessage = '网络错误'
+    if (e.message && e.message.includes('Token')) {
+      // 如果是Token相关错误，清理状态并重新初始化
+      userStore.logout()
+      errorMessage = '登录状态异常，请重新登录'
+      setTimeout(() => {
+        uni.redirectTo({ url: '/pages/login/login' })
+      }, 1500)
+    } else if (e.message && e.message.includes('网络')) {
+      errorMessage = '网络连接失败，请检查网络设置'
+    }
+    uni.showToast({ title: errorMessage, icon: 'none' })
   } finally {
     sending.value = false
   }
@@ -148,8 +166,40 @@ async function onSubmit() {
     }
   } catch (e) {
     console.error('登录失败:', e)
-    const errorMsg = e.response?.data?.msg || '网络错误，请稍后重试'
+    
+    // 区分不同类型的错误
+    let errorMsg = '登录失败，请重试'
+    
+    if (e.response) {
+      // 服务器响应错误
+      if (e.response.status === 401) {
+        errorMsg = '认证失败，请重新登录'
+        // 清理本地状态
+        const userStore = useUserStore()
+        userStore.logout()
+      } else if (e.response.status === 403) {
+        errorMsg = '权限不足'
+      } else if (e.response.data && e.response.data.msg) {
+        errorMsg = e.response.data.msg
+      }
+    } else if (e.request) {
+      // 网络请求失败
+      errorMsg = '网络连接失败，请检查网络设置'
+    } else {
+      // 其他错误
+      errorMsg = e.message || '未知错误'
+    }
+    
     uni.showToast({ title: errorMsg, icon: 'none' })
+    
+    // 如果是认证相关错误，延迟跳转到登录页
+    if (errorMsg.includes('认证') || errorMsg.includes('token')) {
+      setTimeout(() => {
+        uni.reLaunch({
+          url: '/pages/login/login'
+        })
+      }, 1500)
+    }
   } finally {
     submitting.value = false
   }
