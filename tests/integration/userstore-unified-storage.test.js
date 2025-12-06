@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { useUserStore } from '@/store/modules/user'
 import { storage } from '@/store/modules/storage'
+import { server } from '../setup.integration.js'
 
 // Mock storage
 vi.mock('@/store/modules/storage', () => ({
@@ -12,14 +13,6 @@ vi.mock('@/store/modules/storage', () => ({
     clear: vi.fn()
   }
 }))
-
-// Mock uni API
-global.uni = {
-  getStorageSync: vi.fn(),
-  setStorageSync: vi.fn(),
-  removeStorageSync: vi.fn(),
-  clearStorageSync: vi.fn()
-}
 
 describe('UserStore 统一存储系统测试', () => {
   let userStore
@@ -209,4 +202,9 @@ describe('UserStore 统一存储系统测试', () => {
       expect(userStore.isLoggedIn).toBe(false)
     })
   })
+})
+
+// 每个测试后重置服务器状态
+afterEach(() => {
+  server.resetHandlers()
 })

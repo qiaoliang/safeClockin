@@ -1,13 +1,7 @@
 // 前端核心业务逻辑测试 - 专注用户价值和关键业务流程
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'
-
-// 初始化 Pinia
-const pinia = createPinia()
-setActivePinia(pinia)
-
-// 现在可以安全地导入使用了 Pinia 的模块
 import { request } from '@/api/request.js'
+import { server, TEST_VERIFICATION_CODE } from '../setup.integration.js'
 
 describe('前端核心业务逻辑', () => {
   beforeEach(() => {
@@ -15,7 +9,9 @@ describe('前端核心业务逻辑', () => {
     
     // 设置最小化的mock行为，只模拟必要的响应
     global.uni.getStorageSync.mockReturnValue(null)
-    global.storage.get.mockReturnValue(null)
+    if (global.storage) {
+      global.storage.get.mockReturnValue(null)
+    }
     global.uni.request.mockImplementation(({ success }) => {
       success({
         statusCode: 200,
