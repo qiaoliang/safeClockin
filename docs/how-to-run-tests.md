@@ -8,15 +8,22 @@
 tests/
 ├── unit/                    # 单元测试
 │   ├── api-business-logic.test.js
-│   └── userstore-unified-storage.test.js
+│   ├── userstore-unified-storage.test.js
+│   └── config.test.js       # 配置系统测试
 ├── integration/             # 集成测试
 │   └── phone-registration-direct.test.js
-├── e2e/                     # 端到端测试
-│   └── phone-registration-e2e.test.js
+├── e2e/                     # 端到端测试（真实后端）
+│   ├── phone-registration-e2e.test.js
+│   ├── phone-registration-real-backend.test.js
+│   ├── api-business-logic.test.js
+│   ├── userstore-unified-storage.test.js
+│   └── real-backend-e2e.test.js
 ├── setup.js                 # 单元测试配置
 ├── setup.integration.js     # 集成测试配置
+├── setup.e2e.js             # E2E测试配置（包含后端服务检查）
 ├── vitest.config.js         # 单元测试配置文件
 ├── vitest.integration.config.js # 集成测试配置文件
+├── vitest.e2e.config.js     # E2E测试配置文件
 └── phone-registration.test.config.js # 测试数据配置
 ```
 
@@ -39,6 +46,7 @@ tests/
 **主要测试用例**:
 - `api-business-logic.test.js` - API业务逻辑测试
 - `userstore-unified-storage.test.js` - 用户状态管理测试
+- `config.test.js` - 配置系统测试
 
 **运行方法**:
 ```bash
@@ -96,22 +104,69 @@ npm run test:func:run
 **目录**: `tests/e2e/`
 
 **目的**:
-- 模拟真实用户交互流程
-- 测试完整的用户场景
-- 验证UI组件和用户行为
+- 测试与真实后端服务的完整交互
+- 验证API调用的实际响应
+- 确保前后端接口兼容性
 
 **工作原理**:
-- 使用 Vue Test Utils 挂载组件
-- 模拟用户操作（点击、输入等）
-- 验证UI状态变化和用户反馈
+- 自动检查并启动后端服务（如果需要）
+- 使用真实的网络请求
+- 根据环境变量配置不同的后端地址
+
+**环境配置**:
+- 使用 `src/config/` 中的配置文件
+- 支持 unit、func、uat、prod 四种环境
+- 可通过 `BASE_URL_FOR_SAFEGUARD` 环境变量覆盖
 
 **主要测试用例**:
-- `phone-registration-e2e.test.js` - 手机号注册UI交互测试
+- `real-backend-e2e.test.js` - 真实后端服务基础测试
+- `phone-registration-real-backend.test.js` - 手机号注册真实后端测试
 
 **运行方法**:
 ```bash
-# 运行E2E测试
-npm test -- phone-registration-e2e.test.js --run
+# 自动检查并启动后端服务，然后运行所有E2E测试
+npm run test:e2e:run
+
+# 直接运行E2E测试（假设后端已启动）
+npm run test:e2e:direct
+
+# 监听模式运行E2E测试
+npm run test:e2e
+```
+
+**辅助脚本**:
+- `scripts/e2e-helper.sh` - 后端服务管理脚本
+- `scripts/run-e2e-tests.sh` - E2E测试运行脚本
+
+## 🌍 环境配置系统
+
+### 配置文件结构
+
+```
+src/config/
+├── index.js          # 主配置入口，根据环境变量选择配置
+├── unit.js           # 单元测试环境
+├── func.js           # 功能测试环境
+├── uat.js            # UAT环境
+└── prod.js           # 生产环境
+```
+
+### 环境变量
+
+- `UNI_ENV`: 指定当前环境（unit/func/uat/prod）
+- `BASE_URL_FOR_SAFEGUARD`: 覆盖默认API地址（主要用于测试）
+
+### 使用示例
+
+```javascript
+// 在代码中使用配置
+import config, { getAPIBaseURL } from '@/config'
+
+// 获取当前环境的API地址
+const baseURL = getAPIBaseURL()
+
+// 检查当前环境
+console.log('当前环境:', config.env)
 ```
 
 ## 🚀 快速开始
@@ -125,8 +180,8 @@ npm run test:unit:run
 # 运行集成测试
 npm run test:func:run
 
-# 运行E2E测试
-npm test -- phone-registration-e2e.test.js --run
+# 运行E2E测试（自动管理后端服务）
+npm run test:e2e:run
 ```
 
 ### 开发模式测试
@@ -137,6 +192,9 @@ npm run test:unit
 
 # 集成测试监听模式
 npm run test:func
+
+# E2E测试监听模式
+npm run test:e2e
 ```
 
 ### 运行特定测试文件
@@ -147,6 +205,44 @@ npm test -- userstore-unified-storage.test.js --run
 
 # 运行单个集成测试
 npm test -- phone-registration-direct.test.js --config vitest.integration.config.js --run
+
+# 运行单个E2E测试
+npm test -- real-backend-e2e.test.js --config vitest.e2e.config.js --run
+```
+
+## 🛠️ 后端服务管理
+
+### 自动管理（推荐）
+
+```bash
+# E2E测试会自动检查并启动后端服务
+npm run test:e2e:run
+```
+
+### 手动管理
+
+```bash
+# 检查后端服务状态
+./scripts/e2e-helper.sh check
+
+# 启动后端服务
+./scripts/e2e-helper.sh start
+
+# 停止后端服务
+./scripts/e2e-helper.sh stop
+
+# 重启后端服务
+./scripts/e2e-helper.sh restart
+```
+
+### 自定义后端地址
+
+```bash
+# 使用自定义后端地址运行测试
+BASE_URL_FOR_SAFEGUARD=http://localhost:9999 npm run test:e2e:run
+
+# 使用远程后端服务
+BASE_URL_FOR_SAFEGUARD=https://your-backend-server.com npm run test:e2e:run
 ```
 
 ## 📊 测试配置详解
@@ -159,7 +255,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.js'],
-    // 排除集成测试
+    // 排除集成测试和E2E测试
     exclude: ['**/integration/**', '**/e2e/**']
   }
 })
@@ -179,29 +275,48 @@ export default defineConfig({
 })
 ```
 
-### MSW配置 (`setup.integration.js`)
+### E2E测试配置 (`vitest.e2e.config.js`)
 
 ```javascript
-import { setupServer } from 'msw/node'
-import { http } from 'msw'
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.e2e.js'],
+    // 只运行E2E测试
+    include: ['tests/e2e/**/*.test.js'],
+    testTimeout: 30000, // 增加超时时间
+    hookTimeout: 30000
+  }
+})
+```
 
-// 统一测试验证码
-export const TEST_VERIFICATION_CODE = '123456'
+### E2E测试设置 (`setup.e2e.js`)
 
-// API处理器
-export const apiHandlers = [
-  http.post('/api/sms/send_code', async ({ request }) => {
-    const { phone } = await request.json()
-    // 验证逻辑和响应模拟
-  }),
-  http.post('/api/auth/register_phone', async ({ request }) => {
-    const { phone, code, password } = await request.json()
-    // 注册逻辑验证
-  })
-]
-
-// 启动Mock服务器
-export const server = setupServer(...apiHandlers)
+```javascript
+// E2E测试前检查后端服务是否启动
+beforeAll(async () => {
+  // 设置环境变量，确保使用 func 环境配置
+  process.env.UNI_ENV = 'func'
+  
+  const backendUrl = process.env.BASE_URL_FOR_SAFEGUARD || 'http://localhost:8080'
+  
+  // 检查后端服务是否启动，最多重试10次
+  for (let i = 0; i < 10; i++) {
+    try {
+      const response = await fetch(`${backendUrl}/api/count`)
+      if (response.ok) {
+        console.log('✅ 后端服务已启动')
+        return
+      }
+    } catch (error) {
+      console.log(`❌ 后端服务未响应，重试中... (${i + 1}/10)`)
+      await new Promise(resolve => setTimeout(resolve, 3000))
+    }
+  }
+  
+  throw new Error(`❌ 后端服务未启动: ${backendUrl}`)
+})
 ```
 
 ## 🎯 测试数据配置
@@ -272,10 +387,23 @@ test('调试示例', () => {
    # 确保在beforeAll中启动server
    ```
 
-3. **测试数据污染**
+3. **E2E测试后端服务连接失败**
    ```bash
-   # 在beforeEach中清理状态
-   userStore.forceClearUserState()
+   # 检查后端服务是否启动
+   ./scripts/e2e-helper.sh check
+   
+   # 手动启动后端服务
+   ./scripts/e2e-helper.sh start
+   ```
+
+4. **配置未生效**
+   ```bash
+   # 检查环境变量
+   echo $UNI_ENV
+   
+   # 清理缓存
+   rm -rf node_modules/.cache
+   npm install
    ```
 
 ## 📈 测试最佳实践
@@ -318,15 +446,18 @@ describe('功能模块', () => {
 ### 3. Mock使用原则
 
 ```javascript
-// ✅ 适当使用Mock
+// ✅ 适当使用Mock（单元测试）
 vi.mock('@/api/auth', () => ({
   authApi: {
     sendSmsCode: vi.fn()
   }
 }))
 
-// ❌ 过度Mock（集成测试中应避免）
-// 集成测试应该使用MSW而不是直接Mock API
+// ✅ 使用MSW（集成测试）
+// 在setup.integration.js中配置API处理器
+
+// ✅ 使用真实后端（E2E测试）
+// 不使用Mock，直接请求真实后端服务
 ```
 
 ## 📋 测试检查清单
@@ -335,10 +466,12 @@ vi.mock('@/api/auth', () => ({
 
 - [ ] 所有单元测试通过: `npm run test:unit:run`
 - [ ] 所有集成测试通过: `npm run test:func:run`
+- [ ] 所有E2E测试通过: `npm run test:e2e:run`
 - [ ] 新功能有对应的测试用例
 - [ ] 测试覆盖了主要功能路径
 - [ ] 测试覆盖了错误处理场景
 - [ ] 使用了统一的测试验证码 `123456`
+- [ ] 配置系统测试通过: `npm run test:unit:run -- tests/unit/config.test.js`
 
 ## 🎉 总结
 
@@ -346,7 +479,9 @@ vi.mock('@/api/auth', () => ({
 
 - **快速反馈**: 单元测试毫秒级完成
 - **API测试**: 集成测试完全独立，无需后端
-- **用户验证**: E2E测试确保真实用户体验
+- **真实验证**: E2E测试确保与真实后端的兼容性
+- **环境隔离**: 配置系统支持多环境测试
+- **自动化**: 后端服务自动管理，减少手动操作
 - **持续集成**: 所有测试可在CI/CD中稳定运行
 
-这套测试架构确保了代码质量和功能稳定性，同时保持了开发效率。
+这套测试架构确保了代码质量和功能稳定性，同时保持了开发效率。通过环境配置系统，我们可以轻松地在不同环境之间切换，确保应用在各种场景下都能正常工作。
