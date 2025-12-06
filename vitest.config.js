@@ -6,13 +6,13 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./test/setup.js'],
+    setupFiles: ['./tests/setup.js'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'test/',
+        'tests/',
         'unpackage/',
         'coverage/',
         '**/*.d.ts',
@@ -22,13 +22,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, '.'),
-      '@/api': resolve(__dirname, 'api'),
-      '@/components': resolve(__dirname, 'components'),
-      '@/pages': resolve(__dirname, 'pages'),
-      '@/store': resolve(__dirname, 'store'),
-      '@/utils': resolve(__dirname, 'utils'),
-      '@/test': resolve(__dirname, 'test')
+      '@': resolve(__dirname, './src'),
+      '@/api': resolve(__dirname, './src/api'),
+      '@/components': resolve(__dirname, './src/components'),
+      '@/pages': resolve(__dirname, './src/pages'),
+      '@/store': resolve(__dirname, './src/store'),
+      '@/utils': resolve(__dirname, './src/utils'),
+      '@/static': resolve(__dirname, './src/static')
     }
   }
 })

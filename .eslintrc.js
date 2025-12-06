@@ -29,7 +29,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.test.js', '**/*.spec.js'],
+      files: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
       env: {
         vitest: true
       },

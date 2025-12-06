@@ -51,6 +51,6 @@ echo "微信小程序 AppID: $WX_APPID"
 
 # 运行微信小程序构建命令
 echo "正在构建微信小程序..."
-cli publish --platform mp-weixin --project "$FRONTEND_PATH" --appid "$WX_APPID"
+/Applications/HBuilderX.app/Contents/MacOS/cli publish --platform mp-weixin --project "$FRONTEND_PATH/src" --appid "$WX_APPID" --sourceMap true
 
 echo "=== 微信小程序构建完成 ==="

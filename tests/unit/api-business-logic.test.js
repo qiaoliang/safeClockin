@@ -1,6 +1,13 @@
 // 前端核心业务逻辑测试 - 专注用户价值和关键业务流程
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { request } from '../api/request.js'
+import { createPinia, setActivePinia } from 'pinia'
+
+// 初始化 Pinia
+const pinia = createPinia()
+setActivePinia(pinia)
+
+// 现在可以安全地导入使用了 Pinia 的模块
+import { request } from '@/api/request.js'
 
 describe('前端核心业务逻辑', () => {
   beforeEach(() => {

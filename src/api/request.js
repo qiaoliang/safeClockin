@@ -137,9 +137,19 @@ const NO_TOKEN_REQUIRED_URLS = [
 
 export const request = (options) => {
   return new Promise(async (resolve, reject) => {
-    // 优先从 userStore 获取 token，兼容旧版本
-    const userStore = useUserStore()
-    let token = userStore.token || storage.get('token') || uni.getStorageSync('token')
+    // 获取 token，优先从 storage 获取
+    let token = storage.get('token') || uni.getStorageSync('token')
+    
+    // 尝试从 userStore 获取 token（如果 Pinia 已初始化）
+    try {
+      const userStore = useUserStore()
+      if (userStore.token) {
+        token = userStore.token
+      }
+    } catch (e) {
+      // Pinia 未初始化，使用 storage 中的 token
+      console.debug('Pinia not initialized, using storage token')
+    }
     const fullUrl = baseURL + options.url
     
     if (!(options && options.suppressErrorLog)) {
