@@ -153,7 +153,7 @@ const onUserInfoCancel = () => {
 }
 
 const showPhoneLogin = () => {
-  uni.navigateTo({ url: '/pages/phone-login/phone-login?mode=sms' })
+  uni.navigateTo({ url: '/pages/phone-login/phone-login?mode=login' })
 }
 
 const showUserAgreement = () => {

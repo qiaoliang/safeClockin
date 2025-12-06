@@ -182,6 +182,11 @@ export const authApi = {
     url: '/api/auth/login_phone_password',
     method: 'POST',
     data
+  }),
+  loginPhone: (data) => request({
+    url: '/api/auth/login_phone',
+    method: 'POST',
+    data
   })
   ,
   bindPhone: (data) => request({

@@ -2,8 +2,7 @@
   <view class="container">
     <view class="tabs">
       <view :class="['tab', activeTab==='register'?'active':'']" @click="activeTab='register'">注册</view>
-      <view :class="['tab', activeTab==='sms'?'active':'']" @click="activeTab='sms'">短信登录</view>
-      <view :class="['tab', activeTab==='password'?'active':'']" @click="activeTab='password'">密码登录</view>
+      <view :class="['tab', activeTab==='login'?'active':'']" @click="activeTab='login'">手机登录</view>
     </view>
 
     <view class="form">
@@ -14,15 +13,15 @@
         <input class="input" type="number" v-model="phone" placeholder="请输入手机号" />
       </view>
 
-      <view v-if="activeTab!=='password'" class="row">
+      <view v-if="activeTab==='register' || activeTab==='login'" class="row">
         <input class="input" type="number" v-model="code" placeholder="验证码" />
         <button class="code-btn" :disabled="countdown>0 || sending" @click="onSendCode">
           {{ countdown>0 ? `${countdown}s` : '获取验证码' }}
         </button>
       </view>
 
-      <view v-if="activeTab==='password' || activeTab==='register'" class="row">
-        <input class="input" type="text" :password="true" v-model="password" placeholder="设置/输入密码（至少8位，含字母和数字）" />
+      <view v-if="activeTab==='register' || activeTab==='login'" class="row">
+        <input class="input" type="password" v-model="password" :placeholder="activeTab==='register' ? '设置密码（至少8位，含字母和数字）' : '输入密码'" />
       </view>
 
       <view v-if="activeTab==='register'" class="agreement">
@@ -47,7 +46,7 @@ import { useUserStore } from '@/store/modules/user'
 import { storage } from '@/store/modules/storage'
 
 const userStore = useUserStore()
-const activeTab = ref('sms')
+const activeTab = ref('login')
 const countryCodes = ['+86', '+852', '+853', '+886']
 const countryIndex = ref(0)
 const phone = ref('')
@@ -61,9 +60,7 @@ let timer = null
 
 const fullPhone = computed(() => `${countryCodes[countryIndex.value]}${phone.value}`)
 const submitText = computed(() => {
-  if (activeTab.value==='register') return '注册'
-  if (activeTab.value==='sms') return '短信登录'
-  return '密码登录'
+  return activeTab.value==='register' ? '注册' : '登录'
 })
 
 function startCountdown() {
@@ -87,7 +84,7 @@ async function onSendCode() {
   }
   try {
     sending.value = true
-    const purpose = activeTab.value==='register' ? 'register' : (activeTab.value==='sms' ? 'login' : 'bind_phone')
+    const purpose = activeTab.value==='register' ? 'register' : 'login'
     const res = await authApi.sendSmsCode({ phone: fullPhone.value, purpose })
     if (res.code === 1) {
       startCountdown()
@@ -102,8 +99,32 @@ async function onSendCode() {
   }
 }
 
+// 密码强度验证
+function validatePassword(pwd) {
+  if (!pwd) {
+    return { valid: false, message: '请输入密码' }
+  }
+  if (pwd.length < 8) {
+    return { valid: false, message: '密码至少8位' }
+  }
+  if (!/[a-zA-Z]/.test(pwd)) {
+    return { valid: false, message: '密码需包含字母' }
+  }
+  if (!/[0-9]/.test(pwd)) {
+    return { valid: false, message: '密码需包含数字' }
+  }
+  return { valid: true }
+}
+
 async function onSubmit() {
   if (!phone.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  
+  // 密码强度验证
+  const passwordValidation = validatePassword(password.value)
+  if (!passwordValidation.valid) {
+    return uni.showToast({ title: passwordValidation.message, icon: 'none' })
+  }
+  
   submitting.value = true
   try {
     if (activeTab.value==='register') {
@@ -115,17 +136,10 @@ async function onSubmit() {
       } else {
         uni.showToast({ title: res.msg || '注册失败', icon: 'none' })
       }
-    } else if (activeTab.value==='sms') {
-      if (!code.value) return uni.showToast({ title: '请输入验证码', icon: 'none' })
-      const res = await authApi.loginPhoneCode({ phone: fullPhone.value, code: code.value })
-      if (res.code === 1) {
-        await afterLogin(res)
-      } else {
-        uni.showToast({ title: res.msg || '登录失败', icon: 'none' })
-      }
     } else {
-      if (!password.value) return uni.showToast({ title: '请输入密码', icon: 'none' })
-      const res = await authApi.loginPhonePassword({ phone: fullPhone.value, password: password.value })
+      // 手机登录需要同时验证验证码和密码
+      if (!code.value) return uni.showToast({ title: '请输入验证码', icon: 'none' })
+      const res = await authApi.loginPhone({ phone: fullPhone.value, code: code.value, password: password.value })
       if (res.code === 1) {
         await afterLogin(res)
       } else {
@@ -133,7 +147,9 @@ async function onSubmit() {
       }
     }
   } catch (e) {
-    uni.showToast({ title: '网络错误', icon: 'none' })
+    console.error('登录失败:', e)
+    const errorMsg = e.response?.data?.msg || '网络错误，请稍后重试'
+    uni.showToast({ title: errorMsg, icon: 'none' })
   } finally {
     submitting.value = false
   }
@@ -161,7 +177,7 @@ function onAgreeChange(e) {
 
 onLoad((opts)=>{
   const m = String((opts && opts.mode) || '')
-  if(['register','sms','password'].includes(m)) activeTab.value = m
+  if(['register','login'].includes(m)) activeTab.value = m
 })
 </script>
 
