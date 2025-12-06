@@ -13,53 +13,7 @@ vi.mock('@/utils/secure', () => ({
   decodeObject: vi.fn((str) => JSON.parse(str))
 }))
 
-// 检查后端服务是否启动的函数
-async function checkBackendService() {
-  const backendPort = 9999
-  const backendHost = 'localhost'
-  
-  return new Promise((resolve) => {
-    const req = require('http').request({
-      hostname: backendHost,
-      port: backendPort,
-      path: '/api/count',
-      method: 'GET',
-      timeout: 10000 // 等待10秒
-    }, (res) => {
-      resolve(true)
-    })
-    
-    req.on('error', () => {
-      resolve(false)
-    })
-    
-    req.on('timeout', () => {
-      req.destroy()
-      resolve(false)
-    })
-    
-    req.end()
-  })
-}
-
-// 在所有测试开始前检查后端服务
-beforeAll(async () => {
-  console.log('🔍 检查后端服务状态...')
-  
-  const isBackendRunning = await checkBackendService()
-  
-  if (!isBackendRunning) {
-    console.error('❌ 后端服务未启动！')
-    console.error('请先启动后端服务：')
-    console.error('1. cd backend')
-    console.error('2. source venv_py312/bin/activate')
-    console.error('3. python run.py 0.0.0.0 9999')
-    console.error('4. 等待服务启动完成后重新运行测试')
-    process.exit(1)
-  }
-  
-  console.log('✅ 后端服务运行正常')
-})
+// 单元测试不需要后端服务，移除服务检查
 
 // Mock uni-app APIs
 global.uni = {
