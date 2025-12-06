@@ -1,4 +1,4 @@
-export const SENSITIVE_KEYS = ['userState', 'token', 'refreshToken', 'userInfo', 'cached_user_info', 'secure_seed']
+export const SENSITIVE_KEYS = ['userState', 'secure_seed']
 
 function getSeed() {
   let seed = uni.getStorageSync('secure_seed')

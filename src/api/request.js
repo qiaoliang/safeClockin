@@ -41,7 +41,8 @@ function isTokenExpired(token) {
 }
 
 async function refreshToken() {
-  const refreshToken = storage.get('refreshToken') || uni.getStorageSync('refreshToken')
+  const userStore = useUserStore()
+  const refreshToken = userStore.refreshToken
   if (!refreshToken) {
     return null
   }
@@ -62,8 +63,8 @@ async function refreshToken() {
       const newToken = response.data.data.token
       const newRefreshToken = response.data.data.refresh_token
       
-      storage.set('token', newToken)
-      storage.set('refreshToken', newRefreshToken)
+      // 通过 userStore 更新 token，自动触发持久化
+      userStore.updateTokens(newToken, newRefreshToken)
       
       return newToken
     }
@@ -108,20 +109,14 @@ function showExpiredTokenDialog() {
 
 // 处理token过期
 async function handleTokenExpired() {
-  // 保存用户基本信息，不清除微信绑定状态
-  const userInfo = storage.get('userInfo') || uni.getStorageSync('userInfo')
+  const userStore = useUserStore()
   
-  // 只清除认证相关信息，保留用户基本信息
-  uni.removeStorageSync('token')
-  uni.removeStorageSync('refreshToken')
-  
-  // 标记为重新登录场景
-  storage.set('login_scenario', 'relogin')
-  uni.setStorageSync('login_scenario', 'relogin')
+  // 通过 userStore 处理 token 过期
+  userStore.handleTokenExpired()
   
   await showExpiredTokenDialog()
   
-  // 重新定向到登录页，但保留用户信息以便识别
+  // 重新定向到登录页
   uni.redirectTo({
     url: '/pages/login/login'
   })
@@ -138,18 +133,9 @@ const NO_TOKEN_REQUIRED_URLS = [
 export const request = (options) => {
   return new Promise(async (resolve, reject) => {
     // 获取 token，优先从 storage 获取
-    let token = storage.get('token') || uni.getStorageSync('token')
-    
-    // 尝试从 userStore 获取 token（如果 Pinia 已初始化）
-    try {
-      const userStore = useUserStore()
-      if (userStore.token) {
-        token = userStore.token
-      }
-    } catch (e) {
-      // Pinia 未初始化，使用 storage 中的 token
-      console.debug('Pinia not initialized, using storage token')
-    }
+    // 完全依赖 userStore 获取 token
+    const userStore = useUserStore()
+    const token = userStore.token
     const fullUrl = baseURL + options.url
     
     if (!(options && options.suppressErrorLog)) {

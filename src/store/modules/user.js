@@ -73,15 +73,68 @@ export const useUserStore = defineStore('user', {
     _persistUserState() {
       const userState = JSON.stringify(this.userState)
       storage.set('userState', userState)
-      
-      // 为了兼容性，同时维护旧的 storage 键（逐步迁移）
-      storage.set('token', this.userState.auth.token)
-      storage.set('refreshToken', this.userState.auth.refreshToken)
-      storage.set('userInfo', this.userState.profile)
-      storage.set('cached_user_info', this.userState.cache.cachedUserInfo)
-      storage.set('secure_seed', this.userState.auth.secureSeed)
     },
     
+    // 确保 userState 结构完整
+    _ensureUserStateIntegrity() {
+      if (!this.userState || typeof this.userState !== 'object') {
+        this.userState = {
+          auth: {
+            token: null,
+            refreshToken: null,
+            secureSeed: null,
+            loginTime: null,
+            expiresAt: null
+          },
+          profile: {
+            userId: null,
+            nickname: null,
+            avatarUrl: null,
+            role: null,
+            phone: null,
+            wechatOpenid: null,
+            isVerified: false
+          },
+          cache: {
+            checkinData: null,
+            lastUpdate: null,
+            cachedUserInfo: null
+          }
+        }
+      }
+      
+      // 确保子结构完整
+      if (!this.userState.auth) {
+        this.userState.auth = {
+          token: null,
+          refreshToken: null,
+          secureSeed: null,
+          loginTime: null,
+          expiresAt: null
+        }
+      }
+      
+      if (!this.userState.profile) {
+        this.userState.profile = {
+          userId: null,
+          nickname: null,
+          avatarUrl: null,
+          role: null,
+          phone: null,
+          wechatOpenid: null,
+          isVerified: false
+        }
+      }
+      
+      if (!this.userState.cache) {
+        this.userState.cache = {
+          checkinData: null,
+          lastUpdate: null,
+          cachedUserInfo: null
+        }
+      }
+    },
+
     // 从 storage 恢复用户状态
     _restoreUserState() {
       try {
@@ -136,36 +189,7 @@ export const useUserStore = defineStore('user', {
           }
         }
         
-        // 兼容性：从旧的 storage 键恢复
-        const token = storage.get('token')
-        const refreshToken = storage.get('refreshToken')
-        const userInfo = storage.get('userInfo')
-        const cachedUserInfo = storage.get('cached_user_info')
-        const secureSeed = storage.get('secure_seed')
-        
-        if (token && userInfo) {
-          this.userState = {
-            auth: {
-              token,
-              refreshToken,
-              secureSeed,
-              loginTime: null,
-              expiresAt: null
-            },
-            profile: userInfo,
-            cache: {
-              checkinData: null,
-              lastUpdate: null,
-              cachedUserInfo
-            }
-          }
-          this.isLoggedIn = true
-          console.log('✅ 从旧格式恢复用户状态')
-          
-          // 恢复后立即持久化为新格式
-          this._persistUserState()
-          return true
-        }
+        // 不再支持旧格式恢复，强制使用新格式
         
         console.log('📱 无有效用户状态，保持未登录')
         return false
@@ -240,7 +264,7 @@ export const useUserStore = defineStore('user', {
         this.userState.auth = {
           token: apiResponse.data?.token,
           refreshToken: apiResponse.data?.refresh_token,
-          secureSeed: this.userState.auth.secureSeed || storage.get('secure_seed'),
+          secureSeed: this.userState.auth.secureSeed,
           loginTime: now.toISOString(),
           expiresAt: apiResponse.data?.expires_at || null
         }
@@ -377,15 +401,18 @@ export const useUserStore = defineStore('user', {
       // 清理存储
       this._clearUserStorage()
       
-      // 保留必要信息
+      // 保留必要信息在 userState 中
       if (wechatOpenid) {
-        storage.set('userInfo', { wechatOpenid })
+        this.userState.profile.wechatOpenid = wechatOpenid
       }
     },
     
     // 初始化用户状态
     initUserState() {
       console.log('=== 开始初始化用户状态 ===')
+      
+      // 确保 userState 结构完整
+      this._ensureUserStateIntegrity()
       
       // 尝试从存储恢复状态
       const restored = this._restoreUserState()
@@ -470,6 +497,28 @@ export const useUserStore = defineStore('user', {
         this.logout()
         throw error
       }
+    },
+
+    // 更新 token 和 refreshToken（用于 token 刷新）
+    updateTokens(newToken, newRefreshToken) {
+      this.userState.auth.token = newToken
+      this.userState.auth.refreshToken = newRefreshToken
+      this._persistUserState()
+    },
+
+    // 处理 token 过期
+    handleTokenExpired() {
+      // 标记为重新登录场景
+      storage.set('login_scene', 'relogin')
+      uni.setStorageSync('login_scene', 'relogin')
+      
+      // 清除认证信息，但保留用户基本信息
+      this.userState.auth.token = null
+      this.userState.auth.refreshToken = null
+      this.userState.auth.expiresAt = null
+      this.isLoggedIn = false
+      
+      this._persistUserState()
     }
   }
 })
