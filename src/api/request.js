@@ -133,7 +133,7 @@ const NO_TOKEN_REQUIRED_URLS = [
   '/api/auth/login_phone_code', // 验证码登录
   '/api/auth/login_phone_password', // 密码登录
   '/api/auth/register_phone', // 手机号注册
-  '/api/user/profile',    // 获取用户信息（首次登录时需要）
+
   '/api/logout'           // 登出（可能token已失效）
 ]
 

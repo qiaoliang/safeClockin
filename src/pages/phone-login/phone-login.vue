@@ -161,7 +161,16 @@ async function onSubmit() {
       if (res.code === 1) {
         await afterLogin(res)
       } else {
-        uni.showToast({ title: res.msg || '登录失败', icon: 'none' })
+        // 检查是否是用户不存在的错误
+        if (res.data && res.data.code === 'USER_NOT_FOUND') {
+          uni.showToast({ title: '账号不存在，请先注册', icon: 'none' })
+          // 自动切换到注册tab
+          activeTab.value = 'register'
+          // 清空验证码，保留手机号和密码
+          code.value = ''
+        } else {
+          uni.showToast({ title: res.msg || '登录失败', icon: 'none' })
+        }
       }
     }
   } catch (e) {
