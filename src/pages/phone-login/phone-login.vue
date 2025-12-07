@@ -152,7 +152,16 @@ async function onSubmit() {
       if (res.code === 1) {
         await afterLogin(res)
       } else {
-        uni.showToast({ title: res.msg || '注册失败', icon: 'none' })
+        // 检查是否是手机号已存在的错误
+        if (res.data && res.data.code === 'PHONE_EXISTS') {
+          uni.showToast({ title: '该手机号已注册，请直接登录', icon: 'none' })
+          // 自动切换到登录tab
+          activeTab.value = 'login'
+          // 清空验证码，保留手机号和密码
+          code.value = ''
+        } else {
+          uni.showToast({ title: res.msg || '注册失败', icon: 'none' })
+        }
       }
     } else {
       // 手机登录需要同时验证验证码和密码

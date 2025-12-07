@@ -15,6 +15,33 @@ export const authApi = {
       url: '/api/login',
       method: 'POST',
       data: requestData
+    }).then(response => {
+      // 处理新的统一响应格式
+      if (response && response.code === 1 && response.data) {
+        // 将后端的下划线命名转换为前端的驼峰命名
+        const transformedData = {}
+        for (const [key, value] of Object.entries(response.data)) {
+          if (key === 'user_id') {
+            transformedData['userId'] = value
+          } else if (key === 'wechat_openid') {
+            transformedData['wechatOpenid'] = value
+          } else if (key === 'phone_number') {
+            transformedData['phoneNumber'] = value
+          } else if (key === 'avatar_url') {
+            transformedData['avatarUrl'] = value
+          } else if (key === 'refresh_token') {
+            transformedData['refreshToken'] = value
+          } else if (key === 'login_type') {
+            transformedData['loginType'] = value
+            // 兼容旧字段名
+            transformedData['isNewUser'] = value === 'new_user'
+          } else {
+            transformedData[key] = value
+          }
+        }
+        response.data = transformedData
+      }
+      return response
     });
   },
   count:() => request({
@@ -172,6 +199,31 @@ export const authApi = {
     url: '/api/auth/register_phone',
     method: 'POST',
     data
+  }).then(response => {
+    // 处理新的统一响应格式
+    if (response && response.code === 1 && response.data) {
+      const transformedData = {}
+      for (const [key, value] of Object.entries(response.data)) {
+        if (key === 'user_id') {
+          transformedData['userId'] = value
+        } else if (key === 'wechat_openid') {
+          transformedData['wechatOpenid'] = value
+        } else if (key === 'phone_number') {
+          transformedData['phoneNumber'] = value
+        } else if (key === 'avatar_url') {
+          transformedData['avatarUrl'] = value
+        } else if (key === 'refresh_token') {
+          transformedData['refreshToken'] = value
+        } else if (key === 'login_type') {
+          transformedData['loginType'] = value
+          transformedData['isNewUser'] = value === 'new_user'
+        } else {
+          transformedData[key] = value
+        }
+      }
+      response.data = transformedData
+    }
+    return response
   }),
   loginPhoneCode: (data) => request({
     url: '/api/auth/login_phone_code',
@@ -187,6 +239,31 @@ export const authApi = {
     url: '/api/auth/login_phone',
     method: 'POST',
     data
+  }).then(response => {
+    // 处理新的统一响应格式
+    if (response && response.code === 1 && response.data) {
+      const transformedData = {}
+      for (const [key, value] of Object.entries(response.data)) {
+        if (key === 'user_id') {
+          transformedData['userId'] = value
+        } else if (key === 'wechat_openid') {
+          transformedData['wechatOpenid'] = value
+        } else if (key === 'phone_number') {
+          transformedData['phoneNumber'] = value
+        } else if (key === 'avatar_url') {
+          transformedData['avatarUrl'] = value
+        } else if (key === 'refresh_token') {
+          transformedData['refreshToken'] = value
+        } else if (key === 'login_type') {
+          transformedData['loginType'] = value
+          transformedData['isNewUser'] = value === 'new_user'
+        } else {
+          transformedData[key] = value
+        }
+      }
+      response.data = transformedData
+    }
+    return response
   })
   ,
   bindPhone: (data) => request({

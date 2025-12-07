@@ -248,19 +248,19 @@ export const useUserStore = defineStore('user', {
         const now = new Date()
         this.userState.auth = {
           token: apiResponse.data?.token,
-          refreshToken: apiResponse.data?.refresh_token,
+          refreshToken: apiResponse.data?.refreshToken || apiResponse.data?.refresh_token,
           secureSeed: this.userState.auth.secureSeed,
           loginTime: now.toISOString(),
           expiresAt: apiResponse.data?.expires_at || null
         }
         
         this.userState.profile = {
-          userId: apiResponse.data?.user_id,
+          userId: apiResponse.data?.userId || apiResponse.data?.user_id,
           nickname: apiResponse.data?.nickname || apiResponse.data?.nickName,
-          avatarUrl: apiResponse.data?.avatar_url,
+          avatarUrl: apiResponse.data?.avatarUrl || apiResponse.data?.avatar_url,
           role: apiResponse.data?.role || null,
-          phone: apiResponse.data?.phone_number,
-          wechatOpenid: apiResponse.data?.wechat_openid,
+          phone: apiResponse.data?.phoneNumber || apiResponse.data?.phone_number,
+          wechatOpenid: apiResponse.data?.wechatOpenid || apiResponse.data?.wechat_openid,
           isVerified: apiResponse.data?.is_verified || false
         }
         
