@@ -20,13 +20,13 @@ global.uni = {
 // 统一测试验证码
 export const TEST_VERIFICATION_CODE = '123456'
 
-// Mock 服务器基础URL
+// Mock 服务器基础URL - 使用通配符匹配所有localhost和127.0.0.1的请求
 const API_BASE_URL = 'http://localhost:9999'
 
-// 定义 API handlers
+// 定义 API handlers - 使用正则表达式匹配所有localhost和127.0.0.1的请求
 export const apiHandlers = [
   // 发送短信验证码
-  http.post(`${API_BASE_URL}/api/sms/send_code`, async ({ request }) => {
+  http.post(/http:\/\/(localhost|127\.0\.0\.1):\d+\/api\/sms\/send_code/, async ({ request }) => {
     const { phone } = await request.json()
     
     // 验证手机号格式
@@ -47,7 +47,7 @@ export const apiHandlers = [
   }),
 
   // 手机号注册
-  http.post(`${API_BASE_URL}/api/auth/register_phone`, async ({ request }) => {
+  http.post(/http:\/\/(localhost|127\.0\.0\.1):\d+\/api\/auth\/register_phone/, async ({ request }) => {
     const { phone, code, password } = await request.json()
     
     // 验证手机号格式
@@ -102,7 +102,7 @@ export const apiHandlers = [
   }),
 
   // 手机号登录
-  http.post(`${API_BASE_URL}/api/auth/login_phone`, async ({ request }) => {
+  http.post(/http:\/\/(localhost|127\.0\.0\.1):\d+\/api\/auth\/login_phone/, async ({ request }) => {
     const { phone, code } = await request.json()
     
     // 验证手机号格式
@@ -139,7 +139,7 @@ export const apiHandlers = [
   }),
 
   // 获取用户信息
-  http.get(`${API_BASE_URL}/api/user/profile`, ({ request }) => {
+  http.get(/http:\/\/(localhost|127\.0\.0\.1):\d+\/api\/user\/profile/, ({ request }) => {
     const authHeader = request.headers.get('authorization')
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -167,7 +167,7 @@ export const apiHandlers = [
   }),
 
   // 更新用户信息
-  http.post(`${API_BASE_URL}/api/user/profile`, ({ request }) => {
+  http.post(/http:\/\/(localhost|127\.0\.0\.1):\d+\/api\/user\/profile/, ({ request }) => {
     const authHeader = request.headers.get('authorization')
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -232,8 +232,12 @@ export const testUtils = {
   
   // 模拟 API 错误
   mockApiError: (endpoint, errorMessage = '服务器错误') => {
+    // 将endpoint转换为正则表达式，匹配所有localhost和127.0.0.1
+    const endpointPattern = endpoint.replace(/^\/api\//, '/api/')
+    const regex = new RegExp(`http://(localhost|127\.0\.0\.1):\\d+${endpointPattern}`)
+    
     server.use(
-      http.post(`${API_BASE_URL}${endpoint}`, () => {
+      http.post(regex, () => {
         return Response.json({
           code: 0,
           data: {},
@@ -245,8 +249,12 @@ export const testUtils = {
   
   // 模拟网络延迟
   mockNetworkDelay: (endpoint, delay = 2000) => {
+    // 将endpoint转换为正则表达式，匹配所有localhost和127.0.0.1
+    const endpointPattern = endpoint.replace(/^\/api\//, '/api/')
+    const regex = new RegExp(`http://(localhost|127\.0\.0\.1):\\d+${endpointPattern}`)
+    
     server.use(
-      http.post(`${API_BASE_URL}${endpoint}`, async () => {
+      http.post(regex, async () => {
         await testUtils.delay(delay)
         return Response.json({
           code: 1,

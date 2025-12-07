@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { authApi } from '@/api/auth'
 
 const token = ref('')
@@ -62,6 +62,24 @@ const doReject = async () => {
     uni.showToast({ title: r.msg || '处理失败', icon: 'none' })
   }
 }
+
+// 分享给朋友
+onShareAppMessage((res) => {
+  return {
+    title: '安全守护 - 监督邀请',
+    path: '/pages/supervisor-invite/supervisor-invite',
+    imageUrl: '/static/share-logo.png'
+  }
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+  return {
+    title: '安全守护 - 监督邀请',
+    query: '',
+    imageUrl: '/static/share-logo.png'
+  }
+})
 </script>
 
 <style scoped>

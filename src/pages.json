@@ -127,9 +127,7 @@
             "style": {
                 "navigationBarTitleText": "监督邀请",
                 "navigationBarBackgroundColor": "#FAE9DB",
-                "navigationBarTextStyle": "black",
-                "enableShareAppMessage": true,
-                "enableShareTimeline": true
+                "navigationBarTextStyle": "black"
             }
         },
 		{

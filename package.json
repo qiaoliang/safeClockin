@@ -16,7 +16,7 @@
     "test:e2e:direct": "vitest run --config vitest.e2e.config.js",
     "lint": "eslint . --ext .vue,.js,.ts",
     "lint:fix": "eslint . --ext .vue,.js,.ts --fix",
-    "build:mp-weixin": "./mpbuild.sh",
+    "build:mp-weixin": "./scripts/mpbuild.sh",
     "build:unit": "./scripts/build-env.sh unit",
     "build:func": "./scripts/build-env.sh func",
     "build:uat": "./scripts/build-env.sh uat",
