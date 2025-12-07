@@ -95,7 +95,8 @@ export const apiHandlers = [
         user_id: Math.floor(Math.random() * 1000) + 1,
         nickname: '新用户',
         role: 'solo',
-        phone: phone
+        phone: phone,
+        login_type: 'new_user'
       },
       msg: '注册成功'
     })
@@ -132,7 +133,8 @@ export const apiHandlers = [
         user_id: Math.floor(Math.random() * 1000) + 1,
         nickname: '测试用户',
         role: 'solo',
-        phone: phone
+        phone: phone,
+        login_type: 'existing_user'
       },
       msg: '登录成功'
     })
