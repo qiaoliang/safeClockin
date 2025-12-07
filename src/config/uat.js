@@ -5,7 +5,7 @@ export default {
   
   // API 配置
   api: {
-    baseURL: 'https://uat-safeguard-api.example.com', // UAT环境API地址
+    baseURL: 'http://localhost:8080', // UAT环境API地址
     timeout: 20000
   },
   

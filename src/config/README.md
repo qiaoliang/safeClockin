@@ -29,7 +29,7 @@ src/config/
 
 ### uat (UAT环境)
 - **用途**: 用户验收测试
-- **API地址**: `https://uat-safeguard-api.example.com`
+- **API地址**: `http://localhost:8080`
 - **特点**: 接近生产环境配置
 
 ### prod (生产环境)
