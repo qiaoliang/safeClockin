@@ -224,18 +224,16 @@ async function onSubmit() {
 }
 
 async function afterLogin(res) {
-  const token = res.data?.token
-  const refreshToken = res.data?.refresh_token
-  if (token) {
-    // token 和 refreshToken 会在 userStore.login 中自动处理
-    console.log('Token 会在 userStore.login 中自动保存')
+  try {
+    // 使用统一的登录成功处理方法
+    await userStore.processLoginSuccess(res, '手机')
+    
+    // 跳转到主页
+    uni.switchTab({ url: '/pages/home-solo/home-solo' })
+  } catch (error) {
+    console.error('登录后处理失败:', error)
+    uni.showToast({ title: '登录处理失败', icon: 'none' })
   }
-  if (refreshToken) {
-    // token 和 refreshToken 会在 userStore.login 中自动处理
-    console.log('RefreshToken 会在 userStore.login 中自动保存')
-  }
-  await userStore.fetchUserInfo()
-  uni.switchTab({ url: '/pages/home-solo/home-solo' })
 }
 
 function onAgreeChange(e) {

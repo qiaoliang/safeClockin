@@ -275,22 +275,11 @@ export const useUserStore = defineStore('user', {
       storage.remove('secure_seed')
       storage.remove('checkinCache')
     },
-    
-    async login(loginData) {
-      this.isLoading = true
-      let code = null
+
+    // 统一的登录成功处理方法
+    async processLoginSuccess(apiResponse, loginType = 'unknown') {
       try {
-        // 检查是否正在处理相同的code，防止重复请求
-        code = typeof loginData === 'string' ? loginData : loginData.code;
-        if (this.currentProcessingCode === code) {
-          throw new Error('登录凭证正在处理中，请勿重复提交')
-        }
-        
-        this.currentProcessingCode = code
-        
-        // 使用真实API调用
-        const apiResponse = await authApi.login(loginData)
-        console.log('登录API响应:', apiResponse)
+        console.log(`✅ ${loginType}登录成功，处理用户信息`)
         
         // 检查API响应是否成功
         if (apiResponse.code !== 1) {
@@ -309,6 +298,7 @@ export const useUserStore = defineStore('user', {
           expiresAt: apiResponse.data?.expires_at || null
         }
         
+        // 直接使用登录接口返回的完整用户信息
         target.profile = {
           userId: apiResponse.data?.userId || apiResponse.data?.user_id,
           nickname: apiResponse.data?.nickname || apiResponse.data?.nickName,
@@ -316,16 +306,49 @@ export const useUserStore = defineStore('user', {
           role: apiResponse.data?.role || null,
           phone: apiResponse.data?.phoneNumber || apiResponse.data?.phone_number,
           wechatOpenid: apiResponse.data?.wechatOpenid || apiResponse.data?.wechat_openid,
-          isVerified: apiResponse.data?.is_verified || false
+          isVerified: apiResponse.data?.is_verified || false,
+          // 保存所有返回的用户信息字段
+          ...apiResponse.data
         }
         
         this.isLoggedIn = true
         
+        // 更新缓存时间
+        target.cache = {
+          ...target.cache,
+          lastUpdate: Date.now()
+        }
+        
         // 持久化状态
         this._persistUserState()
         
-        // 登录成功后立即获取完整的用户信息
-        await this.fetchUserInfo()
+        console.log(`✅ ${loginType}登录用户信息已保存到本地存储:`, target.profile)
+        
+        return apiResponse.data
+      } catch (error) {
+        console.error(`${loginType}登录处理失败:`, error)
+        throw error
+      }
+    },
+    
+    async login(loginData) {
+      this.isLoading = true
+      let code = null
+      try {
+        // 检查是否正在处理相同的code，防止重复请求
+        code = typeof loginData === 'string' ? loginData : loginData.code;
+        if (this.currentProcessingCode === code) {
+          throw new Error('登录凭证正在处理中，请勿重复提交')
+        }
+        
+        this.currentProcessingCode = code
+        
+        // 使用真实API调用
+        const apiResponse = await authApi.login(loginData)
+        console.log('登录API响应:', apiResponse)
+        
+        // 使用统一的登录成功处理方法
+        return await this.processLoginSuccess(apiResponse, '微信')
         
         return apiResponse.data
       } catch (error) {
