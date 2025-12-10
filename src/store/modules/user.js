@@ -38,46 +38,36 @@ export const useUserStore = defineStore('user', {
     isLoggedIn: false,
     isLoading: false,
     currentProcessingCode: null
-    }
-    
-    // 开发模式下添加保护，防止直接修改 userState
-    if (process.env.NODE_ENV === 'development') {
-      // 深度冻结 userState，防止直接修改
-      const deepFreeze = (obj) => {
-        Object.getOwnPropertyNames(obj).forEach(prop => {
-          if (obj[prop] !== null && typeof obj[prop] === 'object') {
-            deepFreeze(obj[prop])
-          }
-        })
-        return Object.freeze(obj)
-      }
-      
-      // 使用 Proxy 监听修改尝试
-      const proxyHandler = {
-        set(target, property, value) {
-          if (property === 'profile' && value !== target[property]) {
-            console.warn('⚠️ 检测到直接修改 userState.profile，请使用 updateUserInfo() 方法')
-            console.trace('调用栈：')
-            return false // 阻止修改
-          }
-          if (property === 'auth' && value !== target[property]) {
-            console.warn('⚠️ 检测到直接修改 userState.auth，请使用相应的方法')
-            console.trace('调用栈：')
-            return false // 阻止修改
-          }
-          return Reflect.set(target, property, value)
+  }
+  
+  // 开发模式下添加保护，防止直接修改 userState
+  if (process.env.NODE_ENV === 'development') {
+    // 使用 Proxy 监听修改尝试
+    const proxyHandler = {
+      set(target, property, value) {
+        if (property === 'profile' && value !== target[property]) {
+          console.warn('⚠️ 检测到直接修改 userState.profile，请使用 updateUserInfo() 方法')
+          console.trace('调用栈：')
+          return false // 阻止修改
         }
+        if (property === 'auth' && value !== target[property]) {
+          console.warn('⚠️ 检测到直接修改 userState.auth，请使用相应的方法')
+          console.trace('调用栈：')
+          return false // 阻止修改
+        }
+        return Reflect.set(target, property, value)
       }
-      
-      const proxy = new Proxy(initialState.userState, proxyHandler)
-      // 保存原始对象引用，供内部方法使用
-      proxy._target = initialState.userState
-      proxy._isProxy = true
-      
-      initialState.userState = proxy
     }
     
-    return initialState
+    const proxy = new Proxy(initialState.userState, proxyHandler)
+    // 保存原始对象引用，供内部方法使用
+    proxy._target = initialState.userState
+    proxy._isProxy = true
+    
+    initialState.userState = proxy
+  }
+  
+  return initialState
   },
   
   getters: {
