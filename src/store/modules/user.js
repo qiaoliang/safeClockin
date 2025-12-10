@@ -154,7 +154,7 @@ export const useUserStore = defineStore('user', {
             checkinData: null,
             lastUpdate: null
           }
-        }
+        })
       }
       
       // 确保子结构完整
