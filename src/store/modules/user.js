@@ -608,7 +608,7 @@ export const useUserStore = defineStore('user', {
           checkinData: null,
           lastUpdate: null
         }
-      }
+      })
       this.isLoggedIn = false
       this.isLoading = false
       this.currentProcessingCode = null
