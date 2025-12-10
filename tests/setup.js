@@ -23,6 +23,7 @@ global.uni = {
   }),
   setStorageSync: vi.fn(),
   removeStorageSync: vi.fn(),
+  clearStorageSync: vi.fn(),
   redirectTo: vi.fn(),
   navigateTo: vi.fn(),
   navigateBack: vi.fn(),

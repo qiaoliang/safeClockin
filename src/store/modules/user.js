@@ -433,6 +433,9 @@ export const useUserStore = defineStore('user', {
       // 调用登出API
       authApi.logout().catch(() => {})
       
+      // 保存微信用户信息到本地缓存，用于下次登录
+      this._saveWechatUserCache()
+      
       // 保留必要信息用于快速重新登录
       const wechatOpenid = this.userState.profile.wechatOpenid
       
@@ -627,6 +630,57 @@ export const useUserStore = defineStore('user', {
       uni.clearStorageSync()
       
       console.log('✅ 用户状态已强制清理')
+    },
+
+    // 保存微信用户信息到本地缓存
+    _saveWechatUserCache() {
+      const { nickname, avatarUrl } = this.userState.profile
+      if (nickname && avatarUrl) {
+        const cacheData = {
+          nickname,
+          avatarUrl,
+          timestamp: Date.now()
+        }
+        storage.set('safeguard_cache', cacheData)
+        console.log('✅ 微信用户信息已保存到 safeguard_cache')
+      }
+    },
+    
+    // 获取微信用户缓存
+    getWechatUserCache() {
+      const cacheData = storage.get('safeguard_cache')
+      if (!cacheData) {
+        return null
+      }
+      
+      // 检查缓存是否过期（7天）
+      const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000 // 7天
+      if (Date.now() - cacheData.timestamp > CACHE_DURATION) {
+        console.log('⚠️ 微信用户缓存已过期，清理中')
+        this.clearWechatUserCache()
+        return null
+      }
+      
+      return cacheData
+    },
+    
+    // 清理微信用户缓存
+    clearWechatUserCache() {
+      storage.remove('safeguard_cache')
+      console.log('✅ 微信用户缓存已清理')
+    },
+    
+    // 更新微信用户缓存
+    updateWechatUserCache(nickname, avatarUrl) {
+      if (nickname && avatarUrl) {
+        const cacheData = {
+          nickname,
+          avatarUrl,
+          timestamp: Date.now()
+        }
+        storage.set('safeguard_cache', cacheData)
+        console.log('✅ 微信用户缓存已更新')
+      }
     },
 
     // 诊断用户状态（用于调试）

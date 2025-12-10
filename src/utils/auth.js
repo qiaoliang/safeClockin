@@ -42,7 +42,20 @@ export async function handleLoginSuccess(response) {
     let loginData
     if (typeof response === 'string') {
       // 只传入了code（非首次登录）
-      loginData = response
+      // 检查是否有本地缓存的微信用户信息
+      const wechatCache = userStore.getWechatUserCache()
+      if (wechatCache) {
+        // 使用缓存的用户信息进行登录
+        loginData = {
+          code: response,
+          nickname: wechatCache.nickname,
+          avatar_url: wechatCache.avatarUrl
+        }
+        console.log('✅ 使用本地缓存的微信用户信息登录')
+      } else {
+        // 没有缓存，只传code（可能导致缺少nickname参数）
+        loginData = response
+      }
     } else {
       // 获取 code
       const code = response.code
@@ -57,8 +70,19 @@ export async function handleLoginSuccess(response) {
           avatar_url: cachedUserInfo.avatarUrl
         }
       } else {
-        // 非首次登录，只传code
-        loginData = code
+        // 尝试使用本地缓存的微信用户信息
+        const wechatCache = userStore.getWechatUserCache()
+        if (wechatCache) {
+          loginData = {
+            code: code,
+            nickname: wechatCache.nickname,
+            avatar_url: wechatCache.avatarUrl
+          }
+          console.log('✅ 使用本地缓存的微信用户信息登录')
+        } else {
+          // 没有任何缓存信息，只传code（可能导致缺少nickname参数）
+          loginData = code
+        }
       }
     }
     
@@ -68,6 +92,12 @@ export async function handleLoginSuccess(response) {
     // 但为了确保获取最新的信息，我们仍然调用一次fetchUserInfo
     try {
       await userStore.fetchUserInfo()
+      
+      // 登录成功后，更新微信用户缓存
+      const userInfo = userStore.userInfo
+      if (userInfo && userInfo.nickname && userInfo.avatarUrl) {
+        userStore.updateWechatUserCache(userInfo.nickname, userInfo.avatarUrl)
+      }
     } catch (fetchError) {
       console.error('获取用户信息失败，但登录成功:', fetchError)
       // 如果获取用户信息失败，但登录成功，继续执行后续逻辑
