@@ -11,7 +11,7 @@
         ></image>
       </view>
       <view class="user-details">
-        <text class="user-name">{{ userInfo?.nickName || '未设置昵称' }}</text>
+        <text class="user-name">{{ getDisplayName(userInfo) }}</text>
         <text class="user-role">{{ getRoleText(userInfo?.role) }}</text>
       </view>
     </view>
@@ -103,12 +103,36 @@
 
 <script setup>
 import { computed } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { routeGuard } from '@/utils/router'
 
 const userStore = useUserStore()
 
-const userInfo = computed(() => userStore.userInfo)
+// 计算属性：用户信息 - 添加防御性验证
+const userInfo = computed(() => {
+  // Layer 1: 入口点验证 - 确保用户信息存在
+  const user = userStore.userInfo
+  
+  if (!user) {
+    console.log('用户信息为空')
+    return null
+  }
+  
+  // Layer 2: 业务逻辑验证 - 确保关键字段存在
+  if (!user.nickName && !user.nickname) {
+    console.warn('⚠️ 用户信息缺少昵称字段')
+    // 尝试从其他字段获取昵称
+    if (user.wechat_openid) {
+      user.nickName = `微信用户${user.wechat_openid.slice(-6)}`
+    } else {
+      user.nickName = '用户'
+    }
+  }
+  
+  console.log('用户信息验证通过:', user.nickName || user.nickname)
+  return user
+})
 
 const getRoleText = (role) => {
   const roleMap = {
@@ -117,6 +141,40 @@ const getRoleText = (role) => {
     community: '社区工作人员'
   }
   return roleMap[role] || '未知角色'
+}
+
+// 获取用户显示名称 - 添加多层防御
+const getDisplayName = (user) => {
+  // Layer 1: 入口点验证
+  if (!user) {
+    console.log('用户对象为空，显示未登录用户')
+    return '未登录用户'
+  }
+  
+  // Layer 2: 业务逻辑验证 - 尝试多种昵称字段
+  let displayName = user.nickName || user.nickname || user.userName || user.name
+  
+  if (displayName) {
+    console.log('找到用户昵称:', displayName)
+    return displayName
+  }
+  
+  // Layer 3: 环境保护 - 生成临时显示名称
+  if (user.wechat_openid) {
+    displayName = `微信用户${user.wechat_openid.slice(-6)}`
+    console.log('使用微信openid生成临时昵称:', displayName)
+    return displayName
+  }
+  
+  if (user.phone_number) {
+    displayName = `用户${user.phone_number.slice(-4)}`
+    console.log('使用手机号生成临时昵称:', displayName)
+    return displayName
+  }
+  
+  // Layer 4: 最终兜底
+  console.log('无法获取用户昵称，使用默认值')
+  return '未设置昵称'
 }
 
 // 获取连续打卡天数（对于新用户显示0）
@@ -188,6 +246,33 @@ const handleLogout = () => {
     }
   })
 }
+
+// 页面显示时刷新用户数据
+onShow(() => {
+  // Layer 1: 入口点验证 - 确保用户状态正确初始化
+  console.log('=== Layer 1: 个人中心onShow入口点验证 ===')
+  console.log('当前登录状态:', userStore.isLoggedIn)
+  console.log('用户信息:', userStore.userInfo)
+  console.log('用户角色:', userStore.role)
+  
+  // Layer 2: 业务逻辑验证 - 确保数据一致性
+  if (!userStore.userInfo) {
+    console.log('用户信息为空，尝试初始化用户状态')
+    userStore.initUserState()
+  }
+  
+  // Layer 3: 环境保护 - 防止数据过期
+  if (userStore.isLoggedIn && !userStore.userInfo) {
+    console.warn('⚠️ 异常状态：已登录但无用户信息，尝试重新获取')
+    userStore.fetchUserInfo().catch(error => {
+      console.error('重新获取用户信息失败:', error)
+    })
+  }
+  
+  // Layer 4: 调试日志 - 记录当前状态
+  console.log('=== Layer 4: 个人中心页面显示完成 ===')
+  console.log('最终用户昵称:', userInfo.value?.nickName || userInfo.value?.nickname || '未设置昵称')
+})
 </script>
 
 <style scoped>

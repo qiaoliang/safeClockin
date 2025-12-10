@@ -1,12 +1,12 @@
-// 配置文件入口 - prod 环境
+// 配置文件入口 - func 环境
 // 导入各环境配置
 import unitConfig from './unit.js'
 import funcConfig from './func.js'
 import uatConfig from './uat.js'
 import prodConfig from './prod.js'
 
-// 直接返回 prod 配置
-const config = prodConfig
+// 直接返回 func 配置
+const config = funcConfig
 
 // 导出环境信息
 export const currentEnv = config.env
