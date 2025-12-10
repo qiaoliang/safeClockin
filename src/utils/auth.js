@@ -27,16 +27,25 @@ export async function handleLoginSuccess(response) {
       throw new Error('登录凭证无效或缺失')
     }
     
-    // 调用用户store的登录方法，传递微信登录凭证code
-    // response.code 是从微信登录API获取的登录凭证，不是后端API响应的code字段
-    const loginCode = typeof response === 'string' ? response : response.code
-    await userStore.login(loginCode)
-    
-    // 如果是首次登录（提供了用户信息），则更新用户信息
-    if (response.userInfo) {
-      // 直接更新用户资料
-      await userStore.updateUserInfo(response.userInfo)
+    // 构建登录请求数据
+    // 如果有用户信息（首次登录），则一起传递给登录API
+    let loginData
+    if (typeof response === 'string') {
+      // 只传入了code（非首次登录）
+      loginData = response
+    } else if (response.userInfo) {
+      // 首次登录，包含code和用户信息
+      loginData = {
+        code: response.code,
+        nickname: response.userInfo.nickName,
+        avatar_url: response.userInfo.avatarUrl
+      }
+    } else {
+      // 非首次登录，只传code
+      loginData = response.code
     }
+    
+    await userStore.login(loginData)
     
     // 用户信息应该已经在login方法中获取了，这里可以跳过或进行刷新
     // 但为了确保获取最新的信息，我们仍然调用一次fetchUserInfo
