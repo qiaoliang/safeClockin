@@ -337,6 +337,13 @@ export const useUserStore = defineStore('user', {
           this.currentProcessingCode = null
         }
         this.isLoading = false
+        
+        // 清理临时用户信息
+        if (this.userState?.cache?.tempUserInfo) {
+          this.updateCache({
+            tempUserInfo: null
+          })
+        }
       }
     },
     
@@ -499,7 +506,7 @@ export const useUserStore = defineStore('user', {
       await this.updateUserInfo({ role })
     },
     
-    // 缓存管理 - 仅用于 checkinData
+    // 缓存管理 - 用于 checkinData 和临时用户信息
     updateCache(cacheData) {
       // 确保 userState 和 cache 存在
       if (!this.userState) {
@@ -510,10 +517,11 @@ export const useUserStore = defineStore('user', {
         target.cache = {}
       }
       
-      // 只允许更新 checkinData，忽略其他数据
+      // 更新缓存数据
       const target = this.userState._target || this.userState
       target.cache = {
-        checkinData: cacheData.checkinData || null,
+        ...target.cache,
+        ...cacheData,
         lastUpdate: Date.now()
       }
       this._persistUserState()
@@ -528,6 +536,7 @@ export const useUserStore = defineStore('user', {
       const target = this.userState._target || this.userState
       target.cache = {
         checkinData: null,
+        tempUserInfo: null,
         lastUpdate: null
       }
       this._persistUserState()

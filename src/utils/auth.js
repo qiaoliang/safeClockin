@@ -27,22 +27,39 @@ export async function handleLoginSuccess(response) {
       throw new Error('登录凭证无效或缺失')
     }
     
+    // 如果有用户信息，先保存到 store
+    if (response.userInfo) {
+      // 临时保存用户信息到 store 的缓存中，供登录时使用
+      userStore.updateCache({
+        tempUserInfo: {
+          nickname: response.userInfo.nickName,
+          avatarUrl: response.userInfo.avatarUrl
+        }
+      })
+    }
+    
     // 构建登录请求数据
-    // 如果有用户信息（首次登录），则一起传递给登录API
     let loginData
     if (typeof response === 'string') {
       // 只传入了code（非首次登录）
       loginData = response
-    } else if (response.userInfo) {
-      // 首次登录，包含code和用户信息
-      loginData = {
-        code: response.code,
-        nickname: response.userInfo.nickName,
-        avatar_url: response.userInfo.avatarUrl
-      }
     } else {
-      // 非首次登录，只传code
-      loginData = response.code
+      // 获取 code
+      const code = response.code
+      
+      // 检查 store 中是否有缓存用户信息
+      const cachedUserInfo = userStore.userState?.cache?.tempUserInfo
+      if (cachedUserInfo) {
+        // 首次登录，包含code和用户信息
+        loginData = {
+          code: code,
+          nickname: cachedUserInfo.nickname,
+          avatar_url: cachedUserInfo.avatarUrl
+        }
+      } else {
+        // 非首次登录，只传code
+        loginData = code
+      }
     }
     
     await userStore.login(loginData)
