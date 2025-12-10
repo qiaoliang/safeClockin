@@ -5,7 +5,7 @@ export default {
   
   // API 配置
   api: {
-    baseURL: 'http://localhost:8080', // 功能测试环境
+    baseURL: 'http://localhost:9999', // 功能测试环境
     timeout: 15000
   },
   

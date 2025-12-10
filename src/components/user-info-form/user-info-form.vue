@@ -103,24 +103,30 @@ const onSubmit = async (e) => {
   isLoading.value = true
   
   try {
-    // 提交用户信息
-    emit('confirm', {
-      code: props.code,
-      userInfo: {
-        avatarUrl: formData.value.avatarUrl,
-        nickName: formData.value.nickName
-      }
+    // 提交用户信息，并等待父组件处理完成
+    await new Promise((resolve, reject) => {
+      emit('confirm', {
+        code: props.code,
+        userInfo: {
+          avatarUrl: formData.value.avatarUrl,
+          nickName: formData.value.nickName
+        },
+        onSuccess: resolve,
+        onError: reject
+      })
     })
+    
+    // 成功后关闭表单
+    emit('cancel')
     
   } catch (error) {
     console.error('提交用户信息失败:', error)
     uni.showToast({
-      title: '提交失败，请重试',
+      title: error.message || '提交失败，请重试',
       icon: 'none'
     })
   } finally {
-    // 在提交后重置isLoading状态，这将禁用提交按钮
-    // 即使页面跳转，这个状态更新也会生效
+    // 无论成功失败，都重置loading状态
     isLoading.value = false
   }
 }

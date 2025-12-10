@@ -135,10 +135,21 @@ const onUserInfoConfirm = async (userInfo) => {
       userInfo: userInfo.userInfo
     })
     
+    // 调用成功回调
+    if (userInfo.onSuccess) {
+      userInfo.onSuccess()
+    }
+    
     showUserInfoForm.value = false
   } catch (error) {
     console.error('登录失败:', error)
-    handleLoginError(error)
+    
+    // 调用错误回调
+    if (userInfo.onError) {
+      userInfo.onError(error)
+    } else {
+      handleLoginError(error)
+    }
   }
 }
 
