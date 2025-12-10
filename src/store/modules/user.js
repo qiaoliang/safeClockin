@@ -4,9 +4,11 @@ import { storage } from './storage'
 import { authApi } from '@/api/auth'
 
 export const useUserStore = defineStore('user', {
-  state: () => ({
-    // 核心用户状态 - 统一管理所有用户相关数据
-    userState: {
+  state: () => {
+    // 创建初始状态
+    const initialState = {
+      // 核心用户状态 - 统一管理所有用户相关数据
+      userState: {
       // 认证信息
       auth: {
         token: null,
@@ -28,8 +30,7 @@ export const useUserStore = defineStore('user', {
       // 缓存数据
       cache: {
         checkinData: null,
-        lastUpdate: null,
-        cachedUserInfo: null
+        lastUpdate: null
       }
     },
     
@@ -37,7 +38,47 @@ export const useUserStore = defineStore('user', {
     isLoggedIn: false,
     isLoading: false,
     currentProcessingCode: null
-  }),
+    }
+    
+    // 开发模式下添加保护，防止直接修改 userState
+    if (process.env.NODE_ENV === 'development') {
+      // 深度冻结 userState，防止直接修改
+      const deepFreeze = (obj) => {
+        Object.getOwnPropertyNames(obj).forEach(prop => {
+          if (obj[prop] !== null && typeof obj[prop] === 'object') {
+            deepFreeze(obj[prop])
+          }
+        })
+        return Object.freeze(obj)
+      }
+      
+      // 使用 Proxy 监听修改尝试
+      const proxyHandler = {
+        set(target, property, value) {
+          if (property === 'profile' && value !== target[property]) {
+            console.warn('⚠️ 检测到直接修改 userState.profile，请使用 updateUserInfo() 方法')
+            console.trace('调用栈：')
+            return false // 阻止修改
+          }
+          if (property === 'auth' && value !== target[property]) {
+            console.warn('⚠️ 检测到直接修改 userState.auth，请使用相应的方法')
+            console.trace('调用栈：')
+            return false // 阻止修改
+          }
+          return Reflect.set(target, property, value)
+        }
+      }
+      
+      const proxy = new Proxy(initialState.userState, proxyHandler)
+      // 保存原始对象引用，供内部方法使用
+      proxy._target = initialState.userState
+      proxy._isProxy = true
+      
+      initialState.userState = proxy
+    }
+    
+    return initialState
+  },
   
   getters: {
     // 便捷访问器
@@ -69,6 +110,30 @@ export const useUserStore = defineStore('user', {
   },
   
   actions: {
+    // 内部方法：安全地设置 userState（绕过开发模式保护）
+    _setUserState(newState) {
+      if (process.env.NODE_ENV === 'development' && this.userState && this.userState._isProxy) {
+        // 开发模式下，直接设置底层对象
+        const target = this.userState._target || this.userState
+        Object.assign(target, newState)
+      } else {
+        // 生产模式或初始化时，直接设置
+        this.userState = newState
+      }
+    },
+    
+    // 内部方法：安全地设置 profile（绕过开发模式保护）
+    _setProfile(newProfile) {
+      if (process.env.NODE_ENV === 'development' && this.userState && this.userState._isProxy) {
+        // 开发模式下，直接设置底层对象
+        const target = this.userState._target || this.userState
+        target.profile = newProfile
+      } else {
+        // 生产模式或初始化时，直接设置
+        this.userState.profile = newProfile
+      }
+    },
+    
     // 持久化用户状态到 storage
     _persistUserState() {
       const userState = JSON.stringify(this.userState)
@@ -78,7 +143,7 @@ export const useUserStore = defineStore('user', {
     // 确保 userState 结构完整
     _ensureUserStateIntegrity() {
       if (!this.userState || typeof this.userState !== 'object') {
-        this.userState = {
+        this._setUserState({
           auth: {
             token: null,
             refreshToken: null,
@@ -97,15 +162,15 @@ export const useUserStore = defineStore('user', {
           },
           cache: {
             checkinData: null,
-            lastUpdate: null,
-            cachedUserInfo: null
+            lastUpdate: null
           }
         }
       }
       
       // 确保子结构完整
       if (!this.userState.auth) {
-        this.userState.auth = {
+        const target = this.userState._target || this.userState
+        target.auth = {
           token: null,
           refreshToken: null,
           secureSeed: null,
@@ -115,7 +180,8 @@ export const useUserStore = defineStore('user', {
       }
       
       if (!this.userState.profile) {
-        this.userState.profile = {
+        const target = this.userState._target || this.userState
+        target.profile = {
           userId: null,
           nickname: null,
           avatarUrl: null,
@@ -127,10 +193,10 @@ export const useUserStore = defineStore('user', {
       }
       
       if (!this.userState.cache) {
-        this.userState.cache = {
+        const target = this.userState._target || this.userState
+        target.cache = {
           checkinData: null,
-          lastUpdate: null,
-          cachedUserInfo: null
+          lastUpdate: null
         }
       }
     },
@@ -175,12 +241,11 @@ export const useUserStore = defineStore('user', {
               },
               cache: savedState.cache || {
                 checkinData: null,
-                lastUpdate: null,
-                cachedUserInfo: null
+                lastUpdate: null
               }
             }
             
-            this.userState = restoredState
+            this._setUserState(restoredState)
             this.isLoggedIn = !!this.userState.auth.token
             console.log('✅ 从 userState 恢复用户状态')
             return true
@@ -216,7 +281,6 @@ export const useUserStore = defineStore('user', {
       // 清理旧的分散存储
       storage.remove('token')
       storage.remove('refreshToken')
-      storage.remove('userInfo')
       storage.remove('cached_user_info')
       storage.remove('secure_seed')
       storage.remove('checkinCache')
@@ -246,7 +310,8 @@ export const useUserStore = defineStore('user', {
         
         // 更新用户状态
         const now = new Date()
-        this.userState.auth = {
+        const target = this.userState._target || this.userState
+        target.auth = {
           token: apiResponse.data?.token,
           refreshToken: apiResponse.data?.refreshToken || apiResponse.data?.refresh_token,
           secureSeed: this.userState.auth.secureSeed,
@@ -254,7 +319,7 @@ export const useUserStore = defineStore('user', {
           expiresAt: apiResponse.data?.expires_at || null
         }
         
-        this.userState.profile = {
+        target.profile = {
           userId: apiResponse.data?.userId || apiResponse.data?.user_id,
           nickname: apiResponse.data?.nickname || apiResponse.data?.nickName,
           avatarUrl: apiResponse.data?.avatarUrl || apiResponse.data?.avatar_url,
@@ -286,25 +351,40 @@ export const useUserStore = defineStore('user', {
     },
     
     async updateUserInfo(userData) {
+      // 参数验证
+      if (!userData || typeof userData !== 'object') {
+        throw new Error('用户数据必须是一个对象')
+      }
+      
+      // 记录更新前的状态，用于错误回滚
+      const previousProfile = { ...this.userState.profile }
+      
       this.isLoading = true
       try {
+        // 先更新本地状态（乐观更新）
+        const target = this.userState._target || this.userState
+        Object.assign(target.profile, userData)
+        
+        // 调用API更新
         const response = await authApi.updateUserProfile(userData)
         console.log('更新用户信息响应:', response)
         
         // 检查API响应是否成功
         if (response.code !== 1) {
           console.error('更新用户信息API返回错误:', response)
+          // 回滚本地状态
+          target.profile = previousProfile
           throw new Error(`更新用户信息失败: ${response.msg || '未知错误'}`)
         }
-        
-        // 更新用户状态
-        Object.assign(this.userState.profile, userData)
         
         // 持久化状态
         this._persistUserState()
         
         return response
       } catch (error) {
+        // 确保状态已回滚
+        const target = this.userState._target || this.userState
+        target.profile = previousProfile
         console.error('更新用户信息失败:', error)
         throw error
       } finally {
@@ -325,11 +405,14 @@ export const useUserStore = defineStore('user', {
         }
         
         // 更新用户状态
-        this.userState.profile = {
-          ...this.userState.profile,
+        const target = this.userState._target || this.userState
+        target.profile = {
+          ...target.profile,
           ...response.data
         }
-        this.userState.cache.lastUpdate = Date.now()
+        
+        // 更新缓存时间
+        target.cache.lastUpdate = Date.now()
         
         // 持久化状态
         this._persistUserState()
@@ -357,7 +440,7 @@ export const useUserStore = defineStore('user', {
       const wechatOpenid = this.userState.profile.wechatOpenid
       
       // 重置用户状态
-      this.userState = {
+      this._setUserState({
         auth: {
           token: null,
           refreshToken: null,
@@ -376,10 +459,9 @@ export const useUserStore = defineStore('user', {
         },
         cache: {
           checkinData: null,
-          lastUpdate: null,
-          cachedUserInfo: null
+          lastUpdate: null
         }
-      }
+      })
       
       this.isLoggedIn = false
       
@@ -422,23 +504,26 @@ export const useUserStore = defineStore('user', {
     
     // 更新用户角色
     async updateUserRole(role) {
-      this.userState.profile.role = role
+      const target = this.userState._target || this.userState
+      target.profile.role = role
       await this.updateUserInfo({ role })
     },
     
-    // 缓存管理
+    // 缓存管理 - 仅用于 checkinData
     updateCache(cacheData) {
       // 确保 userState 和 cache 存在
       if (!this.userState) {
-        this.userState = { cache: {} }
+        this._setUserState({ cache: {} })
       }
       if (!this.userState.cache) {
-        this.userState.cache = {}
+        const target = this.userState._target || this.userState
+        target.cache = {}
       }
       
-      this.userState.cache = {
-        ...this.userState.cache,
-        ...cacheData,
+      // 只允许更新 checkinData，忽略其他数据
+      const target = this.userState._target || this.userState
+      target.cache = {
+        checkinData: cacheData.checkinData || null,
         lastUpdate: Date.now()
       }
       this._persistUserState()
@@ -447,13 +532,13 @@ export const useUserStore = defineStore('user', {
     clearCache() {
       // 确保 userState 存在
       if (!this.userState) {
-        this.userState = {}
+        this._setUserState({})
       }
       
-      this.userState.cache = {
+      const target = this.userState._target || this.userState
+      target.cache = {
         checkinData: null,
-        lastUpdate: null,
-        cachedUserInfo: null
+        lastUpdate: null
       }
       this._persistUserState()
     },
@@ -471,8 +556,9 @@ export const useUserStore = defineStore('user', {
       try {
         const response = await authApi.refreshToken(this.userState.auth.refreshToken)
         if (response.code === 1) {
-          this.userState.auth.token = response.data.token
-          this.userState.auth.expiresAt = response.data.expires_at
+          const target = this.userState._target || this.userState
+          target.auth.token = response.data.token
+          target.auth.expiresAt = response.data.expires_at
           this._persistUserState()
           return response.data.token
         }
@@ -486,8 +572,9 @@ export const useUserStore = defineStore('user', {
 
     // 更新 token 和 refreshToken（用于 token 刷新）
     updateTokens(newToken, newRefreshToken) {
-      this.userState.auth.token = newToken
-      this.userState.auth.refreshToken = newRefreshToken
+      const target = this.userState._target || this.userState
+      target.auth.token = newToken
+      target.auth.refreshToken = newRefreshToken
       this._persistUserState()
     },
 
@@ -498,9 +585,10 @@ export const useUserStore = defineStore('user', {
       uni.setStorageSync('login_scene', 'relogin')
       
       // 清除认证信息，但保留用户基本信息
-      this.userState.auth.token = null
-      this.userState.auth.refreshToken = null
-      this.userState.auth.expiresAt = null
+      const target = this.userState._target || this.userState
+      target.auth.token = null
+      target.auth.refreshToken = null
+      target.auth.expiresAt = null
       this.isLoggedIn = false
       
       this._persistUserState()
@@ -509,7 +597,7 @@ export const useUserStore = defineStore('user', {
     // 强制清理用户状态（用于调试和异常恢复）
     forceClearUserState() {
       console.log('🧹 强制清理用户状态')
-      this.userState = {
+      this._setUserState({
         auth: {
           token: null,
           refreshToken: null,
@@ -528,8 +616,7 @@ export const useUserStore = defineStore('user', {
         },
         cache: {
           checkinData: null,
-          lastUpdate: null,
-          cachedUserInfo: null
+          lastUpdate: null
         }
       }
       this.isLoggedIn = false

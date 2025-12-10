@@ -91,8 +91,6 @@ const onWechatLogin = async () => {
     
     // 第二步：检查登录场景和用户状态
     const loginScenario = storage.get('login_scenario') || uni.getStorageSync('login_scenario')
-    // 安全访问 cachedUserInfo，确保 userState 和 cache 存在
-    const cachedUserInfo = userStore.userState?.cache?.cachedUserInfo
     const localUserInfo = userStore.userInfo
     const hasWechatBind = !!(localUserInfo && (localUserInfo.wechatOpenid || localUserInfo.wechat_openid))
     
@@ -108,10 +106,6 @@ const onWechatLogin = async () => {
     } else if (hasWechatBind) {
       // 已有微信绑定：非首次登录
       console.log('检测到微信绑定，执行非首次登录流程')
-      await handleLoginSuccess({ code: loginRes.code })
-    } else if (cachedUserInfo) {
-      // 有缓存的用户信息
-      console.log('检测到缓存的用户信息，执行非首次登录流程')
       await handleLoginSuccess({ code: loginRes.code })
     } else {
       // 首次登录场景

@@ -8,7 +8,7 @@ setActivePinia(pinia)
 
 // Mock secure.js utilities
 vi.mock('@/utils/secure', () => ({
-  SENSITIVE_KEYS: ['userState', 'token', 'refreshToken', 'userInfo', 'cached_user_info', 'secure_seed'],
+  SENSITIVE_KEYS: ['userState', 'token', 'refreshToken', 'cached_user_info', 'secure_seed'],
   encodeObject: vi.fn((obj) => JSON.stringify(obj)),
   decodeObject: vi.fn((str) => JSON.parse(str))
 }))

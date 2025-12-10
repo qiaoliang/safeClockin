@@ -304,8 +304,7 @@ const submitAuth = async (e) => {
     if (response.code === 1) {
       // 更新用户验证状态
       if (userStore.userInfo) {
-        userStore.userInfo.verificationStatus = 1 // 待审核
-        uni.setStorageSync('userInfo', userStore.userInfo)
+        await userStore.updateUserInfo({ verificationStatus: 1 }) // 待审核
       }
       
       // 显示成功弹窗

@@ -34,15 +34,7 @@ export async function handleLoginSuccess(response) {
     
     // 如果是首次登录（提供了用户信息），则更新用户信息
     if (response.userInfo) {
-      // 将用户信息缓存到 userStore
-      userStore.updateCache({
-        cachedUserInfo: {
-          avatarUrl: response.userInfo.avatarUrl,
-          nickName: response.userInfo.nickName
-        }
-      })
-      
-      // 更新用户资料
+      // 直接更新用户资料
       await userStore.updateUserInfo(response.userInfo)
     }
     
@@ -150,7 +142,6 @@ async function mockLoginAPI(code, userInfo) {
   // 保存到本地存储
   // 保持与storage模块兼容：字符串则使用storage.set
   try { uni.setStorageSync('token', mockResponse.token) } catch(e) {}
-  try { uni.setStorageSync('userInfo', mockResponse.data) } catch(e) {}
 }
 
 export function handleLoginError(error) {
