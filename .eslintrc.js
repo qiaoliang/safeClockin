@@ -2,8 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true,
-    'vitest/globals': true
+    node: true
   },
   extends: [
     'eslint:recommended',
@@ -14,8 +13,7 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: [
-    'vue',
-    'vitest'
+    'vue'
   ],
   rules: {
     // Vue specific rules
@@ -26,16 +24,5 @@ module.exports = {
     'no-console': 'warn',
     'no-unused-vars': 'warn',
     'prefer-const': 'error'
-  },
-  overrides: [
-    {
-      files: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
-      env: {
-        vitest: true
-      },
-      rules: {
-        'no-unused-expressions': 'off'
-      }
-    }
-  ]
+  }
 }

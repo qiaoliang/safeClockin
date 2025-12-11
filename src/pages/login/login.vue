@@ -3,9 +3,44 @@
   <view class="login-container">
     <!-- Logo和标题 -->
     <view class="logo-section">
-      <image class="app-logo" src="/static/logo.png" mode="aspectFit"></image>
-      <text class="app-title">安卡好习惯</text>
-      <text class="app-subtitle">让关爱无处不在</text>
+      <view class="app-logo floating-card">
+        <text class="shield-icon">🛡️</text>
+      </view>
+      <text class="app-title slide-up">安全守护</text>
+      <text class="app-subtitle slide-up" style="animation-delay: 0.1s;">让关爱无处不在，守护每一份安心</text>
+    </view>
+    
+    <!-- 特色功能展示 -->
+    <view class="features-section slide-up" style="animation-delay: 0.2s;">
+      <view class="feature-card">
+        <view class="feature-icon success-bg">
+          <text class="icon">✓</text>
+        </view>
+        <view class="feature-content">
+          <text class="feature-title">独居者自主管理</text>
+          <text class="feature-desc">简单打卡，轻松记录日常生活</text>
+        </view>
+      </view>
+      
+      <view class="feature-card">
+        <view class="feature-icon blue-bg">
+          <text class="icon">🛡️</text>
+        </view>
+        <view class="feature-content">
+          <text class="feature-title">监护人实时关注</text>
+          <text class="feature-desc">及时掌握状态，安心放心</text>
+        </view>
+      </view>
+      
+      <view class="feature-card">
+        <view class="feature-icon orange-bg">
+          <text class="icon">🏢</text>
+        </view>
+        <view class="feature-content">
+          <text class="feature-title">社区高效服务</text>
+          <text class="feature-desc">专业管理，快速响应</text>
+        </view>
+      </view>
     </view>
     
     <!-- 微信登录按钮 -->
@@ -14,7 +49,7 @@
       @click="onWechatLogin"
       :disabled="isLoading"
     >
-      <text class="wechat-icon">🟢</text>
+      <text class="wechat-icon">💬</text>
       <text class="button-text">微信快捷登录</text>
     </button>
     
@@ -33,12 +68,18 @@
     
     <!-- 用户协议 -->
     <view class="agreement-section">
-      <text class="agreement-text">
-        登录即表示同意
-        <text class="link" @click="showUserAgreement">《用户协议》</text>
-        和
+      <text class="agreement-text">登录即表示您同意</text>
+      <view class="agreement-links">
+        <text class="link" @click="showUserAgreement">《用户服务协议》</text>
+        <text class="separator">和</text>
         <text class="link" @click="showPrivacyPolicy">《隐私政策》</text>
-      </text>
+      </view>
+      
+      <!-- 版本信息 -->
+      <view class="version-info">
+        <text class="version-text">版本 v1.0.0</text>
+        <text class="slogan pulse-animation">让科技温暖生活</text>
+      </view>
     </view>
     
     <!-- 头像昵称填写组件 -->
@@ -188,15 +229,25 @@ const showPrivacyPolicy = () => {
 
 .logo-section {
   text-align: center;
-  margin-bottom: 160rpx;
+  margin-bottom: 120rpx;
 }
 
 .app-logo {
   width: 160rpx;
   height: 160rpx;
-  margin-bottom: 48rpx;
+  margin: 0 auto 48rpx auto;
   border-radius: 32rpx;
-  box-shadow: 0 0 60rpx rgba(244, 130, 36, 0.3);
+  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
+}
+
+.shield-icon {
+  font-size: 80rpx;
+  line-height: 1;
+  display: block;
 }
 
 .app-title {
@@ -205,31 +256,112 @@ const showPrivacyPolicy = () => {
   font-weight: bold;
   color: #624731;
   margin-bottom: 16rpx;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .app-subtitle {
   display: block;
-  font-size: 32rpx;
-  color: #666;
+  font-size: 28rpx;
+  color: #6B7280;
+  line-height: 1.5;
+  max-width: 480rpx;
+  margin: 0 auto;
+}
+
+/* 特色功能展示 */
+.features-section {
+  width: 100%;
+  max-width: 600rpx;
+  margin-bottom: 60rpx;
+}
+
+.feature-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.feature-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.success-bg {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.blue-bg {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.orange-bg {
+  background: rgba(244, 130, 36, 0.2);
+}
+
+.feature-icon .icon {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.success-bg .icon {
+  color: #10B981;
+}
+
+.blue-bg .icon {
+  color: #2563EB;
+}
+
+.orange-bg .icon {
+  color: #E8741A;
+}
+
+.feature-content {
+  flex: 1;
+}
+
+.feature-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8rpx;
+}
+
+.feature-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #6B7280;
 }
 
 .wechat-login-button {
   width: 600rpx;
   height: 96rpx;
-  background: linear-gradient(135deg, #07C160 0%, #00A651 100%);
+  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
   border-radius: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  box-shadow: 0 8rpx 32rpx rgba(7, 193, 96, 0.4);
+  box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
   margin-bottom: 48rpx;
+  border: none;
+  transition: all 0.3s ease;
 }
 
 .wechat-login-button:active {
-  transform: scale(0.98);
+  transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 40rpx rgba(244, 130, 36, 0.5);
 }
 
 .wechat-login-button:disabled {
@@ -237,12 +369,12 @@ const showPrivacyPolicy = () => {
 }
 
 .wechat-icon {
-  font-size: 40rpx;
+  font-size: 36rpx;
   margin-right: 16rpx;
 }
 
 .button-text {
-  font-size: 36rpx;
+  font-size: 32rpx;
 }
 
 .divider {
@@ -255,36 +387,38 @@ const showPrivacyPolicy = () => {
 .divider-line {
   flex: 1;
   height: 2rpx;
-  background-color: #E5E5E5;
+  background-color: #E5E7EB;
 }
 
 .divider-text {
   margin: 0 32rpx;
   font-size: 28rpx;
-  color: #999;
+  color: #6B7280;
 }
 
 .phone-login-button {
   width: 600rpx;
   height: 96rpx;
-  background: white;
+  background: #ffffff;
   border: 4rpx solid #F48224;
   border-radius: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #F48224;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: 600;
   margin-bottom: 80rpx;
+  transition: all 0.3s ease;
 }
 
 .phone-login-button:active {
-  transform: scale(0.98);
+  transform: translateY(-2rpx);
+  background: rgba(244, 130, 36, 0.1);
 }
 
 .phone-icon {
-  font-size: 36rpx;
+  font-size: 32rpx;
   margin-right: 16rpx;
 }
 
@@ -295,12 +429,86 @@ const showPrivacyPolicy = () => {
 
 .agreement-text {
   font-size: 24rpx;
-  color: #999;
-  line-height: 1.6;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 16rpx;
+}
+
+.agreement-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+}
+
+.separator {
+  font-size: 24rpx;
+  color: #6B7280;
+  margin: 0 16rpx;
 }
 
 .link {
   color: #F48224;
   text-decoration: underline;
+  font-size: 24rpx;
+}
+
+.version-info {
+  margin-top: 32rpx;
+}
+
+.version-text {
+  display: block;
+  font-size: 20rpx;
+  color: #9CA3AF;
+  margin-bottom: 8rpx;
+}
+
+.slogan {
+  display: block;
+  font-size: 20rpx;
+  color: #9CA3AF;
+}
+
+/* 动画效果 */
+.floating-card {
+  animation: float 3s ease-in-out infinite;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.pulse-animation {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-20rpx); 
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(60rpx);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.7; 
+  }
 }
 </style>

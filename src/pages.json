@@ -3,7 +3,7 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarTitleText": "登录",
+				"navigationBarTitleText": "安全守护",
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black",
 				"backgroundColor": "#FAE9DB"
@@ -189,7 +189,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "安卡好习惯",
+		"navigationBarTitleText": "安全守护",
 		"navigationBarBackgroundColor": "#FAE9DB",
 		"backgroundColor": "#FAE9DB"
 	}
