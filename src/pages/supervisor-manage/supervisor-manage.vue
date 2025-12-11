@@ -3,90 +3,177 @@
   <view class="supervisor-manage-container">
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title">监护管理</text>
-      <text class="header-subtitle">查看与处理您的监督关系与邀请</text>
+      <text class="header-title">
+        监护管理
+      </text>
+      <text class="header-subtitle">
+        查看与处理您的监督关系与邀请
+      </text>
     </view>
 
     <!-- 我的监护 -->
     <view class="supervised-list-section">
-      <view class="list-title">我的监护</view>
+      <view class="list-title">
+        我的监护
+      </view>
       <view class="supervised-list">
         <view
-          class="supervised-item"
           v-for="person in mySupervised"
           :key="person.user_id"
+          class="supervised-item"
           @click="goToSupervisorDetail(person)"
         >
           <view class="person-avatar">
-            <image :src="person.avatar_url || '/static/logo.png'" class="avatar-image" mode="aspectFill" />
+            <image
+              :src="person.avatar_url || '/static/logo.png'"
+              class="avatar-image"
+              mode="aspectFill"
+            />
           </view>
           <view class="person-info">
-            <text class="person-name">{{ person.nickname }}</text>
-            <text class="person-rules">{{ formatRules(person.rules) }}</text>
+            <text class="person-name">
+              {{ person.nickname }}
+            </text>
+            <text class="person-rules">
+              {{ formatRules(person.rules) }}
+            </text>
           </view>
-          <text class="arrow">›</text>
+          <text class="arrow">
+            ›
+          </text>
         </view>
       </view>
     </view>
 
     <!-- 邀请列表 -->
     <view class="invitation-list-section">
-      <view class="list-title">监督邀请</view>
+      <view class="list-title">
+        监督邀请
+      </view>
       <view class="invitation-list">
-        <view class="invitation-item" v-for="inv in receivedInvitations" :key="inv.relation_id" @click="openInvitation(inv)">
+        <view
+          v-for="inv in receivedInvitations"
+          :key="inv.relation_id"
+          class="invitation-item"
+          @click="openInvitation(inv)"
+        >
           <view class="person-avatar">
-            <image :src="inv.solo_user.avatar_url || '/static/logo.png'" class="avatar-image" mode="aspectFill" />
+            <image
+              :src="inv.solo_user.avatar_url || '/static/logo.png'"
+              class="avatar-image"
+              mode="aspectFill"
+            />
           </view>
           <view class="inv-info">
-            <text class="inv-name">{{ inv.solo_user.nickname }}</text>
-            <text class="inv-rule">{{ inv.rule?.rule_name || '全部规则' }}</text>
-            <text class="inv-status">等待同意</text>
+            <text class="inv-name">
+              {{ inv.solo_user.nickname }}
+            </text>
+            <text class="inv-rule">
+              {{ inv.rule?.rule_name || '全部规则' }}
+            </text>
+            <text class="inv-status">
+              等待同意
+            </text>
           </view>
-          <text class="arrow">›</text>
+          <text class="arrow">
+            ›
+          </text>
         </view>
       </view>
     </view>
 
     <!-- 邀请监护人按钮 -->
     <view class="invite-section">
-      <button class="invite-btn" @click="createInviteLink">
-        <text class="invite-icon">+</text>
-        <text class="invite-text">邀请监护人</text>
+      <button
+        class="invite-btn"
+        @click="createInviteLink"
+      >
+        <text class="invite-icon">
+          +
+        </text>
+        <text class="invite-text">
+          邀请监护人
+        </text>
       </button>
     </view>
 
     <!-- 邀请详情弹窗 -->
-    <view class="modal-overlay" v-if="showInvitationModal">
+    <view
+      v-if="showInvitationModal"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">监督邀请</text>
+          <text class="modal-title">
+            监督邀请
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-text">来自：{{ selectedInvitation?.solo_user?.nickname }}</text>
-          <text class="modal-subtext">规则：{{ selectedInvitation?.rule?.rule_name || '全部规则' }}</text>
-          <text class="modal-subtext">时间：若是具体规则请在详情页查看</text>
+          <text class="modal-text">
+            来自：{{ selectedInvitation?.solo_user?.nickname }}
+          </text>
+          <text class="modal-subtext">
+            规则：{{ selectedInvitation?.rule?.rule_name || '全部规则' }}
+          </text>
+          <text class="modal-subtext">
+            时间：若是具体规则请在详情页查看
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideInvitation">搁置</button>
-          <button class="modal-danger-btn" @click="rejectSelected">拒绝</button>
-          <button class="modal-confirm-btn" @click="acceptSelected">同意</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideInvitation"
+          >
+            搁置
+          </button>
+          <button
+            class="modal-danger-btn"
+            @click="rejectSelected"
+          >
+            拒绝
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="acceptSelected"
+          >
+            同意
+          </button>
         </view>
       </view>
     </view>
 
     <!-- 分享链接弹窗 -->
-    <view class="modal-overlay" v-if="showShareModal">
+    <view
+      v-if="showShareModal"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">邀请链接</text>
+          <text class="modal-title">
+            邀请链接
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-subtext">复制以下链接或使用微信分享</text>
-          <text class="modal-text">{{ lastInvitePath }}</text>
+          <text class="modal-subtext">
+            复制以下链接或使用微信分享
+          </text>
+          <text class="modal-text">
+            {{ lastInvitePath }}
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideShareModal">关闭</button>
-          <button class="modal-confirm-btn" @click="copyInvitePath">复制</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideShareModal"
+          >
+            关闭
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="copyInvitePath"
+          >
+            复制
+          </button>
         </view>
       </view>
     </view>

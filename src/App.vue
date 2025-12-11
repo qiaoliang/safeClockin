@@ -51,7 +51,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang='scss'>
+	@import '@/uni_modules/uni-scss/index.scss';
 page {
   background-color: #FAE9DB;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;

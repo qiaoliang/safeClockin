@@ -1,18 +1,44 @@
 <template>
   <view class="invite-container">
     <view class="header">
-      <text class="title">监督邀请</text>
-      <text class="subtitle">点击同意建立监督关系</text>
+      <text class="title">
+        监督邀请
+      </text>
+      <text class="subtitle">
+        点击同意建立监督关系
+      </text>
     </view>
 
-    <view v-if="errorMsg" class="error">{{ errorMsg }}</view>
+    <view
+      v-if="errorMsg"
+      class="error"
+    >
+      {{ errorMsg }}
+    </view>
 
-    <view v-if="relation" class="card">
-      <text class="row">邀请人用户ID：{{ relation.solo_user_id }}</text>
-      <text class="row">规则：{{ relation.rule_id ? relation.rule_id : '全部规则' }}</text>
+    <view
+      v-if="relation"
+      class="card"
+    >
+      <text class="row">
+        邀请人用户ID：{{ relation.solo_user_id }}
+      </text>
+      <text class="row">
+        规则：{{ relation.rule_id ? relation.rule_id : '全部规则' }}
+      </text>
       <view class="actions">
-        <button class="btn danger" @click="doReject">拒绝</button>
-        <button class="btn" @click="doAccept">同意</button>
+        <button
+          class="btn danger"
+          @click="doReject"
+        >
+          拒绝
+        </button>
+        <button
+          class="btn"
+          @click="doAccept"
+        >
+          同意
+        </button>
       </view>
     </view>
   </view>

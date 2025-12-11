@@ -1,39 +1,93 @@
 <template>
   <view class="container">
     <view class="tabs">
-      <view :class="['tab', activeTab==='register'?'active':'']" @click="activeTab='register'">注册</view>
-      <view :class="['tab', activeTab==='login'?'active':'']" @click="activeTab='login'">手机登录</view>
+      <view
+        :class="['tab', activeTab==='register'?'active':'']"
+        @click="activeTab='register'"
+      >
+        注册
+      </view>
+      <view
+        :class="['tab', activeTab==='login'?'active':'']"
+        @click="activeTab='login'"
+      >
+        手机登录
+      </view>
     </view>
 
     <view class="form">
       <view class="row">
-        <picker mode="selector" :range="countryCodes" :value="countryIndex" @change="onCountryChange">
-          <view class="picker">{{ countryCodes[countryIndex] }}</view>
+        <picker
+          mode="selector"
+          :range="countryCodes"
+          :value="countryIndex"
+          @change="onCountryChange"
+        >
+          <view class="picker">
+            {{ countryCodes[countryIndex] }}
+          </view>
         </picker>
-        <input class="input" type="number" v-model="phone" placeholder="请输入手机号" />
+        <input
+          v-model="phone"
+          class="input"
+          type="number"
+          placeholder="请输入手机号"
+        >
       </view>
 
-      <view v-if="activeTab==='register' || activeTab==='login'" class="row">
-        <input class="input" type="number" v-model="code" placeholder="验证码" />
-        <button class="code-btn" :disabled="countdown>0 || sending" @click="onSendCode">
+      <view
+        v-if="activeTab==='register' || activeTab==='login'"
+        class="row"
+      >
+        <input
+          v-model="code"
+          class="input"
+          type="number"
+          placeholder="验证码"
+        >
+        <button
+          class="code-btn"
+          :disabled="countdown>0 || sending"
+          @click="onSendCode"
+        >
           {{ countdown>0 ? `${countdown}s` : '获取验证码' }}
         </button>
       </view>
 
-      <view v-if="activeTab==='register' || activeTab==='login'" class="row">
-        <input class="input" type="password" v-model="password" :placeholder="activeTab==='register' ? '设置密码（至少8位，含字母和数字）' : '输入密码'" />
+      <view
+        v-if="activeTab==='register' || activeTab==='login'"
+        class="row"
+      >
+        <input
+          v-model="password"
+          class="input"
+          type="password"
+          :placeholder="activeTab==='register' ? '设置密码（至少8位，含字母和数字）' : '输入密码'"
+        >
       </view>
 
-      <view v-if="activeTab==='register'" class="agreement">
+      <view
+        v-if="activeTab==='register'"
+        class="agreement"
+      >
         <checkbox-group @change="onAgreeChange">
           <label class="agree-label">
-            <checkbox value="agree" :checked="agree" />
+            <checkbox
+              value="agree"
+              :checked="agree"
+            />
             <text>我已阅读并同意《用户协议》《隐私政策》</text>
           </label>
         </checkbox-group>
       </view>
 
-      <button class="submit" :disabled="submitting" @click="onSubmit">{{ submitText }}</button>
+      <button
+        class="submit"
+        :disabled="submitting"
+        @click="onSubmit"
+      >
+        {{ submitText }}
+      </button>
     </view>
   </view>
 </template>

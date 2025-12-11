@@ -4,41 +4,71 @@
     <!-- Logo和标题 -->
     <view class="logo-section">
       <view class="app-logo floating-card">
-        <text class="shield-icon">🛡️</text>
+        <text class="shield-icon">
+          🛡️
+        </text>
       </view>
-      <text class="app-title slide-up">安全守护</text>
-      <text class="app-subtitle slide-up" style="animation-delay: 0.1s;">让关爱无处不在，守护每一份安心</text>
+      <text class="app-title slide-up">
+        安全守护
+      </text>
+      <text
+        class="app-subtitle slide-up"
+        style="animation-delay: 0.1s;"
+      >
+        让关爱无处不在，守护每一份安心
+      </text>
     </view>
     
     <!-- 特色功能展示 -->
-    <view class="features-section slide-up" style="animation-delay: 0.2s;">
+    <view
+      class="features-section slide-up"
+      style="animation-delay: 0.2s;"
+    >
       <view class="feature-card">
         <view class="feature-icon success-bg">
-          <text class="icon">✓</text>
+          <text class="icon">
+            ✓
+          </text>
         </view>
         <view class="feature-content">
-          <text class="feature-title">独居者自主管理</text>
-          <text class="feature-desc">简单打卡，轻松记录日常生活</text>
+          <text class="feature-title">
+            独居者自主管理
+          </text>
+          <text class="feature-desc">
+            简单打卡，轻松记录日常生活
+          </text>
         </view>
       </view>
       
       <view class="feature-card">
         <view class="feature-icon blue-bg">
-          <text class="icon">🛡️</text>
+          <text class="icon">
+            🛡️
+          </text>
         </view>
         <view class="feature-content">
-          <text class="feature-title">监护人实时关注</text>
-          <text class="feature-desc">及时掌握状态，安心放心</text>
+          <text class="feature-title">
+            监护人实时关注
+          </text>
+          <text class="feature-desc">
+            及时掌握状态，安心放心
+          </text>
         </view>
       </view>
       
       <view class="feature-card">
         <view class="feature-icon orange-bg">
-          <text class="icon">🏢</text>
+          <text class="icon">
+            🏢
+          </text>
         </view>
         <view class="feature-content">
-          <text class="feature-title">社区高效服务</text>
-          <text class="feature-desc">专业管理，快速响应</text>
+          <text class="feature-title">
+            社区高效服务
+          </text>
+          <text class="feature-desc">
+            专业管理，快速响应
+          </text>
         </view>
       </view>
     </view>
@@ -46,39 +76,68 @@
     <!-- 微信登录按钮 -->
     <button 
       class="wechat-login-button"
-      @click="onWechatLogin"
       :disabled="isLoading"
+      @click="onWechatLogin"
     >
-      <text class="wechat-icon">💬</text>
-      <text class="button-text">微信快捷登录</text>
+      <text class="wechat-icon">
+        💬
+      </text>
+      <text class="button-text">
+        微信快捷登录
+      </text>
     </button>
     
     <!-- 分割线 -->
     <view class="divider">
-      <view class="divider-line"></view>
-      <text class="divider-text">或</text>
-      <view class="divider-line"></view>
+      <view class="divider-line" />
+      <text class="divider-text">
+        或
+      </text>
+      <view class="divider-line" />
     </view>
     
     <!-- 手机号登录入口 -->
-    <button class="phone-login-button" @click="showPhoneLogin">
-      <text class="phone-icon">📱</text>
+    <button
+      class="phone-login-button"
+      @click="showPhoneLogin"
+    >
+      <text class="phone-icon">
+        📱
+      </text>
       <text>手机号登录</text>
     </button>
     
     <!-- 用户协议 -->
     <view class="agreement-section">
-      <text class="agreement-text">登录即表示您同意</text>
+      <text class="agreement-text">
+        登录即表示您同意
+      </text>
       <view class="agreement-links">
-        <text class="link" @click="showUserAgreement">《用户服务协议》</text>
-        <text class="separator">和</text>
-        <text class="link" @click="showPrivacyPolicy">《隐私政策》</text>
+        <text
+          class="link"
+          @click="showUserAgreement"
+        >
+          《用户服务协议》
+        </text>
+        <text class="separator">
+          和
+        </text>
+        <text
+          class="link"
+          @click="showPrivacyPolicy"
+        >
+          《隐私政策》
+        </text>
       </view>
       
       <!-- 版本信息 -->
       <view class="version-info">
-        <text class="version-text">版本 v1.0.0</text>
-        <text class="slogan pulse-animation">让科技温暖生活</text>
+        <text class="version-text">
+          版本 v1.0.0
+        </text>
+        <text class="slogan pulse-animation">
+          让科技温暖生活
+        </text>
       </view>
     </view>
     

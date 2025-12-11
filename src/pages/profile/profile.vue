@@ -3,98 +3,201 @@
   <view class="profile-container">
     <!-- 用户信息区域 -->
     <view class="user-info-section">
-      <view class="user-avatar" @click="editProfile">
+      <view
+        class="user-avatar"
+        @click="editProfile"
+      >
         <image 
           :src="userInfo?.avatarUrl || '/static/logo.png'" 
           class="avatar-image"
           mode="aspectFill"
-        ></image>
+        />
       </view>
       <view class="user-details">
-        <text class="user-name">{{ getDisplayName(userInfo) }}</text>
-        <text class="user-role">{{ getRoleText(userInfo?.role) }}</text>
+        <text class="user-name">
+          {{ getDisplayName(userInfo) }}
+        </text>
+        <text class="user-role">
+          {{ getRoleText(userInfo?.role) }}
+        </text>
       </view>
     </view>
 
-    <view class="hint-section" v-if="needCompleteInfo">
-      <text class="hint-text">完善头像、昵称、联系方式，提升使用体验</text>
+    <view
+      v-if="needCompleteInfo"
+      class="hint-section"
+    >
+      <text class="hint-text">
+        完善头像、昵称、联系方式，提升使用体验
+      </text>
     </view>
 
-    <view class="hint-section" v-if="needCommunityVerify">
-      <text class="hint-text">社区身份未验证，完成后可使用社区功能</text>
-      <button class="hint-btn" @click="navigateTo('/pages/community-auth/community-auth')">去验证</button>
+    <view
+      v-if="needCommunityVerify"
+      class="hint-section"
+    >
+      <text class="hint-text">
+        社区身份未验证，完成后可使用社区功能
+      </text>
+      <button
+        class="hint-btn"
+        @click="navigateTo('/pages/community-auth/community-auth')"
+      >
+        去验证
+      </button>
     </view>
 
     <!-- 用户统计区域 -->
-    <view class="user-stats-section" v-if="userInfo">
+    <view
+      v-if="userInfo"
+      class="user-stats-section"
+    >
       <view class="user-stats-card">
         <view class="stat-item">
-          <text class="stat-value success-color">{{ getConsecutiveCheckins() }}</text>
-          <text class="stat-label">连续打卡</text>
+          <text class="stat-value success-color">
+            {{ getConsecutiveCheckins() }}
+          </text>
+          <text class="stat-label">
+            连续打卡
+          </text>
         </view>
         <view class="stat-item">
-          <text class="stat-value warning-color">{{ getCompletionRate() }}%</text>
-          <text class="stat-label">完成率</text>
+          <text class="stat-value warning-color">
+            {{ getCompletionRate() }}%
+          </text>
+          <text class="stat-label">
+            完成率
+          </text>
         </view>
         <view class="stat-item">
-          <text class="stat-value accent-color">{{ getSupervisorCount() }}</text>
-          <text class="stat-label">监督人</text>
+          <text class="stat-value accent-color">
+            {{ getSupervisorCount() }}
+          </text>
+          <text class="stat-label">
+            监督人
+          </text>
         </view>
       </view>
     </view>
     
     <!-- 功能菜单列表 -->
     <view class="menu-section">
-      <view class="menu-item" @click="navigateTo('/pages/checkin-list/checkin-list')">
-        <view class="menu-icon">📋</view>
-        <text class="menu-text">打卡事项</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/checkin-list/checkin-list')"
+      >
+        <view class="menu-icon">
+          📋
+        </view>
+        <text class="menu-text">
+          打卡事项
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
       
-      <view class="menu-item" @click="navigateTo('/pages/rule-setting/rule-setting')">
-        <view class="menu-icon">⚙️</view>
-        <text class="menu-text">打卡规则</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/rule-setting/rule-setting')"
+      >
+        <view class="menu-icon">
+          ⚙️
+        </view>
+        <text class="menu-text">
+          打卡规则
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
       
       <!-- 监督功能菜单：所有用户都可以访问 -->
-      <view class="menu-item" @click="navigateTo('/pages/supervisor-manage/supervisor-manage')">
-        <view class="menu-icon">👥</view>
-        <text class="menu-text">监护人管理</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/supervisor-manage/supervisor-manage')"
+      >
+        <view class="menu-icon">
+          👥
+        </view>
+        <text class="menu-text">
+          监护人管理
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
       
-      <view class="menu-item" @click="navigateTo('/pages/home-supervisor/home-supervisor')">
-        <view class="menu-icon">👁️</view>
-        <text class="menu-text">我的监督</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/home-supervisor/home-supervisor')"
+      >
+        <view class="menu-icon">
+          👁️
+        </view>
+        <text class="menu-text">
+          我的监督
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
       
-      <view class="menu-item" @click="navigateTo('/pages/notification-settings/notification-settings')">
-        <view class="menu-icon">🔔</view>
-        <text class="menu-text">通知设置</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/notification-settings/notification-settings')"
+      >
+        <view class="menu-icon">
+          🔔
+        </view>
+        <text class="menu-text">
+          通知设置
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
     </view>
     
     <!-- 其他设置 -->
     <view class="menu-section">
-      <view class="menu-item" @click="showAbout">
-        <view class="menu-icon">ℹ️</view>
-        <text class="menu-text">关于我们</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="showAbout"
+      >
+        <view class="menu-icon">
+          ℹ️
+        </view>
+        <text class="menu-text">
+          关于我们
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
       
-      <view class="menu-item" @click="showHelp">
-        <view class="menu-icon">❓</view>
-        <text class="menu-text">帮助中心</text>
-        <text class="menu-arrow">›</text>
+      <view
+        class="menu-item"
+        @click="showHelp"
+      >
+        <view class="menu-icon">
+          ❓
+        </view>
+        <text class="menu-text">
+          帮助中心
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
     </view>
     
     <!-- 退出登录按钮 -->
     <view class="logout-section">
-      <button class="logout-btn" @click="handleLogout">
+      <button
+        class="logout-btn"
+        @click="handleLogout"
+      >
         退出登录
       </button>
     </view>
@@ -217,10 +320,8 @@ const needCommunityVerify = computed(() => {
 })
 
 const showAbout = () => {
-  uni.showModal({
-    title: '关于安卡小习惯',
-    content: '安卡小习惯是一款关注用户安全的监护小程序，通过日常打卡机制让关爱无处不在。',
-    showCancel: false
+  uni.navigateTo({
+    url: '/pages/uni-ui-test/uni-ui-test'
   })
 }
 

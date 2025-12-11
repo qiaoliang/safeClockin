@@ -4,41 +4,81 @@
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
-        <text class="back-btn" @click="goBack">←</text>
-        <text class="header-title">{{ isEditing ? '编辑打卡规则' : '添加打卡规则' }}</text>
+        <text
+          class="back-btn"
+          @click="goBack"
+        >
+          ←
+        </text>
+        <text class="header-title">
+          {{ isEditing ? '编辑打卡规则' : '添加打卡规则' }}
+        </text>
       </view>
     </view>
 
     <!-- 表单 -->
-    <form class="rule-form" @submit="submitForm">
+    <form
+      class="rule-form"
+      @submit="submitForm"
+    >
       <!-- 事项名称 -->
       <view class="form-group">
-        <text class="label">事项名称 <text class="required">*</text></text>
+        <text class="label">
+          事项名称 <text class="required">
+            *
+          </text>
+        </text>
         <input 
+          v-model="formData.rule_name"
           class="input"
           type="text"
-          v-model="formData.rule_name"
           placeholder="请输入事项名称，如：早餐打卡"
           maxlength="50"
-        />
+        >
       </view>
 
       <!-- 打卡频率 -->
       <view class="form-group">
         <view class="row">
-          <text class="label">打卡频率</text>
-          <uni-segmented-control class="seg-control" :current="freqIndex" :values="freqValues" styleType="text" activeColor="#F48224" @clickItem="onFreqClick" />
+          <text class="label">
+            打卡频率
+          </text>
+          <uni-segmented-control
+            class="seg-control"
+            :current="freqIndex"
+            :values="freqValues"
+            style-type="text"
+            active-color="#F48224"
+            @click-item="onFreqClick"
+          />
         </view>
-        <view v-if="freqIndex===3" class="custom-date-range">
-          <text class="label">选择日期范围</text>
+        <view
+          v-if="freqIndex===3"
+          class="custom-date-range"
+        >
+          <text class="label">
+            选择日期范围
+          </text>
           <view class="date-row">
             <view class="date-col">
-              <text class="sub-label">开始日期</text>
-              <uni-datetime-picker class="date-picker" type="date" v-model="formData.custom_start_date" />
+              <text class="sub-label">
+                开始日期
+              </text>
+              <uni-datetime-picker
+                v-model="formData.custom_start_date"
+                class="date-picker"
+                type="date"
+              />
             </view>
             <view class="date-col">
-              <text class="sub-label">结束日期</text>
-              <uni-datetime-picker class="date-picker" type="date" v-model="formData.custom_end_date" />
+              <text class="sub-label">
+                结束日期
+              </text>
+              <uni-datetime-picker
+                v-model="formData.custom_end_date"
+                class="date-picker"
+                type="date"
+              />
             </view>
           </view>
         </view>
@@ -47,34 +87,59 @@
       <!-- 时间段 -->
       <view class="form-group">
         <view class="row">
-          <text class="label">时间段</text>
-          <uni-segmented-control class="seg-control" :current="timeIndex" :values="timeValues" styleType="text" activeColor="#F48224" @clickItem="onTimeClick" />
+          <text class="label">
+            时间段
+          </text>
+          <uni-segmented-control
+            class="seg-control"
+            :current="timeIndex"
+            :values="timeValues"
+            style-type="text"
+            active-color="#F48224"
+            @click-item="onTimeClick"
+          />
         </view>
-        <view class="custom-time-input" v-if="timeIndex === 3">
-          <text class="label">自定义时间</text>
-          <uni-datetime-picker class="time-picker" type="time" v-model="formData.custom_time" return-type="string" />
+        <view
+          v-if="timeIndex === 3"
+          class="custom-time-input"
+        >
+          <text class="label">
+            自定义时间
+          </text>
+          <uni-datetime-picker
+            v-model="formData.custom_time"
+            class="time-picker"
+            type="time"
+            return-type="string"
+          />
         </view>
       </view>
 
       <!-- 图标选择 -->
       <view class="form-group">
-        <text class="label">图标</text>
+        <text class="label">
+          图标
+        </text>
         <view class="icon-selector">
           <view 
-            class="icon-item" 
             v-for="icon in iconOptions" 
-            :key="icon.value"
+            :key="icon.value" 
+            class="icon-item"
             :class="{ active: formData.icon_url === icon.value }"
             @click="formData.icon_url = icon.value"
           >
-            <text class="icon-text">{{ icon.label }}</text>
+            <text class="icon-text">
+              {{ icon.label }}
+            </text>
           </view>
         </view>
       </view>
 
       <!-- 宽限期说明 -->
       <view class="info-section">
-        <text class="info-text">• 系统为每个打卡事项提供30分钟的宽限期，允许在计划时间后30分钟内打卡仍视为有效。</text>
+        <text class="info-text">
+          • 系统为每个打卡事项提供30分钟的宽限期，允许在计划时间后30分钟内打卡仍视为有效。
+        </text>
       </view>
 
       <!-- 提交按钮 -->
@@ -90,18 +155,43 @@
     </form>
 
     <!-- 二次确认弹窗 -->
-    <view class="modal-overlay" v-if="showConfirmModal">
+    <view
+      v-if="showConfirmModal"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">{{ isEditing ? '确认更新' : '确认添加' }}</text>
+          <text class="modal-title">
+            {{ isEditing ? '确认更新' : '确认添加' }}
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-text" v-if="isEditing">修改打卡规则后，系统将自动通知您的监督人。确定要继续吗？</text>
-          <text class="modal-text" v-else>确定要添加新的打卡规则吗？</text>
+          <text
+            v-if="isEditing"
+            class="modal-text"
+          >
+            修改打卡规则后，系统将自动通知您的监督人。确定要继续吗？
+          </text>
+          <text
+            v-else
+            class="modal-text"
+          >
+            确定要添加新的打卡规则吗？
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideConfirmModal">取消</button>
-          <button class="modal-confirm-btn" @click="confirmSubmit">确定</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideConfirmModal"
+          >
+            取消
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="confirmSubmit"
+          >
+            确定
+          </button>
         </view>
       </view>
     </view>

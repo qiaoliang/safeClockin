@@ -4,8 +4,15 @@
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
-        <text class="back-btn" @click="goBack">←</text>
-        <text class="header-title">通知设置</text>
+        <text
+          class="back-btn"
+          @click="goBack"
+        >
+          ←
+        </text>
+        <text class="header-title">
+          通知设置
+        </text>
       </view>
     </view>
 
@@ -13,8 +20,12 @@
     <view class="settings-section">
       <view class="setting-item">
         <view class="setting-info">
-          <text class="setting-title">接收被监督人完成打卡通知</text>
-          <text class="setting-desc">当被监督的用户完成打卡时，您会收到推送通知</text>
+          <text class="setting-title">
+            接收被监督人完成打卡通知
+          </text>
+          <text class="setting-desc">
+            当被监督的用户完成打卡时，您会收到推送通知
+          </text>
         </view>
         <switch 
           class="setting-switch"
@@ -25,8 +36,12 @@
       
       <view class="setting-item">
         <view class="setting-info">
-          <text class="setting-title">接收未打卡提醒</text>
-          <text class="setting-desc">当被监督人未按时打卡时，您会收到提醒</text>
+          <text class="setting-title">
+            接收未打卡提醒
+          </text>
+          <text class="setting-desc">
+            当被监督人未按时打卡时，您会收到提醒
+          </text>
         </view>
         <switch 
           class="setting-switch"
@@ -37,8 +52,12 @@
       
       <view class="setting-item">
         <view class="setting-info">
-          <text class="setting-title">接收规则变更通知</text>
-          <text class="setting-desc">当被监督人修改打卡规则时，您会收到通知</text>
+          <text class="setting-title">
+            接收规则变更通知
+          </text>
+          <text class="setting-desc">
+            当被监督人修改打卡规则时，您会收到通知
+          </text>
         </view>
         <switch 
           class="setting-switch"
@@ -52,10 +71,16 @@
     <view class="info-section">
       <view class="info-card">
         <view class="info-header">
-          <view class="info-icon">ℹ️</view>
+          <view class="info-icon">
+            ℹ️
+          </view>
           <view class="info-content">
-            <text class="info-title">通知说明</text>
-            <text class="info-desc">开启相应通知后，您将通过站内消息、短信或微信推送收到相关提醒。您可以根据需要灵活调整通知偏好。</text>
+            <text class="info-title">
+              通知说明
+            </text>
+            <text class="info-desc">
+              开启相应通知后，您将通过站内消息、短信或微信推送收到相关提醒。您可以根据需要灵活调整通知偏好。
+            </text>
           </view>
         </view>
       </view>

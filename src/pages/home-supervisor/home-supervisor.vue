@@ -7,38 +7,64 @@
           :src="userInfo?.avatarUrl || '/static/logo.png'" 
           class="avatar-image"
           mode="aspectFill"
-        ></image>
+        />
       </view>
       <view class="user-details">
-        <text class="user-name">{{ userInfo?.nickName || '未登录用户' }}</text>
-        <text class="user-role">亲友监督人</text>
+        <text class="user-name">
+          {{ userInfo?.nickName || '未登录用户' }}
+        </text>
+        <text class="user-role">
+          亲友监督人
+        </text>
       </view>
     </view>
 
     <!-- 监督概览 -->
     <view class="overview-section">
       <view class="section-header">
-        <text class="section-title">监督概览</text>
-        <text class="section-subtitle">关注被监督人的日常状况</text>
+        <text class="section-title">
+          监督概览
+        </text>
+        <text class="section-subtitle">
+          关注被监督人的日常状况
+        </text>
       </view>
       
       <view class="overview-cards">
         <view class="overview-card supervised-count">
-          <text class="card-title">监督人数</text>
-          <text class="card-number">{{ supervisedCount }}</text>
-          <text class="card-desc">位用户</text>
+          <text class="card-title">
+            监督人数
+          </text>
+          <text class="card-number">
+            {{ supervisedCount }}
+          </text>
+          <text class="card-desc">
+            位用户
+          </text>
         </view>
         
         <view class="overview-card today-checkin">
-          <text class="card-title">今日打卡率</text>
-          <text class="card-number">{{ todayCheckinRate }}%</text>
-          <text class="card-desc">平均完成率</text>
+          <text class="card-title">
+            今日打卡率
+          </text>
+          <text class="card-number">
+            {{ todayCheckinRate }}%
+          </text>
+          <text class="card-desc">
+            平均完成率
+          </text>
         </view>
         
         <view class="overview-card unchecked-count">
-          <text class="card-title">未打卡</text>
-          <text class="card-number">{{ uncheckedCount }}</text>
-          <text class="card-desc">人未打卡</text>
+          <text class="card-title">
+            未打卡
+          </text>
+          <text class="card-number">
+            {{ uncheckedCount }}
+          </text>
+          <text class="card-desc">
+            人未打卡
+          </text>
         </view>
       </view>
     </view>
@@ -46,14 +72,16 @@
     <!-- 被监督人列表 -->
     <view class="supervised-list-section">
       <view class="section-header">
-        <text class="section-title">被监督人</text>
+        <text class="section-title">
+          被监督人
+        </text>
       </view>
       
       <view class="supervised-list">
         <view 
-          class="supervised-item"
           v-for="person in supervisedList"
           :key="person.user_id"
+          class="supervised-item"
           @click="goToSupervisorDetail(person)"
         >
           <view class="person-avatar">
@@ -61,18 +89,22 @@
               :src="person.avatar_url || '/static/logo.png'" 
               class="avatar-image"
               mode="aspectFill"
-            ></image>
+            />
           </view>
           <view class="person-info">
-            <text class="person-name">{{ person.nickname }}</text>
-            <text class="person-checkin-status">{{ person.today_checkin_status }}</text>
+            <text class="person-name">
+              {{ person.nickname }}
+            </text>
+            <text class="person-checkin-status">
+              {{ person.today_checkin_status }}
+            </text>
           </view>
-          <text class="arrow">›</text>
+          <text class="arrow">
+            ›
+          </text>
         </view>
       </view>
     </view>
-
-    
   </view>
 </template>
 

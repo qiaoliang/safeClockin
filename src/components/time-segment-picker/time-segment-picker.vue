@@ -1,17 +1,40 @@
 <template>
   <view class="time-picker">
-    <text class="section-label">时间段</text>
-    <radio-group @change="onSegmentChange" class="radio-row">
-      <label class="radio-item" v-for="opt in options" :key="opt.value">
-        <radio :value="opt.value" :checked="localSegment===opt.value" />
-        <text :class="['radio-text', localSegment===opt.value ? 'active' : '']">{{opt.label}}</text>
+    <text class="section-label">
+      时间段
+    </text>
+    <radio-group
+      class="radio-row"
+      @change="onSegmentChange"
+    >
+      <label
+        v-for="opt in options"
+        :key="opt.value"
+        class="radio-item"
+      >
+        <radio
+          :value="opt.value"
+          :checked="localSegment===opt.value"
+        />
+        <text :class="['radio-text', localSegment===opt.value ? 'active' : '']">{{ opt.label }}</text>
       </label>
     </radio-group>
 
-    <view v-if="localSegment==='custom'" class="custom-row">
-      <text class="custom-label">自定义时间</text>
-      <picker mode="time" :value="localTime" @change="onTimeChange">
-        <view class="time-input">{{localTime}}</view>
+    <view
+      v-if="localSegment==='custom'"
+      class="custom-row"
+    >
+      <text class="custom-label">
+        自定义时间
+      </text>
+      <picker
+        mode="time"
+        :value="localTime"
+        @change="onTimeChange"
+      >
+        <view class="time-input">
+          {{ localTime }}
+        </view>
       </picker>
     </view>
   </view>

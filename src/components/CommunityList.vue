@@ -18,57 +18,99 @@
     >
       <view class="community-list">
         <view 
-          class="community-card" 
           v-for="community in communities" 
-          :key="community.community_id"
+          :key="community.community_id" 
+          class="community-card"
           @click="handleCommunityClick(community)"
         >
           <view class="card-header">
-            <text class="community-name">{{ community.name }}</text>
-            <view class="role-badge" :class="getRoleBadgeClass(community.user_role)">
-              <text class="role-text">{{ getRoleDisplayName(community.user_role) }}</text>
+            <text class="community-name">
+              {{ community.name }}
+            </text>
+            <view
+              class="role-badge"
+              :class="getRoleBadgeClass(community.user_role)"
+            >
+              <text class="role-text">
+                {{ getRoleDisplayName(community.user_role) }}
+              </text>
             </view>
           </view>
           
           <view class="card-content">
-            <text class="community-desc" v-if="community.description">
+            <text
+              v-if="community.description"
+              class="community-desc"
+            >
               {{ community.description }}
             </text>
-            <text class="community-location" v-if="community.location">
+            <text
+              v-if="community.location"
+              class="community-location"
+            >
               📍 {{ community.location }}
             </text>
           </view>
           
           <view class="card-stats">
             <view class="stat-item">
-              <text class="stat-number">{{ community.user_count || 0 }}</text>
-              <text class="stat-label">用户</text>
+              <text class="stat-number">
+                {{ community.user_count || 0 }}
+              </text>
+              <text class="stat-label">
+                用户
+              </text>
             </view>
-            <view class="stat-divider"></view>
+            <view class="stat-divider" />
             <view class="stat-item">
-              <text class="stat-number">{{ community.admin_count || 0 }}</text>
-              <text class="stat-label">管理员</text>
+              <text class="stat-number">
+                {{ community.admin_count || 0 }}
+              </text>
+              <text class="stat-label">
+                管理员
+              </text>
             </view>
           </view>
           
-          <view class="card-footer" v-if="community.is_default">
-            <text class="default-badge">默认社区</text>
+          <view
+            v-if="community.is_default"
+            class="card-footer"
+          >
+            <text class="default-badge">
+              默认社区
+            </text>
           </view>
         </view>
         
         <!-- 空状态 -->
-        <view class="empty-state" v-if="communities.length === 0 && !loading">
-          <view class="empty-icon">🏘️</view>
-          <text class="empty-text">暂无管理社区</text>
-          <text class="empty-subtext">您还没有被分配到任何社区</text>
+        <view
+          v-if="communities.length === 0 && !loading"
+          class="empty-state"
+        >
+          <view class="empty-icon">
+            🏘️
+          </view>
+          <text class="empty-text">
+            暂无管理社区
+          </text>
+          <text class="empty-subtext">
+            您还没有被分配到任何社区
+          </text>
         </view>
         
         <!-- 加载状态 -->
-        <view class="loading-state" v-if="loading">
-          <view class="loading-card" v-for="i in 3" :key="i">
-            <view class="skeleton-line"></view>
-            <view class="skeleton-line short"></view>
-            <view class="skeleton-line"></view>
+        <view
+          v-if="loading"
+          class="loading-state"
+        >
+          <view
+            v-for="i in 3"
+            :key="i"
+            class="loading-card"
+          >
+            <view class="skeleton-line" />
+            <view class="skeleton-line short" />
+            <view class="skeleton-line" />
           </view>
         </view>
       </view>

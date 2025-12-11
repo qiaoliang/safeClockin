@@ -3,78 +3,160 @@
   <view class="rule-setting-container">
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title">自定义打卡规则</text>
-      <text class="header-subtitle">设置您的日常打卡事项，让关爱更贴心</text>
+      <text class="header-title">
+        自定义打卡规则
+      </text>
+      <text class="header-subtitle">
+        设置您的日常打卡事项，让关爱更贴心
+      </text>
     </view>
 
     <!-- 规则列表 -->
-    <view class="rules-list-section" v-if="rules.length > 0">
-      <view class="list-title">我的打卡规则</view>
+    <view
+      v-if="rules.length > 0"
+      class="rules-list-section"
+    >
+      <view class="list-title">
+        我的打卡规则
+      </view>
       <view 
-        class="rule-item" 
         v-for="rule in rules" 
-        :key="rule.rule_id"
+        :key="rule.rule_id" 
+        class="rule-item"
       >
-        <view class="rule-icon">{{ rule.icon_url }}</view>
+        <view class="rule-icon">
+          {{ rule.icon_url }}
+        </view>
         <view class="rule-info">
-          <text class="rule-name">{{ rule.rule_name }}</text>
+          <text class="rule-name">
+            {{ rule.rule_name }}
+          </text>
           <text class="rule-details">
             {{ getFrequencyDetail(rule) }}
-            <text v-if="displayTimeSlot(rule)"> • {{ getTimeSlotDetail(rule) }}</text>
+            <text v-if="displayTimeSlot(rule)">
+              • {{ getTimeSlotDetail(rule) }}
+            </text>
           </text>
         </view>
         
         <view class="rule-actions">
-          <button class="edit-btn" @click="editRule(rule)">编辑</button>
-          <button class="delete-btn" @click="showDeleteModal(rule)">删除</button>
-          <button class="invite-btn" @click="inviteForRule(rule)">邀请</button>
+          <button
+            class="edit-btn"
+            @click="editRule(rule)"
+          >
+            编辑
+          </button>
+          <button
+            class="delete-btn"
+            @click="showDeleteModal(rule)"
+          >
+            删除
+          </button>
+          <button
+            class="invite-btn"
+            @click="inviteForRule(rule)"
+          >
+            邀请
+          </button>
         </view>
       </view>
     </view>
 
     <!-- 无规则提示 -->
-    <view class="empty-section" v-else>
-      <text class="empty-text">暂无打卡规则</text>
-      <text class="empty-subtext">点击下方按钮添加您的第一个打卡事项</text>
+    <view
+      v-else
+      class="empty-section"
+    >
+      <text class="empty-text">
+        暂无打卡规则
+      </text>
+      <text class="empty-subtext">
+        点击下方按钮添加您的第一个打卡事项
+      </text>
     </view>
 
     <!-- 添加规则按钮 -->
     <view class="add-rule-section">
-      <button class="add-rule-btn" @click="addNewRule">
-        <text class="add-icon">+</text>
-        <text class="add-text">添加打卡规则</text>
+      <button
+        class="add-rule-btn"
+        @click="addNewRule"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          添加打卡规则
+        </text>
       </button>
     </view>
 
     <!-- 删除确认弹窗 -->
-    <view class="modal-overlay" v-if="showDeleteConfirm">
+    <view
+      v-if="showDeleteConfirm"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">删除打卡规则</text>
+          <text class="modal-title">
+            删除打卡规则
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-text">确定要删除 "{{ selectedRule?.rule_name }}" 吗？</text>
-          <text class="modal-subtext">删除后该打卡规则将不再生效</text>
+          <text class="modal-text">
+            确定要删除 "{{ selectedRule?.rule_name }}" 吗？
+          </text>
+          <text class="modal-subtext">
+            删除后该打卡规则将不再生效
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideDeleteModal">取消</button>
-          <button class="modal-confirm-btn" @click="confirmDelete">删除</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideDeleteModal"
+          >
+            取消
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="confirmDelete"
+          >
+            删除
+          </button>
         </view>
       </view>
     </view>
     <!-- 分享邀请链接弹窗 -->
-    <view class="modal-overlay" v-if="showShareModal">
+    <view
+      v-if="showShareModal"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">邀请链接</text>
+          <text class="modal-title">
+            邀请链接
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-subtext">复制以下链接或在微信中分享此页面</text>
-          <text class="modal-text">{{ lastInvitePath }}</text>
+          <text class="modal-subtext">
+            复制以下链接或在微信中分享此页面
+          </text>
+          <text class="modal-text">
+            {{ lastInvitePath }}
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideShareModal">关闭</button>
-          <button class="modal-confirm-btn" @click="copyInvitePath">复制</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideShareModal"
+          >
+            关闭
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="copyInvitePath"
+          >
+            复制
+          </button>
         </view>
       </view>
     </view>

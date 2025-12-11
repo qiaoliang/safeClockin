@@ -8,14 +8,28 @@
           :src="personInfo.avatar_url || '/static/logo.png'" 
           class="avatar-image"
           mode="aspectFill"
-        ></image>
+        />
       </view>
       <view class="person-details">
-        <text class="person-name">{{ personInfo.nickname }}</text>
-        <text class="person-checkin-status">{{ personInfo.today_checkin_status }}</text>
+        <text class="person-name">
+          {{ personInfo.nickname }}
+        </text>
+        <text class="person-checkin-status">
+          {{ personInfo.today_checkin_status }}
+        </text>
         <view class="contact-actions">
-          <button class="contact-btn" @click="callPerson">📞 拨打电话</button>
-          <button class="contact-btn" @click="sendMessage">💬 发送消息</button>
+          <button
+            class="contact-btn"
+            @click="callPerson"
+          >
+            📞 拨打电话
+          </button>
+          <button
+            class="contact-btn"
+            @click="sendMessage"
+          >
+            💬 发送消息
+          </button>
         </view>
       </view>
     </view>
@@ -23,29 +37,73 @@
     <!-- 今日打卡概览 -->
     <view class="checkin-overview-section">
       <view class="section-header">
-        <text class="section-title">今日打卡概览</text>
+        <text class="section-title">
+          今日打卡概览
+        </text>
         <view class="date-selector">
-          <button class="date-btn" @click="selectDate('today')">今天</button>
-          <button class="date-btn" @click="selectDate('yesterday')">昨天</button>
-          <button class="date-btn" @click="selectDate('week')">近7天</button>
+          <button
+            class="date-btn"
+            @click="selectDate('today')"
+          >
+            今天
+          </button>
+          <button
+            class="date-btn"
+            @click="selectDate('yesterday')"
+          >
+            昨天
+          </button>
+          <button
+            class="date-btn"
+            @click="selectDate('week')"
+          >
+            近7天
+          </button>
         </view>
       </view>
       
       <view class="checkin-list">
         <view 
-          class="checkin-item"
           v-for="item in checkinList"
           :key="item.rule_id"
+          class="checkin-item"
         >
           <view class="item-info">
-            <text class="item-name">{{ item.rule_name }}</text>
-            <text class="item-planned-time">计划: {{ item.planned_time }}</text>
+            <text class="item-name">
+              {{ item.rule_name }}
+            </text>
+            <text class="item-planned-time">
+              计划: {{ item.planned_time }}
+            </text>
           </view>
-          <view class="item-status" :class="item.status">
-            <text v-if="item.status === 'checked'" class="status-text checked">✓ 已打卡</text>
-            <text v-else-if="item.status === 'unchecked'" class="status-text unchecked">✗ 未打卡</text>
-            <text v-else class="status-text revoked">↺ 已撤销</text>
-            <text v-if="item.checkin_time" class="checkin-time">{{ item.checkin_time }}</text>
+          <view
+            class="item-status"
+            :class="item.status"
+          >
+            <text
+              v-if="item.status === 'checked'"
+              class="status-text checked"
+            >
+              ✓ 已打卡
+            </text>
+            <text
+              v-else-if="item.status === 'unchecked'"
+              class="status-text unchecked"
+            >
+              ✗ 未打卡
+            </text>
+            <text
+              v-else
+              class="status-text revoked"
+            >
+              ↺ 已撤销
+            </text>
+            <text
+              v-if="item.checkin_time"
+              class="checkin-time"
+            >
+              {{ item.checkin_time }}
+            </text>
           </view>
         </view>
       </view>

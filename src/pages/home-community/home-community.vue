@@ -7,38 +7,64 @@
           :src="userInfo?.avatarUrl || '/static/logo.png'" 
           class="avatar-image"
           mode="aspectFill"
-        ></image>
+        />
       </view>
       <view class="user-details">
-        <text class="user-name">{{ userInfo?.nickName || '未登录用户' }}</text>
-        <text class="user-role">社区工作人员</text>
+        <text class="user-name">
+          {{ userInfo?.nickName || '未登录用户' }}
+        </text>
+        <text class="user-role">
+          社区工作人员
+        </text>
       </view>
     </view>
 
     <!-- 数据概览 -->
     <view class="overview-section">
       <view class="section-header">
-        <text class="section-title">数据概览</text>
-        <text class="section-subtitle">辖区内用户情况</text>
+        <text class="section-title">
+          数据概览
+        </text>
+        <text class="section-subtitle">
+          辖区内用户情况
+        </text>
       </view>
       
       <view class="overview-cards">
         <view class="overview-card total-count">
-          <text class="card-title">用户总数</text>
-          <text class="card-number">{{ totalCount }}</text>
-          <text class="card-desc">人</text>
+          <text class="card-title">
+            用户总数
+          </text>
+          <text class="card-number">
+            {{ totalCount }}
+          </text>
+          <text class="card-desc">
+            人
+          </text>
         </view>
         
         <view class="overview-card checkin-rate">
-          <text class="card-title">今日打卡率</text>
-          <text class="card-number">{{ checkinRate }}%</text>
-          <text class="card-desc">平均完成率</text>
+          <text class="card-title">
+            今日打卡率
+          </text>
+          <text class="card-number">
+            {{ checkinRate }}%
+          </text>
+          <text class="card-desc">
+            平均完成率
+          </text>
         </view>
         
         <view class="overview-card unchecked-count">
-          <text class="card-title">未打卡人数</text>
-          <text class="card-number">{{ uncheckedCount }}</text>
-          <text class="card-desc">人</text>
+          <text class="card-title">
+            未打卡人数
+          </text>
+          <text class="card-number">
+            {{ uncheckedCount }}
+          </text>
+          <text class="card-desc">
+            人
+          </text>
         </view>
       </view>
     </view>
@@ -46,15 +72,29 @@
     <!-- 高频逾期事项 -->
     <view class="frequent-issues-section">
       <view class="section-header">
-        <text class="section-title">高频逾期事项</text>
-        <text class="section-subtitle">近期未完成打卡最多的事项</text>
+        <text class="section-title">
+          高频逾期事项
+        </text>
+        <text class="section-subtitle">
+          近期未完成打卡最多的事项
+        </text>
       </view>
       
       <view class="issues-list">
-        <view class="issue-item" v-for="issue in issuesList" :key="issue.id">
-          <text class="issue-rank">{{ issue.rank }}</text>
-          <text class="issue-name">{{ issue.name }}</text>
-          <text class="issue-count">{{ issue.count }}人未完成</text>
+        <view
+          v-for="issue in issuesList"
+          :key="issue.id"
+          class="issue-item"
+        >
+          <text class="issue-rank">
+            {{ issue.rank }}
+          </text>
+          <text class="issue-name">
+            {{ issue.name }}
+          </text>
+          <text class="issue-count">
+            {{ issue.count }}人未完成
+          </text>
         </view>
       </view>
     </view>
@@ -65,12 +105,14 @@
         class="unchecked-detail-btn"
         @click="goToUncheckedDetail"
       >
-        <text class="btn-text">查看未打卡详情</text>
-        <text class="btn-subtext">当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系</text>
+        <text class="btn-text">
+          查看未打卡详情
+        </text>
+        <text class="btn-subtext">
+          当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系
+        </text>
       </button>
     </view>
-
-    
   </view>
 </template>
 

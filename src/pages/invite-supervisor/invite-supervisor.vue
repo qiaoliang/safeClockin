@@ -4,22 +4,35 @@
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
-        <text class="back-btn" @click="goBack">←</text>
-        <text class="header-title">邀请监护人</text>
+        <text
+          class="back-btn"
+          @click="goBack"
+        >
+          ←
+        </text>
+        <text class="header-title">
+          邀请监护人
+        </text>
       </view>
     </view>
 
     <!-- 邀请方式选择 -->
     <view class="invite-method-section">
-      <view class="section-title">选择邀请方式</view>
+      <view class="section-title">
+        选择邀请方式
+      </view>
       <view class="method-options">
         <view 
           class="method-item"
           :class="{ active: selectedMethod === 'wechat' }"
           @click="selectedMethod = 'wechat'"
         >
-          <text class="method-icon">>WeChat</text>
-          <text class="method-name">微信好友</text>
+          <text class="method-icon">
+            >WeChat
+          </text>
+          <text class="method-name">
+            微信好友
+          </text>
         </view>
         
         <view 
@@ -27,47 +40,72 @@
           :class="{ active: selectedMethod === 'phone' }"
           @click="selectedMethod = 'phone'"
         >
-          <text class="method-icon">📱</text>
-          <text class="method-name">手机号码</text>
+          <text class="method-icon">
+            📱
+          </text>
+          <text class="method-name">
+            手机号码
+          </text>
         </view>
       </view>
     </view>
 
     <!-- 邀请表单 -->
-    <view class="invite-form" v-if="selectedMethod === 'wechat'">
+    <view
+      v-if="selectedMethod === 'wechat'"
+      class="invite-form"
+    >
       <view class="form-group">
-        <text class="label">选择微信好友</text>
+        <text class="label">
+          选择微信好友
+        </text>
         <view class="friend-selector">
-          <view class="friend-item" v-for="friend in wechatFriends" :key="friend.id">
-            <image :src="friend.avatar" class="friend-avatar"></image>
-            <text class="friend-name">{{ friend.name }}</text>
+          <view
+            v-for="friend in wechatFriends"
+            :key="friend.id"
+            class="friend-item"
+          >
+            <image
+              :src="friend.avatar"
+              class="friend-avatar"
+            />
+            <text class="friend-name">
+              {{ friend.name }}
+            </text>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="invite-form" v-if="selectedMethod === 'phone'">
+    <view
+      v-if="selectedMethod === 'phone'"
+      class="invite-form"
+    >
       <view class="form-group">
-        <text class="label">监护人手机号</text>
+        <text class="label">
+          监护人手机号
+        </text>
         <input 
+          v-model="phone"
           class="input"
           type="number"
-          v-model="phone"
           placeholder="请输入监护人手机号码"
           maxlength="11"
-        />
+        >
       </view>
       
       <view class="form-group">
-        <text class="label">验证码</text>
+        <text class="label">
+          验证码
+        </text>
         <view class="verification-input">
           <input 
+            v-model="verificationCode"
             class="input"
             type="number"
-            v-model="verificationCode"
             placeholder="请输入验证码"
             maxlength="6"
-          />
+          >
           <button 
             class="verification-btn"
             :disabled="countdown > 0"
@@ -79,21 +117,27 @@
       </view>
       
       <view class="form-group">
-        <text class="label">监护人姓名</text>
+        <text class="label">
+          监护人姓名
+        </text>
         <input 
+          v-model="supervisorName"
           class="input"
           type="text"
-          v-model="supervisorName"
           placeholder="请输入监护人姓名"
           maxlength="20"
-        />
+        >
       </view>
     </view>
 
     <!-- 邀请说明 -->
     <view class="invite-info">
-      <text class="info-text">• 监督人可以查看您的打卡记录，但无法修改您的设置。您可以随时移除监督人。</text>
-      <text class="info-text">• 被邀请人需要同意后才能成为您的监督人。</text>
+      <text class="info-text">
+        • 监督人可以查看您的打卡记录，但无法修改您的设置。您可以随时移除监督人。
+      </text>
+      <text class="info-text">
+        • 被邀请人需要同意后才能成为您的监督人。
+      </text>
     </view>
 
     <!-- 邀请按钮 -->

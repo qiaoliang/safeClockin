@@ -5,73 +5,134 @@
       <view class="info-card">
         <view class="info-header">
           <view class="info-icon">
-            <text class="icon-text">🛡️</text>
+            <text class="icon-text">
+              🛡️
+            </text>
           </view>
           <view class="info-content">
-            <text class="info-title">身份验证</text>
-            <text class="info-desc">为了确保社区服务的安全性和准确性，请您完成身份验证。验证通过后，您将获得社区管理权限，能够查看和管理辖区内用户的相关信息。</text>
+            <text class="info-title">
+              身份验证
+            </text>
+            <text class="info-desc">
+              为了确保社区服务的安全性和准确性，请您完成身份验证。验证通过后，您将获得社区管理权限，能够查看和管理辖区内用户的相关信息。
+            </text>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 验证表单 -->
-    <form class="auth-form" @submit="submitAuth">
+    <form
+      class="auth-form"
+      @submit="submitAuth"
+    >
       <view class="form-group">
-        <text class="label">姓名 <text class="required">*</text></text>
+        <text class="label">
+          姓名 <text class="required">
+            *
+          </text>
+        </text>
         <input 
+          v-model="formData.name"
           class="input"
           type="text"
-          v-model="formData.name"
           placeholder="请输入您的真实姓名"
           maxlength="20"
-        />
-        <text v-if="errors.name" class="error-text">{{ errors.name }}</text>
+        >
+        <text
+          v-if="errors.name"
+          class="error-text"
+        >
+          {{ errors.name }}
+        </text>
       </view>
       
       <view class="form-group">
-        <text class="label">工号/身份证号 <text class="required">*</text></text>
+        <text class="label">
+          工号/身份证号 <text class="required">
+            *
+          </text>
+        </text>
         <input 
+          v-model="formData.workId"
           class="input"
           type="text"
-          v-model="formData.workId"
           placeholder="请输入您的工号或身份证号"
           maxlength="18"
-        />
-        <text v-if="errors.workId" class="error-text">{{ errors.workId }}</text>
+        >
+        <text
+          v-if="errors.workId"
+          class="error-text"
+        >
+          {{ errors.workId }}
+        </text>
       </view>
       
       <view class="form-group">
-        <text class="label">工作证明照片 <text class="required">*</text></text>
-        <view class="upload-area" @click="chooseImage">
+        <text class="label">
+          工作证明照片 <text class="required">
+            *
+          </text>
+        </text>
+        <view
+          class="upload-area"
+          @click="chooseImage"
+        >
           <input 
+            ref="fileInput" 
             type="file" 
             accept="image/*" 
-            class="file-input" 
+            class="file-input"
             @change="handleFileChange"
-            ref="fileInput"
-          />
+          >
           <image 
             v-if="formData.workProof" 
             :src="formData.workProof" 
             class="proof-image"
             mode="aspectFill"
-          ></image>
-          <view v-else class="upload-placeholder">
+          />
+          <view
+            v-else
+            class="upload-placeholder"
+          >
             <view class="upload-icon">
-              <text class="icon-large">☁️</text>
+              <text class="icon-large">
+                ☁️
+              </text>
             </view>
             <view class="upload-text">
-              <text class="upload-title">点击上传工作证明照片</text>
-              <text class="upload-desc">支持 JPG、PNG 格式，文件大小不超过 5MB</text>
+              <text class="upload-title">
+                点击上传工作证明照片
+              </text>
+              <text class="upload-desc">
+                支持 JPG、PNG 格式，文件大小不超过 5MB
+              </text>
             </view>
           </view>
         </view>
-        <view v-if="formData.workProof" class="upload-actions">
-          <text class="action-btn" @click.stop="changeImage">更换照片</text>
-          <text class="action-btn delete" @click.stop="removeImage">删除</text>
+        <view
+          v-if="formData.workProof"
+          class="upload-actions"
+        >
+          <text
+            class="action-btn"
+            @click.stop="changeImage"
+          >
+            更换照片
+          </text>
+          <text
+            class="action-btn delete"
+            @click.stop="removeImage"
+          >
+            删除
+          </text>
         </view>
-        <text v-if="errors.workProof" class="error-text">{{ errors.workProof }}</text>
+        <text
+          v-if="errors.workProof"
+          class="error-text"
+        >
+          {{ errors.workProof }}
+        </text>
       </view>
       
       <view class="submit-container">
@@ -80,9 +141,16 @@
           :disabled="!isFormValid || isLoading"
           form-type="submit"
         >
-          <text v-if="!isLoading">提交验证</text>
-          <text v-else class="loading-text">
-            <text class="spinner">⟳</text>
+          <text v-if="!isLoading">
+            提交验证
+          </text>
+          <text
+            v-else
+            class="loading-text"
+          >
+            <text class="spinner">
+              ⟳
+            </text>
             提交中...
           </text>
         </button>
@@ -94,41 +162,83 @@
       <view class="tips-card">
         <view class="tips-header">
           <view class="tips-icon">
-            <text class="icon-small">ℹ️</text>
+            <text class="icon-small">
+              ℹ️
+            </text>
           </view>
           <view class="tips-content">
-            <text class="tips-title">温馨提示</text>
-            <text class="tips-desc">验证信息提交后，我们将在1-3个工作日内完成审核。审核结果将通过短信和站内信通知您。请确保提供的信息真实有效。</text>
+            <text class="tips-title">
+              温馨提示
+            </text>
+            <text class="tips-desc">
+              验证信息提交后，我们将在1-3个工作日内完成审核。审核结果将通过短信和站内信通知您。请确保提供的信息真实有效。
+            </text>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 成功弹窗 -->
-    <view v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
-      <view class="modal-content" @click.stop>
+    <view
+      v-if="showSuccessModal"
+      class="modal-overlay"
+      @click="closeSuccessModal"
+    >
+      <view
+        class="modal-content"
+        @click.stop
+      >
         <view class="modal-header">
           <view class="success-icon">
-            <text class="icon-large">✓</text>
+            <text class="icon-large">
+              ✓
+            </text>
           </view>
-          <text class="modal-title">提交成功</text>
-          <text class="modal-desc">验证信息已提交，请耐心等待审核。审核结果将通过短信和站内信通知您。</text>
+          <text class="modal-title">
+            提交成功
+          </text>
+          <text class="modal-desc">
+            验证信息已提交，请耐心等待审核。审核结果将通过短信和站内信通知您。
+          </text>
         </view>
-        <button class="modal-btn" @click="confirmSuccess">确定</button>
+        <button
+          class="modal-btn"
+          @click="confirmSuccess"
+        >
+          确定
+        </button>
       </view>
     </view>
 
     <!-- 错误弹窗 -->
-    <view v-if="showErrorModal" class="modal-overlay" @click="closeErrorModal">
-      <view class="modal-content" @click.stop>
+    <view
+      v-if="showErrorModal"
+      class="modal-overlay"
+      @click="closeErrorModal"
+    >
+      <view
+        class="modal-content"
+        @click.stop
+      >
         <view class="modal-header">
           <view class="error-icon">
-            <text class="icon-large">⚠️</text>
+            <text class="icon-large">
+              ⚠️
+            </text>
           </view>
-          <text class="modal-title">提交失败</text>
-          <text class="modal-desc">{{ errorMessage }}</text>
+          <text class="modal-title">
+            提交失败
+          </text>
+          <text class="modal-desc">
+            {{ errorMessage }}
+          </text>
         </view>
-        <button class="modal-btn" @click="closeErrorModal">确定</button>
+        <button
+          class="modal-btn"
+          @click="closeErrorModal"
+        >
+          确定
+        </button>
       </view>
     </view>
   </view>

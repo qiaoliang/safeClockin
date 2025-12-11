@@ -23,20 +23,23 @@
     "build:prod": "./scripts/build-env.sh prod"
   },
   "dependencies": {
+    "@dcloudio/uni-ui": "^1.5.11",
     "pinia": "^2.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
-    "@vitest/coverage-v8": "^1.0.0",
-    "@vitest/ui": "^1.0.0",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/ui": "^4.0.15",
     "@vue/test-utils": "^2.0.0",
     "eslint": "^8.0.0",
     "eslint-plugin-vitest": "^0.3.0",
     "eslint-plugin-vue": "^9.0.0",
     "jsdom": "^23.0.0",
     "msw": "^2.12.4",
-    "vitest": "^1.0.0"
+    "sass": "^1.96.0",
+    "sass-loader": "^10.1.1",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=16.0.0"

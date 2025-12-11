@@ -3,42 +3,67 @@
   <view class="checkin-list-container">
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title">打卡事项</text>
-      <text class="header-subtitle">完成每日打卡，让关爱无处不在</text>
+      <text class="header-title">
+        打卡事项
+      </text>
+      <text class="header-subtitle">
+        完成每日打卡，让关爱无处不在
+      </text>
     </view>
 
     <!-- 打卡事项列表 -->
-    <view class="checkin-list-section" v-if="checkinItems.length > 0">
-      <view class="list-title">今日打卡事项</view>
+    <view
+      v-if="checkinItems.length > 0"
+      class="checkin-list-section"
+    >
+      <view class="list-title">
+        今日打卡事项
+      </view>
       <view 
-        class="checkin-item" 
         v-for="item in checkinItems" 
-        :key="item.rule_id"
+        :key="item.rule_id" 
+        class="checkin-item"
       >
         <view class="item-info">
-          <text class="item-name">{{ item.rule_name }}</text>
-          <text class="item-time">计划时间: {{ item.planned_time }}</text>
+          <text class="item-name">
+            {{ item.rule_name }}
+          </text>
+          <text class="item-time">
+            计划时间: {{ item.planned_time }}
+          </text>
         </view>
         
-        <view class="item-actions" v-if="item.status === 'checked'">
-          <text class="status-checked">✓ 已打卡</text>
-          <text class="checkin-time">{{ item.checkin_time }}</text>
+        <view
+          v-if="item.status === 'checked'"
+          class="item-actions"
+        >
+          <text class="status-checked">
+            ✓ 已打卡
+          </text>
+          <text class="checkin-time">
+            {{ item.checkin_time }}
+          </text>
           <button 
-            class="cancel-btn" 
+            v-if="isWithin30Minutes(item.checkin_time)" 
+            class="cancel-btn"
             @click="showCancelModal(item)"
-            v-if="isWithin30Minutes(item.checkin_time)"
           >
             撤销
           </button>
         </view>
         
-        <view class="item-actions" v-else-if="item.status === 'missed'">
-          <text class="status-missed">✕ 已错过</text>
+        <view
+          v-else-if="item.status === 'missed'"
+          class="item-actions"
+        >
+          <text class="status-missed">
+            ✕ 已错过
+          </text>
         </view>
         
         <button 
-          class="checkin-btn" 
-          v-else
+          v-else 
+          class="checkin-btn"
           @click="performCheckin(item)"
         >
           打卡
@@ -47,30 +72,63 @@
     </view>
 
     <!-- 无打卡事项提示 -->
-    <view class="empty-section" v-else>
-      <text class="empty-text">今天没有需要打卡的事项</text>
-      <text class="empty-subtext">请先在"打卡规则"中添加打卡事项</text>
+    <view
+      v-else
+      class="empty-section"
+    >
+      <text class="empty-text">
+        今天没有需要打卡的事项
+      </text>
+      <text class="empty-subtext">
+        请先在"打卡规则"中添加打卡事项
+      </text>
     </view>
 
     <!-- 全部完成提示 -->
-    <view class="completed-section" v-if="isAllCompleted">
-      <text class="completed-text">🎉 今日所有打卡事项已完成</text>
-      <text class="completed-subtext">您的健康管理做得很棒！</text>
+    <view
+      v-if="isAllCompleted"
+      class="completed-section"
+    >
+      <text class="completed-text">
+        🎉 今日所有打卡事项已完成
+      </text>
+      <text class="completed-subtext">
+        您的健康管理做得很棒！
+      </text>
     </view>
 
     <!-- 撤销确认弹窗 -->
-    <view class="modal-overlay" v-if="showCancelConfirm">
+    <view
+      v-if="showCancelConfirm"
+      class="modal-overlay"
+    >
       <view class="modal-content">
         <view class="modal-header">
-          <text class="modal-title">撤销打卡</text>
+          <text class="modal-title">
+            撤销打卡
+          </text>
         </view>
         <view class="modal-body">
-          <text class="modal-text">确定要撤销 "{{ selectedCheckinItem?.rule_name }}" 的打卡吗？</text>
-          <text class="modal-subtext">撤销后，该事项将恢复为未打卡状态</text>
+          <text class="modal-text">
+            确定要撤销 "{{ selectedCheckinItem?.rule_name }}" 的打卡吗？
+          </text>
+          <text class="modal-subtext">
+            撤销后，该事项将恢复为未打卡状态
+          </text>
         </view>
         <view class="modal-actions">
-          <button class="modal-cancel-btn" @click="hideCancelModal">取消</button>
-          <button class="modal-confirm-btn" @click="confirmCancel">确定</button>
+          <button
+            class="modal-cancel-btn"
+            @click="hideCancelModal"
+          >
+            取消
+          </button>
+          <button
+            class="modal-confirm-btn"
+            @click="confirmCancel"
+          >
+            确定
+          </button>
         </view>
       </view>
     </view>

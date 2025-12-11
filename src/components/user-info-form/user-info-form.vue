@@ -1,16 +1,26 @@
 <!-- components/user-info-form/user-info-form.vue -->
 <template>
-  <view class="user-info-modal" v-if="visible">
-    <view class="modal-mask" @click="onCancel"></view>
+  <view
+    v-if="visible"
+    class="user-info-modal"
+  >
+    <view
+      class="modal-mask"
+      @click="onCancel"
+    />
     <view class="modal-content">
       <view class="modal-header">
-        <text class="modal-title">完善个人信息</text>
+        <text class="modal-title">
+          完善个人信息
+        </text>
       </view>
       
       <form @submit="onSubmit">
         <!-- 头像选择 -->
         <view class="form-item">
-          <text class="form-label">头像</text>
+          <text class="form-label">
+            头像
+          </text>
           <button 
             class="avatar-button" 
             open-type="chooseAvatar" 
@@ -20,14 +30,18 @@
               class="avatar-image" 
               :src="formData.avatarUrl || defaultAvatarUrl"
               mode="aspectFill"
-            ></image>
-            <text class="avatar-tip">点击选择头像</text>
+            />
+            <text class="avatar-tip">
+              点击选择头像
+            </text>
           </button>
         </view>
         
         <!-- 昵称填写 -->
         <view class="form-item">
-          <text class="form-label">昵称</text>
+          <text class="form-label">
+            昵称
+          </text>
           <input 
             class="nickname-input"
             type="nickname" 
@@ -36,12 +50,17 @@
             placeholder="请输入昵称"
             @input="onNicknameInput"
             @blur="onNicknameBlur"
-          />
+          >
         </view>
         
         <!-- 操作按钮 -->
         <view class="form-actions">
-          <button class="cancel-btn" @click="onCancel">取消</button>
+          <button
+            class="cancel-btn"
+            @click="onCancel"
+          >
+            取消
+          </button>
           <button 
             class="confirm-btn" 
             form-type="submit"

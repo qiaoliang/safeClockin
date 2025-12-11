@@ -2,40 +2,109 @@
   <view class="container">
     <view class="card">
       <view class="row">
-        <text class="label">昵称</text>
-        <input class="input" v-model="nickName" placeholder="请输入昵称" />
-        <button class="btn" @click="saveNickname" :disabled="savingNick">保存</button>
+        <text class="label">
+          昵称
+        </text>
+        <input
+          v-model="nickName"
+          class="input"
+          placeholder="请输入昵称"
+        >
+        <button
+          class="btn"
+          :disabled="savingNick"
+          @click="saveNickname"
+        >
+          保存
+        </button>
       </view>
 
       <view class="row">
-        <text class="label">手机号</text>
-        <text class="value">{{ displayPhone }}</text>
-        <button class="link" @click="openPhoneBind">{{ phoneBindText }}</button>
+        <text class="label">
+          手机号
+        </text>
+        <text class="value">
+          {{ displayPhone }}
+        </text>
+        <button
+          class="link"
+          @click="openPhoneBind"
+        >
+          {{ phoneBindText }}
+        </button>
       </view>
 
       <view class="row">
-        <text class="label">微信号</text>
-        <text class="value">{{ displayWechat }}</text>
-        <button class="link" @click="bindWechat">{{ wechatBindText }}</button>
+        <text class="label">
+          微信号
+        </text>
+        <text class="value">
+          {{ displayWechat }}
+        </text>
+        <button
+          class="link"
+          @click="bindWechat"
+        >
+          {{ wechatBindText }}
+        </button>
       </view>
     </view>
 
-    <view v-if="phoneModal" class="modal">
+    <view
+      v-if="phoneModal"
+      class="modal"
+    >
       <view class="modal-card">
-        <text class="modal-title">绑定/更换手机号</text>
+        <text class="modal-title">
+          绑定/更换手机号
+        </text>
         <view class="row">
-          <picker mode="selector" :range="countryCodes" :value="countryIndex" @change="onCountryChange">
-            <view class="picker">{{ countryCodes[countryIndex] }}</view>
+          <picker
+            mode="selector"
+            :range="countryCodes"
+            :value="countryIndex"
+            @change="onCountryChange"
+          >
+            <view class="picker">
+              {{ countryCodes[countryIndex] }}
+            </view>
           </picker>
-          <input class="input" type="number" v-model="phone" placeholder="请输入手机号" />
+          <input
+            v-model="phone"
+            class="input"
+            type="number"
+            placeholder="请输入手机号"
+          >
         </view>
         <view class="row">
-          <input class="input" type="number" v-model="code" placeholder="验证码" />
-          <button class="btn" :disabled="countdown>0 || sending" @click="sendCode">{{ countdown>0? `${countdown}s` : '获取验证码' }}</button>
+          <input
+            v-model="code"
+            class="input"
+            type="number"
+            placeholder="验证码"
+          >
+          <button
+            class="btn"
+            :disabled="countdown>0 || sending"
+            @click="sendCode"
+          >
+            {{ countdown>0? `${countdown}s` : '获取验证码' }}
+          </button>
         </view>
         <view class="row">
-          <button class="btn primary" :disabled="binding" @click="confirmBindPhone">确认绑定</button>
-          <button class="btn" @click="closePhoneBind">取消</button>
+          <button
+            class="btn primary"
+            :disabled="binding"
+            @click="confirmBindPhone"
+          >
+            确认绑定
+          </button>
+          <button
+            class="btn"
+            @click="closePhoneBind"
+          >
+            取消
+          </button>
         </view>
       </view>
     </view>
@@ -88,7 +157,7 @@ function closePhoneBind() { phoneModal.value = false; code.value=''; phone.value
 function onCountryChange(e){ countryIndex.value = Number(e.detail.value || 0) }
 function fullPhone(){ return `${countryCodes[countryIndex.value]}${phone.value}` }
 function startCountdown(){ countdown.value=60; timer=setInterval(()=>{countdown.value-=1; if(countdown.value<=0) stopCountdown()},1000) }
-function stopCountdown(){ if(timer){ clearInterval(timer); timer=null }; countdown.value=0 }
+function stopCountdown(){ if(timer){ clearInterval(timer); timer=null } countdown.value=0 }
 
 async function sendCode(){
   if(!phone.value) return uni.showToast({ title:'请输入手机号', icon:'none' })

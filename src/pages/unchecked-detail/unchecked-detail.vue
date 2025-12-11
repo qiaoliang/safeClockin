@@ -4,56 +4,96 @@
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
-        <text class="back-btn" @click="goBack">←</text>
-      <text class="header-title">未打卡用户详情</text>
+        <text
+          class="back-btn"
+          @click="goBack"
+        >
+          ←
+        </text>
+        <text class="header-title">
+          未打卡用户详情
+        </text>
       </view>
     </view>
 
     <!-- 未打卡概览 -->
     <view class="overview-section">
       <view class="overview-card unchecked-count">
-        <text class="card-title">未打卡人数</text>
-        <text class="card-number">{{ uncheckedCount }}</text>
-        <text class="card-desc">人</text>
+        <text class="card-title">
+          未打卡人数
+        </text>
+        <text class="card-number">
+          {{ uncheckedCount }}
+        </text>
+        <text class="card-desc">
+          人
+        </text>
       </view>
       
       <view class="overview-card warning-desc">
-      <text class="card-desc">当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系。</text>
+        <text class="card-desc">
+          当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系。
+        </text>
       </view>
     </view>
 
     <!-- 未打卡人员列表 -->
     <view class="unchecked-list-section">
       <view class="section-header">
-        <text class="section-title">未打卡人员</text>
+        <text class="section-title">
+          未打卡人员
+        </text>
       </view>
       
       <view class="unchecked-list">
         <view 
-          class="unchecked-item"
           v-for="person in uncheckedList"
           :key="person.user_id"
+          class="unchecked-item"
         >
           <view class="person-info">
-            <text class="person-name">{{ person.name }}</text>
-            <text class="person-phone">{{ person.phone }}</text>
+            <text class="person-name">
+              {{ person.name }}
+            </text>
+            <text class="person-phone">
+              {{ person.phone }}
+            </text>
           </view>
           <view class="person-checkin">
-            <text class="unchecked-count-text">{{ person.unchecked_count }}项未打卡</text>
-            <view class="unchecked-items" v-if="showDetail[person.user_id]">
+            <text class="unchecked-count-text">
+              {{ person.unchecked_count }}项未打卡
+            </text>
+            <view
+              v-if="showDetail[person.user_id]"
+              class="unchecked-items"
+            >
               <view 
-                class="unchecked-item-detail"
                 v-for="item in person.unchecked_items"
                 :key="item.rule_id"
+                class="unchecked-item-detail"
               >
-                <text class="item-name">{{ item.rule_name }}</text>
-                <text class="item-time">计划: {{ item.planned_time }}</text>
+                <text class="item-name">
+                  {{ item.rule_name }}
+                </text>
+                <text class="item-time">
+                  计划: {{ item.planned_time }}
+                </text>
               </view>
             </view>
           </view>
           <view class="person-actions">
-            <button class="action-btn call" @click="callPerson(person)">📞</button>
-            <button class="action-btn message" @click="sendMessage(person)">💬</button>
+            <button
+              class="action-btn call"
+              @click="callPerson(person)"
+            >
+              📞
+            </button>
+            <button
+              class="action-btn message"
+              @click="sendMessage(person)"
+            >
+              💬
+            </button>
             <button 
               class="action-btn detail" 
               @click="toggleDetail(person.user_id)"
@@ -67,7 +107,10 @@
 
     <!-- 批量操作 -->
     <view class="batch-actions-section">
-      <button class="batch-send-btn" @click="batchSendReminder">
+      <button
+        class="batch-send-btn"
+        @click="batchSendReminder"
+      >
         📢 批量发送提醒
       </button>
     </view>

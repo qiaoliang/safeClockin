@@ -4,14 +4,24 @@
     <view class="header-section">
       <view class="logo-section">
         <view class="logo-circle">
-          <text class="logo-icon">🛡️</text>
+          <text class="logo-icon">
+            🛡️
+          </text>
         </view>
-        <text class="app-title">安全守护</text>
-        <text class="app-subtitle">让关爱无处不在</text>
+        <text class="app-title">
+          安全守护
+        </text>
+        <text class="app-subtitle">
+          让关爱无处不在
+        </text>
       </view>
       
-      <text class="page-title">请选择您的角色</text>
-      <text class="page-subtitle">选择最符合您身份的角色，开始使用安全守护</text>
+      <text class="page-title">
+        请选择您的角色
+      </text>
+      <text class="page-subtitle">
+        选择最符合您身份的角色，开始使用安全守护
+      </text>
     </view>
 
     <!-- 角色选择卡片 -->
@@ -23,19 +33,33 @@
         @tap="selectRole('solo')"
       >
         <view class="role-icon">
-          <text class="role-icon-text">👤</text>
+          <text class="role-icon-text">
+            👤
+          </text>
         </view>
         <view class="role-content">
-          <text class="role-title">普通用户</text>
-          <text class="role-description">我是日常使用者，希望通过打卡让家人放心</text>
+          <text class="role-title">
+            普通用户
+          </text>
+          <text class="role-description">
+            我是日常使用者，希望通过打卡让家人放心
+          </text>
           <view class="role-features">
             <view class="feature-item">
-              <text class="feature-icon">✅</text>
-              <text class="feature-text">每日打卡</text>
+              <text class="feature-icon">
+                ✅
+              </text>
+              <text class="feature-text">
+                每日打卡
+              </text>
             </view>
             <view class="feature-item">
-              <text class="feature-icon">👥</text>
-          <text class="feature-text">监护功能</text>
+              <text class="feature-icon">
+                👥
+              </text>
+              <text class="feature-text">
+                监护功能
+              </text>
             </view>
           </view>
         </view>
@@ -48,19 +72,33 @@
         @tap="selectRole('supervisor')"
       >
         <view class="role-icon">
-          <text class="role-icon-text">❤️</text>
+          <text class="role-icon-text">
+            ❤️
+          </text>
         </view>
         <view class="role-content">
-          <text class="role-title">监护人</text>
-          <text class="role-description">我关心独居的亲友，希望实时了解他们的状况</text>
+          <text class="role-title">
+            监护人
+          </text>
+          <text class="role-description">
+            我关心独居的亲友，希望实时了解他们的状况
+          </text>
           <view class="role-features">
             <view class="feature-item">
-              <text class="feature-icon">👁️</text>
-              <text class="feature-text">实时关注</text>
+              <text class="feature-icon">
+                👁️
+              </text>
+              <text class="feature-text">
+                实时关注
+              </text>
             </view>
             <view class="feature-item">
-              <text class="feature-icon">📞</text>
-              <text class="feature-text">一键联系</text>
+              <text class="feature-icon">
+                📞
+              </text>
+              <text class="feature-text">
+                一键联系
+              </text>
             </view>
           </view>
         </view>
@@ -73,19 +111,33 @@
         @tap="selectRole('community')"
       >
         <view class="role-icon">
-          <text class="role-icon-text">👥</text>
+          <text class="role-icon-text">
+            👥
+          </text>
         </view>
         <view class="role-content">
-          <text class="role-title">社区工作人员</text>
-          <text class="role-description">我负责社区居民管理，需要高效的工作工具</text>
+          <text class="role-title">
+            社区工作人员
+          </text>
+          <text class="role-description">
+            我负责社区居民管理，需要高效的工作工具
+          </text>
           <view class="role-features">
             <view class="feature-item">
-              <text class="feature-icon">📊</text>
-              <text class="feature-text">数据管理</text>
+              <text class="feature-icon">
+                📊
+              </text>
+              <text class="feature-text">
+                数据管理
+              </text>
             </view>
             <view class="feature-item">
-              <text class="feature-icon">🔔</text>
-              <text class="feature-text">批量提醒</text>
+              <text class="feature-icon">
+                🔔
+              </text>
+              <text class="feature-text">
+                批量提醒
+              </text>
             </view>
           </view>
         </view>
@@ -96,9 +148,13 @@
     <view class="footer-section">
       <view class="info-card">
         <view class="info-icon">
-          <text class="info-icon-text">ℹ️</text>
+          <text class="info-icon-text">
+            ℹ️
+          </text>
         </view>
-        <text class="info-text">选择角色后，您可以开始使用相应的功能。如需切换角色，请在个人中心重新设置。</text>
+        <text class="info-text">
+          选择角色后，您可以开始使用相应的功能。如需切换角色，请在个人中心重新设置。
+        </text>
       </view>
     </view>
 

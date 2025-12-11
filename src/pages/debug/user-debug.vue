@@ -1,11 +1,15 @@
 <template>
   <view class="container">
     <view class="header">
-      <text class="title">用户状态调试工具</text>
+      <text class="title">
+        用户状态调试工具
+      </text>
     </view>
     
     <view class="section">
-      <text class="section-title">当前状态</text>
+      <text class="section-title">
+        当前状态
+      </text>
       <view class="state-info">
         <text>登录状态: {{ diagnosis.isLoggedIn ? '已登录' : '未登录' }}</text>
         <text>Token有效: {{ diagnosis.isTokenValid ? '是' : '否' }}</text>
@@ -15,16 +19,40 @@
     </view>
     
     <view class="section">
-      <text class="section-title">调试操作</text>
-      <button @click="runDiagnosis" class="btn">诊断用户状态</button>
-      <button @click="forceClear" class="btn danger">强制清理状态</button>
-      <button @click="testNetwork" class="btn">测试网络连接</button>
+      <text class="section-title">
+        调试操作
+      </text>
+      <button
+        class="btn"
+        @click="runDiagnosis"
+      >
+        诊断用户状态
+      </button>
+      <button
+        class="btn danger"
+        @click="forceClear"
+      >
+        强制清理状态
+      </button>
+      <button
+        class="btn"
+        @click="testNetwork"
+      >
+        测试网络连接
+      </button>
     </view>
     
     <view class="section">
-      <text class="section-title">控制台日志</text>
-      <scroll-view class="log-container" scroll-y>
-        <text class="log-text">{{ logText }}</text>
+      <text class="section-title">
+        控制台日志
+      </text>
+      <scroll-view
+        class="log-container"
+        scroll-y
+      >
+        <text class="log-text">
+          {{ logText }}
+        </text>
       </scroll-view>
     </view>
   </view>
