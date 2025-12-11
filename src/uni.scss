@@ -11,43 +11,70 @@ $uni-primary-light: #F48224CC;
 $uni-primary-dark: #E8741A;
 
 // 辅助色
-$uni-success: #4cd964;
-$uni-success-disable: #4cd96480;
-$uni-success-light: #4cd964CC;
+$uni-success: #10B981;
+$uni-success-disable: #10B98180;
+$uni-success-light: #10B981CC;
+$uni-success-dark: #059669;
 
-$uni-warning: #f0ad4e;
-$uni-warning-disable: #f0ad4e80;
-$uni-warning-light: #f0ad4eCC;
+$uni-warning: #F59E0B;
+$uni-warning-disable: #F59E0B80;
+$uni-warning-light: #F59E0BCC;
+$uni-warning-dark: #D97706;
 
-$uni-error: #dd524d;
-$uni-error-disable: #dd524d80;
-$uni-error-light: #dd524dCC;
+$uni-error: #EF4444;
+$uni-error-disable: #EF444480;
+$uni-error-light: #EF4444CC;
+$uni-error-dark: #DC2626;
+$uni-danger: #EF4444; // 危险色别名
+$uni-danger-dark: #DC2626;
 
-$uni-info: #8f939c;
-$uni-info-disable: #8f939c80;
-$uni-info-light: #8f939cCC;
+$uni-info: #3B82F6;
+$uni-info-disable: #3B82F680;
+$uni-info-light: #3B82F6CC;
+$uni-info-dark: #2563EB;
+
+// 强调色
+$uni-accent: #624731;
+$uni-accent-light: #62473180;
+
+// 状态栏色
+$uni-statusbar-bg-start: #1F2937;
+$uni-statusbar-bg-end: #374151;
 
 // === 文本色系统 ===
 // 主要文字色
 $uni-main-color: #3a3a3a;
+$uni-text-primary: #374151; // 深灰文本
 // 常规文字色
 $uni-base-color: #6a6a6a;
+$uni-text-base: #6B7280; // 中灰文本
 // 次要文字色
 $uni-secondary-color: #909399;
+$uni-text-secondary: #9CA3AF; // 浅灰文本
 // 辅助说明文字
 $uni-extra-color: #c7c7c7;
+$uni-text-light: #D1D5DB; // 极浅灰
+$uni-text-placeholder: #9CA3AF; // 占位文本
 
 // === 背景色系统 ===
 // 主背景色 - 暖色调米色
 $uni-bg-color: #FAE9DB;
+$uni-bg-color-primary: #FAE9DB;
 // 次要背景色
 $uni-bg-color-grey: #f5f5f5;
+$uni-bg-color-light: #E5E7EB;
+$uni-bg-color-lighter: #F3F4F6;
 // 卡片背景色
 $uni-bg-color-white: #ffffff;
+$uni-bg-card-start: #ffffff;
+$uni-bg-card-end: #f8fafc;
 // 渐变背景起始色
 $uni-bg-gradient-start: #FAE9DB;
 // 渐变背景结束色
 $uni-bg-gradient-end: #F8E0D0;
+// 半透明背景
+$uni-bg-overlay: rgba(0, 0, 0, 0.5);
+$uni-bg-overlay-light: rgba(0, 0, 0, 0.3);
 
 // === 边框色系统 ===
 $uni-border-1: #F0F0F0;
@@ -56,6 +83,11 @@ $uni-border-3: #DCDCDC;
 $uni-border-4: #B9B9B9;
 // 输入框边框色
 $uni-border-input: #E5E5E5;
+$uni-border-light: #E5E7EB;
+$uni-border-base: #D1D5DB;
+$uni-border-dark: #9CA3AF;
+// 分隔线颜色
+$uni-divider: #E5E7EB;
 
 // === TabBar 配色 ===
 // TabBar 未选中文字色
@@ -69,21 +101,48 @@ $uni-white: #ffffff;
 $uni-transparent: rgba($color: #000000, $alpha: 0);
 
 /* === SafeGuard 特定间距系统 === */
-$uni-spacing-xs: 4px;
-$uni-spacing-sm: 8px;
-$uni-spacing-base: 15px;
-$uni-spacing-lg: 30px;
-$uni-spacing-xl: 40px;
+$uni-spacing-xxs: 2px;   // 极小间距
+$uni-spacing-xs: 4px;    // 小间距
+$uni-spacing-sm: 8px;    // 较小间距
+$uni-spacing-md: 12px;   // 中等间距
+$uni-spacing-base: 16px; // 基础间距
+$uni-spacing-lg: 20px;   // 较大间距
+$uni-spacing-xl: 24px;   // 大间距
+$uni-spacing-xxl: 32px;  // 超大间距
+$uni-spacing-xxxl: 48px; // 特大间距
 
 // === 阴影系统 ===
-// 小阴影
-$uni-shadow-sm: 0 0 5px rgba($color: #d8d8d8, $alpha: 0.5);
 // 基础阴影
-$uni-shadow-base: 0 1px 8px 1px rgba($color: #a5a5a5, $alpha: 0.2);
-// 大阴影
-$uni-shadow-lg: 0px 1px 10px 2px rgba($color: #a5a4a4, $alpha: 0.5);
+$uni-shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.06);
+$uni-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+$uni-shadow-base: 0 4px 16px rgba(0, 0, 0, 0.06);
+$uni-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.1);
+$uni-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+$uni-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+
+// 卡片阴影
+$uni-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+$uni-shadow-card-hover: 0 6px 16px rgba(0, 0, 0, 0.1);
+
 // 主色调阴影（用于按钮等）
 $uni-shadow-primary: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
+$uni-shadow-primary-sm: 0 2px 8px rgba(244, 130, 36, 0.3);
+$uni-shadow-primary-md: 0 4px 16px rgba(244, 130, 36, 0.4);
+$uni-shadow-primary-lg: 0 6px 20px rgba(244, 130, 36, 0.5);
+$uni-shadow-primary-xl: 0 8px 24px rgba(244, 130, 36, 0.4);
+$uni-shadow-primary-hover: 0 12px 32px rgba(244, 130, 36, 0.5);
+
+// 功能色阴影
+$uni-shadow-success: 0 4px 12px rgba(16, 185, 129, 0.4);
+$uni-shadow-success-hover: 0 6px 16px rgba(16, 185, 129, 0.5);
+$uni-shadow-danger: 0 4px 12px rgba(239, 68, 68, 0.4);
+$uni-shadow-danger-hover: 0 6px 16px rgba(239, 68, 68, 0.5);
+$uni-shadow-danger-xl: 0 8px 24px rgba(239, 68, 68, 0.4);
+$uni-shadow-warning: 0 4px 12px rgba(245, 158, 11, 0.4);
+$uni-shadow-info: 0 8px 24px rgba(59, 130, 246, 0.4);
+
+// Focus 阴影
+$uni-shadow-focus: 0 0 0 3px rgba(244, 130, 36, 0.1);
 
 // === 蒙版和遮罩 ===
 // 标准蒙版
@@ -92,36 +151,102 @@ $uni-mask: rgba($color: #000000, $alpha: 0.4);
 $uni-mask-light: rgba($color: #000000, $alpha: 0.2);
 
 // === 圆角系统 ===
+// 极小圆角
+$uni-radius-xs: 4rpx;
 // 小圆角
 $uni-radius-sm: 8rpx;
 // 基础圆角
 $uni-radius-base: 12rpx;
+// 中等圆角
+$uni-radius-md: 16rpx;
 // 大圆角
-$uni-radius-lg: 16rpx;
+$uni-radius-lg: 20rpx;
 // 特大圆角
-$uni-radius-xl: 32rpx;
+$uni-radius-xl: 24rpx;
 // 超大圆角
-$uni-radius-xxl: 48rpx;
+$uni-radius-xxl: 32rpx;
+// 特超大圆角
+$uni-radius-xxxl: 48rpx;
+// 完全圆形
+$uni-radius-full: 9999rpx;
 
 // === 字体大小系统 ===
+// 极小字体
+$uni-font-size-xxs: 20rpx;  // 10px
+$uni-font-size-xs: 22rpx;   // 11px
 // 小字体
-$uni-font-size-sm: 24rpx;
+$uni-font-size-sm: 24rpx;   // 12px
+// 较小字体
+$uni-font-size-md: 26rpx;   // 13px
 // 基础字体
-$uni-font-size-base: 28rpx;
+$uni-font-size-base: 28rpx; // 14px
+// 较大字体
+$uni-font-size-lg: 32rpx;   // 16px
 // 大字体
-$uni-font-size-lg: 32rpx;
+$uni-font-size-xl: 36rpx;   // 18px
 // 特大字体
-$uni-font-size-xl: 36rpx;
+$uni-font-size-xxl: 40rpx;  // 20px
+$uni-font-size-xxxl: 48rpx; // 24px
+// 超大字体（标题）
+$uni-font-size-h1: 56rpx;   // 28px
+$uni-font-size-h2: 64rpx;   // 32px
+$uni-font-size-h3: 72rpx;   // 36px
 
 // === SafeGuard 实用混入 ===
 // 主色调按钮样式
 @mixin btn-primary {
   background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   color: $uni-white;
-  border-radius: $uni-radius-xl;
+  border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
   font-weight: 600;
   box-shadow: $uni-shadow-primary;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $uni-shadow-primary-hover;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 成功按钮样式
+@mixin btn-success {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  border-radius: $uni-radius-xxl;
+  font-size: $uni-font-size-xl;
+  font-weight: 600;
+  box-shadow: $uni-shadow-success;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $uni-shadow-success-hover;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 危险按钮样式
+@mixin btn-danger {
+  background: linear-gradient(135deg, $uni-danger 0%, $uni-danger-dark 100%);
+  color: $uni-white;
+  border-radius: $uni-radius-xxl;
+  font-size: $uni-font-size-xl;
+  font-weight: 600;
+  box-shadow: $uni-shadow-danger;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $uni-shadow-danger-hover;
+  }
   
   &:active {
     transform: scale(0.98);
@@ -135,23 +260,87 @@ $uni-font-size-xl: 36rpx;
   border-radius: $uni-radius-lg;
   padding: 24rpx 32rpx;
   font-size: $uni-font-size-base;
+  transition: all 0.3s ease;
   
   &:focus {
     border-color: $uni-primary;
+    box-shadow: $uni-shadow-focus;
+    outline: none;
   }
 }
 
 // 卡片样式
 @mixin card-default {
   background: $uni-bg-color-white;
-  border-radius: $uni-radius-base;
+  border-radius: $uni-radius-md;
   padding: 24rpx;
-  box-shadow: $uni-shadow-sm;
+  box-shadow: $uni-shadow-card;
+  transition: all 0.3s ease;
+}
+
+// 卡片渐变样式
+@mixin card-gradient {
+  background: linear-gradient(135deg, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  border-radius: $uni-radius-md;
+  padding: 24rpx;
+  box-shadow: $uni-shadow-card;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $uni-shadow-card-hover;
+  }
 }
 
 // 渐变背景
 @mixin bg-gradient {
   background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+}
+
+// 浮动按钮
+@mixin floating-button {
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  box-shadow: $uni-shadow-primary-xl;
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: $uni-shadow-primary-hover;
+  }
+}
+
+// 浮动动画
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-8px); 
+  }
+}
+
+// Hover 上浮效果
+@mixin hover-lift {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $uni-shadow-md;
+  }
+}
+
+// Hover 缩放效果
+@mixin hover-scale {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // 文字省略
@@ -167,4 +356,14 @@ $uni-font-size-xl: 36rpx;
   -webkit-line-clamp: $lines;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+// 状态栏样式
+@mixin statusbar {
+  background: linear-gradient(135deg, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+}
+
+// 安全区域适配
+@mixin safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
