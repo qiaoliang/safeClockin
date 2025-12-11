@@ -1,60 +1,169 @@
 @import '@/uni_modules/uni-scss/variables.scss';
 /*
- 以下变量是默认值，如不需要修改可以不用给下面的变量重新赋值
+  SafeGuard 项目配色方案
+  基于项目实际使用的配色风格定制
  */
-// 主色
-$uni-primary: #FF7A3D;
-$uni-primary-disable:mix(#fff,$uni-primary,50%);
-$uni-primary-light: mix(#fff,$uni-primary,80%);
+
+// === 主色调系统 ===
+// 品牌主色 - 橙色系
+$uni-primary: #F48224;
+$uni-primary-disable: mix(#fff, $uni-primary, 50%);
+$uni-primary-light: mix(#fff, $uni-primary, 80%);
+$uni-primary-dark: #E8741A;
 
 // 辅助色
-// 除了主色外的场景色，需要在不同的场景中使用（例如危险色表示危险的操作）。
-$uni-success: #18bc37;
-$uni-success-disable:mix(#fff,$uni-success,50%);
-$uni-success-light: mix(#fff,$uni-success,80%);
+$uni-success: #4cd964;
+$uni-success-disable: mix(#fff, $uni-success, 50%);
+$uni-success-light: mix(#fff, $uni-success, 80%);
 
-$uni-warning: #f3a73f;
-$uni-warning-disable:mix(#fff,$uni-warning,50%);
-$uni-warning-light: mix(#fff,$uni-warning,80%);
+$uni-warning: #f0ad4e;
+$uni-warning-disable: mix(#fff, $uni-warning, 50%);
+$uni-warning-light: mix(#fff, $uni-warning, 80%);
 
-$uni-error: #e43d33;
-$uni-error-disable:mix(#fff,$uni-error,50%);
-$uni-error-light: mix(#fff,$uni-error,80%);
+$uni-error: #dd524d;
+$uni-error-disable: mix(#fff, $uni-error, 50%);
+$uni-error-light: mix(#fff, $uni-error, 80%);
 
 $uni-info: #8f939c;
-$uni-info-disable:mix(#fff,$uni-info,50%);
-$uni-info-light: mix(#fff,$uni-info,80%);
+$uni-info-disable: mix(#fff, $uni-info, 50%);
+$uni-info-light: mix(#fff, $uni-info, 80%);
 
-// 中性色
-// 中性色用于文本、背景和边框颜色。通过运用不同的中性色，来表现层次结构。
-$uni-main-color: #3a3a3a; 			// 主要文字
-$uni-base-color: #6a6a6a;			// 常规文字
-$uni-secondary-color: #909399;	// 次要文字
-$uni-extra-color: #c7c7c7;			// 辅助说明
+// === 文本色系统 ===
+// 主要文字色
+$uni-main-color: #3a3a3a;
+// 常规文字色
+$uni-base-color: #6a6a6a;
+// 次要文字色
+$uni-secondary-color: #909399;
+// 辅助说明文字
+$uni-extra-color: #c7c7c7;
 
-// 边框颜色
+// === 背景色系统 ===
+// 主背景色 - 暖色调米色
+$uni-bg-color: #FAE9DB;
+// 次要背景色
+$uni-bg-color-grey: #f5f5f5;
+// 卡片背景色
+$uni-bg-color-white: #ffffff;
+// 渐变背景起始色
+$uni-bg-gradient-start: #FAE9DB;
+// 渐变背景结束色
+$uni-bg-gradient-end: #F8E0D0;
+
+// === 边框色系统 ===
 $uni-border-1: #F0F0F0;
 $uni-border-2: #EDEDED;
 $uni-border-3: #DCDCDC;
 $uni-border-4: #B9B9B9;
+// 输入框边框色
+$uni-border-input: #E5E5E5;
 
-// 常规色
+// === TabBar 配色 ===
+// TabBar 未选中文字色
+$uni-tabbar-color: #624731;
+// TabBar 选中文字色
+$uni-tabbar-active: #F48224;
+
+// === 常规色 ===
 $uni-black: #000000;
 $uni-white: #ffffff;
 $uni-transparent: rgba($color: #000000, $alpha: 0);
 
-// 背景色
-$uni-bg-color: #f7f7f7;
-
-/* 水平间距 */
+/* === SafeGuard 特定间距系统 === */
+$uni-spacing-xs: 4px;
 $uni-spacing-sm: 8px;
 $uni-spacing-base: 15px;
 $uni-spacing-lg: 30px;
+$uni-spacing-xl: 40px;
 
-// 阴影
-$uni-shadow-sm:0 0 5px rgba($color: #d8d8d8, $alpha: 0.5);
-$uni-shadow-base:0 1px 8px 1px rgba($color: #a5a5a5, $alpha: 0.2);
-$uni-shadow-lg:0px 1px 10px 2px rgba($color: #a5a4a4, $alpha: 0.5);
+// === 阴影系统 ===
+// 小阴影
+$uni-shadow-sm: 0 0 5px rgba($color: #d8d8d8, $alpha: 0.5);
+// 基础阴影
+$uni-shadow-base: 0 1px 8px 1px rgba($color: #a5a5a5, $alpha: 0.2);
+// 大阴影
+$uni-shadow-lg: 0px 1px 10px 2px rgba($color: #a5a4a4, $alpha: 0.5);
+// 主色调阴影（用于按钮等）
+$uni-shadow-primary: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
 
-// 蒙版
+// === 蒙版和遮罩 ===
+// 标准蒙版
 $uni-mask: rgba($color: #000000, $alpha: 0.4);
+// 轻蒙版
+$uni-mask-light: rgba($color: #000000, $alpha: 0.2);
+
+// === 圆角系统 ===
+// 小圆角
+$uni-radius-sm: 8rpx;
+// 基础圆角
+$uni-radius-base: 12rpx;
+// 大圆角
+$uni-radius-lg: 16rpx;
+// 特大圆角
+$uni-radius-xl: 32rpx;
+
+// === 字体大小系统 ===
+// 小字体
+$uni-font-size-sm: 24rpx;
+// 基础字体
+$uni-font-size-base: 28rpx;
+// 大字体
+$uni-font-size-lg: 32rpx;
+// 特大字体
+$uni-font-size-xl: 36rpx;
+
+// === SafeGuard 实用混入 ===
+// 主色调按钮样式
+@mixin btn-primary {
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  border-radius: $uni-radius-xl;
+  font-size: $uni-font-size-xl;
+  font-weight: 600;
+  box-shadow: $uni-shadow-primary;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 输入框样式
+@mixin input-default {
+  background: $uni-bg-color-white;
+  border: 2rpx solid $uni-border-input;
+  border-radius: $uni-radius-lg;
+  padding: 24rpx 32rpx;
+  font-size: $uni-font-size-base;
+  
+  &:focus {
+    border-color: $uni-primary;
+  }
+}
+
+// 卡片样式
+@mixin card-default {
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-base;
+  padding: 24rpx;
+  box-shadow: $uni-shadow-sm;
+}
+
+// 渐变背景
+@mixin bg-gradient {
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+}
+
+// 文字省略
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文字省略
+@mixin text-ellipsis-multi($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
