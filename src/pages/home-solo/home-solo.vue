@@ -1,53 +1,133 @@
 <template>
   <view class="home-solo-container">
-    <!-- 顶部用户信息 -->
-    <view class="user-info-section">
-      <view class="user-avatar">
-        <image 
-          :src="userInfo?.avatarUrl || '/static/logo.png'" 
-          class="avatar-image"
-          mode="aspectFill"
-        ></image>
-      </view>
-      <view class="user-details">
-        <text class="user-name">{{ getDisplayName(userInfo) }}</text>
-        <text class="user-role">{{ getRoleText(userInfo?.role) }}</text>
+    <!-- 顶部问候区域 -->
+    <view class="greeting-header">
+      <view class="greeting-card">
+        <view class="greeting-content">
+          <view class="user-info-row">
+            <view class="user-avatar-section">
+              <image 
+                :src="userInfo?.avatarUrl || 'https://s.coze.cn/image/dhcVCXur50w/'" 
+                class="user-avatar-img"
+                mode="aspectFill"
+              />
+              <view class="user-greeting">
+                <text class="greeting-text">
+                  {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
+                </text>
+                <text class="date-text">
+                  {{ getCurrentDate() }}
+                </text>
+              </view>
+            </view>
+            <view class="weather-info">
+              <view class="weather-content">
+                <text class="weather-icon">
+                  ☀️
+                </text>
+                <text class="weather-text">
+                  晴 18°C
+                </text>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 角色切换标签 -->
+          <view class="role-tabs">
+            <view 
+              :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
+              @click="switchRole('checkin')"
+            >
+              <text class="tab-icon">
+                🕐
+              </text>
+              <text class="tab-text">
+                今日打卡
+              </text>
+            </view>
+            <view 
+              :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
+              @click="switchRole('supervisor')"
+            >
+              <text class="tab-icon">
+                🛡️
+              </text>
+              <text class="tab-text">
+                当前监护
+              </text>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 
     <!-- 今日打卡概览 -->
     <view class="checkin-overview-section">
       <view class="section-header">
-        <text class="section-title">今日打卡概览</text>
-        <text class="section-subtitle">完成打卡，让关爱无处不在</text>
-        <view class="refresh-btn" @click="refreshCheckinData" :class="{ loading: checkinStore.isLoading }">
-          <text class="refresh-icon">{{ checkinStore.isLoading ? '⏳' : '🔄' }}</text>
+        <text class="section-title">
+          今日打卡概览
+        </text>
+        <text class="section-subtitle">
+          完成打卡，让关爱无处不在
+        </text>
+        <view
+          class="refresh-btn"
+          :class="{ loading: checkinStore.isLoading }"
+          @click="refreshCheckinData"
+        >
+          <text class="refresh-icon">
+            {{ checkinStore.isLoading ? '⏳' : '🔄' }}
+          </text>
         </view>
       </view>
       
       <view class="overview-cards">
         <view class="overview-card pending-checkin">
-          <text class="card-title">待打卡</text>
-          <text class="card-number">{{ pendingCheckinCount }}</text>
-          <text class="card-desc">项目</text>
+          <text class="card-title">
+            待打卡
+          </text>
+          <text class="card-number">
+            {{ pendingCheckinCount }}
+          </text>
+          <text class="card-desc">
+            项目
+          </text>
         </view>
         
         <view class="overview-card completed-checkin">
-          <text class="card-title">已完成</text>
-          <text class="card-number">{{ completedCheckinCount }}</text>
-          <text class="card-desc">项目</text>
+          <text class="card-title">
+            已完成
+          </text>
+          <text class="card-number">
+            {{ completedCheckinCount }}
+          </text>
+          <text class="card-desc">
+            项目
+          </text>
         </view>
         
         <view class="overview-card missed-checkin">
-          <text class="card-title">已错过</text>
-          <text class="card-number">{{ missedCheckinCount }}</text>
-          <text class="card-desc">项目</text>
+          <text class="card-title">
+            已错过
+          </text>
+          <text class="card-number">
+            {{ missedCheckinCount }}
+          </text>
+          <text class="card-desc">
+            项目
+          </text>
         </view>
         
         <view class="overview-card completion-rate">
-          <text class="card-title">完成率</text>
-          <text class="card-number">{{ completionRate }}%</text>
-          <text class="card-desc">今日目标</text>
+          <text class="card-title">
+            完成率
+          </text>
+          <text class="card-number">
+            {{ completionRate }}%
+          </text>
+          <text class="card-desc">
+            今日目标
+          </text>
         </view>
       </view>
     </view>
@@ -59,13 +139,20 @@
         :disabled="disableMainBtn"
         @click="handleMainAction"
       >
-        <text class="btn-icon">📋</text>
-        <text class="btn-text">{{ mainBtnText }}</text>
-        <text v-if="mainBtnSubtext" class="btn-subtext">{{ mainBtnSubtext }}</text>
+        <text class="btn-icon">
+          📋
+        </text>
+        <text class="btn-text">
+          {{ mainBtnText }}
+        </text>
+        <text
+          v-if="mainBtnSubtext"
+          class="btn-subtext"
+        >
+          {{ mainBtnSubtext }}
+        </text>
       </button>
     </view>
-
-    
   </view>
 </template>
 
@@ -81,6 +168,7 @@ const checkinStore = useCheckinStore()
 const mainBtnText = ref('今日待办')
 const mainBtnSubtext = ref('点击进入打卡事项列表')
 const clicking = ref(false)
+const currentRole = ref('checkin')
 
 // 计算属性：用户信息 - 添加防御性验证
 const userInfo = computed(() => {
@@ -266,6 +354,38 @@ const goToCheckinList = () => {
   })
 }
 
+// 获取问候语
+const getGreetingText = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return '早上好'
+  if (hour < 18) return '下午好'
+  return '晚上好'
+}
+
+// 获取当前日期
+const getCurrentDate = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const date = now.getDate()
+  const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+  const weekday = weekdays[now.getDay()]
+  return `${year}年${month}月${date}日 ${weekday}`
+}
+
+// 切换角色
+const switchRole = (role) => {
+  currentRole.value = role
+  // 这里可以添加角色切换后的逻辑
+  if (role === 'supervisor') {
+    // 切换到监护人视图的逻辑
+    console.log('切换到监护人视图')
+  } else {
+    // 切换到打卡视图的逻辑
+    console.log('切换到打卡视图')
+  }
+}
+
 
 
 onMounted(() => {
@@ -324,47 +444,122 @@ uni.$on('checkinRulesUpdated', (data) => {
   padding: 48rpx 32rpx 80rpx;
 }
 
-.user-info-section {
+.greeting-header {
+  padding: 48rpx 0 32rpx;
+}
+
+.greeting-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 32rpx;
+  padding: 40rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(60rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.greeting-content {
+  
+}
+
+.user-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.user-avatar-section {
   display: flex;
   align-items: center;
-  margin-bottom: 48rpx;
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  gap: 24rpx;
 }
 
-.user-avatar {
-  margin-right: 24rpx;
+.user-avatar-img {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 64rpx;
+  border: 6rpx solid #ffffff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
-.avatar-image {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50rpx;
-  border: 4rpx solid #F48224;
+.user-greeting {
+  
 }
 
-.user-details {
-  flex: 1;
-}
-
-.user-name {
+.greeting-text {
   display: block;
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #624731;
   margin-bottom: 8rpx;
 }
 
-.user-role {
+.date-text {
   display: block;
   font-size: 24rpx;
-  color: #F48224;
-  background: rgba(244, 130, 36, 0.1);
-  padding: 8rpx 16rpx;
-  border-radius: 16rpx;
-  width: fit-content;
+  color: #666;
+}
+
+.weather-info {
+  
+}
+
+.weather-content {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.weather-icon {
+  font-size: 40rpx;
+}
+
+.weather-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.role-tabs {
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 50rpx;
+  padding: 4rpx;
+}
+
+.role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 16rpx 32rpx;
+  border-radius: 50rpx;
+  transition: all 0.3s ease;
+}
+
+.role-tab.active {
+  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  color: white;
+  box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.3);
+}
+
+.tab-icon {
+  font-size: 24rpx;
+}
+
+.tab-text {
+  font-size: 24rpx;
+  font-weight: 500;
 }
 
 .checkin-overview-section {
@@ -393,7 +588,7 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .refresh-btn {
-  padding: 8rpx 16rpx;
+  padding: 4rpx 16rpx;
   background: rgba(244, 130, 36, 0.1);
   border-radius: 16rpx;
   transition: all 0.3s ease;
@@ -443,7 +638,7 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .card-number {
   display: block;
-  font-size: 28rpx;
+  font-size: 24rpx;
   font-weight: bold;
   color: #624731;
   margin-bottom: 2rpx;
