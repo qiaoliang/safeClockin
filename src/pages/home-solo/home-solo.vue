@@ -460,9 +460,11 @@ uni.$on('checkinRulesUpdated', (data) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .home-solo-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+  @include bg-gradient;
   padding: 48rpx 32rpx 80rpx;
 }
 
@@ -471,10 +473,10 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .greeting-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 32rpx;
+  background: linear-gradient(135deg, $uni-bg-color-white 0%, #f8fafc 100%);
+  border-radius: $uni-radius-xl;
   padding: 40rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  box-shadow: $uni-shadow-base;
   animation: slideUp 0.5s ease-out;
 }
 
@@ -510,8 +512,8 @@ uni.$on('checkinRulesUpdated', (data) => {
   width: 104rpx;
   height: 104rpx;
   border-radius: 64rpx;
-  border: 6rpx solid #ffffff;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  border: 6rpx solid $uni-bg-color-white;
+  box-shadow: $uni-shadow-sm;
 }
 
 .user-greeting {
@@ -520,16 +522,16 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .greeting-text {
   display: block;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   font-weight: 700;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 8rpx;
 }
 
 .date-text {
   display: block;
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .weather-info {
@@ -547,8 +549,8 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .weather-text {
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .role-tabs {
@@ -570,17 +572,17 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .role-tab.active {
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
-  color: white;
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
   box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.3);
 }
 
 .tab-icon {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
 }
 
 .tab-text {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   font-weight: 500;
 }
 
@@ -597,16 +599,16 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .section-title {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-lg;
   font-weight: 600;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 8rpx;
 }
 
 .section-subtitle {
   display: block;
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .refresh-btn {
@@ -626,7 +628,7 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .refresh-icon {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
 }
 
 .overview-cards {
@@ -637,11 +639,11 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .overview-card {
-  background: white;
-  border-radius: 12rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-base;
   padding: 16rpx 12rpx;
   text-align: center;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  box-shadow: $uni-shadow-sm;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -653,16 +655,16 @@ uni.$on('checkinRulesUpdated', (data) => {
 .card-title {
   display: block;
   font-size: 18rpx;
-  color: #666;
+  color: $uni-base-color;
   margin-bottom: 6rpx;
   font-weight: 500;
 }
 
 .card-number {
   display: block;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   font-weight: bold;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 2rpx;
   line-height: 1;
 }
@@ -670,23 +672,23 @@ uni.$on('checkinRulesUpdated', (data) => {
 .card-desc {
   display: block;
   font-size: 16rpx;
-  color: #999;
+  color: $uni-secondary-color;
 }
 
 .pending-checkin {
-  border-top: 4rpx solid #FF7A3D;
+  border-top: 4rpx solid $uni-primary;
 }
 
 .completed-checkin {
-  border-top: 4rpx solid #4CAF50;
+  border-top: 4rpx solid $uni-success;
 }
 
 .missed-checkin {
-  border-top: 4rpx solid #F44336;
+  border-top: 4rpx solid $uni-error;
 }
 
 .completion-rate {
-  border-top: 4rpx solid #2196F3;
+  border-top: 4rpx solid $uni-info;
 }
 
 /* 当前任务悬浮按钮样式 */
@@ -696,8 +698,8 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .floating-tasks-btn {
   width: 100%;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
-  box-shadow: 0 8rpx 24rpx rgba(244, 130, 36, 0.4);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  box-shadow: $uni-shadow-primary;
   transition: all 0.3s ease;
   animation: float 3s ease-in-out infinite;
   border-radius: 48rpx;
@@ -759,14 +761,14 @@ uni.$on('checkinRulesUpdated', (data) => {
   right: -8rpx;
   width: 48rpx;
   height: 48rpx;
-  background: #EF4444;
+  background: $uni-error;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   font-weight: bold;
-  color: white;
+  color: $uni-white;
 }
 
 .tasks-text-content {
@@ -777,23 +779,23 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .tasks-title {
   display: block;
-  font-size: 40rpx;
+  font-size: $uni-font-size-xl;
   font-weight: bold;
-  color: white;
+  color: $uni-white;
   margin-bottom: 8rpx;
   line-height: 1.2;
 }
 
 .tasks-subtitle {
   display: block;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.2;
 }
 
 .tasks-arrow {
   font-size: 48rpx;
-  color: white;
+  color: $uni-white;
   font-weight: bold;
 }
 
@@ -803,9 +805,9 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .today-tasks-btn {
   width: 100%;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
-  border-radius: 24rpx;
+  border-radius: $uni-radius-lg;
   padding: 48rpx;
   display: flex;
   flex-direction: column;
@@ -825,15 +827,15 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .btn-text {
   display: block;
-  font-size: 40rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: white;
+  color: $uni-white;
   margin-bottom: 8rpx;
 }
 
 .btn-subtext {
   display: block;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   color: rgba(255, 255, 255, 0.8);
 }
 
