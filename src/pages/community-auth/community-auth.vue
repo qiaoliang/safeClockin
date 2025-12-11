@@ -458,21 +458,23 @@ const clearError = (field) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .auth-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 48rpx;
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+  padding: $uni-radius-xxl;
 }
 
 /* 说明文字区域 */
 .description-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .info-card {
-  background: white;
-  border-radius: 32rpx;
-  padding: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xxl;
+  padding: $uni-radius-xxl;
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
 
@@ -489,7 +491,7 @@ const clearError = (field) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 32rpx;
+  margin-right: $uni-font-size-xl;
   flex-shrink: 0;
 }
 
@@ -503,42 +505,42 @@ const clearError = (field) => {
 
 .info-title {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .info-desc {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
   line-height: 1.6;
 }
 
 /* 表单样式 */
 .auth-form {
-  background: white;
-  border-radius: 32rpx;
-  padding: 48rpx;
-  margin-bottom: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xxl;
+  padding: $uni-radius-xxl;
+  margin-bottom: $uni-radius-xxl;
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
 
 .form-group {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .label {
   display: block;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .required {
-  color: #EF4444;
+  color: $uni-error;
 }
 
 .input {
@@ -546,24 +548,24 @@ const clearError = (field) => {
   height: 96rpx;
   background: #FAFAFA;
   border: 2rpx solid #E5E5E5;
-  border-radius: 24rpx;
-  padding: 0 32rpx;
-  font-size: 32rpx;
-  color: #333;
+  border-radius: $uni-radius-xl;
+  padding: 0 $uni-font-size-xl;
+  font-size: $uni-font-size-lg;
+  color: $uni-main-color;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
 .input:focus {
-  border-color: #F48224;
-  background: white;
+  border-color: $uni-primary;
+  background: $uni-bg-color-white;
   box-shadow: 0 0 0 6rpx rgba(244, 130, 36, 0.1);
 }
 
 .error-text {
   display: block;
-  font-size: 24rpx;
-  color: #EF4444;
+  font-size: $uni-font-size-sm;
+  color: $uni-error;
   margin-top: 8rpx;
 }
 
@@ -573,7 +575,7 @@ const clearError = (field) => {
   height: 240rpx;
   background: #FAFAFA;
   border: 4rpx dashed #D1D5DB;
-  border-radius: 24rpx;
+  border-radius: $uni-radius-xl;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -584,7 +586,7 @@ const clearError = (field) => {
 }
 
 .upload-area:hover {
-  border-color: #F48224;
+  border-color: $uni-primary;
   background-color: rgba(244, 130, 36, 0.05);
 }
 
@@ -612,7 +614,7 @@ const clearError = (field) => {
 }
 
 .upload-icon {
-  margin-bottom: 24rpx;
+  margin-bottom: $uni-font-size-base;
 }
 
 .icon-large {
@@ -625,47 +627,47 @@ const clearError = (field) => {
 
 .upload-title {
   display: block;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 500;
   margin-bottom: 8rpx;
 }
 
 .upload-desc {
   display: block;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   color: #9CA3AF;
 }
 
 .upload-actions {
   display: flex;
   justify-content: center;
-  margin-top: 24rpx;
-  gap: 32rpx;
+  margin-top: $uni-font-size-base;
+  gap: $uni-font-size-xl;
 }
 
 .action-btn {
-  font-size: 24rpx;
-  color: #F48224;
+  font-size: $uni-font-size-sm;
+  color: $uni-primary;
   cursor: pointer;
 }
 
 .action-btn.delete {
-  color: #EF4444;
+  color: $uni-error;
 }
 
 /* 提交按钮 */
 .submit-container {
-  margin-top: 32rpx;
+  margin-top: $uni-font-size-xl;
 }
 
 .submit-btn {
   width: 100%;
   height: 112rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
-  border-radius: 32rpx;
-  color: white;
-  font-size: 36rpx;
+  border-radius: $uni-radius-xxl;
+  color: $uni-bg-color-white;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
   box-shadow: 0 16rpx 48rpx rgba(244, 130, 36, 0.4);
   transition: all 0.3s ease;
@@ -687,7 +689,7 @@ const clearError = (field) => {
 .loading-text {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: $uni-radius-base;
 }
 
 .spinner {
@@ -701,14 +703,14 @@ const clearError = (field) => {
 
 /* 提示信息 */
 .tips-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .tips-card {
   background: #FEF3C7;
-  border: 2rpx solid #F59E0B;
-  border-radius: 32rpx;
-  padding: 32rpx;
+  border: 2rpx solid $uni-warning;
+  border-radius: $uni-radius-xxl;
+  padding: $uni-font-size-xl;
 }
 
 .tips-header {
@@ -719,19 +721,19 @@ const clearError = (field) => {
 .tips-icon {
   width: 48rpx;
   height: 48rpx;
-  background: #F59E0B;
+  background: $uni-warning;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 24rpx;
+  margin-right: $uni-font-size-base;
   flex-shrink: 0;
   margin-top: 4rpx;
 }
 
 .icon-small {
-  font-size: 24rpx;
-  color: white;
+  font-size: $uni-font-size-sm;
+  color: $uni-bg-color-white;
 }
 
 .tips-content {
@@ -740,7 +742,7 @@ const clearError = (field) => {
 
 .tips-title {
   display: block;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 600;
   color: #92400E;
   margin-bottom: 8rpx;
@@ -748,7 +750,7 @@ const clearError = (field) => {
 
 .tips-desc {
   display: block;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   color: #78350F;
   line-height: 1.5;
 }
@@ -765,13 +767,13 @@ const clearError = (field) => {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 48rpx;
+  padding: $uni-radius-xxl;
 }
 
 .modal-content {
-  background: white;
-  border-radius: 32rpx;
-  padding: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xxl;
+  padding: $uni-radius-xxl;
   width: 100%;
   max-width: 600rpx;
   box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.2);
@@ -779,7 +781,7 @@ const clearError = (field) => {
 
 .modal-header {
   text-align: center;
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .success-icon {
@@ -790,12 +792,12 @@ const clearError = (field) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 32rpx;
+  margin: 0 auto $uni-font-size-xl;
 }
 
 .success-icon .icon-large {
   font-size: 64rpx;
-  color: #10B981;
+  color: $uni-success;
 }
 
 .error-icon {
@@ -806,37 +808,37 @@ const clearError = (field) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 32rpx;
+  margin: 0 auto $uni-font-size-xl;
 }
 
 .error-icon .icon-large {
   font-size: 64rpx;
-  color: #EF4444;
+  color: $uni-error;
 }
 
 .modal-title {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .modal-desc {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
   line-height: 1.5;
 }
 
 .modal-btn {
   width: 100%;
   height: 96rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
-  border-radius: 24rpx;
-  color: white;
-  font-size: 32rpx;
+  border-radius: $uni-radius-xl;
+  color: $uni-bg-color-white;
+  font-size: $uni-font-size-lg;
   font-weight: 600;
   box-shadow: 0 8rpx 24rpx rgba(244, 130, 36, 0.3);
 }

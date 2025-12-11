@@ -380,15 +380,18 @@ onShow(() => {
 .hint-section{background:#FEF3C7;border-left:8rpx solid #F59E0B;border-radius:16rpx;padding:24rpx;margin-bottom:24rpx}
 .hint-text{display:block;color:#78350F;margin-bottom:12rpx}
 .hint-btn{background:#F48224;color:#fff;border:none;border-radius:16rpx;padding:12rpx 16rpx}
+<style scoped>
+@import '@/uni.scss';
+
 .profile-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+  @include bg-gradient;
   padding: 40rpx 24rpx;
 }
 
 .user-info-section {
-  background: white;
-  border-radius: 24rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-lg;
   padding: 48rpx;
   margin-bottom: 32rpx;
   display: flex;
@@ -397,8 +400,8 @@ onShow(() => {
 }
 
 .user-stats-section {
-  background: white;
-  border-radius: 24rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-lg;
   padding: 32rpx;
   margin-bottom: 32rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
@@ -416,18 +419,18 @@ onShow(() => {
 }
 
 .stat-value {
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: bold;
   margin-bottom: 8rpx;
 }
 
 .stat-label {
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .success-color {
-  color: #10B981;
+  color: $uni-success;
 }
 
 .warning-color {

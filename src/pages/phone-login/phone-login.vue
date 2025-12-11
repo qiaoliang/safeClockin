@@ -302,16 +302,18 @@ onLoad((opts)=>{
 </script>
 
 <style scoped>
-.container { padding: 32rpx }
-.tabs { display:flex; margin-bottom: 24rpx }
-.tab { flex:1; text-align:center; padding: 24rpx; border-bottom: 4rpx solid #eee }
-.tab.active { color:#F48224; border-color:#F48224 }
-.form { background:#fff; border-radius: 16rpx; padding: 24rpx }
-.row { display:flex; align-items:center; margin-bottom: 16rpx }
-.picker { width: 160rpx; padding: 16rpx; border: 2rpx solid #ddd; border-radius: 8rpx; margin-right: 12rpx }
-.input { flex:1; padding: 16rpx; border: 2rpx solid #ddd; border-radius: 8rpx }
-.code-btn { margin-left: 12rpx; padding: 16rpx; background:#F48224; color:#fff; border-radius: 8rpx }
-.agreement { display:flex; align-items:center; color:#666; margin: 12rpx 0 }
-.agree-label { display:flex; align-items:center; gap: 12rpx }
-.submit { width:100%; padding: 20rpx; background:#F48224; color:#fff; border-radius: 8rpx }
+@import '@/uni.scss';
+
+.container { padding: $uni-font-size-xl }
+.tabs { display:flex; margin-bottom: $uni-font-size-base }
+.tab { flex:1; text-align:center; padding: $uni-font-size-base; border-bottom: 4rpx solid #eee }
+.tab.active { color:$uni-primary; border-color:$uni-primary }
+.form { background:$uni-bg-color-white; border-radius: $uni-radius-lg; padding: $uni-font-size-base }
+.row { display:flex; align-items:center; margin-bottom: $uni-radius-base }
+.picker { width: 160rpx; padding: $uni-radius-base; border: 2rpx solid #ddd; border-radius: 8rpx; margin-right: 12rpx }
+.input { flex:1; padding: $uni-radius-base; border: 2rpx solid #ddd; border-radius: 8rpx }
+.code-btn { margin-left: 12rpx; padding: $uni-radius-base; background:$uni-primary; color:$uni-bg-color-white; border-radius: 8rpx }
+.agreement { display:flex; align-items:center; color:$uni-base-color; margin: $uni-radius-base 0 }
+.agree-label { display:flex; align-items:center; gap: $uni-radius-base }
+.submit { width:100%; padding: 20rpx; background:$uni-primary; color:$uni-bg-color-white; border-radius: 8rpx }
 </style>

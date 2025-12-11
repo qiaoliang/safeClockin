@@ -460,14 +460,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import '@/uni.scss';
+
 .add-rule-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 32rpx;
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+  padding: $uni-font-size-xl;
 }
 
 .header-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .header-content {
@@ -477,41 +479,41 @@ onMounted(() => {
 
 .back-btn {
   font-size: 48rpx;
-  color: #624731;
-  margin-right: 24rpx;
+  color: $uni-tabbar-color;
+  margin-right: $uni-radius-base;
 }
 
 .header-title {
   font-size: 40rpx;
   font-weight: 600;
-  color: #624731;
+  color: $uni-tabbar-color;
 }
 
 .rule-form {
-  background: white;
-  border-radius: 24rpx;
-  padding: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-radius-xxl;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .form-group {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .label {
   display: block;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
-.row{display:flex;align-items:center;gap:16rpx}
+.row{display:flex;align-items:center;gap:$uni-radius-base}
 .seg-control{flex:1}
 .time-picker{width:100%}
 
 .required {
-  color: #EF4444;
+  color: $uni-error;
 }
 
 .input {
@@ -519,36 +521,36 @@ onMounted(() => {
   height: 96rpx;
   background: #FAFAFA;
   border: 2rpx solid #E5E5E5;
-  border-radius: 16rpx;
-  padding: 0 32rpx;
-  font-size: 32rpx;
-  color: #333;
+  border-radius: $uni-radius-lg;
+  padding: 0 $uni-font-size-xl;
+  font-size: $uni-font-size-lg;
+  color: $uni-main-color;
   box-sizing: border-box;
 }
 
 .radio-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
+  gap: $uni-radius-base;
 }
 
 .radio-item {
-  padding: 16rpx 24rpx;
+  padding: $uni-radius-base $uni-font-size-base;
   background: #F8F8F8;
-  border-radius: 16rpx;
+  border-radius: $uni-radius-lg;
   border: 2rpx solid #E5E5E5;
   cursor: pointer;
 }
 
 .radio-item.active {
   background: #FEF3C7;
-  border-color: #F59E0B;
+  border-color: $uni-warning;
   color: #92400E;
 }
 
 .radio-text {
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
 }
 
 .radio-item.active .radio-text {
@@ -556,13 +558,13 @@ onMounted(() => {
 }
 
 .custom-time-input {
-  margin-top: 24rpx;
+  margin-top: $uni-font-size-base;
 }
 
 .icon-selector {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
+  gap: $uni-radius-base;
 }
 
 .icon-item {
@@ -572,44 +574,44 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   background: #F8F8F8;
-  border-radius: 16rpx;
+  border-radius: $uni-radius-lg;
   border: 2rpx solid #E5E5E5;
   cursor: pointer;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
 }
 
 .icon-item.active {
   background: #FEF3C7;
-  border-color: #F59E0B;
+  border-color: $uni-warning;
   transform: scale(1.1);
 }
 
 .info-section {
-  margin: 48rpx 0;
-  padding: 24rpx;
+  margin: $uni-radius-xxl 0;
+  padding: $uni-font-size-base;
   background: #FEF3C7;
-  border-radius: 16rpx;
-  border-left: 8rpx solid #F59E0B;
+  border-radius: $uni-radius-lg;
+  border-left: 8rpx solid $uni-warning;
 }
 
 .info-text {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   color: #78350F;
   line-height: 1.5;
 }
 
 .submit-section {
-  margin-top: 32rpx;
+  margin-top: $uni-font-size-xl;
 }
 
 .submit-btn {
   width: 100%;
   height: 112rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
-  border-radius: 32rpx;
+  border-radius: $uni-radius-xxl;
   color: white;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
   box-shadow: 0 16rpx 48rpx rgba(244, 130, 36, 0.4);
 }
@@ -632,13 +634,13 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 48rpx;
+  padding: $uni-radius-xxl;
 }
 
 .modal-content {
-  background: white;
-  border-radius: 24rpx;
-  padding: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-radius-xxl;
   width: 100%;
   max-width: 600rpx;
   box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.2);
@@ -646,30 +648,30 @@ onMounted(() => {
 
 .modal-header {
   text-align: center;
-  margin-bottom: 32rpx;
+  margin-bottom: $uni-font-size-xl;
 }
 
 .modal-title {
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
+  color: $uni-tabbar-color;
 }
 
 .modal-body {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .modal-text {
   display: block;
-  font-size: 32rpx;
-  color: #333;
+  font-size: $uni-font-size-lg;
+  color: $uni-main-color;
   text-align: center;
   line-height: 1.5;
 }
 
 .modal-actions {
   display: flex;
-  gap: 24rpx;
+  gap: $uni-font-size-base;
 }
 
 .modal-cancel-btn {
@@ -677,20 +679,20 @@ onMounted(() => {
   height: 80rpx;
   background: #F5F5F5;
   border: none;
-  border-radius: 16rpx;
-  color: #666;
-  font-size: 32rpx;
+  border-radius: $uni-radius-lg;
+  color: $uni-base-color;
+  font-size: $uni-font-size-lg;
   font-weight: 500;
 }
 
 .modal-confirm-btn {
   flex: 1;
   height: 80rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
-  border-radius: 16rpx;
+  border-radius: $uni-radius-lg;
   color: white;
-  font-size: 32rpx;
+  font-size: $uni-font-size-lg;
   font-weight: 500;
 }
 </style>

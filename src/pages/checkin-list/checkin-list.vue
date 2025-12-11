@@ -321,10 +321,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
+<style scoped>
+@import '@/uni.scss';
+
 .checkin-list-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 48rpx 32rpx;
+  @include bg-gradient;
+  padding: 48rpx 32rpx 80rpx;
 }
 
 .header-section {
@@ -354,8 +357,8 @@ onMounted(() => {
 }
 
 .checkin-item {
-  background: white;
-  border-radius: 24rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-lg;
   padding: 32rpx;
   margin-bottom: 24rpx;
   display: flex;
@@ -370,16 +373,16 @@ onMounted(() => {
 
 .item-name {
   display: block;
-  font-size: 32rpx;
+  font-size: $uni-font-size-lg;
   font-weight: 600;
-  color: #333;
+  color: $uni-main-color;
   margin-bottom: 8rpx;
 }
 
 .item-time {
   display: block;
-  font-size: 24rpx;
-  color: #999;
+  font-size: $uni-font-size-sm;
+  color: $uni-secondary-color;
 }
 
 .item-actions {
@@ -390,14 +393,14 @@ onMounted(() => {
 }
 
 .status-checked {
-  font-size: 24rpx;
-  color: #10B981;
+  font-size: $uni-font-size-sm;
+  color: $uni-success;
   font-weight: 500;
 }
 
 .status-missed {
-  font-size: 24rpx;
-  color: #EF4444;
+  font-size: $uni-font-size-sm;
+  color: $uni-error;
   font-weight: 500;
 }
 

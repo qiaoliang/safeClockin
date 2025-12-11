@@ -277,9 +277,11 @@ const showPrivacyPolicy = () => {
 </script>
 
 <style scoped>
+@import '@/uni.scss';
+
 .login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+  @include bg-gradient;
   padding: 120rpx 48rpx 80rpx;
   display: flex;
   flex-direction: column;
@@ -404,15 +406,15 @@ const showPrivacyPolicy = () => {
 .wechat-login-button {
   width: 600rpx;
   height: 96rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
-  border-radius: 32rpx;
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  border-radius: $uni-radius-xl;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 32rpx;
+  color: $uni-white;
+  font-size: $uni-font-size-lg;
   font-weight: 600;
-  box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
+  box-shadow: $uni-shadow-primary;
   margin-bottom: 48rpx;
   border: none;
   transition: all 0.3s ease;
@@ -446,7 +448,7 @@ const showPrivacyPolicy = () => {
 .divider-line {
   flex: 1;
   height: 2rpx;
-  background-color: #E5E7EB;
+  background-color: $uni-border-1;
 }
 
 .divider-text {

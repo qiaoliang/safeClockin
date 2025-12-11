@@ -148,31 +148,33 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .home-community-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 48rpx 32rpx 80rpx;
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+  padding: $uni-radius-xxl $uni-font-size-xl 80rpx;
 }
 
 .user-info-section {
   display: flex;
   align-items: center;
-  margin-bottom: 48rpx;
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx;
+  margin-bottom: $uni-radius-xxl;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-font-size-xl;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .user-avatar {
-  margin-right: 24rpx;
+  margin-right: $uni-font-size-base;
 }
 
 .avatar-image {
   width: 100rpx;
   height: 100rpx;
   border-radius: 50rpx;
-  border: 4rpx solid #F48224;
+  border: 4rpx solid $uni-primary;
 }
 
 .user-details {
@@ -181,106 +183,106 @@ onMounted(() => {
 
 .user-name {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #333;
+  color: $uni-main-color;
   margin-bottom: 8rpx;
 }
 
 .user-role {
   display: block;
-  font-size: 24rpx;
-  color: #F48224;
+  font-size: $uni-font-size-sm;
+  color: $uni-primary;
   background: rgba(244, 130, 36, 0.1);
-  padding: 8rpx 16rpx;
-  border-radius: 16rpx;
+  padding: 8rpx $uni-font-size-base;
+  border-radius: $uni-radius-base;
   width: fit-content;
 }
 
 .overview-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .section-header {
-  margin-bottom: 24rpx;
+  margin-bottom: $uni-font-size-base;
 }
 
 .section-title {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 8rpx;
 }
 
 .section-subtitle {
   display: block;
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .overview-cards {
   display: flex;
-  gap: 24rpx;
+  gap: $uni-font-size-base;
 }
 
 .overview-card {
   flex: 1;
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-font-size-xl;
   text-align: center;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .card-title {
   display: block;
-  font-size: 24rpx;
-  color: #666;
-  margin-bottom: 16rpx;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .card-number {
   display: block;
   font-size: 48rpx;
   font-weight: bold;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 8rpx;
 }
 
 .card-desc {
   display: block;
   font-size: 20rpx;
-  color: #999;
+  color: $uni-secondary-color;
 }
 
 .total-count {
-  border-top: 8rpx solid #F48224;
+  border-top: 8rpx solid $uni-primary;
 }
 
 .checkin-rate {
-  border-top: 8rpx solid #10B981;
+  border-top: 8rpx solid $uni-success;
 }
 
 .unchecked-count {
-  border-top: 8rpx solid #EF4444;
+  border-top: 8rpx solid $uni-error;
 }
 
 .frequent-issues-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .issues-list {
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-font-size-xl;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .issue-item {
   display: flex;
   align-items: center;
-  padding: 16rpx 0;
+  padding: $uni-radius-base 0;
   border-bottom: 2rpx solid #F8F8F8;
 }
 
@@ -289,51 +291,51 @@ onMounted(() => {
 }
 
 .issue-rank {
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 600;
-  color: #624731;
-  margin-right: 16rpx;
+  color: $uni-tabbar-color;
+  margin-right: $uni-radius-base;
   width: 40rpx;
 }
 
 .issue-name {
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 500;
-  color: #333;
+  color: $uni-main-color;
   flex: 1;
 }
 
 .issue-count {
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .unchecked-detail-section {
-  margin-bottom: 48rpx;
+  margin-bottom: $uni-radius-xxl;
 }
 
 .unchecked-detail-btn {
   width: 100%;
-  background: white;
+  background: $uni-bg-color-white;
   border: none;
-  border-radius: 24rpx;
-  padding: 48rpx;
+  border-radius: $uni-radius-xl;
+  padding: $uni-radius-xxl;
   text-align: left;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .btn-text {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .btn-subtext {
   display: block;
-  font-size: 24rpx;
-  color: #666;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
   line-height: 1.5;
 }
 

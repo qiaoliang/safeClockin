@@ -248,14 +248,16 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .role-select-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
   padding-bottom: 40rpx;
 }
 
 .header-section {
-  padding: 60rpx 48rpx 48rpx;
+  padding: 60rpx $uni-radius-xxl $uni-radius-xxl;
   text-align: center;
 }
 
@@ -266,13 +268,13 @@ onLoad(() => {
 .logo-circle {
   width: 160rpx;
   height: 160rpx;
-  background: white;
+  background: $uni-bg-color-white;
   border-radius: 50%;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 32rpx;
+  margin: 0 auto $uni-font-size-xl;
 }
 
 .logo-icon {
@@ -283,41 +285,41 @@ onLoad(() => {
   display: block;
   font-size: 48rpx;
   font-weight: bold;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .app-subtitle {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
 }
 
 .page-title {
   display: block;
   font-size: 40rpx;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .page-subtitle {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
   line-height: 1.5;
 }
 
 .role-selection {
-  padding: 0 48rpx;
+  padding: 0 $uni-radius-xxl;
 }
 
 .role-card {
-  background: white;
+  background: $uni-bg-color-white;
   border-radius: 40rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  padding: 48rpx;
-  margin-bottom: 48rpx;
+  padding: $uni-radius-xxl;
+  margin-bottom: $uni-radius-xxl;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -327,20 +329,20 @@ onLoad(() => {
   }
 
   &.selected {
-    border: 6rpx solid #F48224;
+    border: 6rpx solid $uni-primary;
     box-shadow: 0 0 0 8rpx rgba(244, 130, 36, 0.1);
   }
 }
 
 .role-icon {
-  background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
   border-radius: 50%;
   width: 160rpx;
   height: 160rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 32rpx;
+  margin: 0 auto $uni-font-size-xl;
 }
 
 .role-icon-text {
@@ -353,18 +355,18 @@ onLoad(() => {
 
 .role-title {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
-  margin-bottom: 16rpx;
+  color: $uni-tabbar-color;
+  margin-bottom: $uni-radius-base;
 }
 
 .role-description {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
   line-height: 1.6;
-  margin-bottom: 32rpx;
+  margin-bottom: $uni-font-size-xl;
 }
 
 .role-features {
@@ -377,29 +379,29 @@ onLoad(() => {
   display: flex;
   align-items: center;
   gap: 8rpx;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   color: #888;
 }
 
 .feature-icon {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
 }
 
 .feature-text {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
 }
 
 .footer-section {
-  padding: 32rpx 48rpx;
+  padding: $uni-font-size-xl $uni-radius-xxl;
 }
 
 .info-card {
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 32rpx;
-  padding: 32rpx;
+  border-radius: $uni-radius-xxl;
+  padding: $uni-font-size-xl;
   display: flex;
   align-items: flex-start;
-  gap: 24rpx;
+  gap: $uni-font-size-base;
 }
 
 .info-icon {
@@ -415,29 +417,29 @@ onLoad(() => {
 }
 
 .info-icon-text {
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
 }
 
 .info-text {
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
   line-height: 1.6;
   flex: 1;
 }
 
 .confirm-section {
-  padding: 0 48rpx;
-  margin-top: 48rpx;
+  padding: 0 $uni-radius-xxl;
+  margin-top: $uni-radius-xxl;
 }
 
 .confirm-btn {
   width: 100%;
   height: 96rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E67E22 100%);
-  color: white;
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-bg-color-white;
   border: none;
   border-radius: 48rpx;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
   display: flex;
   align-items: center;
