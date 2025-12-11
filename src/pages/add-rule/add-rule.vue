@@ -459,7 +459,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import '@/uni.scss';
 
 .add-rule-container {

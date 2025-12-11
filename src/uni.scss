@@ -1,4 +1,3 @@
-@import '@/uni_modules/uni-scss/variables.scss';
 /*
   SafeGuard 项目配色方案
   基于项目实际使用的配色风格定制
@@ -7,26 +6,26 @@
 // === 主色调系统 ===
 // 品牌主色 - 橙色系
 $uni-primary: #F48224;
-$uni-primary-disable: mix(#fff, $uni-primary, 50%);
-$uni-primary-light: mix(#fff, $uni-primary, 80%);
+$uni-primary-disable: #F4822480;
+$uni-primary-light: #F48224CC;
 $uni-primary-dark: #E8741A;
 
 // 辅助色
 $uni-success: #4cd964;
-$uni-success-disable: mix(#fff, $uni-success, 50%);
-$uni-success-light: mix(#fff, $uni-success, 80%);
+$uni-success-disable: #4cd96480;
+$uni-success-light: #4cd964CC;
 
 $uni-warning: #f0ad4e;
-$uni-warning-disable: mix(#fff, $uni-warning, 50%);
-$uni-warning-light: mix(#fff, $uni-warning, 80%);
+$uni-warning-disable: #f0ad4e80;
+$uni-warning-light: #f0ad4eCC;
 
 $uni-error: #dd524d;
-$uni-error-disable: mix(#fff, $uni-error, 50%);
-$uni-error-light: mix(#fff, $uni-error, 80%);
+$uni-error-disable: #dd524d80;
+$uni-error-light: #dd524dCC;
 
 $uni-info: #8f939c;
-$uni-info-disable: mix(#fff, $uni-info, 50%);
-$uni-info-light: mix(#fff, $uni-info, 80%);
+$uni-info-disable: #8f939c80;
+$uni-info-light: #8f939cCC;
 
 // === 文本色系统 ===
 // 主要文字色
@@ -101,6 +100,8 @@ $uni-radius-base: 12rpx;
 $uni-radius-lg: 16rpx;
 // 特大圆角
 $uni-radius-xl: 32rpx;
+// 超大圆角
+$uni-radius-xxl: 48rpx;
 
 // === 字体大小系统 ===
 // 小字体

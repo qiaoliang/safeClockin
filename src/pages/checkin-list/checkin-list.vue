@@ -320,8 +320,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-<style scoped>
+<style lang="scss" scoped>
 @import '@/uni.scss';
 
 .checkin-list-container {

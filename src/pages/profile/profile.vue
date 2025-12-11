@@ -376,12 +376,12 @@ onShow(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/uni.scss';
+
 .hint-section{background:#FEF3C7;border-left:8rpx solid #F59E0B;border-radius:16rpx;padding:24rpx;margin-bottom:24rpx}
 .hint-text{display:block;color:#78350F;margin-bottom:12rpx}
 .hint-btn{background:#F48224;color:#fff;border:none;border-radius:16rpx;padding:12rpx 16rpx}
-<style scoped>
-@import '@/uni.scss';
 
 .profile-container {
   min-height: 100vh;

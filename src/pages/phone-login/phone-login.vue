@@ -301,7 +301,7 @@ onLoad((opts)=>{
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import '@/uni.scss';
 
 .container { padding: $uni-font-size-xl }

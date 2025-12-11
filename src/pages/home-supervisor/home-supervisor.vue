@@ -160,13 +160,13 @@ onMounted(() => {
 .home-supervisor-container {
   min-height: 100vh;
   background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
-  padding: $uni-radius-xxl $uni-font-size-xl 80rpx;
+  padding: $uni-radius-xl $uni-font-size-xl 80rpx;
 }
 
 .user-info-section {
   display: flex;
   align-items: center;
-  margin-bottom: $uni-radius-xxl;
+  margin-bottom: $uni-radius-xl;
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
   padding: $uni-font-size-xl;
@@ -207,7 +207,7 @@ onMounted(() => {
 }
 
 .overview-section {
-  margin-bottom: $uni-radius-xxl;
+  margin-bottom: $uni-radius-xl;
 }
 
 .section-header {
@@ -276,7 +276,7 @@ onMounted(() => {
 }
 
 .supervised-list-section {
-  margin-bottom: $uni-radius-xxl;
+  margin-bottom: $uni-radius-xl;
 }
 
 .supervised-list {
