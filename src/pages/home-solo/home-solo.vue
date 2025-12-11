@@ -65,25 +65,7 @@
       </button>
     </view>
 
-    <!-- 快捷功能 -->
-    <view class="quick-actions-section">
-      <view class="section-header">
-        <text class="section-title">快捷功能</text>
-      </view>
-      
-      <view class="quick-actions-grid">
-        <view class="quick-action-item" @click="goToRuleSetting">
-          <view class="action-icon">⚙️</view>
-          <text class="action-text">打卡规则</text>
-        </view>
-        
-        <!-- 监督管理：所有用户都可以使用 -->
-        <view class="quick-action-item" @click="goToSupervisionFeatures">
-          <view class="action-icon">👁️</view>
-          <text class="action-text">监督管理</text>
-        </view>
-      </view>
-    </view>
+    
   </view>
 </template>
 
@@ -284,21 +266,7 @@ const goToCheckinList = () => {
   })
 }
 
-// 跳转到打卡规则设置
-const goToRuleSetting = () => {
-  uni.navigateTo({
-    url: '/pages/rule-setting/rule-setting'
-  })
-}
 
-
-// 跳转到监督管理
-const goToSupervisionFeatures = () => {
-  // 这里可以导航到监督管理页面，或者一个包含多个监督选项的页面
-  uni.navigateTo({
-    url: '/pages/home-supervisor/home-supervisor'
-  })
-}
 
 onMounted(() => {
   initCheckinData()
@@ -353,7 +321,7 @@ uni.$on('checkinRulesUpdated', (data) => {
 .home-solo-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 48rpx 32rpx 160rpx;
+  padding: 48rpx 32rpx 80rpx;
 }
 
 .user-info-section {
@@ -544,38 +512,5 @@ uni.$on('checkinRulesUpdated', (data) => {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.quick-actions-section {
-  margin-top: 24rpx;
-}
 
-.quick-actions-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24rpx;
-}
-
-.quick-action-item {
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx 16rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
-}
-
-.quick-action-item:active {
-  transform: scale(0.95);
-}
-
-.action-icon {
-  display: block;
-  font-size: 48rpx;
-  margin-bottom: 16rpx;
-}
-
-.action-text {
-  display: block;
-  font-size: 24rpx;
-  color: #666;
-}
 </style>

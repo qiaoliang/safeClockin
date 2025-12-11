@@ -72,24 +72,7 @@
       </view>
     </view>
 
-    <!-- 快捷功能 -->
-    <view class="quick-actions-section">
-      <view class="section-header">
-        <text class="section-title">快捷功能</text>
-      </view>
-      
-      <view class="quick-actions-grid">
-        <view class="quick-action-item" @click="goToProfile">
-          <view class="action-icon">👤</view>
-          <text class="action-text">个人中心</text>
-        </view>
-        
-        <view class="quick-action-item" @click="goToNotificationSettings">
-          <view class="action-icon">🔔</view>
-          <text class="action-text">通知设置</text>
-        </view>
-      </view>
-    </view>
+    
   </view>
 </template>
 
@@ -132,19 +115,7 @@ const goToSupervisorDetail = (person) => {
   })
 }
 
-// 跳转到个人中心
-const goToProfile = () => {
-  uni.switchTab({
-    url: '/pages/profile/profile'
-  })
-}
 
-// 跳转到通知设置
-const goToNotificationSettings = () => {
-  uni.navigateTo({
-    url: '/pages/notification-settings/notification-settings'
-  })
-}
 
 onMounted(() => {
   // 初始化数据，实际项目中应从API获取
@@ -155,7 +126,7 @@ onMounted(() => {
 .home-supervisor-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
-  padding: 48rpx 32rpx 160rpx;
+  padding: 48rpx 32rpx 80rpx;
 }
 
 .user-info-section {
@@ -319,38 +290,5 @@ onMounted(() => {
   color: #999;
 }
 
-.quick-actions-section {
-  margin-top: 24rpx;
-}
 
-.quick-actions-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24rpx;
-}
-
-.quick-action-item {
-  background: white;
-  border-radius: 24rpx;
-  padding: 32rpx 16rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
-}
-
-.quick-action-item:active {
-  transform: scale(0.95);
-}
-
-.action-icon {
-  display: block;
-  font-size: 48rpx;
-  margin-bottom: 16rpx;
-}
-
-.action-text {
-  display: block;
-  font-size: 24rpx;
-  color: #666;
-}
 </style>

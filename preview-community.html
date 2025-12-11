@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社区页面修改预览</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .preview-container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-screen {
+            min-height: 667px;
+            background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
+            padding: 16px 16px 80px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #624731;
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: #666;
+            display: block;
+            margin-bottom: 12px;
+        }
+        
+        .community-cards {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        
+        .community-card {
+            flex: 0 0 140px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .community-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .community-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 12px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 16px;
+            font-weight: 600;
+            color: #624731;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #999;
+            display: block;
+            margin-top: 2px;
+        }
+        
+        .overview-section {
+            margin-top: 24px;
+        }
+        
+        .overview-cards {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .overview-card {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card-title {
+            font-size: 12px;
+            color: #666;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .card-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #624731;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .card-desc {
+            font-size: 10px;
+            color: #999;
+            display: block;
+        }
+        
+        .change-indicator {
+            background: #10B981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="mobile-screen">
+            <div class="change-indicator">
+                ✅ 用户信息区域已成功移除
+            </div>
+            
+            <!-- 社区列表区域 -->
+            <div class="section-title">全部社区</div>
+            <div class="section-subtitle">您管理的所有社区</div>
+            
+            <div class="community-cards">
+                <div class="community-card">
+                    <div class="community-name">阳光社区</div>
+                    <div class="community-stats">
+                        <div class="stat">
+                            <span class="stat-number">128</span>
+                            <span class="stat-label">用户</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">管理员</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="community-card">
+                    <div class="community-name">幸福社区</div>
+                    <div class="community-stats">
+                        <div class="stat">
+                            <span class="stat-number">96</span>
+                            <span class="stat-label">用户</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label">管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据概览区域 -->
+            <div class="overview-section">
+                <div class="section-title">数据概览</div>
+                <div class="section-subtitle">辖区内用户情况</div>
+                
+                <div class="overview-cards">
+                    <div class="overview-card" style="border-top: 4px solid #F48224;">
+                        <span class="card-title">用户总数</span>
+                        <span class="card-number">128</span>
+                        <span class="card-desc">人</span>
+                    </div>
+                    
+                    <div class="overview-card" style="border-top: 4px solid #10B981;">
+                        <span class="card-title">今日打卡率</span>
+                        <span class="card-number">89.8%</span>
+                        <span class="card-desc">平均完成率</span>
+                    </div>
+                    
+                    <div class="overview-card" style="border-top: 4px solid #EF4444;">
+                        <span class="card-title">未打卡人数</span>
+                        <span class="card-number">13</span>
+                        <span class="card-desc">人</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
