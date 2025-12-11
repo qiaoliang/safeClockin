@@ -61,6 +61,28 @@
       </view>
     </view>
 
+    <!-- 当前任务悬浮按钮 -->
+    <view class="floating-tasks-section">
+      <button 
+        class="floating-tasks-btn"
+        @click="goToCheckinList"
+      >
+        <view class="tasks-btn-content">
+          <view class="tasks-icon-wrapper">
+            <text class="tasks-icon">📋</text>
+            <view class="tasks-badge">
+              {{ pendingCheckinCount }}
+            </view>
+          </view>
+          <view class="tasks-text-content">
+            <text class="tasks-title">当前任务</text>
+            <text class="tasks-subtitle">还有 {{ pendingCheckinCount }} 项未完成</text>
+          </view>
+          <text class="tasks-arrow">›</text>
+        </view>
+      </button>
+    </view>
+
     <!-- 今日打卡概览 -->
     <view class="checkin-overview-section">
       <view class="section-header">
@@ -665,6 +687,114 @@ uni.$on('checkinRulesUpdated', (data) => {
 
 .completion-rate {
   border-top: 4rpx solid #2196F3;
+}
+
+/* 当前任务悬浮按钮样式 */
+.floating-tasks-section {
+  padding: 0 0 48rpx 0;
+}
+
+.floating-tasks-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  box-shadow: 0 8rpx 24rpx rgba(244, 130, 36, 0.4);
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+  border-radius: 48rpx;
+  padding: 0;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.floating-tasks-btn::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(135deg, rgba(244, 130, 36, 0.6), rgba(232, 116, 26, 0.6));
+  border-radius: 48rpx;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-tasks-btn:active::before {
+  opacity: 1;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.tasks-btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48rpx 40rpx;
+}
+
+.tasks-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tasks-icon {
+  font-size: 60rpx;
+  color: white;
+}
+
+.tasks-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background: #EF4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.tasks-text-content {
+  flex: 1;
+  margin-left: 32rpx;
+  text-align: left;
+}
+
+.tasks-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8rpx;
+  line-height: 1.2;
+}
+
+.tasks-subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.2;
+}
+
+.tasks-arrow {
+  font-size: 48rpx;
+  color: white;
+  font-weight: bold;
 }
 
 .today-tasks-section {
