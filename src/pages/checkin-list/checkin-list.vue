@@ -350,9 +350,9 @@ onMounted(() => {
 }
 
 .list-title {
-  font-size: 36rpx;
+  font-size: $uni-font-size-xl;
   font-weight: 600;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 32rpx;
 }
 
@@ -405,72 +405,69 @@ onMounted(() => {
 }
 
 .checkin-time {
-  font-size: 24rpx;
-  color: #6B7280;
+  font-size: $uni-font-size-sm;
+  color: $uni-secondary-color;
+  margin-top: 4rpx;
 }
 
 .checkin-btn {
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
-  color: white;
-  border-radius: 16rpx;
-  padding: 16rpx 32rpx;
-  font-size: 28rpx;
-  font-weight: 500;
+  width: 160rpx;
+  height: 64rpx;
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  border-radius: $uni-radius-xl;
+  color: $uni-white;
+  font-size: $uni-font-size-base;
+  font-weight: 600;
   border: none;
-  box-shadow: 0 4rpx 12rpx rgba(244, 130, 36, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(244, 130, 36, 0.3);
 }
 
 .cancel-btn {
-  background: #FEE2E2;
-  color: #EF4444;
-  border-radius: 16rpx;
-  padding: 8rpx 16rpx;
-  font-size: 24rpx;
+  width: 160rpx;
+  height: 64rpx;
+  background: $uni-error-light;
+  color: $uni-error;
+  border-radius: $uni-radius-xl;
+  font-size: $uni-font-size-base;
+  font-weight: 600;
   border: none;
-  margin-top: 8rpx;
 }
 
 .empty-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400rpx;
   text-align: center;
+  padding: 120rpx 40rpx;
 }
 
 .empty-text {
-  font-size: 32rpx;
-  color: #666;
+  display: block;
+  font-size: $uni-font-size-lg;
+  color: $uni-tabbar-color;
   margin-bottom: 16rpx;
 }
 
 .empty-subtext {
-  font-size: 24rpx;
-  color: #999;
+  display: block;
+  font-size: $uni-font-size-sm;
+  color: $uni-base-color;
 }
 
 .completed-section {
-  background: white;
-  border-radius: 24rpx;
-  padding: 48rpx;
-  margin-top: 32rpx;
   text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: 80rpx 40rpx;
 }
 
 .completed-text {
   display: block;
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #10B981;
+  font-size: $uni-font-size-xl;
+  font-weight: bold;
+  color: $uni-success;
   margin-bottom: 16rpx;
 }
 
 .completed-subtext {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-tabbar-color;
 }
 
 /* 模态框样式 */
@@ -489,12 +486,10 @@ onMounted(() => {
 }
 
 .modal-content {
-  background: white;
-  border-radius: 24rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-lg;
   padding: 48rpx;
-  width: 100%;
-  max-width: 600rpx;
-  box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.2);
+  width: 560rpx;
 }
 
 .modal-header {
@@ -503,28 +498,23 @@ onMounted(() => {
 }
 
 .modal-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #624731;
-}
-
-.modal-body {
-  margin-bottom: 48rpx;
+  font-size: $uni-font-size-lg;
+  font-weight: bold;
+  color: $uni-main-color;
+  margin-bottom: 8rpx;
 }
 
 .modal-text {
-  display: block;
-  font-size: 32rpx;
-  color: #333;
-  margin-bottom: 16rpx;
-  text-align: center;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
+  margin-bottom: 32rpx;
+  line-height: 1.5;
 }
 
 .modal-subtext {
-  display: block;
-  font-size: 24rpx;
-  color: #666;
-  text-align: center;
+  font-size: $uni-font-size-sm;
+  color: $uni-secondary-color;
+  margin-bottom: 32rpx;
 }
 
 .modal-actions {
@@ -535,22 +525,22 @@ onMounted(() => {
 .modal-cancel-btn {
   flex: 1;
   height: 80rpx;
-  background: #F5F5F5;
+  background: $uni-bg-color-grey;
+  color: $uni-main-color;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+  font-weight: 600;
   border: none;
-  border-radius: 16rpx;
-  color: #666;
-  font-size: 32rpx;
-  font-weight: 500;
 }
 
 .modal-confirm-btn {
   flex: 1;
   height: 80rpx;
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+  font-weight: 600;
   border: none;
-  border-radius: 16rpx;
-  color: white;
-  font-size: 32rpx;
-  font-weight: 500;
 }
 </style>
