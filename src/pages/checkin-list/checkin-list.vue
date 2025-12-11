@@ -337,16 +337,16 @@ onMounted(() => {
 
 .header-title {
   display: block;
-  font-size: 48rpx;
+  font-size: $uni-font-size-xl;
   font-weight: bold;
-  color: #624731;
+  color: $uni-tabbar-color;
   margin-bottom: 16rpx;
 }
 
 .header-subtitle {
   display: block;
-  font-size: 28rpx;
-  color: #666;
+  font-size: $uni-font-size-base;
+  color: $uni-base-color;
 }
 
 .list-title {
