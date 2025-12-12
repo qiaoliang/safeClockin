@@ -301,30 +301,62 @@ const applyFilter = () => {
 // 显示操作菜单
 const showActionMenu = (item) => {
   const itemList = item.status === CommunityStatus.ACTIVE
-    ? ['修改', '停用']
-    : ['修改', '启用', '删除']
+    ? ['查看工作人员', '查看用户', '修改', '停用']
+    : ['查看工作人员', '查看用户', '修改', '启用', '删除']
 
   uni.showActionSheet({
     itemList,
     success: (res) => {
-      switch (res.tapIndex) {
-        case 0:
-          editCommunity(item)
-          break
-        case 1:
-          if (item.status === CommunityStatus.ACTIVE) {
+      const index = res.tapIndex
+      
+      // 前两个选项始终是查看工作人员和用户
+      if (index === 0) {
+        viewStaff(item)
+        return
+      }
+      if (index === 1) {
+        viewUsers(item)
+        return
+      }
+      
+      // 后续选项根据状态不同而不同
+      if (item.status === CommunityStatus.ACTIVE) {
+        switch (index) {
+          case 2: // 修改
+            editCommunity(item)
+            break
+          case 3: // 停用
             toggleCommunityStatus(item, CommunityStatus.INACTIVE)
-          } else {
+            break
+        }
+      } else {
+        switch (index) {
+          case 2: // 修改
+            editCommunity(item)
+            break
+          case 3: // 启用
             toggleCommunityStatus(item, CommunityStatus.ACTIVE)
-          }
-          break
-        case 2:
-          if (item.status === CommunityStatus.INACTIVE) {
+            break
+          case 4: // 删除
             deleteCommunity(item)
-          }
-          break
+            break
+        }
       }
     }
+  })
+}
+
+// 查看社区的工作人员
+const viewStaff = (community) => {
+  uni.navigateTo({
+    url: `/pages/community-staff-manage/community-staff-manage?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+  })
+}
+
+// 查看社区的用户
+const viewUsers = (community) => {
+  uni.navigateTo({
+    url: `/pages/community-user-manage/community-user-manage?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
   })
 }
 

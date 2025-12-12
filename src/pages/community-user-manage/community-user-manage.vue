@@ -1,12 +1,16 @@
 <template>
   <view class="user-manage-container">
+    <!-- 面包屑导航 -->
+    <view v-if="communityName" class="breadcrumb">
+      <text class="breadcrumb-text">{{ communityName }}</text>
+      <text class="breadcrumb-arrow">›</text>
+      <text class="breadcrumb-current">用户管理</text>
+    </view>
+
     <!-- 顶部标题区 -->
     <view class="header-section">
       <text class="header-title">
         社区用户管理
-      </text>
-      <text class="header-subtitle">
-        当前社区：{{ currentCommunity?.name || '未选择' }}
       </text>
     </view>
 
@@ -155,6 +159,10 @@ import { PagePath, FeaturePermission } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
 
+// 当前社区和社区名称
+const currentCommunity = ref(null)
+const communityName = ref('')
+
 // 页面权限检查
 onLoad(async (options) => {
   if (!checkPagePermission(PagePath.COMMUNITY_USER_MANAGE)) {
@@ -162,20 +170,26 @@ onLoad(async (options) => {
   }
   console.log('[社区用户管理] 权限检查通过')
   
+  // 接收社区名称参数
+  if (options.communityName) {
+    communityName.value = decodeURIComponent(options.communityName)
+  }
+  
   // 处理页面参数
   if (options.communityId) {
     // 从 store 中获取社区信息
     const community = communityStore.communities.find(c => c.id === options.communityId)
     if (community) {
       currentCommunity.value = community
+      // 如果没有传入社区名称，使用 community 对象的 name
+      if (!communityName.value) {
+        communityName.value = community.name
+      }
       // 加载该社区的用户列表
       await loadUserList(true)
     }
   }
 })
-
-// 当前社区
-const currentCommunity = ref(null)
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -421,6 +435,30 @@ uni.$on('usersAdded', () => {
   min-height: 100vh;
   @include bg-gradient;
   padding-bottom: 80rpx;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: $uni-bg-color-white;
+  border-bottom: 1rpx solid #E8E8E8;
+  
+  .breadcrumb-text {
+    color: $uni-base-color;
+    font-size: $uni-font-size-sm;
+  }
+  
+  .breadcrumb-arrow {
+    margin: 0 12rpx;
+    color: $uni-secondary-color;
+  }
+  
+  .breadcrumb-current {
+    color: $uni-main-color;
+    font-size: $uni-font-size-sm;
+    font-weight: $uni-font-weight-base;
+  }
 }
 
 .header-section {

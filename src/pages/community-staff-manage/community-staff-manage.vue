@@ -1,5 +1,12 @@
 <template>
   <view class="staff-manage-container">
+    <!-- 面包屑导航 -->
+    <view v-if="communityName" class="breadcrumb">
+      <text class="breadcrumb-text">{{ communityName }}</text>
+      <text class="breadcrumb-arrow">›</text>
+      <text class="breadcrumb-current">工作人员管理</text>
+    </view>
+
     <!-- 顶部标题栏 -->
     <view class="header-bar">
       <text class="header-title">
@@ -98,6 +105,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
+import { useUserStore } from '@/store/modules/user'
 import { formatPhone, formatDate } from '@/utils/community'
 import {
   DEFAULT_AVATAR,
@@ -113,16 +121,34 @@ import { PagePath, FeaturePermission } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
 
-// 页面权限检查
-onLoad(() => {
+// 当前社区ID和名称（从URL参数或store获取）
+const currentCommunityId = ref('')
+const communityName = ref('')
+
+// 页面权限检查和参数接收
+onLoad((options) => {
   if (!checkPagePermission(PagePath.COMMUNITY_STAFF_MANAGE)) {
     return
   }
   console.log('[工作人员管理] 权限检查通过')
+  
+  // 接收URL参数
+  if (options.communityId) {
+    currentCommunityId.value = options.communityId
+    communityName.value = decodeURIComponent(options.communityName || '')
+    console.log('[工作人员管理] 使用传入的社区ID:', currentCommunityId.value)
+  } else {
+    // 使用当前用户的社区
+    const userStore = useUserStore()
+    currentCommunityId.value = userStore.userInfo?.communityId || ''
+    console.log('[工作人员管理] 使用用户当前社区ID:', currentCommunityId.value)
+  }
+  
+  // 加载工作人员列表
+  if (currentCommunityId.value) {
+    loadStaffList()
+  }
 })
-
-// 当前社区ID
-const currentCommunityId = ref('')
 
 // 排序方式
 const sortBy = ref(SortType.TIME)
@@ -280,7 +306,13 @@ onPullDownRefresh(async () => {
 })
 
 onMounted(async () => {
-  // 加载社区列表
+  // 如果已经通过URL参数设置了社区ID，直接加载工作人员列表
+  if (currentCommunityId.value) {
+    await loadStaffMembers()
+    return
+  }
+  
+  // 否则，加载社区列表并选择第一个社区
   if (communityStore.communities.length === 0) {
     await communityStore.loadCommunities(true)
   }
@@ -305,6 +337,30 @@ uni.$on('staffAdded', () => {
   min-height: 100vh;
   @include bg-gradient;
   padding-bottom: 80rpx;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: $uni-bg-color-white;
+  border-bottom: 1rpx solid #E8E8E8;
+  
+  .breadcrumb-text {
+    color: $uni-base-color;
+    font-size: $uni-font-size-sm;
+  }
+  
+  .breadcrumb-arrow {
+    margin: 0 12rpx;
+    color: $uni-secondary-color;
+  }
+  
+  .breadcrumb-current {
+    color: $uni-main-color;
+    font-size: $uni-font-size-sm;
+    font-weight: $uni-font-weight-base;
+  }
 }
 
 .header-bar {
