@@ -2,8 +2,12 @@
   <view class="merge-container">
     <!-- 头部说明 -->
     <view class="merge-header">
-      <text class="header-title">社区合并</text>
-      <text class="header-subtitle">选择要合并的社区（至少2个）</text>
+      <text class="header-title">
+        社区合并
+      </text>
+      <text class="header-subtitle">
+        选择要合并的社区（至少2个）
+      </text>
     </view>
 
     <!-- 搜索栏 -->
@@ -39,20 +43,31 @@
         </view>
 
         <view class="community-info">
-          <text class="community-name">{{ item.name }}</text>
-          <text class="community-location">📍 {{ item.location }}</text>
+          <text class="community-name">
+            {{ item.name }}
+          </text>
+          <text class="community-location">
+            📍 {{ item.location }}
+          </text>
         </view>
       </view>
 
       <!-- 空状态 -->
-      <view v-if="filteredCommunities.length === 0" class="empty-state">
-        <text class="empty-text">{{ EMPTY_MESSAGES.NO_SEARCH_RESULTS }}</text>
+      <view
+        v-if="filteredCommunities.length === 0"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          {{ EMPTY_MESSAGES.NO_SEARCH_RESULTS }}
+        </text>
       </view>
     </view>
 
     <!-- 目标社区选择 -->
     <view class="merge-section">
-      <text class="section-label">合并到：</text>
+      <text class="section-label">
+        合并到：
+      </text>
       <uni-data-select
         v-model="targetCommunityId"
         :localdata="communityOptions"

@@ -12,7 +12,9 @@
 
     <!-- 角色选择 -->
     <view class="role-selector">
-      <text class="selector-label">添加为：</text>
+      <text class="selector-label">
+        添加为：
+      </text>
       <uni-data-checkbox
         v-model="selectedRole"
         :localdata="roleOptions"
@@ -38,11 +40,18 @@
         />
 
         <view class="user-info">
-          <text class="user-name">{{ user.nickname }}</text>
-          <text class="user-phone">{{ user.phone_number }}</text>
+          <text class="user-name">
+            {{ user.nickname }}
+          </text>
+          <text class="user-phone">
+            {{ user.phone_number }}
+          </text>
         </view>
 
-        <view v-if="user.is_staff" class="already-staff-tag">
+        <view
+          v-if="user.is_staff"
+          class="already-staff-tag"
+        >
           已是工作人员
         </view>
 
@@ -55,16 +64,29 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="searchResults.length === 0 && searchKeyword" class="empty-state">
-        <text class="empty-text">未找到用户</text>
-        <button class="invite-btn" @click="inviteRegister">
+      <view
+        v-if="searchResults.length === 0 && searchKeyword"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          未找到用户
+        </text>
+        <button
+          class="invite-btn"
+          @click="inviteRegister"
+        >
           邀请注册
         </button>
       </view>
 
       <!-- 未搜索提示 -->
-      <view v-if="!searchKeyword && searchResults.length === 0" class="search-tip">
-        <text class="tip-text">请输入手机号或昵称搜索用户</text>
+      <view
+        v-if="!searchKeyword && searchResults.length === 0"
+        class="search-tip"
+      >
+        <text class="tip-text">
+          请输入手机号或昵称搜索用户
+        </text>
       </view>
     </view>
 

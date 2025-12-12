@@ -4,6 +4,13 @@ module.exports = {
     es2021: true,
     node: true
   },
+  globals: {
+    uni: 'readonly',
+    wx: 'readonly',
+    plus: 'readonly',
+    getCurrentPages: 'readonly',
+    getApp: 'readonly'
+  },
   extends: [
     'eslint:recommended',
     'plugin:vue/vue3-recommended'

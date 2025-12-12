@@ -11,7 +11,10 @@
     </view>
 
     <!-- 已选提示 -->
-    <view v-if="selectedUsers.length > 0" class="selected-count-tip">
+    <view
+      v-if="selectedUsers.length > 0"
+      class="selected-count-tip"
+    >
       已选 {{ selectedUsers.length }} 人
     </view>
 
@@ -33,11 +36,18 @@
         />
 
         <view class="user-info">
-          <text class="user-name">{{ user.nickname }}</text>
-          <text class="user-phone">{{ user.phone_number }}</text>
+          <text class="user-name">
+            {{ user.nickname }}
+          </text>
+          <text class="user-phone">
+            {{ user.phone_number }}
+          </text>
         </view>
 
-        <view v-if="user.already_in_community" class="already-in-tag">
+        <view
+          v-if="user.already_in_community"
+          class="already-in-tag"
+        >
           已在社区
         </view>
 
@@ -50,13 +60,23 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="searchResults.length === 0 && searchKeyword" class="empty-state">
-        <text class="empty-text">无匹配用户</text>
+      <view
+        v-if="searchResults.length === 0 && searchKeyword"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          无匹配用户
+        </text>
       </view>
 
       <!-- 未搜索提示 -->
-      <view v-if="!searchKeyword && searchResults.length === 0" class="search-tip">
-        <text class="tip-text">请输入关键词搜索用户</text>
+      <view
+        v-if="!searchKeyword && searchResults.length === 0"
+        class="search-tip"
+      >
+        <text class="tip-text">
+          请输入关键词搜索用户
+        </text>
       </view>
     </view>
 

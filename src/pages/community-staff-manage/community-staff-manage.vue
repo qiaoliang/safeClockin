@@ -2,9 +2,16 @@
   <view class="staff-manage-container">
     <!-- 顶部标题栏 -->
     <view class="header-bar">
-      <text class="header-title">工作人员管理</text>
-      <view class="header-right" @click="showSortMenu">
-        <text class="icon-sort">排序</text>
+      <text class="header-title">
+        工作人员管理
+      </text>
+      <view
+        class="header-right"
+        @click="showSortMenu"
+      >
+        <text class="icon-sort">
+          排序
+        </text>
       </view>
     </view>
 
@@ -16,8 +23,8 @@
     >
       <view
         v-for="community in communities"
-        :key="community.id"
         :id="'tab-' + community.id"
+        :key="community.id"
         :class="['community-tab-item', { active: currentCommunityId === community.id }]"
         @click="switchCommunity(community.id)"
       >
@@ -29,8 +36,8 @@
     <view class="staff-list">
       <view
         v-for="item in displayStaffMembers"
-        :key="item.user_id"
         :id="'staff-' + item.user_id"
+        :key="item.user_id"
         class="staff-item"
         @click="viewStaffDetail(item)"
         @longpress="showDeleteConfirm(item)"
@@ -43,7 +50,9 @@
 
         <view class="staff-info">
           <view class="staff-name-row">
-            <text class="staff-name">{{ item.nickname }}</text>
+            <text class="staff-name">
+              {{ item.nickname }}
+            </text>
             <view
               :class="['role-tag', item.role === 'manager' ? 'role-tag-manager' : 'role-tag-staff']"
             >
@@ -62,14 +71,24 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="displayStaffMembers.length === 0 && !loading" class="empty-state">
-        <text class="empty-text">{{ EMPTY_MESSAGES.NO_STAFF }}</text>
+      <view
+        v-if="displayStaffMembers.length === 0 && !loading"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          {{ EMPTY_MESSAGES.NO_STAFF }}
+        </text>
       </view>
     </view>
 
     <!-- 底部悬浮按钮 -->
-    <view class="floating-add-btn" @click="addStaff">
-      <text class="add-icon">+</text>
+    <view
+      class="floating-add-btn"
+      @click="addStaff"
+    >
+      <text class="add-icon">
+        +
+      </text>
     </view>
   </view>
 </template>
@@ -105,7 +124,7 @@ const communities = computed(() => communityStore.activeCommunities)
 
 // 显示的工作人员列表（经过排序）
 const displayStaffMembers = computed(() => {
-  let list = [...communityStore.staffMembers]
+  const list = [...communityStore.staffMembers]
 
   // 排序
   switch (sortBy.value) {

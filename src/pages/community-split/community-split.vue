@@ -2,13 +2,19 @@
   <view class="split-container">
     <!-- 头部说明 -->
     <view class="split-header">
-      <text class="header-title">社区拆分</text>
-      <text class="header-subtitle">选择要拆分的社区</text>
+      <text class="header-title">
+        社区拆分
+      </text>
+      <text class="header-subtitle">
+        选择要拆分的社区
+      </text>
     </view>
 
     <!-- 选择源社区 -->
     <view class="source-section">
-      <text class="section-label">源社区</text>
+      <text class="section-label">
+        源社区
+      </text>
       <uni-data-select
         v-model="sourceCommunityId"
         :localdata="communityOptions"
@@ -18,10 +24,18 @@
     </view>
 
     <!-- 子社区信息 -->
-    <view v-if="sourceCommunityId" class="sub-communities-section">
+    <view
+      v-if="sourceCommunityId"
+      class="sub-communities-section"
+    >
       <view class="section-header">
-        <text class="section-title">子社区信息</text>
-        <button class="add-sub-btn" @click="addSubCommunity">
+        <text class="section-title">
+          子社区信息
+        </text>
+        <button
+          class="add-sub-btn"
+          @click="addSubCommunity"
+        >
           + 新增子社区
         </button>
       </view>
@@ -32,7 +46,9 @@
         class="sub-community-item"
       >
         <view class="sub-item-header">
-          <text class="sub-item-title">子社区 {{ index + 1 }}</text>
+          <text class="sub-item-title">
+            子社区 {{ index + 1 }}
+          </text>
           <button
             class="remove-sub-btn"
             @click="removeSubCommunity(index)"
@@ -55,8 +71,13 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="subCommunities.length === 0" class="empty-sub">
-        <text class="empty-text">请添加至少一个子社区</text>
+      <view
+        v-if="subCommunities.length === 0"
+        class="empty-sub"
+      >
+        <text class="empty-text">
+          请添加至少一个子社区
+        </text>
       </view>
     </view>
 

@@ -1,7 +1,15 @@
 <template>
   <view class="community-form-container">
-    <uni-forms ref="formRef" :modelValue="formData" :rules="rules">
-      <uni-forms-item label="社区名称" name="name" required>
+    <uni-forms
+      ref="formRef"
+      :model-value="formData"
+      :rules="rules"
+    >
+      <uni-forms-item
+        label="社区名称"
+        name="name"
+        required
+      >
         <uni-easyinput
           v-model="formData.name"
           placeholder="请输入社区名称"
@@ -9,31 +17,63 @@
         />
       </uni-forms-item>
 
-      <uni-forms-item label="位置选择" name="location" required>
-        <view class="location-selector" @click="selectLocation">
-          <text v-if="formData.location" class="location-text">
+      <uni-forms-item
+        label="位置选择"
+        name="location"
+        required
+      >
+        <view
+          class="location-selector"
+          @click="selectLocation"
+        >
+          <text
+            v-if="formData.location"
+            class="location-text"
+          >
             {{ formData.location }}
           </text>
-          <text v-else class="location-placeholder">
+          <text
+            v-else
+            class="location-placeholder"
+          >
             点击选择位置
           </text>
-          <text class="location-icon">›</text>
+          <text class="location-icon">
+            ›
+          </text>
         </view>
       </uni-forms-item>
 
-      <uni-forms-item label="社区主管" name="manager_id">
-        <view class="manager-selector" @click="selectManager">
-          <text v-if="formData.manager_name" class="manager-text">
+      <uni-forms-item
+        label="社区主管"
+        name="manager_id"
+      >
+        <view
+          class="manager-selector"
+          @click="selectManager"
+        >
+          <text
+            v-if="formData.manager_name"
+            class="manager-text"
+          >
             {{ formData.manager_name }}
           </text>
-          <text v-else class="manager-placeholder">
+          <text
+            v-else
+            class="manager-placeholder"
+          >
             点击选择主管（可选）
           </text>
-          <text class="manager-icon">›</text>
+          <text class="manager-icon">
+            ›
+          </text>
         </view>
       </uni-forms-item>
 
-      <uni-forms-item label="社区描述" name="description">
+      <uni-forms-item
+        label="社区描述"
+        name="description"
+      >
         <uni-easyinput
           v-model="formData.description"
           type="textarea"
@@ -44,7 +84,11 @@
     </uni-forms>
 
     <view class="form-actions">
-      <button class="submit-btn" :disabled="submitting" @click="submitForm">
+      <button
+        class="submit-btn"
+        :disabled="submitting"
+        @click="submitForm"
+      >
         {{ submitting ? '提交中...' : (isEdit ? '保存修改' : '创建社区') }}
       </button>
     </view>

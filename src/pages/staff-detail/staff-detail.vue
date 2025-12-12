@@ -7,7 +7,9 @@
         class="staff-avatar-large"
         mode="aspectFill"
       />
-      <text class="staff-name-large">{{ staffInfo.nickname }}</text>
+      <text class="staff-name-large">
+        {{ staffInfo.nickname }}
+      </text>
       <view
         :class="['role-tag-large', staffInfo.role === 'manager' ? 'role-tag-manager' : 'role-tag-staff']"
       >
@@ -18,8 +20,14 @@
     <!-- 基本信息 -->
     <uni-section title="基本信息">
       <uni-list>
-        <uni-list-item title="联系电话" :rightText="staffInfo.phone_number" />
-        <uni-list-item title="添加时间" :rightText="formatDate(staffInfo.added_time)" />
+        <uni-list-item
+          title="联系电话"
+          :right-text="staffInfo.phone_number"
+        />
+        <uni-list-item
+          title="添加时间"
+          :right-text="formatDate(staffInfo.added_time)"
+        />
       </uni-list>
     </uni-section>
 
@@ -31,16 +39,21 @@
           :key="community.id"
           :title="community.name"
           :note="community.location"
-          showArrow
+          show-arrow
           @click="viewCommunity(community)"
         />
       </uni-list>
     </uni-section>
 
     <!-- 负责范围（仅专员显示） -->
-    <uni-section v-if="staffInfo.role === 'staff'" title="负责范围">
+    <uni-section
+      v-if="staffInfo.role === 'staff'"
+      title="负责范围"
+    >
       <view class="scope-content">
-        <text class="scope-text">{{ staffInfo.scope || '暂无' }}</text>
+        <text class="scope-text">
+          {{ staffInfo.scope || '暂无' }}
+        </text>
       </view>
     </uni-section>
   </view>

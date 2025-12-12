@@ -2,12 +2,24 @@
   <view class="community-manage-container">
     <!-- 顶部标题栏 -->
     <view class="header-bar">
-      <view class="header-left" @click="showMoreMenu">
-        <text class="icon-more">⋮</text>
+      <view
+        class="header-left"
+        @click="showMoreMenu"
+      >
+        <text class="icon-more">
+          ⋮
+        </text>
       </view>
-      <text class="header-title">社区管理</text>
-      <view class="header-right" @click="showFilterPanel">
-        <text class="icon-filter">🔍</text>
+      <text class="header-title">
+        社区管理
+      </text>
+      <view
+        class="header-right"
+        @click="showFilterPanel"
+      >
+        <text class="icon-filter">
+          🔍
+        </text>
       </view>
     </view>
 
@@ -20,9 +32,14 @@
           :options="swipeOptions"
           @click="handleSwipeClick($event, item)"
         >
-          <view class="community-item" @longpress="showActionMenu(item)">
+          <view
+            class="community-item"
+            @longpress="showActionMenu(item)"
+          >
             <view class="community-header">
-              <text class="community-name">{{ item.name }}</text>
+              <text class="community-name">
+                {{ item.name }}
+              </text>
               <view
                 :class="['status-tag', item.status === 'active' ? 'status-tag-active' : 'status-tag-inactive']"
               >
@@ -31,45 +48,80 @@
             </view>
 
             <view class="community-location">
-              <text class="location-icon">📍</text>
-              <text class="location-text">{{ item.location }}</text>
+              <text class="location-icon">
+                📍
+              </text>
+              <text class="location-text">
+                {{ item.location }}
+              </text>
             </view>
 
             <view class="community-meta">
-              <text class="meta-text">👤 {{ item.manager_name || '未分配' }}</text>
-              <text class="meta-divider">|</text>
-              <text class="meta-text">{{ formatDate(item.created_at) }}</text>
+              <text class="meta-text">
+                👤 {{ item.manager_name || '未分配' }}
+              </text>
+              <text class="meta-divider">
+                |
+              </text>
+              <text class="meta-text">
+                {{ formatDate(item.created_at) }}
+              </text>
             </view>
           </view>
         </uni-swipe-action-item>
       </uni-swipe-action>
 
       <!-- 空状态 -->
-      <view v-if="displayCommunities.length === 0 && !loading" class="empty-state">
-        <text class="empty-text">{{ EMPTY_MESSAGES.NO_COMMUNITIES }}</text>
+      <view
+        v-if="displayCommunities.length === 0 && !loading"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          {{ EMPTY_MESSAGES.NO_COMMUNITIES }}
+        </text>
       </view>
 
       <!-- 加载更多 -->
-      <view v-if="loading" class="loading-more">
+      <view
+        v-if="loading"
+        class="loading-more"
+      >
         <uni-load-more :status="loadMoreStatus" />
       </view>
     </view>
 
     <!-- 底部悬浮按钮 -->
-    <view class="floating-add-btn" @click="createCommunity">
-      <text class="add-icon">+</text>
+    <view
+      class="floating-add-btn"
+      @click="createCommunity"
+    >
+      <text class="add-icon">
+        +
+      </text>
     </view>
 
     <!-- 筛选面板 -->
-    <uni-popup ref="filterPopup" type="bottom">
+    <uni-popup
+      ref="filterPopup"
+      type="bottom"
+    >
       <view class="filter-panel">
         <view class="filter-header">
-          <text class="filter-title">筛选</text>
-          <text class="filter-close" @click="closeFilter">✕</text>
+          <text class="filter-title">
+            筛选
+          </text>
+          <text
+            class="filter-close"
+            @click="closeFilter"
+          >
+            ✕
+          </text>
         </view>
 
         <view class="filter-section">
-          <text class="filter-label">状态</text>
+          <text class="filter-label">
+            状态
+          </text>
           <uni-data-checkbox
             v-model="filterStatus"
             :localdata="statusOptions"
@@ -78,7 +130,9 @@
         </view>
 
         <view class="filter-section">
-          <text class="filter-label">搜索</text>
+          <text class="filter-label">
+            搜索
+          </text>
           <uni-easyinput
             v-model="filterKeyword"
             placeholder="输入社区名称"
@@ -86,8 +140,18 @@
         </view>
 
         <view class="filter-actions">
-          <button class="reset-btn" @click="resetFilter">重置</button>
-          <button class="confirm-btn" @click="applyFilter">确认</button>
+          <button
+            class="reset-btn"
+            @click="resetFilter"
+          >
+            重置
+          </button>
+          <button
+            class="confirm-btn"
+            @click="applyFilter"
+          >
+            确认
+          </button>
         </view>
       </view>
     </uni-popup>

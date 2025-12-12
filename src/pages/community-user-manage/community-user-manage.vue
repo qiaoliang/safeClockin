@@ -2,8 +2,12 @@
   <view class="user-manage-container">
     <!-- 顶部标题区 -->
     <view class="header-section">
-      <text class="header-title">社区用户管理</text>
-      <text class="header-subtitle">当前社区：{{ currentCommunity?.name || '未选择' }}</text>
+      <text class="header-title">
+        社区用户管理
+      </text>
+      <text class="header-subtitle">
+        当前社区：{{ currentCommunity?.name || '未选择' }}
+      </text>
     </view>
 
     <!-- 搜索栏 -->
@@ -20,12 +24,15 @@
       <uni-swipe-action>
         <uni-swipe-action-item
           v-for="item in displayUsers"
-          :key="item.user_id"
           :id="'user-' + item.user_id"
+          :key="item.user_id"
           :options="swipeOptions"
           @click="handleSwipeClick($event, item)"
         >
-          <view class="user-item" @click="viewUserDetail(item)">
+          <view
+            class="user-item"
+            @click="viewUserDetail(item)"
+          >
             <image
               :src="item.avatar_url || DEFAULT_AVATAR"
               class="user-avatar"
@@ -33,8 +40,12 @@
             />
 
             <view class="user-info">
-              <text class="user-name">{{ item.nickname }}</text>
-              <text class="user-phone">{{ formatPhone(item.phone_number) }}</text>
+              <text class="user-name">
+                {{ item.nickname }}
+              </text>
+              <text class="user-phone">
+                {{ formatPhone(item.phone_number) }}
+              </text>
 
               <view class="user-meta">
                 <text class="join-time">
@@ -46,8 +57,12 @@
                   class="unchecked-badge"
                   @click.stop="showUncheckedDetail(item)"
                 >
-                  <text class="badge-icon">⚠️</text>
-                  <text class="badge-text">{{ item.unchecked_count }}</text>
+                  <text class="badge-icon">
+                    ⚠️
+                  </text>
+                  <text class="badge-text">
+                    {{ item.unchecked_count }}
+                  </text>
                 </view>
               </view>
             </view>
@@ -56,27 +71,50 @@
       </uni-swipe-action>
 
       <!-- 空状态 -->
-      <view v-if="displayUsers.length === 0 && !loading" class="empty-state">
-        <text class="empty-text">{{ EMPTY_MESSAGES.NO_USERS }}</text>
+      <view
+        v-if="displayUsers.length === 0 && !loading"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          {{ EMPTY_MESSAGES.NO_USERS }}
+        </text>
       </view>
 
       <!-- 加载更多 -->
-      <view v-if="loading" class="loading-more">
+      <view
+        v-if="loading"
+        class="loading-more"
+      >
         <uni-load-more :status="loadMoreStatus" />
       </view>
     </view>
 
     <!-- 底部悬浮按钮 -->
-    <view class="floating-add-btn" @click="addUsers">
-      <text class="add-icon">+</text>
+    <view
+      class="floating-add-btn"
+      @click="addUsers"
+    >
+      <text class="add-icon">
+        +
+      </text>
     </view>
 
     <!-- 未完成打卡详情弹窗 -->
-    <uni-popup ref="uncheckedPopup" type="bottom">
+    <uni-popup
+      ref="uncheckedPopup"
+      type="bottom"
+    >
       <view class="unchecked-detail-panel">
         <view class="panel-header">
-          <text class="panel-title">未完成打卡</text>
-          <text class="panel-close" @click="closeUncheckedDetail">✕</text>
+          <text class="panel-title">
+            未完成打卡
+          </text>
+          <text
+            class="panel-close"
+            @click="closeUncheckedDetail"
+          >
+            ✕
+          </text>
         </view>
 
         <view class="unchecked-list">
@@ -85,8 +123,12 @@
             :key="item.rule_id"
             class="unchecked-item"
           >
-            <text class="item-name">{{ item.rule_name }}</text>
-            <text class="item-time">计划时间：{{ item.planned_time }}</text>
+            <text class="item-name">
+              {{ item.rule_name }}
+            </text>
+            <text class="item-time">
+              计划时间：{{ item.planned_time }}
+            </text>
           </view>
         </view>
       </view>
