@@ -2,63 +2,71 @@
   <view class="home-solo-container">
     <!-- 顶部问候区域 -->
     <view class="greeting-header">
-      <view class="greeting-card">
-        <view class="greeting-content">
-          <view class="user-info-row">
-            <view class="user-avatar-section">
-              <image 
-                :src="userInfo?.avatarUrl || 'https://s.coze.cn/image/dhcVCXur50w/'" 
-                class="user-avatar-img"
-                mode="aspectFill"
-              />
-              <view class="user-greeting">
-                <text class="greeting-text">
-                  {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
-                </text>
-                <text class="date-text">
-                  {{ getCurrentDate() }}
-                </text>
+      <uni-card 
+        class="greeting-card"
+        :is-shadow="false"
+        :is-full="false"
+        :border="false"
+        padding="40rpx"
+      >
+        <template v-slot:default>
+          <view class="greeting-content">
+            <view class="user-info-row">
+              <view class="user-avatar-section">
+                <image 
+                  :src="userInfo?.avatarUrl || 'https://s.coze.cn/image/dhcVCXur50w/'" 
+                  class="user-avatar-img"
+                  mode="aspectFill"
+                />
+                <view class="user-greeting">
+                  <text class="greeting-text">
+                    {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
+                  </text>
+                  <text class="date-text">
+                    {{ getCurrentDate() }}
+                  </text>
+                </view>
+              </view>
+              <view class="weather-info">
+                <view class="weather-content">
+                  <text class="weather-icon">
+                    ☀️
+                  </text>
+                  <text class="weather-text">
+                    晴 18°C
+                  </text>
+                </view>
               </view>
             </view>
-            <view class="weather-info">
-              <view class="weather-content">
-                <text class="weather-icon">
-                  ☀️
+            
+            <!-- 角色切换标签 -->
+            <view class="role-tabs">
+              <view 
+                :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
+                @click="switchRole('checkin')"
+              >
+                <text class="tab-icon">
+                  🕐
                 </text>
-                <text class="weather-text">
-                  晴 18°C
+                <text class="tab-text">
+                  今日打卡
+                </text>
+              </view>
+              <view 
+                :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
+                @click="switchRole('supervisor')"
+              >
+                <text class="tab-icon">
+                  🛡️
+                </text>
+                <text class="tab-text">
+                  当前监护
                 </text>
               </view>
             </view>
           </view>
-          
-          <!-- 角色切换标签 -->
-          <view class="role-tabs">
-            <view 
-              :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
-              @click="switchRole('checkin')"
-            >
-              <text class="tab-icon">
-                🕐
-              </text>
-              <text class="tab-text">
-                今日打卡
-              </text>
-            </view>
-            <view 
-              :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
-              @click="switchRole('supervisor')"
-            >
-              <text class="tab-icon">
-                🛡️
-              </text>
-              <text class="tab-text">
-                当前监护
-              </text>
-            </view>
-          </view>
-        </view>
-      </view>
+        </template>
+      </uni-card>
     </view>
 
     <!-- 当前任务悬浮按钮 -->
@@ -85,72 +93,100 @@
 
     <!-- 今日打卡概览 -->
     <view class="checkin-overview-section">
-      <view class="section-header">
-        <text class="section-title">
-          今日打卡概览
-        </text>
-        <text class="section-subtitle">
-          完成打卡，让关爱无处不在
-        </text>
-        <view
-          class="refresh-btn"
-          :class="{ loading: checkinStore.isLoading }"
-          @click="refreshCheckinData"
-        >
-          <text class="refresh-icon">
-            {{ checkinStore.isLoading ? '⏳' : '🔄' }}
-          </text>
-        </view>
-      </view>
+      <uni-section 
+        title="今日打卡概览" 
+        sub-title="完成打卡，让关爱无处不在"
+        type="line"
+      >
+        <template v-slot:right>
+          <view
+            class="refresh-btn"
+            :class="{ loading: checkinStore.isLoading }"
+            @click="refreshCheckinData"
+          >
+            <text class="refresh-icon">
+              {{ checkinStore.isLoading ? '⏳' : '🔄' }}
+            </text>
+          </view>
+        </template>
+      </uni-section>
       
       <view class="overview-cards">
-        <view class="overview-card pending-checkin">
-          <text class="card-title">
-            待打卡
-          </text>
-          <text class="card-number">
-            {{ pendingCheckinCount }}
-          </text>
-          <text class="card-desc">
-            项目
-          </text>
-        </view>
+        <uni-card 
+          class="overview-card pending-checkin"
+          :is-shadow="true"
+          :border="false"
+          padding="16rpx 12rpx"
+        >
+          <view class="card-content">
+            <text class="card-title">
+              待打卡
+            </text>
+            <text class="card-number">
+              {{ pendingCheckinCount }}
+            </text>
+            <text class="card-desc">
+              项目
+            </text>
+          </view>
+        </uni-card>
         
-        <view class="overview-card completed-checkin">
-          <text class="card-title">
-            已完成
-          </text>
-          <text class="card-number">
-            {{ completedCheckinCount }}
-          </text>
-          <text class="card-desc">
-            项目
-          </text>
-        </view>
+        <uni-card 
+          class="overview-card completed-checkin"
+          :is-shadow="true"
+          :border="false"
+          padding="16rpx 12rpx"
+        >
+          <view class="card-content">
+            <text class="card-title">
+              已完成
+            </text>
+            <text class="card-number">
+              {{ completedCheckinCount }}
+            </text>
+            <text class="card-desc">
+              项目
+            </text>
+          </view>
+        </uni-card>
         
-        <view class="overview-card missed-checkin">
-          <text class="card-title">
-            已错过
-          </text>
-          <text class="card-number">
-            {{ missedCheckinCount }}
-          </text>
-          <text class="card-desc">
-            项目
-          </text>
-        </view>
+        <uni-card 
+          class="overview-card missed-checkin"
+          :is-shadow="true"
+          :border="false"
+          padding="16rpx 12rpx"
+        >
+          <view class="card-content">
+            <text class="card-title">
+              已错过
+            </text>
+            <text class="card-number">
+              {{ missedCheckinCount }}
+            </text>
+            <text class="card-desc">
+              项目
+            </text>
+          </view>
+        </uni-card>
         
-        <view class="overview-card completion-rate">
-          <text class="card-title">
-            完成率
-          </text>
-          <text class="card-number">
-            {{ completionRate }}%
-          </text>
-          <text class="card-desc">
-            今日目标
-          </text>
-        </view>
+        <uni-card 
+          class="overview-card completion-rate"
+          :is-shadow="true"
+          :border="false"
+          padding="16rpx 12rpx"
+        >
+          <view class="card-content">
+            <text class="card-title">
+              完成率
+            </text>
+            <text class="card-number">
+              {{ completionRate }}%
+            </text>
+            <text class="card-desc">
+              今日目标
+            </text>
+          </view>
+        </uni-card>
       </view>
     </view>
 
@@ -636,20 +672,21 @@ uni.$on('checkinRulesUpdated', (data) => {
   gap: 12rpx;
   overflow-x: auto;
   padding-bottom: 4rpx;
+  
+  ::v-deep .overview-card {
+    min-width: 140rpx;
+    flex: 1;
+    margin: 0;
+    border-radius: $uni-radius-base;
+  }
 }
 
-.overview-card {
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-base;
-  padding: 16rpx 12rpx;
+.card-content {
   text-align: center;
-  box-shadow: $uni-shadow-sm;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 140rpx;
-  flex: 1;
 }
 
 .card-title {
@@ -675,19 +712,19 @@ uni.$on('checkinRulesUpdated', (data) => {
   color: $uni-secondary-color;
 }
 
-.pending-checkin {
+::v-deep .pending-checkin {
   border-top: 4rpx solid $uni-primary;
 }
 
-.completed-checkin {
+::v-deep .completed-checkin {
   border-top: 4rpx solid $uni-success;
 }
 
-.missed-checkin {
+::v-deep .missed-checkin {
   border-top: 4rpx solid $uni-error;
 }
 
-.completion-rate {
+::v-deep .completion-rate {
   border-top: 4rpx solid $uni-info;
 }
 
