@@ -25,7 +25,10 @@ export const useUserStore = defineStore('user', {
         role: null,
         phone: null,
         wechatOpenid: null,
-        isVerified: false
+        isVerified: false,
+        // 社区角色信息：支持用户在多个社区担任不同角色
+        communityRoles: {},  // { communityId: role } 格式
+        communityRole: null  // 保持向后兼容，存储当前社区的角色
       },
       // 缓存数据
       cache: {
@@ -37,7 +40,8 @@ export const useUserStore = defineStore('user', {
     // 运行时状态
     isLoggedIn: false,
     isLoading: false,
-    currentProcessingCode: null
+    currentProcessingCode: null,
+    currentCommunityId: null
   }
   
   // 开发模式下添加保护，防止直接修改 userState
@@ -88,19 +92,40 @@ export const useUserStore = defineStore('user', {
       return state.userState.profile.role === 4 || state.userState.profile.role === 'community_admin'
     },
     
+    // 社区主管：需要检查用户在当前社区的角色
     isCommunityManager: (state) => {
-      // 社区主管：需要检查用户的 communityRole 字段
-      // communityRole 由后端API返回，存储在 profile 中
+      // 优先检查当前社区角色，如果没有指定社区则检查默认角色
+      const currentCommunityId = state.currentCommunityId
+      if (currentCommunityId && state.userState.profile.communityRoles) {
+        const roleInCurrentCommunity = state.userState.profile.communityRoles[currentCommunityId]
+        return roleInCurrentCommunity === 'manager'
+      }
+      // 向后兼容：如果未使用新结构，仍检查旧字段
       return state.userState.profile.communityRole === 'manager'
     },
     
     isCommunityStaff: (state) => {
-      // 社区专员：需要检查用户的 communityRole 字段
+      // 社区专员：需要检查用户在当前社区的角色
+      const currentCommunityId = state.currentCommunityId
+      if (currentCommunityId && state.userState.profile.communityRoles) {
+        const roleInCurrentCommunity = state.userState.profile.communityRoles[currentCommunityId]
+        return roleInCurrentCommunity === 'staff'
+      }
+      // 向后兼容：如果未使用新结构，仍检查旧字段
       return state.userState.profile.communityRole === 'staff'
     },
     
     hasCommunityPermission: (state) => {
       // 判断是否有任何级别的社区管理权限
+      const currentCommunityId = state.currentCommunityId
+      if (currentCommunityId && state.userState.profile.communityRoles) {
+        const roleInCurrentCommunity = state.userState.profile.communityRoles[currentCommunityId]
+        return state.userState.profile.role === 4 || 
+               state.userState.profile.role === 'community_admin' ||
+               roleInCurrentCommunity === 'manager' ||
+               roleInCurrentCommunity === 'staff'
+      }
+      // 向后兼容
       return state.userState.profile.role === 4 || 
              state.userState.profile.role === 'community_admin' ||
              state.userState.profile.communityRole === 'manager' ||
@@ -203,7 +228,10 @@ export const useUserStore = defineStore('user', {
           role: null,
           phone: null,
           wechatOpenid: null,
-          isVerified: false
+          isVerified: false,
+          // 社区角色信息：支持用户在多个社区担任不同角色
+          communityRoles: {},
+          communityRole: null
         }
       }
       
@@ -252,7 +280,9 @@ export const useUserStore = defineStore('user', {
                 role: null,
                 phone: null,
                 wechatOpenid: null,
-                isVerified: false
+                isVerified: false,
+                communityRoles: {},
+                communityRole: null
               },
               cache: savedState.cache || {
                 checkinData: null,
@@ -332,6 +362,9 @@ export const useUserStore = defineStore('user', {
           phone: apiResponse.data?.phoneNumber || apiResponse.data?.phone_number,
           wechatOpenid: apiResponse.data?.wechatOpenid || apiResponse.data?.wechat_openid,
           isVerified: apiResponse.data?.is_verified || false,
+          // 确保社区角色信息存在
+          communityRoles: apiResponse.data?.communityRoles || {},
+          communityRole: apiResponse.data?.communityRole || null,
           // 保存所有返回的用户信息字段
           ...apiResponse.data
         }
@@ -555,6 +588,34 @@ export const useUserStore = defineStore('user', {
       const target = this.userState._target || this.userState
       target.profile.role = role
       await this.updateUserInfo({ role })
+    },
+    
+    // 设置当前社区ID
+    setCurrentCommunityId(communityId) {
+      // 更新用户状态中的当前社区ID
+      this.currentCommunityId = communityId
+      const target = this.userState._target || this.userState
+      target.profile.communityRole = target.profile.communityRoles?.[communityId] || null
+    },
+    
+    // 更新用户在特定社区的角色
+    updateCommunityRole(communityId, role) {
+      const target = this.userState._target || this.userState
+      if (!target.profile.communityRoles) {
+        target.profile.communityRoles = {}
+      }
+      target.profile.communityRoles[communityId] = role
+      // 如果当前社区是此社区，也更新当前社区的角色
+      if (target.profile.currentCommunityId === communityId) {
+        target.profile.communityRole = role
+      }
+      this._persistUserState()
+    },
+    
+    // 获取用户在指定社区的角色
+    getRoleInCommunity(communityId) {
+      const target = this.userState._target || this.userState
+      return target.profile.communityRoles?.[communityId] || null
     },
     
     // 缓存管理 - 用于 checkinData 和临时用户信息
