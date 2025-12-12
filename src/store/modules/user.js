@@ -84,8 +84,8 @@ export const useUserStore = defineStore('user', {
     
     // 社区管理权限判断
     isSuperAdmin: (state) => {
-      // super_admin 的 role 值为 4（数字类型）
-      return state.userState.profile.role === 4
+      // super_admin 的 role 值为 4（数字类型）或 'community_admin'（字符串类型）
+      return state.userState.profile.role === 4 || state.userState.profile.role === 'community_admin'
     },
     
     isCommunityManager: (state) => {
@@ -102,6 +102,7 @@ export const useUserStore = defineStore('user', {
     hasCommunityPermission: (state) => {
       // 判断是否有任何级别的社区管理权限
       return state.userState.profile.role === 4 || 
+             state.userState.profile.role === 'community_admin' ||
              state.userState.profile.communityRole === 'manager' ||
              state.userState.profile.communityRole === 'staff'
     },

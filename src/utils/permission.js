@@ -88,7 +88,7 @@ export const hasFeaturePermission = (featureName, userRole = null) => {
  */
 export const canManageCommunity = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.SUPER_ADMIN
+  return role === UserRole.SUPER_ADMIN || role === 'community_admin'
 }
 
 /**
@@ -98,7 +98,8 @@ export const canManageCommunity = (userRole = null) => {
  */
 export const canManageStaff = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.SUPER_ADMIN || role === UserRole.COMMUNITY_MANAGER
+  return (role === UserRole.SUPER_ADMIN || role === 'community_admin') || 
+         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager')
 }
 
 /**
@@ -108,9 +109,8 @@ export const canManageStaff = (userRole = null) => {
  */
 export const canManageUsers = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.SUPER_ADMIN || 
-         role === UserRole.COMMUNITY_MANAGER || 
-         role === UserRole.COMMUNITY_STAFF
+  return (role === UserRole.SUPER_ADMIN || role === 'community_admin') || 
+         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager')
 }
 
 /**
@@ -120,7 +120,8 @@ export const canManageUsers = (userRole = null) => {
  */
 export const isSuperAdmin = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.SUPER_ADMIN
+  // 后端返回的超级管理员角色可能是 'community_admin' 字符串，也可能是 'super_admin' 字符串
+  return role === UserRole.SUPER_ADMIN || role === 'community_admin'
 }
 
 /**
