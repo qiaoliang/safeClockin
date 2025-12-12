@@ -142,7 +142,7 @@ export const request = (options) => {
     // 获取 token，优先从 storage 获取
     // 完全依赖 userStore 获取 token
     const userStore = useUserStore()
-    const token = userStore.token
+    let token = userStore.token
     const fullUrl = baseURL + options.url
     
     if (!(options && options.suppressErrorLog)) {
