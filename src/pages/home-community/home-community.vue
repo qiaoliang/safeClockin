@@ -1,5 +1,13 @@
 <template>
   <view class="home-community-container">
+    <!-- 顶部操作栏 -->
+    <view class="header-bar">
+      <text class="page-title">数据看板</text>
+      <view class="header-actions" @click="showQuickMenu">
+        <text class="action-btn">管理</text>
+      </view>
+    </view>
+
     <!-- 顶部用户信息 -->
     <view class="user-info-section">
       <view class="user-avatar">
@@ -133,6 +141,43 @@ const issuesList = ref([
 // 计算属性：用户信息
 const userInfo = computed(() => userStore.userInfo)
 
+// 计算属性：是否是社区主管
+const isCommunityManager = computed(() => userStore.isCommunityManager)
+
+// 显示快捷管理菜单
+const showQuickMenu = () => {
+  const items = ['用户管理']
+  
+  // manager 可以看到工作人员管理
+  if (isCommunityManager.value) {
+    items.unshift('工作人员管理')
+  }
+  
+  items.push('更多功能...')
+  
+  uni.showActionSheet({
+    itemList: items,
+    success: (res) => {
+      const index = res.tapIndex
+      
+      if (items[index] === '用户管理') {
+        uni.navigateTo({
+          url: '/pages/community-user-manage/community-user-manage'
+        })
+      } else if (items[index] === '工作人员管理') {
+        uni.navigateTo({
+          url: '/pages/community-staff-manage/community-staff-manage'
+        })
+      } else if (items[index] === '更多功能...') {
+        // 跳转到个人中心
+        uni.switchTab({
+          url: '/pages/profile/profile'
+        })
+      }
+    }
+  })
+}
+
 // 跳转到未打卡详情
 const goToUncheckedDetail = () => {
   uni.navigateTo({
@@ -153,10 +198,39 @@ onMounted(() => {
 .home-community-container {
   min-height: 100vh;
   background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
-  padding: $uni-radius-xxl $uni-font-size-xl 80rpx;
+  padding: 0 0 80rpx;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  background: #FAE9DB;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  
+  .page-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .header-actions {
+    .action-btn {
+      padding: 12rpx 24rpx;
+      background: #FF6B35;
+      color: #fff;
+      border-radius: 32rpx;
+      font-size: 28rpx;
+      font-weight: 500;
+    }
+  }
 }
 
 .user-info-section {
+  margin-top: 24rpx;
+  margin-left: 32rpx;
+  margin-right: 32rpx;
   display: flex;
   align-items: center;
   margin-bottom: $uni-radius-xxl;

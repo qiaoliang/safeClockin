@@ -82,6 +82,30 @@ export const useUserStore = defineStore('user', {
     isSupervisor: (state) => state.userState.profile.role === 'supervisor',
     isCommunityWorker: (state) => state.userState.profile.role === 'community',
     
+    // 社区管理权限判断
+    isSuperAdmin: (state) => {
+      // super_admin 的 role 值为 4（数字类型）
+      return state.userState.profile.role === 4
+    },
+    
+    isCommunityManager: (state) => {
+      // 社区主管：需要检查用户的 communityRole 字段
+      // communityRole 由后端API返回，存储在 profile 中
+      return state.userState.profile.communityRole === 'manager'
+    },
+    
+    isCommunityStaff: (state) => {
+      // 社区专员：需要检查用户的 communityRole 字段
+      return state.userState.profile.communityRole === 'staff'
+    },
+    
+    hasCommunityPermission: (state) => {
+      // 判断是否有任何级别的社区管理权限
+      return state.userState.profile.role === 4 || 
+             state.userState.profile.communityRole === 'manager' ||
+             state.userState.profile.communityRole === 'staff'
+    },
+    
     // 认证状态
     isTokenValid: (state) => {
       const { token, expiresAt } = state.userState.auth

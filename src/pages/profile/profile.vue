@@ -159,6 +159,32 @@
       </view>
     </view>
     
+    <!-- 社区管理菜单组 -->
+    <view
+      v-if="communityManagementItems.length > 0"
+      class="menu-section"
+    >
+      <view class="menu-group-title">
+        社区管理
+      </view>
+      <view
+        v-for="item in communityManagementItems"
+        :key="item.name"
+        class="menu-item"
+        @click="navigateTo(item.path)"
+      >
+        <view class="menu-icon">
+          {{ item.icon }}
+        </view>
+        <text class="menu-text">
+          {{ item.name }}
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
+      </view>
+    </view>
+    
     <!-- 其他设置 -->
     <view class="menu-section">
       <view
@@ -211,6 +237,37 @@ import { useUserStore } from '@/store/modules/user'
 import { routeGuard } from '@/utils/router'
 
 const userStore = useUserStore()
+
+// 计算属性：社区管理菜单项 - 根据角色动态生成
+const communityManagementItems = computed(() => {
+  const items = []
+  
+  // super_admin (role=4) 可以看到所有功能
+  if (userStore.isSuperAdmin) {
+    items.push(
+      { name: '社区列表', icon: '🏘️', path: '/pages/community-manage/community-manage' },
+      { name: '工作人员管理', icon: '👥', path: '/pages/community-staff-manage/community-staff-manage' },
+      { name: '用户管理', icon: '👤', path: '/pages/community-user-manage/community-user-manage' },
+      { name: '社区合并', icon: '🔗', path: '/pages/community-merge/community-merge' },
+      { name: '社区拆分', icon: '✂️', path: '/pages/community-split/community-split' }
+    )
+  }
+  // community_manager 可以管理工作人员和用户
+  else if (userStore.isCommunityManager) {
+    items.push(
+      { name: '工作人员管理', icon: '👥', path: '/pages/community-staff-manage/community-staff-manage' },
+      { name: '用户管理', icon: '👤', path: '/pages/community-user-manage/community-user-manage' }
+    )
+  }
+  // community_staff 只能管理用户
+  else if (userStore.isCommunityStaff) {
+    items.push(
+      { name: '用户管理', icon: '👤', path: '/pages/community-user-manage/community-user-manage' }
+    )
+  }
+  
+  return items
+})
 
 // 计算属性：用户信息 - 添加防御性验证
 const userInfo = computed(() => {
@@ -474,6 +531,15 @@ onShow(() => {
   margin-bottom: 32rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
   overflow: hidden;
+}
+
+.menu-group-title {
+  padding: 24rpx 48rpx 16rpx;
+  font-size: 28rpx;
+  color: #999;
+  font-weight: 500;
+  background: #FAFAFA;
+  border-bottom: 2rpx solid #F0F0F0;
 }
 
 .menu-item {
