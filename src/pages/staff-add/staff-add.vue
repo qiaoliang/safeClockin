@@ -115,6 +115,8 @@ import {
   SUCCESS_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission } from '@/utils/permission'
+import { PagePath } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
 
@@ -274,6 +276,12 @@ const inviteRegister = () => {
 }
 
 onLoad((options) => {
+  // 页面权限检查
+  if (!checkPagePermission(PagePath.STAFF_ADD)) {
+    return
+  }
+  console.log('[添加工作人员] 权限检查通过')
+  
   if (options.communityId) {
     currentCommunityId.value = options.communityId
   }

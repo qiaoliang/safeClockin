@@ -69,6 +69,8 @@ import {
   ERROR_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission } from '@/utils/permission'
+import { PagePath } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
 
@@ -136,6 +138,12 @@ const viewCommunity = (community) => {
 }
 
 onLoad((options) => {
+  // 页面权限检查
+  if (!checkPagePermission(PagePath.STAFF_DETAIL)) {
+    return
+  }
+  console.log('[工作人员详情] 权限检查通过')
+  
   if (options.userId) {
     currentCommunityId.value = options.communityId || ''
     loadStaffDetail(options.userId)

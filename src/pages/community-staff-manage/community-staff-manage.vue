@@ -81,8 +81,9 @@
       </view>
     </view>
 
-    <!-- 底部悬浮按钮 -->
+    <!-- 底部悬浮按钮 - 仅有添加权限的用户可见 -->
     <view
+      v-if="hasFeaturePermission(FeaturePermission.ADD_STAFF)"
       class="floating-add-btn"
       @click="addStaff"
     >
@@ -95,7 +96,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { onPullDownRefresh } from '@dcloudio/uni-app'
+import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
 import { formatPhone, formatDate } from '@/utils/community'
 import {
@@ -107,8 +108,18 @@ import {
   CONFIRM_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission, hasFeaturePermission } from '@/utils/permission'
+import { PagePath, FeaturePermission } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
+
+// 页面权限检查
+onLoad(() => {
+  if (!checkPagePermission(PagePath.COMMUNITY_STAFF_MANAGE)) {
+    return
+  }
+  console.log('[工作人员管理] 权限检查通过')
+})
 
 // 当前社区ID
 const currentCommunityId = ref('')

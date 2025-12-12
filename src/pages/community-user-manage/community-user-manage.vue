@@ -89,8 +89,9 @@
       </view>
     </view>
 
-    <!-- 底部悬浮按钮 -->
+    <!-- 底部悬浮按钮 - 仅有添加权限的用户可见 -->
     <view
+      v-if="hasFeaturePermission(FeaturePermission.ADD_USER)"
       class="floating-add-btn"
       @click="addUsers"
     >
@@ -149,8 +150,29 @@ import {
   SUCCESS_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission, hasFeaturePermission } from '@/utils/permission'
+import { PagePath, FeaturePermission } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
+
+// 页面权限检查
+onLoad(async (options) => {
+  if (!checkPagePermission(PagePath.COMMUNITY_USER_MANAGE)) {
+    return
+  }
+  console.log('[社区用户管理] 权限检查通过')
+  
+  // 处理页面参数
+  if (options.communityId) {
+    // 从 store 中获取社区信息
+    const community = communityStore.communities.find(c => c.id === options.communityId)
+    if (community) {
+      currentCommunity.value = community
+      // 加载该社区的用户列表
+      await loadUserList(true)
+    }
+  }
+})
 
 // 当前社区
 const currentCommunity = ref(null)

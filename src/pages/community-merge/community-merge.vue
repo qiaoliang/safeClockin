@@ -90,6 +90,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
 import { debounce } from '@/utils/community'
 import {
@@ -100,8 +101,18 @@ import {
   CONFIRM_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission } from '@/utils/permission'
+import { PagePath } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
+
+// 页面权限检查
+onLoad(() => {
+  if (!checkPagePermission(PagePath.COMMUNITY_MERGE)) {
+    return
+  }
+  console.log('[社区合并] 权限检查通过')
+})
 
 // 搜索关键词
 const searchKeyword = ref('')

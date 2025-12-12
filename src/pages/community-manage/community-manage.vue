@@ -3,6 +3,7 @@
     <!-- 顶部标题栏 -->
     <view class="header-bar">
       <view
+        v-if="hasFeaturePermission(FeaturePermission.MERGE_COMMUNITY) || hasFeaturePermission(FeaturePermission.SPLIT_COMMUNITY)"
         class="header-left"
         @click="showMoreMenu"
       >
@@ -90,8 +91,9 @@
       </view>
     </view>
 
-    <!-- 底部悬浮按钮 -->
+    <!-- 底部悬浮按钮 - 仅有创建权限的用户可见 -->
     <view
+      v-if="hasFeaturePermission(FeaturePermission.CREATE_COMMUNITY)"
       class="floating-add-btn"
       @click="createCommunity"
     >
@@ -160,7 +162,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
 import { formatDate } from '@/utils/community'
 import {
@@ -171,8 +173,20 @@ import {
   CONFIRM_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission } from '@/utils/permission'
+import { PagePath, FeaturePermission } from '@/constants/permissions'
+import { hasFeaturePermission } from '@/utils/permission'
 
 const communityStore = useCommunityStore()
+
+// 页面权限检查
+onLoad(() => {
+  if (!checkPagePermission(PagePath.COMMUNITY_MANAGE)) {
+    return
+  }
+  // 页面权限检查通过,继续初始化
+  console.log('[社区管理] 权限检查通过,开始加载数据')
+})
 
 // 筛选状态
 const filterStatus = ref(['all'])

@@ -105,6 +105,8 @@ import {
   SUCCESS_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
+import { checkPagePermission } from '@/utils/permission'
+import { PagePath } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()
 
