@@ -337,7 +337,9 @@ const inviteForRule = async (rule) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/uni.scss';
+
 .rule-setting-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FAE9DB 0%, #F8E0D0 100%);
@@ -364,10 +366,7 @@ const inviteForRule = async (rule) => {
 }
 
 .list-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #624731;
-  margin-bottom: 32rpx;
+  @include section-title;
 }
 
 .rule-item {

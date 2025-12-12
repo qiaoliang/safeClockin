@@ -86,22 +86,13 @@
     </button>
 
     <!-- 功能快捷入口 -->
-    <uni-grid :column="4" :show-border="false" :square="false">
-        <uni-grid-item>
-          <view class="grid-item-content" @click="handleInviteGuardian">
-            <view class="grid-icon-wrapper" style="background: #6C9EFF;">
-              <text class="grid-icon">👥</text>
-            </view>
-            <text class="grid-text">邀请监护</text>
-          </view>
-        </uni-grid-item>
-        
+    <uni-grid :column="3" :show-border="false" :square="false">        
         <uni-grid-item>
           <view class="grid-item-content" @click="handleSetRules">
             <view class="grid-icon-wrapper" style="background: #B37FEF;">
               <text class="grid-icon">⚙️</text>
             </view>
-            <text class="grid-text">设置规则</text>
+            <text class="grid-text">查看规则</text>
           </view>
         </uni-grid-item>
         
@@ -125,16 +116,15 @@
       </uni-grid>
 
     <!-- 当前任务列表 -->
-    <!-- 查看今天日程 -->
     <uni-card>
-      <view class="section-header-row">
-        <text class="section-title-text">当前任务</text>
-        <view class="section-link" @click="goToCheckinList">
-          <text class="link-text">点击查看今天日程</text>
-          <text class="link-arrow">›</text>
-        </view>
-      </view>
-      
+        <uni-section class="mb-10" title="当前任务">
+            <template v-slot:right>
+            <view class="section-link" @click="goToCheckinList">
+                <text class="link-text">点击查看今天活动</text>
+                <text class="link-arrow">›</text>
+            </view>
+            </template>
+        </uni-section>
     <uni-list :border="false">
         <uni-list-item 
           v-for="task in nearbyTasks" 
@@ -423,7 +413,7 @@ const handleInviteGuardian = () => {
 
 const handleSetRules = () => {
   uni.navigateTo({
-    url: '/pages/add-rule/add-rule'
+    url: '/pages/rule-setting/rule-setting'
   })
 }
 
@@ -516,41 +506,16 @@ uni.$on('checkinRulesUpdated', (data) => {
 <style lang="scss" scoped>
 @import '@/uni.scss';
 
-.home-solo-container {
-  min-height: 100vh;
-  @include bg-gradient;
-  padding: 48rpx 32rpx 80rpx;
+/* 工具类 */
+.mb-10 {
+  margin-bottom: $uni-font-size-base;
 }
 
-.greeting-header {
-  margin-bottom: 32rpx;
-  
-  ::v-deep .greeting-card {
-    background: #ffffff !important;
-    border-radius: $uni-radius-xl !important;
-    box-shadow: $uni-shadow-base !important;
-    animation: slideUp 0.5s ease-out;
-    margin: 0 !important;
-    
-    .uni-card {
-      background: #ffffff !important;
-      box-shadow: none !important;
-    }
-    
-    .uni-card__content {
-      background: #ffffff !important;
-    }
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(60rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+/* uni-section 标题样式自定义 */
+::v-deep .uni-section {
+  .uni-section__content-title {
+    color: $uni-text-base;
+    font-size: $uni-font-size-base;
   }
 }
 
@@ -649,110 +614,6 @@ uni.$on('checkinRulesUpdated', (data) => {
   font-weight: 500;
 }
 
-.checkin-overview-section {
-  margin-bottom: 48rpx;
-}
-
-.refresh-btn {
-  padding: 4rpx 16rpx;
-  background: rgba(244, 130, 36, 0.1);
-  border-radius: 16rpx;
-  transition: all 0.3s ease;
-}
-
-.refresh-btn:active {
-  transform: scale(0.95);
-  background: rgba(244, 130, 36, 0.2);
-}
-
-.refresh-btn.loading {
-  opacity: 0.6;
-}
-
-.refresh-icon {
-  font-size: $uni-font-size-sm;
-}
-
-.overview-cards {
-  display: flex;
-  gap: 12rpx;
-  overflow-x: auto;
-  padding-bottom: 4rpx;
-  
-  ::v-deep .overview-card {
-    min-width: 140rpx;
-    flex: 1;
-    margin: 0 !important;
-    border-radius: $uni-radius-base !important;
-    
-    .uni-card {
-      background: $uni-bg-color-white !important;
-      box-shadow: $uni-shadow-sm !important;
-    }
-    
-    &.pending-checkin {
-      border-top: 4rpx solid $uni-primary !important;
-    }
-    
-    &.completed-checkin {
-      border-top: 4rpx solid $uni-success !important;
-    }
-    
-    &.missed-checkin {
-      border-top: 4rpx solid $uni-error !important;
-    }
-    
-    &.completion-rate {
-      border-top: 4rpx solid $uni-info !important;
-    }
-  }
-}
-
-.card-content {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-title {
-  display: block;
-  font-size: 18rpx;
-  color: $uni-base-color;
-  margin-bottom: 6rpx;
-  font-weight: 500;
-}
-
-.card-number {
-  display: block;
-  font-size: $uni-font-size-sm;
-  font-weight: bold;
-  color: $uni-tabbar-color;
-  margin-bottom: 2rpx;
-  line-height: 1;
-}
-
-.card-desc {
-  display: block;
-  font-size: 16rpx;
-  color: $uni-secondary-color;
-}
-
-/* 当前任务悬浮按钮样式 */
-.floating-tasks-section {
-  padding: 0 0 32rpx 0;
-}
-
-/* 功能宫格区域 */
-.function-grid-section {
-  margin-bottom: 48rpx;
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-lg;
-  padding: 24rpx 16rpx;
-  box-shadow: $uni-shadow-sm;
-}
-
 .grid-item-content {
   display: flex;
   flex-direction: column;
@@ -780,24 +641,6 @@ uni.$on('checkinRulesUpdated', (data) => {
   color: $uni-main-color;
   text-align: center;
   line-height: 1.5;
-}
-
-/* 当前任务列表区域 */
-.current-tasks-section {
-  margin-bottom: 48rpx;
-}
-
-.section-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24rpx;
-}
-
-.section-title-text {
-  font-size: $uni-font-size-lg;
-  font-weight: 600;
-  color: $uni-main-color;
 }
 
 .section-link {

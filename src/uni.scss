@@ -100,49 +100,52 @@ $uni-black: #000000;
 $uni-white: #ffffff;
 $uni-transparent: rgba($color: #000000, $alpha: 0);
 
-/* === SafeGuard 特定间距系统 === */
-$uni-spacing-xxs: 2px;   // 极小间距
-$uni-spacing-xs: 4px;    // 小间距
-$uni-spacing-sm: 8px;    // 较小间距
-$uni-spacing-md: 12px;   // 中等间距
-$uni-spacing-base: 16px; // 基础间距
-$uni-spacing-lg: 20px;   // 较大间距
-$uni-spacing-xl: 24px;   // 大间距
-$uni-spacing-xxl: 32px;  // 超大间距
-$uni-spacing-xxxl: 48px; // 特大间距
+/* === 特定间距系统 === */
+$uni-spacing-xxs: 2rpx;   // 极小间距
+$uni-spacing-xs: 4rpx;    // 小间距
+$uni-spacing-sm: 8rpx;    // 较小间距
+$uni-spacing-md: 12rpx;   // 中等间距
+$uni-spacing-base: 16rpx; // 基础间距
+$uni-spacing-lg: 20rpx;   // 较大间距
+$uni-spacing-xl: 24rpx;   // 大间距
+$uni-spacing-xxl: 32rpx;  // 超大间距
+$uni-spacing-xxxl: 48rpx; // 特大间距
+
+// 角度
+$uni-deg-base: $uni-deg-base;
 
 // === 阴影系统 ===
 // 基础阴影
-$uni-shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.06);
-$uni-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
-$uni-shadow-base: 0 4px 16px rgba(0, 0, 0, 0.06);
-$uni-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.1);
-$uni-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
-$uni-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+$uni-shadow-xs: 0 2rpx 4rpx rgba(0, 0, 0, 0.06);
+$uni-shadow-sm: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+$uni-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+$uni-shadow-md: 0 6rpx 16rpx rgba(0, 0, 0, 0.1);
+$uni-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+$uni-shadow-xl: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
 
 // 卡片阴影
-$uni-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
-$uni-shadow-card-hover: 0 6px 16px rgba(0, 0, 0, 0.1);
+$uni-shadow-card: 0 4prx 12rpx rgba(0, 0, 0, 0.08);
+$uni-shadow-card-hover: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 
 // 主色调阴影（用于按钮等）
 $uni-shadow-primary: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-sm: 0 2px 8px rgba(244, 130, 36, 0.3);
-$uni-shadow-primary-md: 0 4px 16px rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-lg: 0 6px 20px rgba(244, 130, 36, 0.5);
-$uni-shadow-primary-xl: 0 8px 24px rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-hover: 0 12px 32px rgba(244, 130, 36, 0.5);
+$uni-shadow-primary-sm: 0 2rpx 8rpx rgba(244, 130, 36, 0.3);
+$uni-shadow-primary-md: 0 4rpx 16rpx rgba(244, 130, 36, 0.4);
+$uni-shadow-primary-lg: 0 6rpx 20rpx rgba(244, 130, 36, 0.5);
+$uni-shadow-primary-xl: 0 8rpx 24rpx rgba(244, 130, 36, 0.4);
+$uni-shadow-primary-hover: 0 12rpx 32rpx rgba(244, 130, 36, 0.5);
 
 // 功能色阴影
-$uni-shadow-success: 0 4px 12px rgba(16, 185, 129, 0.4);
-$uni-shadow-success-hover: 0 6px 16px rgba(16, 185, 129, 0.5);
-$uni-shadow-danger: 0 4px 12px rgba(239, 68, 68, 0.4);
-$uni-shadow-danger-hover: 0 6px 16px rgba(239, 68, 68, 0.5);
-$uni-shadow-danger-xl: 0 8px 24px rgba(239, 68, 68, 0.4);
-$uni-shadow-warning: 0 4px 12px rgba(245, 158, 11, 0.4);
-$uni-shadow-info: 0 8px 24px rgba(59, 130, 246, 0.4);
+$uni-shadow-success: 0 4rpx 12rpx rgba(16, 185, 129, 0.4);
+$uni-shadow-success-hover: 0 6rpx 16rpx rgba(16, 185, 129, 0.5);
+$uni-shadow-danger: 0 4rpx 12rpx rgba(239, 68, 68, 0.4);
+$uni-shadow-danger-hover: 0 6rpx 16rpx rgba(239, 68, 68, 0.5);
+$uni-shadow-danger-xl: 0 8rpx 24rpx rgba(239, 68, 68, 0.4);
+$uni-shadow-warning: 0 4rpx 12rpx rgba(245, 158, 11, 0.4);
+$uni-shadow-info: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
 
 // Focus 阴影
-$uni-shadow-focus: 0 0 0 3px rgba(244, 130, 36, 0.1);
+$uni-shadow-focus: 0 0 0 3rpx rgba(244, 130, 36, 0.1);
 
 // === 蒙版和遮罩 ===
 // 标准蒙版
@@ -192,14 +195,16 @@ $uni-font-size-h1: 56rpx;   // 28px
 $uni-font-size-h2: 64rpx;   // 32px
 $uni-font-size-h3: 72rpx;   // 36px
 
+$uni-font-weight-base: 600;
+
 // === SafeGuard 实用混入 ===
 // 主色调按钮样式
 @mixin btn-primary {
-  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
   color: $uni-white;
   border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
-  font-weight: 600;
+  font-weight: $uni-font-weight-base;
   box-shadow: $uni-shadow-primary;
   transition: all 0.3s ease;
   
@@ -215,11 +220,11 @@ $uni-font-size-h3: 72rpx;   // 36px
 
 // 成功按钮样式
 @mixin btn-success {
-  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  background: linear-gradient($$uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
   color: $uni-white;
   border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
-  font-weight: 600;
+  font-weight: $uni-font-weight-base;
   box-shadow: $uni-shadow-success;
   transition: all 0.3s ease;
   
@@ -235,11 +240,11 @@ $uni-font-size-h3: 72rpx;   // 36px
 
 // 危险按钮样式
 @mixin btn-danger {
-  background: linear-gradient(135deg, $uni-danger 0%, $uni-danger-dark 100%);
+  background: linear-gradient($$uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
   color: $uni-white;
   border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
-  font-weight: 600;
+  font-weight: $uni-font-weight-base;
   box-shadow: $uni-shadow-danger;
   transition: all 0.3s ease;
   
@@ -272,34 +277,37 @@ $uni-font-size-h3: 72rpx;   // 36px
 // 卡片样式
 @mixin card-default {
   background: $uni-bg-color-white;
-  border-radius: $uni-radius-md;
-  padding: 24rpx;
+  border-radius: $uni-radius-lg;
+  padding: $uni-spacing-xl;
   box-shadow: $uni-shadow-card;
+  align-items: center;
   transition: all 0.3s ease;
+  margin-bottom: 32rpx;
+  display: flex;
 }
 
 // 卡片渐变样式
 @mixin card-gradient {
-  background: linear-gradient(135deg, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  background: linear-gradient($$uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
   border-radius: $uni-radius-md;
-  padding: 24rpx;
+  padding: $uni-spacing-xl;
   box-shadow: $uni-shadow-card;
   transition: all 0.3s ease;
   
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1rpx);
     box-shadow: $uni-shadow-card-hover;
   }
 }
 
 // 渐变背景
 @mixin bg-gradient {
-  background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+  background: linear-gradient($$uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
 }
 
 // 浮动按钮
 @mixin floating-button {
-  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  background: linear-gradient($$uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
   box-shadow: $uni-shadow-primary-xl;
   transition: all 0.3s ease;
   animation: float 3s ease-in-out infinite;
@@ -360,10 +368,16 @@ $uni-font-size-h3: 72rpx;   // 36px
 
 // 状态栏样式
 @mixin statusbar {
-  background: linear-gradient(135deg, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+  background: linear-gradient($$uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
 }
 
 // 安全区域适配
 @mixin safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
+}
+@mixin section-title {
+  font-size: $uni-font-size-xl;
+  font-weight: $uni-font-weight-base;
+  color: $uni-tabbar-color;
+  margin-bottom: 32rpx;
 }

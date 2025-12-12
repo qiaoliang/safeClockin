@@ -390,13 +390,7 @@ onShow(() => {
 }
 
 .user-info-section {
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-lg;
-  padding: 48rpx;
-  margin-bottom: 32rpx;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  @include card-default;
 }
 
 .user-stats-section {

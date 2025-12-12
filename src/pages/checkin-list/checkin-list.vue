@@ -12,13 +12,8 @@
     </view>
 
     <!-- 打卡事项列表 -->
-    <view
-      v-if="checkinItems.length > 0"
-      class="checkin-list-section"
-    >
-      <view class="list-title">
-        今日打卡事项
-      </view>
+    <view v-if="checkinItems.length > 0" class="checkin-list-section" >
+      <view class="list-title">今日打卡事项</view>
       <view 
         v-for="item in checkinItems" 
         :key="item.rule_id" 
@@ -349,10 +344,7 @@ onMounted(() => {
 }
 
 .list-title {
-  font-size: $uni-font-size-xl;
-  font-weight: 600;
-  color: $uni-tabbar-color;
-  margin-bottom: 32rpx;
+  @include section-title;
 }
 
 .checkin-item {
