@@ -106,12 +106,19 @@
           <text class="label">
             自定义时间
           </text>
-          <uni-datetime-picker
-            v-model="formData.custom_time"
+          <picker 
+            mode="time" 
+            :value="formData.custom_time"
+            @change="onTimeChange"
             class="time-picker"
-            type="time"
-            return-type="string"
-          />
+          >
+            <view class="picker-input">
+              <text class="picker-text" :class="{ placeholder: !formData.custom_time }">
+                {{ formData.custom_time || '请选择时间' }}
+              </text>
+              <text class="picker-icon">🕐</text>
+            </view>
+          </picker>
         </view>
       </view>
 
@@ -238,9 +245,15 @@ const onTimeClick = (e) => {
   const idx = e?.currentIndex ?? e?.detail?.current ?? e
   timeIndex.value = Number(idx)
   formData.value.time_slot_type = timeIndex.value + 1
-  if (timeIndex.value === 0) formData.value.custom_time = '08:00'
-  else if (timeIndex.value === 1) formData.value.custom_time = '14:00'
-  else if (timeIndex.value === 2) formData.value.custom_time = '20:00'
+  if (timeIndex.value === 0) formData.value.custom_time = '08:00:00'
+  else if (timeIndex.value === 1) formData.value.custom_time = '14:00:00'
+  else if (timeIndex.value === 2) formData.value.custom_time = '20:00:00'
+}
+
+// 处理时间选择变化
+const onTimeChange = (e) => {
+  formData.value.custom_time = e.detail.value
+  console.log('选择的时间:', e.detail.value)
 }
 
 // 图标选项
@@ -300,7 +313,14 @@ const watchFormChanges = () => {
           timeIndex.value = fixedTs - 1
 
           const ct = typeof rule.custom_time === 'string' ? rule.custom_time : ''
-          formData.value.custom_time = fixedTs === 4 && /^\d{2}:\d{2}/.test(ct) ? ct.slice(0,5) : '08:00'
+          // 确保时间格式为 HH:mm（只包含小时和分钟）
+          let timeStr = '08:00'
+          if (fixedTs === 4 && ct) {
+            if (/^\d{2}:\d{2}/.test(ct)) {
+              timeStr = ct.slice(0, 5) // 只取 HH:mm 部分
+            }
+          }
+          formData.value.custom_time = timeStr
 
           formData.value.custom_start_date = rule.custom_start_date || ''
           formData.value.custom_end_date = rule.custom_end_date || ''
@@ -559,6 +579,35 @@ onMounted(() => {
 
 .custom-time-input {
   margin-top: $uni-font-size-base;
+}
+
+.picker-input {
+  width: 100%;
+  height: 96rpx;
+  background: #FAFAFA;
+  border: 2rpx solid #E5E5E5;
+  border-radius: $uni-radius-lg;
+  padding: 0 $uni-font-size-xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.picker-text {
+  font-size: $uni-font-size-lg;
+  color: $uni-main-color;
+  flex: 1;
+}
+
+.picker-text.placeholder {
+  color: #999999;
+}
+
+.picker-icon {
+  font-size: $uni-font-size-xl;
+  color: $uni-base-color;
+  margin-left: 16rpx;
 }
 
 .icon-selector {

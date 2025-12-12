@@ -75,6 +75,19 @@
 				rangeSeparator="至"
 			/>
 		</view>
+		<uni-section
+			:title="'仅时间选择用法：' + timeonly"
+			type="line"
+		></uni-section>
+		<view class="example-body">
+			<uni-datetime-picker
+				v-model="timeonly"
+				type="time"
+				:clear-icon="true"
+				placeholder="请选择时间"
+				:border="true"
+			/>
+		</view>
 	</view>
 </template>
 
@@ -86,6 +99,7 @@
 				datetimesingle: "2021-04-3",
 				range: ["2021-03-8", "2021-4-20"],
 				datetimerange: ["2021-03-20 20:10:10", "2021-05-10 10:10:10"],
+				timeonly: "08:00"
 			};
 		},
 
