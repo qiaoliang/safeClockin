@@ -207,7 +207,7 @@ const formData = ref({
   rule_name: '',
   frequency_type: 0, // 0-每天, 1-每周, 2-工作日, 3-自定义
   time_slot_type: 4, // 1-上午, 2-下午, 3-晚上, 4-自定义时间
-  custom_time: '08:00', // 自定义时间
+  custom_time: '08:00:00', // 自定义时间，格式必须是 HH:mm:ss
   custom_start_date: '',
   custom_end_date: '',
   icon_url: '⏰', // 默认图标

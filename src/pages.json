@@ -161,6 +161,14 @@
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/uni-ui-time/uni-ui-time",
+			"style": {
+				"navigationBarTitleText": "uni-ui time测试",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
 		}
 		
 	],

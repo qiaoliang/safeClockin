@@ -1,14 +1,11 @@
 <template>
-  <view class="home-solo-container">
     <!-- 顶部问候区域 -->
-    <view class="greeting-header">
-      <uni-card 
+    <uni-card 
         class="greeting-card"
         :is-shadow="false"
         :is-full="false"
         :border="false"
-        padding="40rpx"
-      >
+        padding="40rpx">
         <template v-slot:default>
           <view class="greeting-content">
             <view class="user-info-row">
@@ -67,11 +64,9 @@
           </view>
         </template>
       </uni-card>
-    </view>
 
     <!-- 当前任务悬浮按钮 -->
-    <view class="floating-tasks-section">
-      <button 
+    <button 
         class="floating-tasks-btn"
         @click="goToCheckinList"
       >
@@ -88,107 +83,82 @@
           </view>
           <text class="tasks-arrow">›</text>
         </view>
-      </button>
-    </view>
+    </button>
 
-    <!-- 今日打卡概览 -->
-    <view class="checkin-overview-section">
-      <uni-section 
-        title="今日打卡概览" 
-        sub-title="完成打卡，让关爱无处不在"
-        type="line"
-      >
-        <template v-slot:right>
-          <view
-            class="refresh-btn"
-            :class="{ loading: checkinStore.isLoading }"
-            @click="refreshCheckinData"
-          >
-            <text class="refresh-icon">
-              {{ checkinStore.isLoading ? '⏳' : '🔄' }}
-            </text>
+    <!-- 功能快捷入口 -->
+    <uni-grid :column="4" :show-border="false" :square="false">
+        <uni-grid-item>
+          <view class="grid-item-content" @click="handleInviteGuardian">
+            <view class="grid-icon-wrapper" style="background: #6C9EFF;">
+              <text class="grid-icon">👥</text>
+            </view>
+            <text class="grid-text">邀请监护</text>
           </view>
-        </template>
-      </uni-section>
-      
-      <view class="overview-cards">
-        <uni-card 
-          class="overview-card pending-checkin"
-          :is-shadow="true"
-          :border="false"
-          padding="16rpx 12rpx"
-        >
-          <view class="card-content">
-            <text class="card-title">
-              待打卡
-            </text>
-            <text class="card-number">
-              {{ pendingCheckinCount }}
-            </text>
-            <text class="card-desc">
-              项目
-            </text>
-          </view>
-        </uni-card>
+        </uni-grid-item>
         
-        <uni-card 
-          class="overview-card completed-checkin"
-          :is-shadow="true"
-          :border="false"
-          padding="16rpx 12rpx"
-        >
-          <view class="card-content">
-            <text class="card-title">
-              已完成
-            </text>
-            <text class="card-number">
-              {{ completedCheckinCount }}
-            </text>
-            <text class="card-desc">
-              项目
-            </text>
+        <uni-grid-item>
+          <view class="grid-item-content" @click="handleSetRules">
+            <view class="grid-icon-wrapper" style="background: #B37FEF;">
+              <text class="grid-icon">⚙️</text>
+            </view>
+            <text class="grid-text">设置规则</text>
           </view>
-        </uni-card>
+        </uni-grid-item>
         
-        <uni-card 
-          class="overview-card missed-checkin"
-          :is-shadow="true"
-          :border="false"
-          padding="16rpx 12rpx"
-        >
-          <view class="card-content">
-            <text class="card-title">
-              已错过
-            </text>
-            <text class="card-number">
-              {{ missedCheckinCount }}
-            </text>
-            <text class="card-desc">
-              项目
-            </text>
+        <uni-grid-item>
+          <view class="grid-item-content" @click="handleGuardianManage">
+            <view class="grid-icon-wrapper" style="background: #8CE0A0;">
+              <text class="grid-icon">👨‍👩‍👧</text>
+            </view>
+            <text class="grid-text">监护管理</text>
           </view>
-        </uni-card>
+        </uni-grid-item>
         
-        <uni-card 
-          class="overview-card completion-rate"
-          :is-shadow="true"
-          :border="false"
-          padding="16rpx 12rpx"
-        >
-          <view class="card-content">
-            <text class="card-title">
-              完成率
-            </text>
-            <text class="card-number">
-              {{ completionRate }}%
-            </text>
-            <text class="card-desc">
-              今日目标
-            </text>
+        <uni-grid-item>
+          <view class="grid-item-content" @click="handleHealthRecord">
+            <view class="grid-icon-wrapper" style="background: #FFA0A0;">
+              <text class="grid-icon">💗</text>
+            </view>
+            <text class="grid-text">健康记录</text>
           </view>
-        </uni-card>
+        </uni-grid-item>
+      </uni-grid>
+
+    <!-- 当前任务列表 -->
+    <!-- 查看今天日程 -->
+    <uni-card>
+      <view class="section-header-row">
+        <text class="section-title-text">当前任务</text>
+        <view class="section-link" @click="goToCheckinList">
+          <text class="link-text">点击查看今天日程</text>
+          <text class="link-arrow">›</text>
+        </view>
       </view>
-    </view>
+      
+    <uni-list :border="false">
+        <uni-list-item 
+          v-for="task in nearbyTasks" 
+          :key="task.rule_id"
+          :title="task.rule_name"
+          :note="`${task.planned_time} - ${task.end_time || '23:59'}`"
+          :show-arrow="false">
+          <template v-slot:header>
+            <view class="task-icon-wrapper" :style="{ background: task.iconBg }">
+              <text class="task-icon-emoji">{{ task.icon }}</text>
+            </view>
+          </template>
+          <template v-slot:footer>
+            <button 
+              :class="['task-action-btn', task.status === 'pending' ? 'btn-pending' : 'btn-makeup']"
+              @click="handleTaskAction(task)"
+            >
+              <text class="btn-icon">{{ task.status === 'pending' ? '🕐' : '🔄' }}</text>
+              <text class="btn-text">{{ task.status === 'pending' ? '待打卡' : '补打卡' }}</text>
+            </button>
+          </template>
+        </uni-list-item>
+      </uni-list>
+    </uni-card>
 
     <!-- 今日行动主按钮 -->
     <view class="today-tasks-section">
@@ -211,7 +181,6 @@
         </text>
       </button>
     </view>
-  </view>
 </template>
 
 <script setup>
@@ -444,6 +413,55 @@ const switchRole = (role) => {
   }
 }
 
+// 功能快捷入口点击处理
+const handleInviteGuardian = () => {
+  uni.showToast({
+    title: '邀请监护功能开发中',
+    icon: 'none'
+  })
+}
+
+const handleSetRules = () => {
+  uni.navigateTo({
+    url: '/pages/add-rule/add-rule'
+  })
+}
+
+const handleGuardianManage = () => {
+  uni.showToast({
+    title: '监护管理功能开发中',
+    icon: 'none'
+  })
+}
+
+const handleHealthRecord = () => {
+  uni.showToast({
+    title: '健康记录功能开发中',
+    icon: 'none'
+  })
+}
+
+// 处理任务操作
+const handleTaskAction = async (task) => {
+  if (task.status === 'pending') {
+    // 待打卡
+    try {
+      await checkinStore.performCheckin(task.rule_id)
+      updateMainButton()
+      uni.showToast({ title: '打卡成功', icon: 'success' })
+    } catch(e) {
+      console.error('打卡失败:', e)
+      uni.showToast({ title: '打卡失败，请稍后重试', icon: 'none' })
+    }
+  } else {
+    // 补打卡
+    uni.showToast({
+      title: '补打卡功能开发中',
+      icon: 'none'
+    })
+  }
+}
+
 
 
 onMounted(() => {
@@ -505,15 +523,24 @@ uni.$on('checkinRulesUpdated', (data) => {
 }
 
 .greeting-header {
-  padding: 48rpx 0 32rpx;
-}
-
-.greeting-card {
-  background: linear-gradient(135deg, $uni-bg-color-white 0%, #f8fafc 100%);
-  border-radius: $uni-radius-xl;
-  padding: 40rpx;
-  box-shadow: $uni-shadow-base;
-  animation: slideUp 0.5s ease-out;
+  margin-bottom: 32rpx;
+  
+  ::v-deep .greeting-card {
+    background: #ffffff !important;
+    border-radius: $uni-radius-xl !important;
+    box-shadow: $uni-shadow-base !important;
+    animation: slideUp 0.5s ease-out;
+    margin: 0 !important;
+    
+    .uni-card {
+      background: #ffffff !important;
+      box-shadow: none !important;
+    }
+    
+    .uni-card__content {
+      background: #ffffff !important;
+    }
+  }
 }
 
 @keyframes slideUp {
@@ -626,27 +653,6 @@ uni.$on('checkinRulesUpdated', (data) => {
   margin-bottom: 48rpx;
 }
 
-.section-header {
-  margin-bottom: 24rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.section-title {
-  display: block;
-  font-size: $uni-font-size-lg;
-  font-weight: 600;
-  color: $uni-tabbar-color;
-  margin-bottom: 8rpx;
-}
-
-.section-subtitle {
-  display: block;
-  font-size: $uni-font-size-sm;
-  color: $uni-base-color;
-}
-
 .refresh-btn {
   padding: 4rpx 16rpx;
   background: rgba(244, 130, 36, 0.1);
@@ -676,8 +682,29 @@ uni.$on('checkinRulesUpdated', (data) => {
   ::v-deep .overview-card {
     min-width: 140rpx;
     flex: 1;
-    margin: 0;
-    border-radius: $uni-radius-base;
+    margin: 0 !important;
+    border-radius: $uni-radius-base !important;
+    
+    .uni-card {
+      background: $uni-bg-color-white !important;
+      box-shadow: $uni-shadow-sm !important;
+    }
+    
+    &.pending-checkin {
+      border-top: 4rpx solid $uni-primary !important;
+    }
+    
+    &.completed-checkin {
+      border-top: 4rpx solid $uni-success !important;
+    }
+    
+    &.missed-checkin {
+      border-top: 4rpx solid $uni-error !important;
+    }
+    
+    &.completion-rate {
+      border-top: 4rpx solid $uni-info !important;
+    }
   }
 }
 
@@ -712,25 +739,128 @@ uni.$on('checkinRulesUpdated', (data) => {
   color: $uni-secondary-color;
 }
 
-::v-deep .pending-checkin {
-  border-top: 4rpx solid $uni-primary;
-}
-
-::v-deep .completed-checkin {
-  border-top: 4rpx solid $uni-success;
-}
-
-::v-deep .missed-checkin {
-  border-top: 4rpx solid $uni-error;
-}
-
-::v-deep .completion-rate {
-  border-top: 4rpx solid $uni-info;
-}
-
 /* 当前任务悬浮按钮样式 */
 .floating-tasks-section {
-  padding: 0 0 48rpx 0;
+  padding: 0 0 32rpx 0;
+}
+
+/* 功能宫格区域 */
+.function-grid-section {
+  margin-bottom: 48rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-lg;
+  padding: 24rpx 16rpx;
+  box-shadow: $uni-shadow-sm;
+}
+
+.grid-item-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 8rpx;
+}
+
+.grid-icon-wrapper {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.grid-icon {
+  font-size: 48rpx;
+}
+
+.grid-text {
+  font-size: $uni-font-size-sm;
+  color: $uni-main-color;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* 当前任务列表区域 */
+.current-tasks-section {
+  margin-bottom: 48rpx;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title-text {
+  font-size: $uni-font-size-lg;
+  font-weight: 600;
+  color: $uni-main-color;
+}
+
+.section-link {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.link-text {
+  font-size: $uni-font-size-sm;
+  color: $uni-primary;
+}
+
+.link-arrow {
+  font-size: $uni-font-size-lg;
+  color: $uni-primary;
+  font-weight: bold;
+}
+
+.task-icon-wrapper {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.task-icon-emoji {
+  font-size: 40rpx;
+}
+
+.task-action-btn {
+  padding: 12rpx 24rpx;
+  border-radius: $uni-radius-lg;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: $uni-font-size-sm;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-pending {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+}
+
+.btn-makeup {
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(244, 130, 36, 0.3);
+}
+
+.btn-icon {
+  font-size: $uni-font-size-base;
+}
+
+.btn-text {
+  font-size: $uni-font-size-sm;
 }
 
 .floating-tasks-btn {

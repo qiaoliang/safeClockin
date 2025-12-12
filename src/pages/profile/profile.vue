@@ -321,7 +321,7 @@ const needCommunityVerify = computed(() => {
 
 const showAbout = () => {
   uni.navigateTo({
-    url: '/pages/uni-ui-test/uni-ui-test'
+    url: '/pages/uni-ui-time/uni-ui-time'
   })
 }
 
