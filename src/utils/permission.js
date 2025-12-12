@@ -17,7 +17,22 @@ import { useUserStore } from '@/store/modules/user'
  */
 export const getCurrentUserRole = () => {
   const userStore = useUserStore()
-  return userStore.role || null
+  const role = userStore.role
+  
+  // 将后端返回的角色值映射为标准的角色常量值
+  if (role === 'community_admin' || role === 4) {
+    return UserRole.SUPER_ADMIN
+  } else if (role === 'community_manager' || role === 3) {
+    return UserRole.COMMUNITY_MANAGER
+  } else if (role === 'community') {
+    return UserRole.COMMUNITY_STAFF
+  } else if (role === 'supervisor' || role === 2) {
+    return UserRole.SUPERVISOR
+  } else if (role === 'solo' || role === 1) {
+    return UserRole.SOLO
+  }
+  
+  return role || null
 }
 
 /**
@@ -131,7 +146,7 @@ export const isSuperAdmin = (userRole = null) => {
  */
 export const isCommunityManager = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.COMMUNITY_MANAGER
+  return role === UserRole.COMMUNITY_MANAGER || role === 'community_manager'
 }
 
 /**
@@ -141,7 +156,7 @@ export const isCommunityManager = (userRole = null) => {
  */
 export const isCommunityStaff = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.COMMUNITY_STAFF
+  return role === UserRole.COMMUNITY_STAFF || role === 'community'
 }
 
 /**
