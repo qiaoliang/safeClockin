@@ -147,6 +147,83 @@
 			}
 		},
 		{
+			"path": "pages/community-manage/community-manage",
+			"style": {
+				"navigationBarTitleText": "社区管理",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 50
+			}
+		},
+		{
+			"path": "pages/community-form/community-form",
+			"style": {
+				"navigationBarTitleText": "社区信息",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/community-merge/community-merge",
+			"style": {
+				"navigationBarTitleText": "社区合并",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/community-split/community-split",
+			"style": {
+				"navigationBarTitleText": "社区拆分",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/community-staff-manage/community-staff-manage",
+			"style": {
+				"navigationBarTitleText": "工作人员管理",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/staff-detail/staff-detail",
+			"style": {
+				"navigationBarTitleText": "工作人员详情",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/staff-add/staff-add",
+			"style": {
+				"navigationBarTitleText": "添加工作人员",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/community-user-manage/community-user-manage",
+			"style": {
+				"navigationBarTitleText": "社区用户管理",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 50
+			}
+		},
+		{
+			"path": "pages/community-user-add/community-user-add",
+			"style": {
+				"navigationBarTitleText": "添加用户",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
 			"path": "pages/debug/user-debug",
 			"style": {
 				"navigationBarTitleText": "用户调试",
