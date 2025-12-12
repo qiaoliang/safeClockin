@@ -112,7 +112,7 @@ $uni-spacing-xxl: 32rpx;  // 超大间距
 $uni-spacing-xxxl: 48rpx; // 特大间距
 
 // 角度
-$uni-deg-base: $uni-deg-base;
+$uni-deg-base: 135deg;
 
 // === 阴影系统 ===
 // 基础阴影
@@ -220,7 +220,7 @@ $uni-font-weight-base: 600;
 
 // 成功按钮样式
 @mixin btn-success {
-  background: linear-gradient($$uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
+  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
   color: $uni-white;
   border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
@@ -240,7 +240,7 @@ $uni-font-weight-base: 600;
 
 // 危险按钮样式
 @mixin btn-danger {
-  background: linear-gradient($$uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
   color: $uni-white;
   border-radius: $uni-radius-xxl;
   font-size: $uni-font-size-xl;
@@ -288,7 +288,7 @@ $uni-font-weight-base: 600;
 
 // 卡片渐变样式
 @mixin card-gradient {
-  background: linear-gradient($$uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
   border-radius: $uni-radius-md;
   padding: $uni-spacing-xl;
   box-shadow: $uni-shadow-card;
@@ -302,12 +302,12 @@ $uni-font-weight-base: 600;
 
 // 渐变背景
 @mixin bg-gradient {
-  background: linear-gradient($$uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+  background: linear-gradient($uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
 }
 
 // 浮动按钮
 @mixin floating-button {
-  background: linear-gradient($$uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
   box-shadow: $uni-shadow-primary-xl;
   transition: all 0.3s ease;
   animation: float 3s ease-in-out infinite;
@@ -368,7 +368,7 @@ $uni-font-weight-base: 600;
 
 // 状态栏样式
 @mixin statusbar {
-  background: linear-gradient($$uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+  background: linear-gradient($uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
 }
 
 // 安全区域适配
