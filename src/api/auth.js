@@ -12,7 +12,7 @@ export const authApi = {
       requestData = loginData;
     }
     return request({
-      url: '/api/login',
+      url: '/api/auth/login_wechat',
       method: 'POST',
       data: requestData
     }).then(response => {

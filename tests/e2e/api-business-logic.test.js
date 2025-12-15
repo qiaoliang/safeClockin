@@ -47,7 +47,7 @@ describe('前端核心业务逻辑', () => {
     it('✅ 用户登录流程不受token限制', async () => {
       // 测试业务规则：登录是获取token的入口
       const result = await request({
-        url: '/api/login',
+        url: '/api/auth/login_wechat',
         method: 'POST',
         data: { code: 'wechat_code' }
       })
@@ -127,7 +127,7 @@ describe('前端核心业务逻辑', () => {
       })
 
       await expect(
-        request({ url: '/api/login', method: 'POST', data: { code: 'test' } })
+        request({ url: '/api/auth/login_wechat', method: 'POST', data: { code: 'test' } })
       ).rejects.toThrow('网络请求失败')
     })
 

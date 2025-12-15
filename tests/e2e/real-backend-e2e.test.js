@@ -64,7 +64,7 @@ describe('真实后端服务 E2E 测试', () => {
 
     it('应该能够处理微信登录请求', async () => {
       const response = await request({
-        url: '/api/login',
+        url: '/api/auth/login_wechat',
         method: 'POST',
         data: { code: TEST_CODE }
       })

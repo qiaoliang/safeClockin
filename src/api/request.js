@@ -125,7 +125,7 @@ async function handleTokenExpired() {
 
 // 不需要token验证的API白名单
 const NO_TOKEN_REQUIRED_URLS = [
-  '/api/login',           // 微信登录
+  '/api/auth/login_wechat', // 微信登录
   '/api/send_sms',        // 发送短信验证码（旧接口）
   '/api/sms/send_code',   // 发送短信验证码（新接口）
   '/api/login_phone',     // 手机号登录
