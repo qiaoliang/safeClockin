@@ -559,6 +559,9 @@ export const useUserStore = defineStore('user', {
     initUserState() {
       console.log('=== 开始初始化用户状态 ===')
       
+      // 首先进行种子健康检查
+      this._checkSeedHealth()
+      
       // 确保 userState 结构完整
       this._ensureUserStateIntegrity()
       
@@ -581,6 +584,34 @@ export const useUserStore = defineStore('user', {
       }
       
       console.log('=== 用户状态初始化完成 ===')
+    },
+
+    // 检查种子健康状况
+    _checkSeedHealth() {
+      try {
+        // 动态导入避免循环依赖
+        const { diagnoseSeedStatus } = require('@/utils/secure')
+        const diagnostics = diagnoseSeedStatus()
+        
+        if (!diagnostics.isValid) {
+          console.error('❌ 种子健康检查失败，可能影响数据解密')
+          console.warn('建议：清理应用数据后重新登录')
+          
+          // 可以选择显示用户提示
+          // uni.showModal({
+          //   title: '数据异常',
+          //   content: '检测到数据存储异常，建议重新登录以恢复正常使用',
+          //   showCancel: false
+          // })
+        } else if (diagnostics.recoveredFrom !== 'primary') {
+          console.warn(`⚠️ 种子从备份恢复: ${diagnostics.recoveredFrom}`)
+          console.log('建议：种子已自动恢复，可正常使用')
+        } else {
+          console.log('✅ 种子健康检查通过')
+        }
+      } catch (error) {
+        console.error('❌ 种子健康检查失败:', error)
+      }
     },
     
     // 更新用户角色
@@ -757,20 +788,43 @@ export const useUserStore = defineStore('user', {
     
     // 获取微信用户缓存
     getWechatUserCache() {
-      const cacheData = storage.get('safeguard_cache')
-      if (!cacheData) {
-        return null
-      }
-      
-      // 检查缓存是否过期（7天）
-      const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000 // 7天
-      if (Date.now() - cacheData.timestamp > CACHE_DURATION) {
-        console.log('⚠️ 微信用户缓存已过期，清理中')
+      try {
+        const cacheData = storage.get('safeguard_cache')
+        if (!cacheData) {
+          console.log('📱 微信用户缓存不存在')
+          return null
+        }
+        
+        // 验证缓存数据结构
+        if (!cacheData || typeof cacheData !== 'object') {
+          console.warn('⚠️ 微信用户缓存格式异常，清理中')
+          this.clearWechatUserCache()
+          return null
+        }
+        
+        // 验证必需字段
+        if (!cacheData.nickname || !cacheData.avatarUrl) {
+          console.warn('⚠️ 微信用户缓存缺少必需字段，清理中')
+          this.clearWechatUserCache()
+          return null
+        }
+        
+        // 检查缓存是否过期（7天）
+        const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000 // 7天
+        if (!cacheData.timestamp || Date.now() - cacheData.timestamp > CACHE_DURATION) {
+          console.log('⚠️ 微信用户缓存已过期，清理中')
+          this.clearWechatUserCache()
+          return null
+        }
+        
+        console.log('✅ 微信用户缓存有效')
+        return cacheData
+      } catch (error) {
+        console.error('❌ 获取微信用户缓存失败:', error)
+        // 清理可能损坏的缓存
         this.clearWechatUserCache()
         return null
       }
-      
-      return cacheData
     },
     
     // 清理微信用户缓存

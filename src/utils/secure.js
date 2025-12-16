@@ -1,11 +1,113 @@
 export const SENSITIVE_KEYS = ['userState', 'secure_seed']
 
-function getSeed() {
-  let seed = uni.getStorageSync('secure_seed')
-  if (!seed) {
-    seed = Math.random().toString(36).slice(2) + Date.now().toString(36)
-    try { uni.setStorageSync('secure_seed', seed) } catch(e) {}
+function saveSeedWithBackup(seed) {
+  try {
+    // 主存储
+    uni.setStorageSync('secure_seed', seed)
+    
+    // 备份存储1：使用不同的key
+    uni.setStorageSync('backup_seed_1', seed)
+    
+    // 备份存储2：简单混淆（base64编码）
+    uni.setStorageSync('bk_seed_2', btoa(seed))
+    
+    // 备份存储3：分段存储（前半部分和后半部分分开）
+    const mid = Math.floor(seed.length / 2)
+    uni.setStorageSync('seed_part_1', seed.slice(0, mid))
+    uni.setStorageSync('seed_part_2', seed.slice(mid))
+    
+    // 备份存储4：反转字符串
+    uni.setStorageSync('seed_rev', seed.split('').reverse().join(''))
+    
+    console.log('✅ 种子已保存到多个备份位置')
+    return true
+  } catch (e) {
+    console.error('❌ 保存种子备份失败:', e)
+    return false
   }
+}
+
+function recoverSeedFromBackup() {
+  console.log('🔄 开始尝试从备份恢复种子...')
+  
+  // 尝试从备份1恢复
+  let seed = uni.getStorageSync('backup_seed_1')
+  if (seed && typeof seed === 'string' && seed.length > 10) {
+    console.log('✅ 从备份1恢复种子成功')
+    return seed
+  }
+  
+  // 尝试从备份2恢复（需要解码）
+  try {
+    const seedBase64 = uni.getStorageSync('bk_seed_2')
+    if (seedBase64 && typeof seedBase64 === 'string') {
+      seed = atob(seedBase64)
+      if (seed && seed.length > 10) {
+        console.log('✅ 从备份2恢复种子成功')
+        return seed
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ 从备份2恢复种子失败:', e)
+  }
+  
+  // 尝试从分段备份恢复
+  try {
+    const part1 = uni.getStorageSync('seed_part_1')
+    const part2 = uni.getStorageSync('seed_part_2')
+    if (part1 && part2 && typeof part1 === 'string' && typeof part2 === 'string') {
+      seed = part1 + part2
+      if (seed && seed.length > 10) {
+        console.log('✅ 从分段备份恢复种子成功')
+        return seed
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ 从分段备份恢复种子失败:', e)
+  }
+  
+  // 尝试从反转备份恢复
+  try {
+    const revSeed = uni.getStorageSync('seed_rev')
+    if (revSeed && typeof revSeed === 'string') {
+      seed = revSeed.split('').reverse().join('')
+      if (seed && seed.length > 10) {
+        console.log('✅ 从反转备份恢复种子成功')
+        return seed
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ 从反转备份恢复种子失败:', e)
+  }
+  
+  console.log('❌ 所有备份恢复尝试均失败')
+  return null
+}
+
+function getSeed() {
+  // 首先尝试从主存储获取
+  let seed = uni.getStorageSync('secure_seed')
+  
+  // 验证种子有效性
+  if (seed && typeof seed === 'string' && seed.length > 10) {
+    return seed
+  }
+  
+  // 主存储无效，尝试从备份恢复
+  console.warn('⚠️ 主存储种子无效，尝试从备份恢复')
+  seed = recoverSeedFromBackup()
+  
+  if (seed) {
+    // 恢复成功，重新保存到所有位置
+    saveSeedWithBackup(seed)
+    return seed
+  }
+  
+  // 所有恢复尝试都失败，生成新种子
+  console.log('🆔 生成新的加密种子')
+  seed = Math.random().toString(36).slice(2) + Date.now().toString(36)
+  saveSeedWithBackup(seed)
+  
   return seed
 }
 
@@ -153,6 +255,130 @@ export function encodeObject(obj) {
   return base64.replace(/[^\x00-\x7F]/g, '')
 }
 
+// 种子诊断工具
+export function diagnoseSeedStatus() {
+  console.log('🔍 开始诊断种子状态...')
+  
+  const diagnostics = {
+    primary: null,
+    backup1: null,
+    backup2: null,
+    backupParts: null,
+    backupRev: null,
+    isValid: false,
+    recoveredFrom: null
+  }
+  
+  // 检查主存储
+  const primary = uni.getStorageSync('secure_seed')
+  diagnostics.primary = {
+    exists: !!primary,
+    valid: primary && typeof primary === 'string' && primary.length > 10,
+    value: primary ? `${primary.slice(0, 8)}...` : null
+  }
+  
+  // 检查备份1
+  const backup1 = uni.getStorageSync('backup_seed_1')
+  diagnostics.backup1 = {
+    exists: !!backup1,
+    valid: backup1 && typeof backup1 === 'string' && backup1.length > 10,
+    value: backup1 ? `${backup1.slice(0, 8)}...` : null
+  }
+  
+  // 检查备份2
+  const backup2 = uni.getStorageSync('bk_seed_2')
+  diagnostics.backup2 = {
+    exists: !!backup2,
+    valid: false,
+    value: null
+  }
+  if (backup2) {
+    try {
+      const decoded = atob(backup2)
+      diagnostics.backup2.valid = decoded && decoded.length > 10
+      diagnostics.backup2.value = decoded ? `${decoded.slice(0, 8)}...` : null
+    } catch (e) {
+      diagnostics.backup2.error = e.message
+    }
+  }
+  
+  // 检查分段备份
+  const part1 = uni.getStorageSync('seed_part_1')
+  const part2 = uni.getStorageSync('seed_part_2')
+  diagnostics.backupParts = {
+    exists: !!(part1 && part2),
+    valid: false,
+    value: null
+  }
+  if (part1 && part2) {
+    const combined = part1 + part2
+    diagnostics.backupParts.valid = combined.length > 10
+    diagnostics.backupParts.value = `${combined.slice(0, 8)}...`
+  }
+  
+  // 检查反转备份
+  const revSeed = uni.getStorageSync('seed_rev')
+  diagnostics.backupRev = {
+    exists: !!revSeed,
+    valid: false,
+    value: null
+  }
+  if (revSeed) {
+    try {
+      const reversed = revSeed.split('').reverse().join('')
+      diagnostics.backupRev.valid = reversed.length > 10
+      diagnostics.backupRev.value = `${reversed.slice(0, 8)}...`
+    } catch (e) {
+      diagnostics.backupRev.error = e.message
+    }
+  }
+  
+  // 检查是否可以恢复
+  if (diagnostics.primary.valid) {
+    diagnostics.isValid = true
+    diagnostics.recoveredFrom = 'primary'
+  } else if (diagnostics.backup1.valid) {
+    diagnostics.isValid = true
+    diagnostics.recoveredFrom = 'backup1'
+  } else if (diagnostics.backup2.valid) {
+    diagnostics.isValid = true
+    diagnostics.recoveredFrom = 'backup2'
+  } else if (diagnostics.backupParts.valid) {
+    diagnostics.isValid = true
+    diagnostics.recoveredFrom = 'parts'
+  } else if (diagnostics.backupRev.valid) {
+    diagnostics.isValid = true
+    diagnostics.recoveredFrom = 'reversed'
+  }
+  
+  console.log('📊 种子诊断结果:', diagnostics)
+  return diagnostics
+}
+
+// 清理所有种子备份（用于测试或重置）
+export function clearAllSeedBackups() {
+  console.log('🧹 清理所有种子备份...')
+  const keys = [
+    'secure_seed',
+    'backup_seed_1',
+    'bk_seed_2',
+    'seed_part_1',
+    'seed_part_2',
+    'seed_rev'
+  ]
+  
+  keys.forEach(key => {
+    try {
+      uni.removeStorageSync(key)
+      console.log(`✅ 已清理: ${key}`)
+    } catch (e) {
+      console.error(`❌ 清理失败: ${key}`, e)
+    }
+  })
+  
+  console.log('✅ 所有种子备份已清理')
+}
+
 export function decodeObject(str) {
   if (!str || typeof str !== 'string') return null
   try {
@@ -179,7 +405,45 @@ export function decodeObject(str) {
     }
   } catch(e) {
     console.error('decodeObject: 解码失败，尝试兼容性处理', e)
-    // 尝试直接解析原始字符串（兼容未加密的历史数据）
+    
+    // 如果是种子相关错误，尝试诊断和恢复
+    if (e.message && (e.message.includes('seed') || e.message.includes('decode'))) {
+      console.warn('⚠️ 检测到可能的种子问题，执行诊断...')
+      const diagnostics = diagnoseSeedStatus()
+      
+      if (!diagnostics.isValid) {
+        console.error('❌ 种子诊断失败，无法恢复数据')
+        return null
+      }
+      
+      // 如果诊断发现可用备份，尝试重新获取种子并解码
+      console.log('🔄 尝试使用恢复的种子重新解码...')
+      try {
+        const seed = recoverSeedFromBackup()
+        if (seed) {
+          // 临时设置种子并重试
+          const originalSeed = uni.getStorageSync('secure_seed')
+          uni.setStorageSync('secure_seed', seed)
+          
+          // 重新尝试解码
+          const result = decodeObject(str)
+          
+          // 恢复原始种子状态
+          if (originalSeed) {
+            uni.setStorageSync('secure_seed', originalSeed)
+          }
+          
+          if (result) {
+            console.log('✅ 使用恢复种子解码成功')
+            return result
+          }
+        }
+      } catch (retryError) {
+        console.error('❌ 使用恢复种子重试失败:', retryError)
+      }
+    }
+    
+    // 最后尝试直接解析原始字符串（兼容未加密的历史数据）
     try {
       return JSON.parse(str)
     } catch {

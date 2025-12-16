@@ -40,21 +40,25 @@ export async function handleLoginSuccess(response) {
     
     // 构建登录请求数据
     let loginData
+    let hasUserInfo = false
+    
     if (typeof response === 'string') {
       // 只传入了code（非首次登录）
       // 检查是否有本地缓存的微信用户信息
       const wechatCache = userStore.getWechatUserCache()
-      if (wechatCache) {
+      if (wechatCache && wechatCache.nickname && wechatCache.avatarUrl) {
         // 使用缓存的用户信息进行登录
         loginData = {
           code: response,
           nickname: wechatCache.nickname,
           avatar_url: wechatCache.avatarUrl
         }
+        hasUserInfo = true
         console.log('✅ 使用本地缓存的微信用户信息登录')
       } else {
-        // 没有缓存，只传code（可能导致缺少nickname参数）
-        loginData = response
+        // 没有缓存，需要获取用户信息
+        console.warn('⚠️ 缺少微信用户信息缓存，需要重新获取')
+        throw new Error('NEED_USER_INFO')
       }
     } else {
       // 获取 code
@@ -62,28 +66,37 @@ export async function handleLoginSuccess(response) {
       
       // 检查 store 中是否有缓存用户信息
       const cachedUserInfo = userStore.userState?.cache?.tempUserInfo
-      if (cachedUserInfo) {
+      if (cachedUserInfo && cachedUserInfo.nickname && cachedUserInfo.avatarUrl) {
         // 首次登录，包含code和用户信息
         loginData = {
           code: code,
           nickname: cachedUserInfo.nickname,
           avatar_url: cachedUserInfo.avatarUrl
         }
+        hasUserInfo = true
       } else {
         // 尝试使用本地缓存的微信用户信息
         const wechatCache = userStore.getWechatUserCache()
-        if (wechatCache) {
+        if (wechatCache && wechatCache.nickname && wechatCache.avatarUrl) {
           loginData = {
             code: code,
             nickname: wechatCache.nickname,
             avatar_url: wechatCache.avatarUrl
           }
+          hasUserInfo = true
           console.log('✅ 使用本地缓存的微信用户信息登录')
         } else {
-          // 没有任何缓存信息，只传code（可能导致缺少nickname参数）
-          loginData = code
+          // 没有任何缓存信息，需要获取用户信息
+          console.warn('⚠️ 缺少微信用户信息，需要重新获取')
+          throw new Error('NEED_USER_INFO')
         }
       }
+    }
+    
+    // 验证必需参数
+    if (!hasUserInfo || !loginData.nickname || !loginData.avatar_url) {
+      console.error('❌ 登录数据缺少必需参数:', loginData)
+      throw new Error('NEED_USER_INFO')
     }
     
     await userStore.login(loginData)
@@ -147,6 +160,43 @@ export async function handleLoginSuccess(response) {
   } catch (error) {
     console.error('登录成功处理失败:', error)
     
+    // 检查是否是缺少用户信息的错误
+    if (error.message?.includes('缺少nickname参数') || 
+        error.message?.includes('缺少avatar_url参数') ||
+        error.message?.includes('缺少用户昵称信息') ||
+        error.message?.includes('缺少用户头像信息') ||
+        error.message?.includes('重新进行微信授权')) {
+      console.log('检测到缺少用户信息错误，需要重新获取用户信息')
+      
+      // 尝试从当前页面获取用户信息
+      const pages = getCurrentPages()
+      const currentPage = pages[pages.length - 1]
+      
+      // 如果当前页面是登录页面且有 showUserInfoForm 方法
+      if (currentPage && typeof currentPage.showUserInfoForm === 'function') {
+        // 重新获取微信登录凭证
+        try {
+          const loginRes = await uni.login()
+          if (loginRes.code) {
+            currentPage.loginCode = loginRes.code
+            currentPage.showUserInfoForm.value = true
+            return // 不显示错误提示，直接显示用户信息表单
+          }
+        } catch (loginError) {
+          console.error('重新获取登录凭证失败:', loginError)
+        }
+      }
+      
+      // 如果无法自动处理，显示友好提示
+      uni.showModal({
+        title: '需要用户信息',
+        content: '登录需要您的微信昵称和头像信息，请重新授权',
+        showCancel: false,
+        confirmText: '确定'
+      })
+      return
+    }
+    
     // 根据错误类型显示不同提示
     let errorMessage = '登录失败，请重试'
     if (error.message?.includes('网络')) {
@@ -159,6 +209,8 @@ export async function handleLoginSuccess(response) {
       errorMessage = '登录凭证已失效，请重新登录'
     } else if (error.message?.includes('JSON')) {
       errorMessage = '服务器响应格式错误，请稍后重试'
+    } else if (error.message === 'NEED_USER_INFO') {
+      errorMessage = '需要获取用户信息'
     }
     
     uni.showToast({
