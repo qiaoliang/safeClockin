@@ -43,7 +43,7 @@ export async function handleLoginSuccess(response) {
     let loginData
     let hasUserInfo = false
     
-    // 检查是否有完整的用户信息缓存
+    // Defense-in-depth: 检查用户信息缓存但不强制要求
     const wechatCache = userStore.getWechatUserCache()
     const tempUserInfo = userStore.userState?.cache?.tempUserInfo
     
@@ -67,16 +67,18 @@ export async function handleLoginSuccess(response) {
       hasUserInfo = true
       console.log('✅ 使用持久化缓存的用户信息登录')
     } 
-    // 没有缓存信息
+    // 没有缓存信息 - Defense-in-depth: 允许仅用code登录
     else {
-      console.warn('⚠️ 缺少用户信息缓存，需要重新获取')
-      throw new Error('NEED_USER_INFO')
+      console.warn('⚠️ 缺少用户信息缓存，使用仅code登录（后端将提供默认值）')
+      loginData = { code: code }
+      hasUserInfo = false
     }
     
-    // 验证必需参数
-    if (!loginData.nickname || !loginData.avatar_url) {
-      console.error('❌ 登录数据缺少必需参数:', loginData)
-      throw new Error('NEED_USER_INFO')
+    // Defense-in-depth: 验证参数但不强制失败
+    if (loginData.nickname && loginData.avatar_url) {
+      console.log('✅ 完整用户信息可用')
+    } else {
+      console.log('ℹ️ 使用简化登录模式，后端将处理缺失的用户信息')
     }
     
     await userStore.login(loginData)
@@ -140,42 +142,13 @@ export async function handleLoginSuccess(response) {
   } catch (error) {
     console.error('登录成功处理失败:', error)
     
-    // 检查是否是缺少用户信息的错误
-    if (error.message?.includes('缺少nickname参数') || 
-        error.message?.includes('缺少avatar_url参数') ||
-        error.message?.includes('缺少用户昵称信息') ||
-        error.message?.includes('缺少用户头像信息') ||
-        error.message?.includes('重新进行微信授权')) {
-      console.log('检测到缺少用户信息错误，需要重新获取用户信息')
-      
-      // 尝试从当前页面获取用户信息
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      
-      // 如果当前页面是登录页面且有 showUserInfoForm 方法
-      if (currentPage && typeof currentPage.showUserInfoForm === 'function') {
-        // 重新获取微信登录凭证
-        try {
-          const loginRes = await uni.login()
-          if (loginRes.code) {
-            currentPage.loginCode = loginRes.code
-            currentPage.showUserInfoForm.value = true
-            return // 不显示错误提示，直接显示用户信息表单
-          }
-        } catch (loginError) {
-          console.error('重新获取登录凭证失败:', loginError)
-        }
-      }
-      
-      // 如果无法自动处理，显示友好提示
-      uni.showModal({
-        title: '需要用户信息',
-        content: '登录需要您的微信昵称和头像信息，请重新授权',
-        showCancel: false,
-        confirmText: '确定'
-      })
-      return
-    }
+    // Defense-in-depth: 简化错误处理，移除对用户信息缺失的特殊处理
+    // 因为后端现在支持仅code登录并提供默认用户信息
+    console.log('登录错误详情:', {
+      message: error.message,
+      type: error.type,
+      stack: error.stack
+    })
     
     // 根据错误类型显示不同提示
     let errorMessage = '登录失败，请重试'

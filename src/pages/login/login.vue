@@ -191,23 +191,19 @@ const onWechatLogin = async () => {
     
     console.log('🔑 获取微信登录凭证成功')
     
-    // 简化逻辑：直接尝试使用缓存登录
+    // Defense-in-depth: 直接使用code登录，后端会处理缺失的用户信息
     try {
       await handleLoginSuccess({ code: loginRes.code })
       
       // 清除可能存在的场景标记
       storage.remove('login_scenario')
       uni.removeStorageSync('login_scenario')
+      
+      console.log('✅ 微信登录成功')
     } catch (loginError) {
-      // 如果是缺少用户信息错误，显示用户信息表单
-      if (loginError.message === 'NEED_USER_INFO') {
-        console.log('📝 需要用户信息，显示用户信息表单')
-        loginCode.value = loginRes.code
-        showUserInfoForm.value = true
-      } else {
-        // 其他错误，直接抛出
-        throw loginError
-      }
+      console.error('❌ 微信登录失败:', loginError)
+      // 不再处理NEED_USER_INFO错误，因为后端支持仅code登录
+      throw loginError
     }
   } catch (error) {
     console.error('登录失败:', error)
