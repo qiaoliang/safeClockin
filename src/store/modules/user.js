@@ -97,10 +97,12 @@ export const useUserStore = defineStore("user", {
 
         // 社区管理权限判断
         isSuperAdmin: (state) => {
-            // super_admin 的 role 值为 4（数字类型）或 'community_admin'（字符串类型）
+            // 后端返回的是中文角色名称，如"超级系统管理员"、"社区主管"、"社区专员"、"普通用户"
+            const role = state.userState.profile.role;
             return (
-                state.userState.profile.role === 4 ||
-                state.userState.profile.role === "community_admin"
+                role === 4 || // 数字类型（向后兼容）
+                role === "community_admin" || // 字符串类型（向后兼容）
+                role === "超级系统管理员" // 后端实际返回的中文角色名称
             );
         },
 
@@ -113,8 +115,13 @@ export const useUserStore = defineStore("user", {
                     state.userState.profile.communityRoles[currentCommunityId];
                 return roleInCurrentCommunity === "manager";
             }
-            // 向后兼容：如果未使用新结构，仍检查旧字段
-            return state.userState.profile.communityRole === "manager";
+            // 向后兼容：如果未使用新结构，检查旧字段
+            if (state.userState.profile.communityRole === "manager") {
+                return true;
+            }
+            // 检查全局角色：后端返回的是中文角色名称"社区主管"
+            const role = state.userState.profile.role;
+            return role === 3 || role === "社区主管";
         },
 
         isCommunityStaff: (state) => {
@@ -125,8 +132,13 @@ export const useUserStore = defineStore("user", {
                     state.userState.profile.communityRoles[currentCommunityId];
                 return roleInCurrentCommunity === "staff";
             }
-            // 向后兼容：如果未使用新结构，仍检查旧字段
-            return state.userState.profile.communityRole === "staff";
+            // 向后兼容：如果未使用新结构，检查旧字段
+            if (state.userState.profile.communityRole === "staff") {
+                return true;
+            }
+            // 检查全局角色：后端返回的是中文角色名称"社区专员"
+            const role = state.userState.profile.role;
+            return role === 2 || role === "社区专员";
         },
 
         hasCommunityPermission: (state) => {
@@ -138,14 +150,21 @@ export const useUserStore = defineStore("user", {
                 return (
                     state.userState.profile.role === 4 ||
                     state.userState.profile.role === "community_admin" ||
+                    state.userState.profile.role === "超级系统管理员" ||
                     roleInCurrentCommunity === "manager" ||
                     roleInCurrentCommunity === "staff"
                 );
             }
             // 向后兼容
+            const role = state.userState.profile.role;
             return (
-                state.userState.profile.role === 4 ||
-                state.userState.profile.role === "community_admin" ||
+                role === 4 ||
+                role === "community_admin" ||
+                role === "超级系统管理员" ||
+                role === 3 ||
+                role === "社区主管" ||
+                role === 2 ||
+                role === "社区专员" ||
                 state.userState.profile.communityRole === "manager" ||
                 state.userState.profile.communityRole === "staff"
             );

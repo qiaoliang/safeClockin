@@ -20,15 +20,16 @@ export const getCurrentUserRole = () => {
   const role = userStore.role
   
   // 将后端返回的角色值映射为标准的角色常量值
-  if (role === 'community_admin' || role === 4) {
+  // 处理中文角色名称
+  if (role === 'community_admin' || role === 4 || role === '超级系统管理员') {
     return UserRole.SUPER_ADMIN
-  } else if (role === 'community_manager' || role === 3) {
+  } else if (role === 'community_manager' || role === 3 || role === '社区主管') {
     return UserRole.COMMUNITY_MANAGER
-  } else if (role === 'community') {
+  } else if (role === 'community' || role === 2 || role === '社区专员') {
     return UserRole.COMMUNITY_STAFF
-  } else if (role === 'supervisor' || role === 2) {
+  } else if (role === 'supervisor') {
     return UserRole.SUPERVISOR
-  } else if (role === 'solo' || role === 1) {
+  } else if (role === 'solo' || role === 1 || role === '普通用户') {
     return UserRole.SOLO
   }
   
@@ -125,7 +126,8 @@ export const canManageStaff = (userRole = null) => {
 export const canManageUsers = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
   return (role === UserRole.SUPER_ADMIN || role === 'community_admin') || 
-         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager')
+         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager') ||
+         (role === UserRole.COMMUNITY_STAFF || role === 'community')
 }
 
 /**
