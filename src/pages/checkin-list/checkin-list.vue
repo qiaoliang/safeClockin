@@ -12,8 +12,13 @@
     </view>
 
     <!-- 打卡事项列表 -->
-    <view v-if="checkinItems.length > 0" class="checkin-list-section" >
-      <view class="list-title">今日打卡事项</view>
+    <view
+      v-if="checkinItems.length > 0"
+      class="checkin-list-section"
+    >
+      <view class="list-title">
+        今日打卡事项
+      </view>
       <view 
         v-for="item in checkinItems" 
         :key="item.rule_id" 

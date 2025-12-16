@@ -109,14 +109,19 @@
           <picker 
             mode="time" 
             :value="formData.custom_time"
-            @change="onTimeChange"
             class="time-picker"
+            @change="onTimeChange"
           >
             <view class="picker-input">
-              <text class="picker-text" :class="{ placeholder: !formData.custom_time }">
+              <text
+                class="picker-text"
+                :class="{ placeholder: !formData.custom_time }"
+              >
                 {{ formData.custom_time || '请选择时间' }}
               </text>
-              <text class="picker-icon">🕐</text>
+              <text class="picker-icon">
+                🕐
+              </text>
             </view>
           </picker>
         </view>

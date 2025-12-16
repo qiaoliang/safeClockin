@@ -1,10 +1,19 @@
 <template>
   <view class="user-manage-container">
     <!-- 面包屑导航 -->
-    <view v-if="communityName" class="breadcrumb">
-      <text class="breadcrumb-text">{{ communityName }}</text>
-      <text class="breadcrumb-arrow">›</text>
-      <text class="breadcrumb-current">用户管理</text>
+    <view
+      v-if="communityName"
+      class="breadcrumb"
+    >
+      <text class="breadcrumb-text">
+        {{ communityName }}
+      </text>
+      <text class="breadcrumb-arrow">
+        ›
+      </text>
+      <text class="breadcrumb-current">
+        用户管理
+      </text>
     </view>
 
     <!-- 顶部标题区 -->

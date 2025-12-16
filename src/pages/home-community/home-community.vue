@@ -2,9 +2,16 @@
   <view class="home-community-container">
     <!-- 顶部操作栏 -->
     <view class="header-bar">
-      <text class="page-title">数据看板</text>
-      <view class="header-actions" @click="showQuickMenu">
-        <text class="action-btn">管理</text>
+      <text class="page-title">
+        数据看板
+      </text>
+      <view
+        class="header-actions"
+        @click="showQuickMenu"
+      >
+        <text class="action-btn">
+          管理
+        </text>
       </view>
     </view>
 

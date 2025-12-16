@@ -1,94 +1,120 @@
 <template>
-	<view class="page">
-		<text class="example-info">可以同时选择日期和时间的选择器</text>
-		<uni-section :title="'日期用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				type="date"
-				:value="single"
-				start="2021-3-20"
-				end="2021-6-20"
-				@change="change"
-			/>
-		</view>
-		<uni-section :title="'时间戳用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				returnType="timestamp"
-				@change="changeLog($event)"
-				start="2021-3-20"
-				end="2021-5-20"
-			/>
-		</view>
-		<uni-section
-			:title="'日期时间用法：' + datetimesingle"
-			type="line"
-		></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				type="datetime"
-				v-model="datetimesingle"
-				@change="changeLog"
-			/>
-		</view>
-		<uni-section :title="'v-model用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker v-model="single" />
-		</view>
-		<uni-section :title="'插槽用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker v-model="single"
-				>我是一个插槽，点击我</uni-datetime-picker
-			>
-		</view>
-		<uni-section :title="'无边框用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker v-model="single" :border="false" />
-		</view>
-		<uni-section :title="'disabled用法：' + single" type="line"></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker v-model="single" disabled />
-		</view>
-		<uni-section
-			:title="'日期范围用法：' + '[' + range + ']'"
-			type="line"
-		></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				v-model="range"
-				type="daterange"
-				start="2021-3-20"
-				end="2021-5-20"
-				rangeSeparator="至"
-			/>
-		</view>
-		<uni-section
-			:title="'日期时间范围用法：' + '[' + datetimerange + ']' "
-			type="line"
-		></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				v-model="datetimerange"
-				type="datetimerange"
-				start="2021-3-20 12:00:00"
-				end="2021-6-20 20:00:00"
-				rangeSeparator="至"
-			/>
-		</view>
-		<uni-section
-			:title="'仅时间选择用法：' + timeonly"
-			type="line"
-		></uni-section>
-		<view class="example-body">
-			<uni-datetime-picker
-				v-model="timeonly"
-				type="time"
-				:clear-icon="true"
-				placeholder="请选择时间"
-				:border="true"
-			/>
-		</view>
-	</view>
+  <view class="page">
+    <text class="example-info">
+      可以同时选择日期和时间的选择器
+    </text>
+    <uni-section
+      :title="'日期用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        type="date"
+        :value="single"
+        start="2021-3-20"
+        end="2021-6-20"
+        @change="change"
+      />
+    </view>
+    <uni-section
+      :title="'时间戳用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        return-type="timestamp"
+        start="2021-3-20"
+        end="2021-5-20"
+        @change="changeLog($event)"
+      />
+    </view>
+    <uni-section
+      :title="'日期时间用法：' + datetimesingle"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="datetimesingle"
+        type="datetime"
+        @change="changeLog"
+      />
+    </view>
+    <uni-section
+      :title="'v-model用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker v-model="single" />
+    </view>
+    <uni-section
+      :title="'插槽用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker v-model="single">
+        我是一个插槽，点击我
+      </uni-datetime-picker>
+    </view>
+    <uni-section
+      :title="'无边框用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="single"
+        :border="false"
+      />
+    </view>
+    <uni-section
+      :title="'disabled用法：' + single"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="single"
+        disabled
+      />
+    </view>
+    <uni-section
+      :title="'日期范围用法：' + '[' + range + ']'"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="range"
+        type="daterange"
+        start="2021-3-20"
+        end="2021-5-20"
+        range-separator="至"
+      />
+    </view>
+    <uni-section
+      :title="'日期时间范围用法：' + '[' + datetimerange + ']' "
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="datetimerange"
+        type="datetimerange"
+        start="2021-3-20 12:00:00"
+        end="2021-6-20 20:00:00"
+        range-separator="至"
+      />
+    </view>
+    <uni-section
+      :title="'仅时间选择用法：' + timeonly"
+      type="line"
+    />
+    <view class="example-body">
+      <uni-datetime-picker
+        v-model="timeonly"
+        type="time"
+        :clear-icon="true"
+        placeholder="请选择时间"
+        :border="true"
+      />
+    </view>
+  </view>
 </template>
 
 <script>
