@@ -189,40 +189,19 @@ const onWechatLogin = async () => {
       throw new Error('获取微信登录凭证失败')
     }
     
-    // 第二步：检查登录场景和用户状态
-    const loginScenario = storage.get('login_scenario') || uni.getStorageSync('login_scenario')
-    const localUserInfo = userStore.userInfo
-    const hasWechatBind = !!(localUserInfo && (localUserInfo.wechatOpenid || localUserInfo.wechat_openid))
+    console.log('🔑 获取微信登录凭证成功')
     
-    console.log('登录场景:', loginScenario, '微信绑定状态:', hasWechatBind)
-    
-    // 尝试直接登录（包括重新登录和已有绑定的情况）
+    // 简化逻辑：直接尝试使用缓存登录
     try {
-      if (loginScenario === 'relogin' && hasWechatBind) {
-        // 重新登录场景：直接使用微信绑定信息登录
-        console.log('重新登录场景，使用微信绑定信息')
-        await handleLoginSuccess({ code: loginRes.code })
-        // 清除场景标记
-        storage.remove('login_scenario')
-        uni.removeStorageSync('login_scenario')
-      } else if (hasWechatBind) {
-        // 已有微信绑定：非首次登录
-        console.log('检测到微信绑定，执行非首次登录流程')
-        await handleLoginSuccess({ code: loginRes.code })
-      } else {
-        // 首次登录场景，尝试使用缓存登录
-        console.log('首次登录场景，尝试使用缓存')
-        await handleLoginSuccess({ code: loginRes.code })
-      }
+      await handleLoginSuccess({ code: loginRes.code })
+      
+      // 清除可能存在的场景标记
+      storage.remove('login_scenario')
+      uni.removeStorageSync('login_scenario')
     } catch (loginError) {
       // 如果是缺少用户信息错误，显示用户信息表单
       if (loginError.message === 'NEED_USER_INFO') {
-        console.log('需要用户信息，显示用户信息表单')
-        try {
-          userStore.clearCache()
-        } catch (error) {
-          console.warn('清理缓存时出错，但继续登录流程:', error)
-        }
+        console.log('📝 需要用户信息，显示用户信息表单')
         loginCode.value = loginRes.code
         showUserInfoForm.value = true
       } else {

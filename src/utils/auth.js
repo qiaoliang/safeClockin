@@ -27,7 +27,7 @@ export async function handleLoginSuccess(response) {
       throw new Error('登录凭证无效或缺失')
     }
     
-    // 如果有用户信息，先保存到 store
+    // 如果有用户信息，先保存到 store 的缓存中，供登录时使用
     if (response.userInfo) {
       // 临时保存用户信息到 store 的缓存中，供登录时使用
       userStore.updateCache({
@@ -38,63 +38,43 @@ export async function handleLoginSuccess(response) {
       })
     }
     
-    // 构建登录请求数据
+    // 简化逻辑：只检查本地缓存完整性
+    const code = typeof response === 'string' ? response : response.code
     let loginData
     let hasUserInfo = false
     
-    if (typeof response === 'string') {
-      // 只传入了code（非首次登录）
-      // 检查是否有本地缓存的微信用户信息
-      const wechatCache = userStore.getWechatUserCache()
-      if (wechatCache && wechatCache.nickname && wechatCache.avatarUrl) {
-        // 使用缓存的用户信息进行登录
-        loginData = {
-          code: response,
-          nickname: wechatCache.nickname,
-          avatar_url: wechatCache.avatarUrl
-        }
-        hasUserInfo = true
-        console.log('✅ 使用本地缓存的微信用户信息登录')
-      } else {
-        // 没有缓存，需要获取用户信息
-        console.warn('⚠️ 缺少微信用户信息缓存，需要重新获取')
-        throw new Error('NEED_USER_INFO')
+    // 检查是否有完整的用户信息缓存
+    const wechatCache = userStore.getWechatUserCache()
+    const tempUserInfo = userStore.userState?.cache?.tempUserInfo
+    
+    // 优先使用临时缓存（当前会话获取的用户信息）
+    if (tempUserInfo && tempUserInfo.nickname && tempUserInfo.avatarUrl) {
+      loginData = {
+        code: code,
+        nickname: tempUserInfo.nickname,
+        avatar_url: tempUserInfo.avatarUrl
       }
-    } else {
-      // 获取 code
-      const code = response.code
-      
-      // 检查 store 中是否有缓存用户信息
-      const cachedUserInfo = userStore.userState?.cache?.tempUserInfo
-      if (cachedUserInfo && cachedUserInfo.nickname && cachedUserInfo.avatarUrl) {
-        // 首次登录，包含code和用户信息
-        loginData = {
-          code: code,
-          nickname: cachedUserInfo.nickname,
-          avatar_url: cachedUserInfo.avatarUrl
-        }
-        hasUserInfo = true
-      } else {
-        // 尝试使用本地缓存的微信用户信息
-        const wechatCache = userStore.getWechatUserCache()
-        if (wechatCache && wechatCache.nickname && wechatCache.avatarUrl) {
-          loginData = {
-            code: code,
-            nickname: wechatCache.nickname,
-            avatar_url: wechatCache.avatarUrl
-          }
-          hasUserInfo = true
-          console.log('✅ 使用本地缓存的微信用户信息登录')
-        } else {
-          // 没有任何缓存信息，需要获取用户信息
-          console.warn('⚠️ 缺少微信用户信息，需要重新获取')
-          throw new Error('NEED_USER_INFO')
-        }
+      hasUserInfo = true
+      console.log('✅ 使用临时缓存的用户信息登录')
+    } 
+    // 其次使用持久化缓存
+    else if (wechatCache && wechatCache.nickname && wechatCache.avatarUrl) {
+      loginData = {
+        code: code,
+        nickname: wechatCache.nickname,
+        avatar_url: wechatCache.avatarUrl
       }
+      hasUserInfo = true
+      console.log('✅ 使用持久化缓存的用户信息登录')
+    } 
+    // 没有缓存信息
+    else {
+      console.warn('⚠️ 缺少用户信息缓存，需要重新获取')
+      throw new Error('NEED_USER_INFO')
     }
     
     // 验证必需参数
-    if (!hasUserInfo || !loginData.nickname || !loginData.avatar_url) {
+    if (!loginData.nickname || !loginData.avatar_url) {
       console.error('❌ 登录数据缺少必需参数:', loginData)
       throw new Error('NEED_USER_INFO')
     }

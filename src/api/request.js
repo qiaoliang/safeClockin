@@ -138,8 +138,9 @@ const NO_TOKEN_REQUIRED_URLS = [
 ]
 
 export const request = (options) => {
-  return new Promise(async (resolve, reject) => {
-    // 获取 token，优先从 storage 获取
+  return new Promise((resolve, reject) => {
+    (async () => {
+      // 获取 token，优先从 storage 获取
     // 完全依赖 userStore 获取 token
     const userStore = useUserStore()
     let token = userStore.token
@@ -341,6 +342,8 @@ function handleResponse(res, fullUrl, resolve, reject, options = {}) {
       reject(new Error(`请求失败: ${res.statusCode} - FullURL:${fullUrl} - ${JSON.stringify(res.data)}`))
     }
   }
+    })()
+  })
 }
 
 

@@ -188,8 +188,7 @@ export const authApi = {
   logout:() => request({
     url: '/api/logout',
     method: 'POST'
-  })
-  ,
+  }),
   sendSmsCode: (data) => request({
     url: '/api/sms/send_code',
     method: 'POST',
