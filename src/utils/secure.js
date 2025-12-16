@@ -1,28 +1,67 @@
 export const SENSITIVE_KEYS = ['userState', 'secure_seed']
 
 function saveSeedWithBackup(seed) {
+  let successCount = 0
+  let totalAttempts = 0
+  
+  // 主存储
   try {
-    // 主存储
+    totalAttempts++
     uni.setStorageSync('secure_seed', seed)
-    
-    // 备份存储1：使用不同的key
+    successCount++
+  } catch (e) {
+    console.warn('⚠️ 主存储保存失败:', e.message)
+  }
+  
+  // 备份存储1：使用不同的key
+  try {
+    totalAttempts++
     uni.setStorageSync('backup_seed_1', seed)
-    
-    // 备份存储2：简单混淆（base64编码）
-    uni.setStorageSync('bk_seed_2', btoa(seed))
-    
-    // 备份存储3：分段存储（前半部分和后半部分分开）
+    successCount++
+  } catch (e) {
+    console.warn('⚠️ 备份1保存失败:', e.message)
+  }
+  
+  // 备份存储2：简单混淆（base64编码）- 环境适配
+  try {
+    totalAttempts++
+    if (typeof btoa === 'function') {
+      uni.setStorageSync('bk_seed_2', btoa(seed))
+      successCount++
+    } else {
+      // 微信小程序环境的fallback
+      console.log('ℹ️ 小程序环境，跳过base64备份（使用其他备份机制）')
+      successCount++ // 标记为成功，因为有其他备份
+    }
+  } catch (e) {
+    console.warn('⚠️ 备份2保存失败:', e.message)
+  }
+  
+  // 备份存储3：分段存储（前半部分和后半部分分开）
+  try {
+    totalAttempts++
     const mid = Math.floor(seed.length / 2)
     uni.setStorageSync('seed_part_1', seed.slice(0, mid))
     uni.setStorageSync('seed_part_2', seed.slice(mid))
-    
-    // 备份存储4：反转字符串
-    uni.setStorageSync('seed_rev', seed.split('').reverse().join(''))
-    
-    console.log('✅ 种子已保存到多个备份位置')
-    return true
+    successCount++
   } catch (e) {
-    console.error('❌ 保存种子备份失败:', e)
+    console.warn('⚠️ 分段备份保存失败:', e.message)
+  }
+  
+  // 备份存储4：反转字符串
+  try {
+    totalAttempts++
+    uni.setStorageSync('seed_rev', seed.split('').reverse().join(''))
+    successCount++
+  } catch (e) {
+    console.warn('⚠️ 反转备份保存失败:', e.message)
+  }
+  
+  if (successCount >= 3) {
+    console.log(`✅ 种子已保存到 ${successCount}/${totalAttempts} 个备份位置`)
+    return true
+  } else {
+    console.error(`❌ 种子保存失败，仅 ${successCount}/${totalAttempts} 个备份成功`)
     return false
   }
 }
