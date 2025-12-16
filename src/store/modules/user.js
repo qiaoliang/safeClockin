@@ -43,6 +43,9 @@ export const useUserStore = defineStore("user", {
             isLoading: false,
             currentProcessingCode: null,
             currentCommunityId: null,
+            
+            // 初始化状态标志
+            _isInitialized: false,
         };
 
         // 开发模式下添加保护，防止直接修改 userState
@@ -596,6 +599,9 @@ export const useUserStore = defineStore("user", {
             });
 
             this.isLoggedIn = false;
+            
+            // 重置初始化标志，允许下次重新初始化
+            this._isInitialized = false;
 
             // 清理存储
             this._clearUserStorage();
@@ -608,6 +614,12 @@ export const useUserStore = defineStore("user", {
 
         // 初始化用户状态
         initUserState() {
+            // 防止重复初始化
+            if (this._isInitialized) {
+                console.log("📱 用户状态已初始化，跳过重复调用");
+                return;
+            }
+
             console.log("=== 开始初始化用户状态 ===");
 
             // 首先进行种子健康检查
@@ -634,6 +646,8 @@ export const useUserStore = defineStore("user", {
                 console.log("📱 用户未登录，状态已清空");
             }
 
+            // 标记为已初始化
+            this._isInitialized = true;
             console.log("=== 用户状态初始化完成 ===");
         },
 
