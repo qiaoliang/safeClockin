@@ -33,6 +33,12 @@
           </view>
         </view>
 
+        <!-- 主管信息 -->
+        <view v-if="communityData.manager" class="info-manager">
+          <text class="manager-icon">👨‍💼</text>
+          <text class="manager-text">主管: {{ communityData.manager.nickname || '未知' }}</text>
+        </view>
+
         <view class="info-location">
           <text class="location-icon">📍</text>
           <text class="location-text">{{ communityData.location || '未设置位置' }}</text>
@@ -50,11 +56,7 @@
           </view>
           <view class="stat-item">
             <text class="stat-value">{{ communityData.stats?.user_count || 0 }}</text>
-            <text class="stat-label">成员</text>
-          </view>
-          <view class="stat-item">
-            <text class="stat-value">{{ communityData.stats?.staff_count || 0 }}</text>
-            <text class="stat-label">工作人员</text>
+            <text class="stat-label">社区用户</text>
           </view>
           <view class="stat-item">
             <text class="stat-value">{{ communityData.stats?.checkin_rate || 0 }}%</text>
@@ -506,6 +508,22 @@ const formatDate = (dateString) => {
     }
   }
   
+  .info-manager {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .manager-icon {
+      margin-right: 8px;
+      color: #666;
+    }
+    
+    .manager-text {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+  
   .info-location {
     display: flex;
     align-items: center;
@@ -537,7 +555,7 @@ const formatDate = (dateString) => {
   
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     margin-bottom: 16px;
     
