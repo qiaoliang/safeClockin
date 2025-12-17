@@ -381,6 +381,10 @@ export const useUserStore = defineStore("user", {
             storage.remove("cached_user_info");
             storage.remove("secure_seed");
             storage.remove("checkinCache");
+            
+            // 清理微信用户缓存（防止切换登录方式时数据混淆）
+            storage.remove("safeguard_cache");
+            storage.remove("login_scene");
         },
 
         // 统一的登录成功处理方法
@@ -394,6 +398,18 @@ export const useUserStore = defineStore("user", {
                     throw new Error(
                         `登录失败: ${apiResponse.msg || "未知错误"}`
                     );
+                }
+
+                // 清理旧的用户缓存，防止不同登录方式的数据混淆
+                if (loginType === "手机") {
+                    // 手机登录时清理微信用户缓存
+                    console.log("📱 手机登录，清理微信用户缓存");
+                    this.clearWechatUserCache();
+                    storage.remove("login_scene");
+                } else if (loginType === "微信") {
+                    // 微信登录时清理可能的手机用户缓存
+                    console.log("📱 微信登录，清理可能的旧缓存");
+                    storage.remove("login_scene");
                 }
 
                 // 更新用户状态
@@ -587,8 +603,16 @@ export const useUserStore = defineStore("user", {
             // 调用登出API
             authApi.logout().catch(() => {});
 
-            // 保存微信用户信息到本地缓存，用于下次登录
-            this._saveWechatUserCache();
+            // 检查当前用户类型，决定是否保存缓存
+            const currentUserType = this.userState.profile.wechatOpenid ? "微信" : "手机";
+            
+            if (currentUserType === "微信") {
+                // 微信用户退出时保存信息到缓存，用于下次快速登录
+                this._saveWechatUserCache();
+            } else {
+                // 手机用户退出时清理所有缓存
+                this.clearWechatUserCache();
+            }
 
             // 保留必要信息用于快速重新登录
             const wechatOpenid = this.userState.profile.wechatOpenid;
@@ -622,8 +646,13 @@ export const useUserStore = defineStore("user", {
             // 重置初始化标志，允许下次重新初始化
             this._isInitialized = false;
 
-            // 清理存储
+            // 清理存储（除了微信用户的缓存）
             this._clearUserStorage();
+            
+            // 如果是微信用户，重新保存缓存
+            if (currentUserType === "微信") {
+                this._saveWechatUserCache();
+            }
 
             // 保留必要信息在 userState 中
             if (wechatOpenid) {
