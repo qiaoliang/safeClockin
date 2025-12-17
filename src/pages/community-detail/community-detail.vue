@@ -26,48 +26,41 @@
     <view v-else class="content-area">
       <!-- 社区基本信息卡片 -->
       <view class="community-info-card">
-        <view class="info-header">
-          <text class="community-name">{{ communityData.name }}</text>
-          <view :class="['status-tag', communityData.status === 'active' ? 'status-tag-active' : 'status-tag-inactive']">
-            {{ communityData.status === 'active' ? '启用' : '停用' }}
+        <!-- 社区标题 -->
+        <text class="community-title">{{ communityData.name }}</text>
+        
+        <!-- 基本信息行：地址和主管在同一行 -->
+        <view class="info-row">
+          <!-- 地址信息 -->
+          <view class="info-item">
+            <text class="icon-location">📍</text>
+            <text class="info-text">{{ communityData.location || '未设置位置' }}</text>
+          </view>
+          
+          <!-- 主管信息 -->
+          <view v-if="communityData.manager" class="info-item">
+            <text class="icon-manager">👤</text>
+            <text class="info-text">主管: {{ communityData.manager.nickname || '未知' }}</text>
           </view>
         </view>
-
-        <!-- 主管信息 -->
-        <view v-if="communityData.manager" class="info-manager">
-          <text class="manager-icon">👨‍💼</text>
-          <text class="manager-text">主管: {{ communityData.manager.nickname || '未知' }}</text>
-        </view>
-
-        <view class="info-location">
-          <text class="location-icon">📍</text>
-          <text class="location-text">{{ communityData.location || '未设置位置' }}</text>
-        </view>
-
-        <view v-if="communityData.description" class="info-description">
-          <text class="description-text">{{ communityData.description }}</text>
-        </view>
-
-        <!-- 统计信息网格 -->
-        <view class="stats-grid">
+        
+        <!-- 分隔线 -->
+        <view class="divider"></view>
+        
+        <!-- 统计数据 -->
+        <view class="stats-container">
           <view class="stat-item">
-            <text class="stat-value">{{ communityData.stats?.admin_count || 0 }}</text>
+            <text class="stat-number admin-count">{{ communityData.stats?.admin_count || 0 }}</text>
             <text class="stat-label">专员</text>
           </view>
           <view class="stat-item">
-            <text class="stat-value">{{ communityData.stats?.user_count || 0 }}</text>
+            <text class="stat-number user-count">{{ communityData.stats?.user_count || 0 }}</text>
             <text class="stat-label">社区用户</text>
           </view>
           <view class="stat-item">
-            <text class="stat-value">{{ communityData.stats?.checkin_rate || 0 }}%</text>
+            <text class="stat-number checkin-rate">{{ communityData.stats?.checkin_rate || 0 }}%</text>
             <text class="stat-label">打卡率</text>
           </view>
-        </view>
-
-        <!-- 创建信息 -->
-        <view class="creation-info">
-          <text class="info-text">创建者: {{ communityData.creator?.nickname || '未知' }}</text>
-          <text class="info-text">创建时间: {{ formatDate(communityData.created_at) }}</text>
         </view>
       </view>
 
@@ -472,127 +465,95 @@ const formatDate = (dateString) => {
   padding: 16px;
 }
 
-.community-info-card {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
-  .info-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    
-    .community-name {
-      font-size: 20px;
-      font-weight: 600;
-      color: #333;
-    }
-    
-    .status-tag {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      
-      &.status-tag-active {
-        background-color: #e8f5e9;
-        color: #4caf50;
-      }
-      
-      &.status-tag-inactive {
-        background-color: #ffebee;
-        color: #f44336;
-      }
-    }
-  }
-  
-  .info-manager {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    
-    .manager-icon {
-      margin-right: 8px;
-      color: #666;
-    }
-    
-    .manager-text {
-      color: #666;
-      font-size: 14px;
-    }
-  }
-  
-  .info-location {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    
-    .location-icon {
-      margin-right: 8px;
-      color: #666;
-    }
-    
-    .location-text {
-      color: #666;
-      font-size: 14px;
-    }
-  }
-  
-  .info-description {
+  .community-info-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
     margin-bottom: 16px;
-    padding: 12px;
-    background-color: #f9f9f9;
-    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     
-    .description-text {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-  }
-  
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-    
-    .stat-item {
-      text-align: center;
-      padding: 12px 8px;
-      background-color: #f9f9f9;
-      border-radius: 6px;
-      
-      .stat-value {
-        display: block;
-        font-size: 18px;
-        font-weight: 600;
-        color: #409eff;
-        margin-bottom: 4px;
-      }
-      
-      .stat-label {
-        font-size: 12px;
-        color: #666;
-      }
-    }
-  }
-  
-  .creation-info {
-    border-top: 1px solid #eee;
-    padding-top: 12px;
-    
-    .info-text {
+    /* 社区标题 */
+    .community-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #5C4033; /* 深棕色 */
+      margin-bottom: 16px;
       display: block;
-      font-size: 12px;
-      color: #999;
-      margin-bottom: 4px;
+    }
+    
+    /* 基本信息行 */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 15px;
+      color: #666;
+      
+      .info-item {
+        display: flex;
+        align-items: center;
+        
+        .icon-location,
+        .icon-manager {
+          width: 16px;
+          height: 16px;
+          margin-right: 6px;
+          color: #F57C00; /* 橙色 */
+        }
+        
+        .info-text {
+          font-size: 15px;
+          color: #666;
+        }
+      }
+    }
+    
+    /* 分隔线 */
+    .divider {
+      height: 1px;
+      background-color: #E0E0E0;
+      margin: 20px 0;
+    }
+    
+    /* 统计数据容器 */
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      
+      .stat-item {
+        text-align: center;
+        padding: 12px 0;
+        
+        .stat-number {
+          display: block;
+          font-size: 34px;
+          font-weight: 700;
+          line-height: 1;
+          margin-bottom: 4px;
+          
+          &.admin-count {
+            color: #F57C00; /* 橙色 - 专员数 */
+          }
+          
+          &.user-count {
+            color: #5C4033; /* 深棕色 - 社区用户数 */
+          }
+          
+          &.checkin-rate {
+            color: #5C4033; /* 深棕色 - 打卡率 */
+          }
+        }
+        
+        .stat-label {
+          font-size: 13px;
+          color: #888;
+          margin-top: 4px;
+        }
+      }
     }
   }
-}
-
 .tab-bar {
   display: flex;
   background-color: #fff;
