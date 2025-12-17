@@ -246,6 +246,15 @@
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/community-detail/community-detail",
+			"style": {
+				"navigationBarTitleText": "社区详情",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true
+			}
 		}
 		
 	],

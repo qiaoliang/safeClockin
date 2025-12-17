@@ -35,6 +35,7 @@
         >
           <view
             class="community-item"
+            @click="viewCommunityDetail(item)"
             @longpress="showActionMenu(item)"
           >
             <view class="community-header">
@@ -358,6 +359,38 @@ const viewUsers = (community) => {
   uni.navigateTo({
     url: `/pages/community-user-manage/community-user-manage?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
   })
+}
+
+// 查看社区详情
+const viewCommunityDetail = (community) => {
+  // 检查用户权限
+  if (!hasCommunityAccess(community.id)) {
+    uni.showToast({
+      title: '无权限查看该社区详情',
+      icon: 'none'
+    })
+    return
+  }
+  
+  uni.navigateTo({
+    url: `/pages/community-detail/community-detail?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+  })
+}
+
+// 检查用户对社区的访问权限
+const hasCommunityAccess = (communityId) => {
+  const userRole = userStore.userInfo?.role
+  const userCommunities = userStore.managedCommunities || []
+  
+  // 超级管理员可以查看所有社区
+  if (userRole === 4) return true
+  
+  // 社区工作人员只能查看自己管理的社区
+  if (userRole === 3) {
+    return userCommunities.some(c => c.id === communityId) || false
+  }
+  
+  return false
 }
 
 // 处理滑动操作
