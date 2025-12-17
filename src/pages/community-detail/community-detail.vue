@@ -405,79 +405,77 @@ const formatDate = (dateString) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .community-detail-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  @include bg-gradient;
 }
 
 .header-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+  padding: $uni-spacing-md $uni-spacing-base;
+  background-color: $uni-bg-color-white;
+  border-bottom: 1px solid $uni-divider;
   
   .header-left,
   .header-right {
-    width: 40px;
-    height: 40px;
+    width: 80rpx;
+    height: 80rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     
     .icon-back,
     .icon-settings {
-      font-size: 20px;
-      color: #333;
+      font-size: 40rpx;
+      color: $uni-main-color;
     }
   }
   
   .header-title {
     flex: 1;
     text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
+    font-size: $uni-font-size-xl;
+    font-weight: $uni-font-weight-base;
+    color: $uni-main-color;
   }
 }
 
 .loading-container,
 .error-container {
-  padding: 40px 20px;
+  padding: 80rpx 40rpx;
   text-align: center;
   
   .error-text {
-    color: #f56c6c;
-    margin-bottom: 20px;
+    color: $uni-error;
+    margin-bottom: $uni-spacing-xl;
   }
   
   .retry-btn {
-    background-color: #409eff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    @include btn-primary;
+    padding: $uni-spacing-sm $uni-spacing-lg;
+    font-size: $uni-font-size-base;
   }
 }
 
 .content-area {
-  padding: 16px;
+  padding: $uni-spacing-base;
 }
 
   .community-info-card {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    @include card-default;
+    padding: $uni-spacing-xl;
+    margin-bottom: $uni-spacing-base;
     
     /* 社区标题 */
     .community-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: #5C4033; /* 深棕色 */
-      margin-bottom: 16px;
+      font-size: $uni-font-size-xxl;
+      font-weight: $uni-font-weight-base;
+      color: $uni-accent; /* 使用强调色替代深棕色 */
+      margin-bottom: $uni-spacing-lg;
       display: block;
     }
     
@@ -486,9 +484,9 @@ const formatDate = (dateString) => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      font-size: 15px;
-      color: #666;
+      margin-bottom: $uni-spacing-xl;
+      font-size: $uni-font-size-base;
+      color: $uni-base-color;
       
       .info-item {
         display: flex;
@@ -496,15 +494,15 @@ const formatDate = (dateString) => {
         
         .icon-location,
         .icon-manager {
-          width: 16px;
-          height: 16px;
-          margin-right: 6px;
-          color: #F57C00; /* 橙色 */
+          width: 32rpx;
+          height: 32rpx;
+          margin-right: $uni-spacing-sm;
+          color: $uni-primary; /* 使用主色调替代橙色 */
         }
         
         .info-text {
-          font-size: 15px;
-          color: #666;
+          font-size: $uni-font-size-base;
+          color: $uni-base-color;
         }
       }
     }
@@ -512,8 +510,8 @@ const formatDate = (dateString) => {
     /* 分隔线 */
     .divider {
       height: 1px;
-      background-color: #E0E0E0;
-      margin: 20px 0;
+      background-color: $uni-divider;
+      margin: $uni-spacing-xl 0;
     }
     
     /* 统计数据容器 */
@@ -524,138 +522,133 @@ const formatDate = (dateString) => {
       
       .stat-item {
         text-align: center;
-        padding: 12px 0;
+        padding: $uni-spacing-md 0;
         
         .stat-number {
           display: block;
-          font-size: 34px;
-          font-weight: 700;
+          font-size: $uni-font-size-h1;
+          font-weight: $uni-font-weight-base;
           line-height: 1;
-          margin-bottom: 4px;
+          margin-bottom: $uni-spacing-xs;
           
           &.admin-count {
-            color: #F57C00; /* 橙色 - 专员数 */
+            color: $uni-primary; /* 使用主色调替代橙色 - 专员数 */
           }
           
           &.user-count {
-            color: #5C4033; /* 深棕色 - 社区用户数 */
+            color: $uni-accent; /* 使用强调色替代深棕色 - 社区用户数 */
           }
           
           &.checkin-rate {
-            color: #5C4033; /* 深棕色 - 打卡率 */
+            color: $uni-accent; /* 使用强调色替代深棕色 - 打卡率 */
           }
         }
         
         .stat-label {
-          font-size: 13px;
-          color: #888;
-          margin-top: 4px;
+          font-size: $uni-font-size-sm;
+          color: $uni-secondary-color;
+          margin-top: $uni-spacing-xs;
         }
       }
     }
   }
 .tab-bar {
   display: flex;
-  background-color: #fff;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background-color: $uni-bg-color-white;
+  border-radius: $uni-radius-base;
+  margin-bottom: $uni-spacing-base;
   overflow: hidden;
+  box-shadow: $uni-shadow-sm;
   
   .tab-item {
     flex: 1;
     text-align: center;
-    padding: 12px 0;
+    padding: $uni-spacing-md 0;
     border-bottom: 2px solid transparent;
     
     &.tab-item-active {
-      border-bottom-color: #409eff;
+      border-bottom-color: $uni-primary;
       
       .tab-text {
-        color: #409eff;
+        color: $uni-primary;
       }
     }
     
     .tab-text {
-      font-size: 14px;
-      color: #666;
+      font-size: $uni-font-size-base;
+      color: $uni-base-color;
     }
   }
 }
 
 .tab-content {
   .tab-panel {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 16px;
+    background-color: $uni-bg-color-white;
+    border-radius: $uni-radius-base;
+    padding: $uni-spacing-base;
     min-height: 200px;
     
     .placeholder-text {
-      color: #999;
+      color: $uni-secondary-color;
       text-align: center;
       display: block;
-      padding: 40px 0;
+      padding: 80rpx 0;
     }
     
     .management-card {
-      background-color: #f9f9f9;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 16px;
+      @include card-gradient;
+      margin-bottom: $uni-spacing-base;
       
       .card-title {
         display: block;
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
+        font-size: $uni-font-size-xl;
+        font-weight: $uni-font-weight-base;
+        color: $uni-main-color;
+        margin-bottom: $uni-spacing-sm;
       }
       
       .card-description {
         display: block;
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 20px;
+        font-size: $uni-font-size-base;
+        color: $uni-base-color;
+        margin-bottom: $uni-spacing-xl;
         line-height: 1.5;
       }
       
       .card-stats {
         display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: $uni-spacing-xl;
+        margin-bottom: $uni-spacing-xl;
         
         .stat-item {
           flex: 1;
           text-align: center;
-          padding: 12px;
-          background-color: white;
-          border-radius: 6px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: $uni-spacing-md;
+          background-color: $uni-bg-color-white;
+          border-radius: $uni-radius-sm;
+          box-shadow: $uni-shadow-xs;
           
           .stat-value {
             display: block;
-            font-size: 20px;
-            font-weight: 600;
-            color: #409eff;
-            margin-bottom: 4px;
+            font-size: $uni-font-size-xxl;
+            font-weight: $uni-font-weight-base;
+            color: $uni-primary;
+            margin-bottom: $uni-spacing-xs;
           }
           
           .stat-label {
             display: block;
-            font-size: 12px;
-            color: #666;
+            font-size: $uni-font-size-sm;
+            color: $uni-base-color;
           }
         }
       }
       
       .manage-btn {
         width: 100%;
-        background-color: #409eff;
-        color: white;
-        border: none;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 16px;
-        font-weight: 500;
+        @include btn-primary;
+        font-size: $uni-font-size-lg;
+        font-weight: $uni-font-weight-base;
       }
     }
   }
