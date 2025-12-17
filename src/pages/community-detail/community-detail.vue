@@ -47,7 +47,7 @@
         <!-- 分隔线 -->
         <view class="divider"></view>
         
-        <!-- 统计数据 -->
+        <!-- 统计数据 - 五列布局 -->
         <view class="stats-container">
           <view class="stat-item">
             <text class="stat-number admin-count">{{ communityData.stats?.admin_count || 0 }}</text>
@@ -55,7 +55,15 @@
           </view>
           <view class="stat-item">
             <text class="stat-number user-count">{{ communityData.stats?.user_count || 0 }}</text>
-            <text class="stat-label">社区用户</text>
+            <text class="stat-label">成员</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number support-count">{{ communityData.stats?.support_count || 0 }}</text>
+            <text class="stat-label">应援</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number active-count">{{ communityData.stats?.active_events || 0 }}</text>
+            <text class="stat-label">活跃</text>
           </view>
           <view class="stat-item">
             <text class="stat-number checkin-rate">{{ communityData.stats?.checkin_rate || 0 }}%</text>
@@ -532,15 +540,23 @@ const formatDate = (dateString) => {
           margin-bottom: $uni-spacing-xs;
           
           &.admin-count {
-            color: $uni-primary; /* 使用主色调替代橙色 - 专员数 */
+            color: $uni-primary; /* 橙色 - 专员数 */
           }
           
           &.user-count {
-            color: $uni-accent; /* 使用强调色替代深棕色 - 社区用户数 */
+            color: $uni-accent; /* 深棕色 - 成员数 */
+          }
+          
+          &.support-count {
+            color: $uni-success; /* 绿色 - 应援数 */
+          }
+          
+          &.active-count {
+            color: $uni-error; /* 红色 - 活跃数 */
           }
           
           &.checkin-rate {
-            color: $uni-accent; /* 使用强调色替代深棕色 - 打卡率 */
+            color: $uni-accent; /* 深棕色 - 打卡率 */
           }
         }
         
