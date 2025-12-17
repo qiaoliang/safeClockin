@@ -232,7 +232,7 @@ const hasViewPermission = computed(() => {
 // 生命周期
 onLoad((options) => {
   communityId.value = options.communityId || ''
-  communityName.value = options.communityName || ''
+  communityName.value = decodeURIComponent(options.communityName || '')
   
   if (communityId.value) {
     loadCommunityDetail()
@@ -241,6 +241,44 @@ onLoad((options) => {
     loading.value = false
   }
 })
+
+// URL解码函数
+const decodeText = (text) => {
+  if (!text || typeof text !== 'string') return text
+  
+  try {
+    // 尝试解码URL编码的文本
+    return decodeURIComponent(text)
+  } catch (error) {
+    // 如果解码失败，返回原文本
+    console.warn('URL解码失败:', error)
+    return text
+  }
+}
+
+// 解码社区数据中的文本字段
+const decodeCommunityData = (data) => {
+  if (!data || typeof data !== 'object') return data
+  
+  const decoded = { ...data }
+  
+  // 解码基本文本字段
+  if (decoded.name) decoded.name = decodeText(decoded.name)
+  if (decoded.description) decoded.description = decodeText(decoded.description)
+  if (decoded.location) decoded.location = decodeText(decoded.location)
+  
+  // 解码创建者信息
+  if (decoded.creator && decoded.creator.nickname) {
+    decoded.creator.nickname = decodeText(decoded.creator.nickname)
+  }
+  
+  // 解码主管信息
+  if (decoded.manager && decoded.manager.nickname) {
+    decoded.manager.nickname = decodeText(decoded.manager.nickname)
+  }
+  
+  return decoded
+}
 
 // 方法
 const loadCommunityDetail = async () => {
@@ -263,7 +301,8 @@ const loadCommunityDetail = async () => {
   try {
     const response = await communityApi.getCommunityDetail(communityId.value)
     if (response.code === 1) {
-      communityData.value = response.data.community || {}
+      // 解码API返回的数据
+      communityData.value = decodeCommunityData(response.data.community || {})
       
       // 验证返回的数据是否属于当前用户有权限的社区
       if (communityData.value.id && communityData.value.id.toString() !== communityId.value.toString()) {
