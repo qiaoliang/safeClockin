@@ -85,27 +85,65 @@
       <view class="tab-content">
         <!-- 专员管理 -->
         <view v-if="activeTab === 'staff'" class="tab-panel">
-          <community-staff-list :community-id="communityId" />
+          <view class="management-card">
+            <text class="card-title">社区专员管理</text>
+            <text class="card-description">管理社区的工作人员，包括主管和专员</text>
+            <view class="card-stats">
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.staff_count || 0 }}</text>
+                <text class="stat-label">工作人员</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.admin_count || 0 }}</text>
+                <text class="stat-label">专员</text>
+              </view>
+            </view>
+            <button class="manage-btn" @click="navigateToStaffManage">
+              进入专员管理
+            </button>
+          </view>
         </view>
 
         <!-- 用户管理 -->
         <view v-else-if="activeTab === 'users'" class="tab-panel">
-          <community-user-list :community-id="communityId" />
+          <view class="management-card">
+            <text class="card-title">社区用户管理</text>
+            <text class="card-description">管理社区成员，查看用户信息和打卡情况</text>
+            <view class="card-stats">
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.user_count || 0 }}</text>
+                <text class="stat-label">成员</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.checkin_rate || 0 }}%</text>
+                <text class="stat-label">打卡率</text>
+              </view>
+            </view>
+            <button class="manage-btn" @click="navigateToUserManage">
+              进入用户管理
+            </button>
+          </view>
         </view>
 
         <!-- 打卡规则 -->
         <view v-else-if="activeTab === 'checkin'" class="tab-panel">
-          <community-checkin-rules :community-id="communityId" />
-        </view>
-
-        <!-- 任务分配 -->
-        <view v-else-if="activeTab === 'tasks'" class="tab-panel">
-          <text class="placeholder-text">任务分配功能开发中...</text>
-        </view>
-
-        <!-- 应援记录 -->
-        <view v-else-if="activeTab === 'support'" class="tab-panel">
-          <text class="placeholder-text">应援记录功能开发中...</text>
+          <view class="management-card">
+            <text class="card-title">打卡规则管理</text>
+            <text class="card-description">设置和管理社区的打卡规则</text>
+            <view class="card-stats">
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.checkin_rules || 0 }}</text>
+                <text class="stat-label">规则数</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-value">{{ communityData.stats?.active_users || 0 }}</text>
+                <text class="stat-label">活跃用户</text>
+              </view>
+            </view>
+            <button class="manage-btn" @click="navigateToCheckinRules">
+              进入规则管理
+            </button>
+          </view>
         </view>
       </view>
     </view>
@@ -113,13 +151,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { communityApi } from '@/api'
-import CommunityStaffList from '@/components/community/CommunityStaffList.vue'
-import CommunityUserList from '@/components/community/CommunityUserList.vue'
-import CommunityCheckinRules from '@/components/community/CommunityCheckinRules.vue'
 
 // 路由参数
 const communityId = ref('')
@@ -135,9 +170,7 @@ const activeTab = ref('staff')
 const tabs = [
   { id: 'staff', name: '专员管理' },
   { id: 'users', name: '用户管理' },
-  { id: 'checkin', name: '打卡规则' },
-  { id: 'tasks', name: '任务分配' },
-  { id: 'support', name: '应援记录' }
+  { id: 'checkin', name: '打卡规则' }
 ]
 
 // Store
@@ -300,6 +333,28 @@ const deleteCommunity = () => {
 const exportData = () => {
   uni.showToast({
     title: '导出功能开发中',
+    icon: 'none'
+  })
+}
+
+// 导航到专员管理页面
+const navigateToStaffManage = () => {
+  uni.navigateTo({
+    url: `/pages/community-staff-manage/community-staff-manage?communityId=${communityId.value}&communityName=${encodeURIComponent(communityData.value.name || '')}`
+  })
+}
+
+// 导航到用户管理页面
+const navigateToUserManage = () => {
+  uni.navigateTo({
+    url: `/pages/community-user-manage/community-user-manage?communityId=${communityId.value}&communityName=${encodeURIComponent(communityData.value.name || '')}`
+  })
+}
+
+// 导航到打卡规则页面
+const navigateToCheckinRules = () => {
+  uni.showToast({
+    title: '打卡规则功能开发中',
     icon: 'none'
   })
 }
@@ -521,6 +576,69 @@ const formatDate = (dateString) => {
       text-align: center;
       display: block;
       padding: 40px 0;
+    }
+    
+    .management-card {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      
+      .card-title {
+        display: block;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      
+      .card-description {
+        display: block;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      
+      .card-stats {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        
+        .stat-item {
+          flex: 1;
+          text-align: center;
+          padding: 12px;
+          background-color: white;
+          border-radius: 6px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          
+          .stat-value {
+            display: block;
+            font-size: 20px;
+            font-weight: 600;
+            color: #409eff;
+            margin-bottom: 4px;
+          }
+          
+          .stat-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+      
+      .manage-btn {
+        width: 100%;
+        background-color: #409eff;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+      }
     }
   }
 }
