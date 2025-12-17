@@ -155,7 +155,7 @@ onLoad((options) => {
   
   // 加载工作人员列表
   if (currentCommunityId.value) {
-    loadStaffList()
+    loadStaffMembers()
   }
 })
 
