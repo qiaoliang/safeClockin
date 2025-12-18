@@ -122,6 +122,7 @@
     <CommunityAddUserModal 
       v-if="showAddUserModal"
       :community-id="communityId"
+      :community-name="communityData.name"
       @close="closeAddUserModal"
       @confirm="confirmAddUser"
     />
@@ -134,6 +135,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import { getCommunityDetail, getCommunityStaffList, getCommunityUsers } from '@/api/community'
+import { authApi } from '@/api/auth'
 import CommunityDetailHeader from './components/CommunityDetailHeader.vue'
 import CommunityInfoCard from './components/CommunityInfoCard.vue'
 import CommunityTabBar from './components/CommunityTabBar.vue'
@@ -652,22 +654,68 @@ const closeAddUserModal = () => {
   showAddUserModal.value = false
 }
 
-const confirmAddUser = async (userData) => {
+const confirmAddUser = async (data) => {
   try {
-    // TODO: 调用API添加用户
-    await new Promise(resolve => setTimeout(resolve, 300))
+    uni.showLoading({ title: '处理中...', mask: true })
     
-    const newUser = {
-      id: `user_${Date.now()}`,
-      ...userData
+    // 判断处理类型
+    if (data.type === 'create') {
+      // 安卡大家庭：创建新用户
+      // 注意：这里假设后端已经支持超级管理员免验证码创建
+      // 实际实现需要后端API支持
+      const response = await authApi.registerPhone({
+        phone: data.userData.phoneNumber,
+        nickname: data.userData.nickname,
+        password: 'A123456',
+        role: 1,
+        code: userStore.isSuperAdmin ? '000000' : '' // 需要后端支持特殊验证码
+      })
+      
+      if (response.code === 1) {
+        // 创建成功后，将用户添加到安卡大家庭
+        const addResponse = await communityStore.addCommunityUsers(
+          communityId.value,
+          [response.data.userId]
+        )
+        
+        if (addResponse.code === 1) {
+          uni.showToast({ title: '用户创建并添加成功', icon: 'success' })
+          // 刷新用户列表
+          await refreshUserList()
+        } else {
+          uni.showToast({ title: addResponse.msg || '添加用户失败', icon: 'none' })
+        }
+      } else {
+        uni.showToast({ title: response.msg || '创建用户失败', icon: 'none' })
+      }
+    } else if (data.type === 'add') {
+      // 普通社区：添加现有用户
+      const response = await communityStore.addCommunityUsers(
+        communityId.value,
+        [data.userId]
+      )
+      
+      if (response.code === 1) {
+        uni.showToast({ 
+          title: response.data.added_count > 0 ? '添加成功' : '用户已在社区',
+          icon: 'success' 
+        })
+        // 刷新用户列表
+        await refreshUserList()
+      } else {
+        uni.showToast({ title: response.msg || '添加失败', icon: 'none' })
+      }
     }
     
-    userList.value.unshift(newUser)
-    uni.showToast({ title: '添加成功', icon: 'success' })
     showAddUserModal.value = false
   } catch (err) {
-    console.error('添加用户失败:', err)
-    uni.showToast({ title: '添加失败', icon: 'error' })
+    console.error('处理用户失败:', err)
+    uni.showToast({ 
+      title: err.message || '操作失败，请重试', 
+      icon: 'none' 
+    })
+  } finally {
+    uni.hideLoading()
   }
 }
 

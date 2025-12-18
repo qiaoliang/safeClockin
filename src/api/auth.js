@@ -274,5 +274,24 @@ export const authApi = {
     url: '/api/user/bind_wechat',
     method: 'POST',
     data
+  }),
+  // 搜索用户（用于社区添加用户）
+  searchUsers: (params) => request({
+    url: '/api/users/search',
+    method: 'GET',
+    data: params
+  }).then(response => {
+    // 处理响应数据格式转换
+    if (response && response.code === 1 && response.data && response.data.users) {
+      const transformedUsers = response.data.users.map(user => ({
+        userId: user.user_id,
+        nickname: user.nickname,
+        phoneNumber: user.phone_number,
+        avatarUrl: user.avatar_url,
+        isSupervisor: user.is_supervisor
+      }))
+      response.data.users = transformedUsers
+    }
+    return response
   })
 }
