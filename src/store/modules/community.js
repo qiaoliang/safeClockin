@@ -451,6 +451,39 @@ export const useCommunityStore = defineStore('community', {
     },
     
     /**
+     * 在社区中创建新用户（超级管理员在安卡大家庭中免验证码创建）
+     * @param {string} communityId - 社区ID
+     * @param {Object} userData - 用户数据
+     * @param {string} userData.nickname - 用户昵称
+     * @param {string} userData.phone - 手机号码
+     * @param {string} userData.remark - 备注信息（可选）
+     */
+    async createCommunityUser(communityId, userData) {
+      try {
+        const response = await request({
+          url: '/api/community/create-user',
+          method: 'POST',
+          data: {
+            community_id: communityId,
+            nickname: userData.nickname,
+            phone: userData.phone,
+            remark: userData.remark || ''
+          }
+        })
+        
+        if (response.code === 1) {
+          // 刷新用户列表
+          await this.loadCommunityUsers(communityId, true)
+        }
+        
+        return response
+      } catch (error) {
+        console.error('创建社区用户失败:', error)
+        throw error
+      }
+    },
+    
+    /**
      * 搜索用户
      * @param {string} keyword - 搜索关键词
      * @param {string} communityId - 社区ID (可选)

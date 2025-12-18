@@ -660,31 +660,20 @@ const confirmAddUser = async (data) => {
     
     // 判断处理类型
     if (data.type === 'create') {
-      // 安卡大家庭：创建新用户
-      // 注意：这里假设后端已经支持超级管理员免验证码创建
-      // 实际实现需要后端API支持
-      const response = await authApi.registerPhone({
-        phone: data.userData.phoneNumber,
-        nickname: data.userData.nickname,
-        password: 'A123456',
-        role: 1,
-        code: userStore.isSuperAdmin ? '000000' : '' // 需要后端支持特殊验证码
-      })
+      // 安卡大家庭：创建新用户（使用新的专用API）
+      const response = await communityStore.createCommunityUser(
+        communityId.value,
+        {
+          nickname: data.userData.nickname,
+          phone: data.userData.phoneNumber,
+          remark: data.userData.remark || ''
+        }
+      )
       
       if (response.code === 1) {
-        // 创建成功后，将用户添加到安卡大家庭
-        const addResponse = await communityStore.addCommunityUsers(
-          communityId.value,
-          [response.data.userId]
-        )
-        
-        if (addResponse.code === 1) {
-          uni.showToast({ title: '用户创建并添加成功', icon: 'success' })
-          // 刷新用户列表
-          await refreshUserList()
-        } else {
-          uni.showToast({ title: addResponse.msg || '添加用户失败', icon: 'none' })
-        }
+        uni.showToast({ title: '用户创建并添加成功', icon: 'success' })
+        // 刷新用户列表
+        await refreshUserList()
       } else {
         uni.showToast({ title: response.msg || '创建用户失败', icon: 'none' })
       }
