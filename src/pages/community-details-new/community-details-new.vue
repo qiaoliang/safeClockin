@@ -132,6 +132,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
+import { useCommunityStore } from '@/store/modules/community'
 import { getCommunityDetail, getCommunityStaffList, getCommunityUsers } from '@/api/community'
 import CommunityDetailHeader from './components/CommunityDetailHeader.vue'
 import CommunityInfoCard from './components/CommunityInfoCard.vue'
@@ -147,6 +148,7 @@ import CommunityAddUserModal from './components/modals/CommunityAddUserModal.vue
 
 // Store
 const userStore = useUserStore()
+const communityStore = useCommunityStore()
 
 // 页面参数
 const communityId = ref('')
@@ -385,7 +387,8 @@ const loadStaffList = async () => {
 
 // 加载用户列表（懒加载）
 const loadUserList = async () => {
-  // 如果已经加载过，直接返回
+  // 如果已经加载过且列表不为空，直接返回
+  // 但如果列表为空（可能是删除后），允许重新加载
   if (userListLoaded.value && userList.value.length > 0) {
     return
   }
@@ -398,10 +401,12 @@ const loadUserList = async () => {
     } else {
       console.error('加载用户列表失败:', response.msg)
       userList.value = []
+      userListLoaded.value = true // 标记为已加载，即使是空列表
     }
   } catch (err) {
     console.error('加载用户列表失败:', err)
     userList.value = []
+    userListLoaded.value = true // 标记为已加载，即使是空列表
   }
 }
 
@@ -473,13 +478,24 @@ const handleRemoveStaff = async (staffId) => {
     success: async (res) => {
       if (res.confirm) {
         try {
-          // TODO: 调用API移除专员
-          await new Promise(resolve => setTimeout(resolve, 300))
-          staffList.value = staffList.value.filter(staff => staff.id !== staffId)
-          uni.showToast({ title: '移除成功', icon: 'success' })
+          uni.showLoading({ title: '移除中...' })
+          
+          // 调用真实的API移除工作人员
+          const response = await communityStore.removeStaffMember(communityId.value, staffId)
+          
+          if (response.code === 1) {
+            uni.showToast({ title: '移除成功', icon: 'success' })
+            
+            // 重新加载工作人员列表
+            await loadStaffList()
+          } else {
+            uni.showToast({ title: response.msg || '移除失败', icon: 'error' })
+          }
         } catch (err) {
           console.error('移除专员失败:', err)
           uni.showToast({ title: '移除失败', icon: 'error' })
+        } finally {
+          uni.hideLoading()
         }
       }
     }
@@ -497,13 +513,28 @@ const handleRemoveUser = async (userId) => {
     success: async (res) => {
       if (res.confirm) {
         try {
-          // TODO: 调用API移除用户
-          await new Promise(resolve => setTimeout(resolve, 300))
-          userList.value = userList.value.filter(user => user.id !== userId)
-          uni.showToast({ title: '移除成功', icon: 'success' })
+          uni.showLoading({ title: '移除中...' })
+          
+          // 调用真实的API移除用户
+          const response = await communityStore.removeCommunityUser(communityId.value, userId)
+          
+          if (response.code === 1) {
+            uni.showToast({ title: '移除成功', icon: 'success' })
+            
+            // 重置加载状态，强制重新加载用户列表
+            userListLoaded.value = false
+            userList.value = []
+            
+            // 重新加载用户列表
+            await loadUserList()
+          } else {
+            uni.showToast({ title: response.msg || '移除失败', icon: 'error' })
+          }
         } catch (err) {
           console.error('移除用户失败:', err)
           uni.showToast({ title: '移除失败', icon: 'error' })
+        } finally {
+          uni.hideLoading()
         }
       }
     }
