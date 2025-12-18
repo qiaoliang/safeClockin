@@ -4,22 +4,39 @@
  */
 
 // === 主色调系统 ===
-// 品牌主色 - 橙色系
+// 品牌主色 - 橙色系（从HTML文件提取）
 $uni-primary: #F48224;
 $uni-primary-disable: #F4822480;
 $uni-primary-light: #F48224CC;
 $uni-primary-dark: #E8741A;
+$uni-primary-gradient-start: #F48224;
+$uni-primary-gradient-end: #E8741A;
+
+// 背景主色 - 米色系（从HTML文件提取）
+$uni-bg-primary: #FAE9DB;
+$uni-bg-primary-light: #F8E0D0;
+$uni-bg-primary-gradient-start: #FAE9DB;
+$uni-bg-primary-gradient-end: #F8E0D0;
+
+// 强调色 - 深棕色（从HTML文件提取）
+$uni-accent: #624731;
+$uni-accent-light: #62473180;
+$uni-accent-dark: #4A3525;
 
 // 辅助色
 $uni-success: #10B981;
 $uni-success-disable: #10B98180;
 $uni-success-light: #10B981CC;
 $uni-success-dark: #059669;
+$uni-success-gradient-start: #10B981;
+$uni-success-gradient-end: #059669;
 
 $uni-warning: #F59E0B;
 $uni-warning-disable: #F59E0B80;
 $uni-warning-light: #F59E0BCC;
 $uni-warning-dark: #D97706;
+$uni-warning-gradient-start: #F59E0B;
+$uni-warning-gradient-end: #D97706;
 
 $uni-error: #EF4444;
 $uni-error-disable: #EF444480;
@@ -27,36 +44,46 @@ $uni-error-light: #EF4444CC;
 $uni-error-dark: #DC2626;
 $uni-danger: #EF4444; // 危险色别名
 $uni-danger-dark: #DC2626;
+$uni-danger-gradient-start: #EF4444;
+$uni-danger-gradient-end: #DC2626;
 
 $uni-info: #3B82F6;
 $uni-info-disable: #3B82F680;
 $uni-info-light: #3B82F6CC;
 $uni-info-dark: #2563EB;
+$uni-info-gradient-start: #3B82F6;
+$uni-info-gradient-end: #2563EB;
 
 // 强调色
 $uni-accent: #624731;
 $uni-accent-light: #62473180;
 
-// 状态栏色
+// 状态栏色（从HTML文件提取）
 $uni-statusbar-bg-start: #1F2937;
 $uni-statusbar-bg-end: #374151;
+$uni-statusbar-gradient-start: #1F2937;
+$uni-statusbar-gradient-end: #374151;
 
-// === 文本色系统 ===
+// === 文本色系统 ===（从HTML文件提取）
 // 主要文字色
 $uni-main-color: #3a3a3a;
-$uni-text-primary: #374151; // 深灰文本
+$uni-text-primary: #374151; // 深灰文本（从HTML提取）
+$uni-text-primary-dark: #1F2937;
 // 常规文字色
 $uni-base-color: #6a6a6a;
-$uni-text-base: #6B7280; // 中灰文本
+$uni-text-base: #6B7280; // 中灰文本（从HTML提取）
 // 次要文字色
 $uni-secondary-color: #909399;
-$uni-text-secondary: #9CA3AF; // 浅灰文本
+$uni-text-secondary: #9CA3AF; // 浅灰文本（从HTML提取）
 // 辅助说明文字
 $uni-extra-color: #c7c7c7;
-$uni-text-light: #D1D5DB; // 极浅灰
-$uni-text-placeholder: #9CA3AF; // 占位文本
+$uni-text-light: #D1D5DB; // 极浅灰（从HTML提取）
+$uni-text-placeholder: #9CA3AF; // 占位文本（从HTML提取）
+$uni-text-gray-600: #6B7280; // HTML中使用的灰色文本
+$uni-text-gray-700: #374151; // HTML中使用的深灰文本
+$uni-text-gray-800: #1F2937; // HTML中使用的更深灰文本
 
-// === 背景色系统 ===
+// === 背景色系统 ===（从HTML文件提取）
 // 主背景色 - 暖色调米色
 $uni-bg-color: #FAE9DB;
 $uni-bg-color-primary: #FAE9DB;
@@ -64,14 +91,26 @@ $uni-bg-color-primary: #FAE9DB;
 $uni-bg-color-grey: #f5f5f5;
 $uni-bg-color-light: #E5E7EB;
 $uni-bg-color-lighter: #F3F4F6;
-// 卡片背景色
 $uni-bg-color-white: #ffffff;
+// 卡片背景色（从HTML文件提取）
 $uni-bg-card-start: #ffffff;
 $uni-bg-card-end: #f8fafc;
-// 渐变背景起始色
+$uni-bg-card-gradient-start: #ffffff;
+$uni-bg-card-gradient-end: #f8fafc;
+// 渐变背景色（从HTML文件提取）
 $uni-bg-gradient-start: #FAE9DB;
-// 渐变背景结束色
 $uni-bg-gradient-end: #F8E0D0;
+// 功能背景色（从HTML文件提取）
+$uni-bg-blue-50: #EFF6FF;
+$uni-bg-blue-100: #DBEAFE;
+$uni-bg-purple-50: #F5F3FF;
+$uni-bg-purple-100: #EDE9FE;
+$uni-bg-green-50: #F0FDF4;
+$uni-bg-green-100: #DCFCE7;
+$uni-bg-red-50: #FEF2F2;
+$uni-bg-red-100: #FEE2E2;
+$uni-bg-yellow-50: #FEFCE8;
+$uni-bg-yellow-100: #FEF9C3;
 // 半透明背景
 $uni-bg-overlay: rgba(0, 0, 0, 0.5);
 $uni-bg-overlay-light: rgba(0, 0, 0, 0.3);
@@ -114,35 +153,41 @@ $uni-spacing-xxxl: 48rpx; // 特大间距
 // 角度
 $uni-deg-base: 135deg;
 
-// === 阴影系统 ===
-// 基础阴影
+// === 阴影系统 ===（从HTML文件提取并转换为rpx）
+// 基础阴影（HTML中使用px，转换为rpx：1px = 2rpx）
 $uni-shadow-xs: 0 2rpx 4rpx rgba(0, 0, 0, 0.06);
-$uni-shadow-sm: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
-$uni-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
-$uni-shadow-md: 0 6rpx 16rpx rgba(0, 0, 0, 0.1);
-$uni-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
-$uni-shadow-xl: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+$uni-shadow-sm: 0 4rpx 12rpx rgba(0, 0, 0, 0.08); // HTML: 0 4px 12px
+$uni-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.06); // HTML: 0 4px 16px
+$uni-shadow-md: 0 6rpx 16rpx rgba(0, 0, 0, 0.1); // HTML: 0 6px 16px
+$uni-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.1); // HTML: 0 8px 24px
+$uni-shadow-xl: 0 12rpx 32rpx rgba(0, 0, 0, 0.15); // HTML: 0 12px 32px
 
-// 卡片阴影
-$uni-shadow-card: 0 4prx 12rpx rgba(0, 0, 0, 0.08);
-$uni-shadow-card-hover: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+// 卡片阴影（从HTML文件提取）
+$uni-shadow-card: 0 4rpx 12rpx rgba(0, 0, 0, 0.08); // HTML: 0 4px 12px rgba(0, 0, 0, 0.08)
+$uni-shadow-card-hover: 0 4rpx 16rpx rgba(0, 0, 0, 0.08); // HTML: 0 4px 16px rgba(0, 0, 0, 0.08)
+$uni-shadow-card-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.1); // HTML: 0 8px 24px rgba(0, 0, 0, 0.1)
+
+// 按钮阴影（从HTML文件提取）
+$uni-shadow-button: 0 2rpx 8rpx rgba(244, 130, 36, 0.3); // HTML: 0 2px 8px rgba(244, 130, 36, 0.3)
+$uni-shadow-button-hover: 0 4rpx 12rpx rgba(244, 130, 36, 0.4); // HTML: 0 4px 12px rgba(244, 130, 36, 0.4)
 
 // 主色调阴影（用于按钮等）
-$uni-shadow-primary: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-sm: 0 2rpx 8rpx rgba(244, 130, 36, 0.3);
-$uni-shadow-primary-md: 0 4rpx 16rpx rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-lg: 0 6rpx 20rpx rgba(244, 130, 36, 0.5);
-$uni-shadow-primary-xl: 0 8rpx 24rpx rgba(244, 130, 36, 0.4);
-$uni-shadow-primary-hover: 0 12rpx 32rpx rgba(244, 130, 36, 0.5);
+$uni-shadow-primary: 0 8rpx 32rpx rgba(244, 130, 36, 0.4); // HTML: 0 8px 32px
+$uni-shadow-primary-sm: 0 2rpx 8rpx rgba(244, 130, 36, 0.3); // HTML: 0 2px 8px
+$uni-shadow-primary-md: 0 4rpx 16rpx rgba(244, 130, 36, 0.4); // HTML: 0 4px 16px
+$uni-shadow-primary-lg: 0 6rpx 20rpx rgba(244, 130, 36, 0.5); // HTML: 0 6px 20px
+$uni-shadow-primary-xl: 0 8rpx 24rpx rgba(244, 130, 36, 0.4); // HTML: 0 8px 24px
+$uni-shadow-primary-hover: 0 12rpx 32rpx rgba(244, 130, 36, 0.5); // HTML: 0 12px 32px
 
-// 功能色阴影
-$uni-shadow-success: 0 4rpx 12rpx rgba(16, 185, 129, 0.4);
-$uni-shadow-success-hover: 0 6rpx 16rpx rgba(16, 185, 129, 0.5);
-$uni-shadow-danger: 0 4rpx 12rpx rgba(239, 68, 68, 0.4);
-$uni-shadow-danger-hover: 0 6rpx 16rpx rgba(239, 68, 68, 0.5);
-$uni-shadow-danger-xl: 0 8rpx 24rpx rgba(239, 68, 68, 0.4);
-$uni-shadow-warning: 0 4rpx 12rpx rgba(245, 158, 11, 0.4);
-$uni-shadow-info: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
+// 功能色阴影（从HTML文件提取）
+$uni-shadow-success: 0 4rpx 12rpx rgba(16, 185, 129, 0.4); // HTML: 0 4px 12px
+$uni-shadow-success-hover: 0 6rpx 16rpx rgba(16, 185, 129, 0.5); // HTML: 0 6px 16px
+$uni-shadow-danger: 0 4rpx 12rpx rgba(239, 68, 68, 0.4); // HTML: 0 4px 12px
+$uni-shadow-danger-hover: 0 6rpx 16rpx rgba(239, 68, 68, 0.5); // HTML: 0 6px 16px
+$uni-shadow-danger-xl: 0 8rpx 24rpx rgba(239, 68, 68, 0.4); // HTML: 0 8px 24px
+$uni-shadow-warning: 0 4rpx 12rpx rgba(245, 158, 11, 0.4); // HTML: 0 4px 12px
+$uni-shadow-info: 0 8rpx 24rpx rgba(59, 130, 246, 0.4); // HTML: 0 8px 24px
+$uni-shadow-sos: 0 8rpx 24rpx rgba(239, 68, 68, 0.4); // HTML: 一键求助按钮阴影
 
 // Focus 阴影
 $uni-shadow-focus: 0 0 0 3rpx rgba(244, 130, 36, 0.1);
@@ -380,4 +425,267 @@ $uni-font-weight-base: 600;
   font-weight: $uni-font-weight-base;
   color: $uni-tabbar-color;
   margin-bottom: 32rpx;
+}
+
+// === 从HTML文件提取的动画系统 ===
+// 浮动动画（从HTML文件提取）
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-8px); 
+  }
+}
+
+// 脉冲动画（从HTML文件提取）
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+// 红色脉冲动画（从HTML文件提取）
+@keyframes pulse-red {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+// 蓝色脉冲动画（从HTML文件提取）
+@keyframes pulse-blue {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+}
+
+// 红色闪烁动画（从HTML文件提取）
+@keyframes blink-red {
+  0%, 100% { 
+    opacity: 1;
+    background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+  }
+  50% { 
+    opacity: 0.7;
+    background: linear-gradient($uni-deg-base, #B91C1C 0%, #991B1B 100%);
+  }
+}
+
+// 蓝色闪烁动画（从HTML文件提取）
+@keyframes blink-blue {
+  0%, 100% { 
+    opacity: 1;
+    background: linear-gradient($uni-deg-base, $uni-info 0%, $uni-info-dark 100%);
+  }
+  50% { 
+    opacity: 0.7;
+    background: linear-gradient($uni-deg-base, #1D4ED8 0%, #1E40AF 100%);
+  }
+}
+
+// 滑入动画（从HTML文件提取）
+@keyframes slide-up {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// === 从HTML文件提取的新样式混入 ===
+// 渐变背景混入（从HTML文件提取）
+@mixin bg-gradient-primary {
+  background: linear-gradient($uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+}
+
+@mixin bg-gradient-orange {
+  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+}
+
+@mixin bg-gradient-success {
+  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
+}
+
+@mixin bg-gradient-danger {
+  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+}
+
+@mixin bg-gradient-statusbar {
+  background: linear-gradient($uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+}
+
+@mixin bg-gradient-card {
+  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+}
+
+// 卡片样式混入（从HTML文件提取）
+@mixin card-gradient {
+  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  border-radius: $uni-radius-md;
+  padding: $uni-spacing-xl;
+  box-shadow: $uni-shadow-card;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $uni-shadow-card-hover;
+  }
+}
+
+@mixin greeting-card {
+  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  border-radius: $uni-radius-xl;
+  padding: $uni-spacing-xl;
+  box-shadow: $uni-shadow-card;
+  transition: all 0.3s ease;
+}
+
+// 按钮样式混入（从HTML文件提取）
+@mixin login-button {
+  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+  box-shadow: $uni-shadow-primary;
+  transition: all 0.3s ease;
+  border-radius: $uni-radius-xxl;
+  color: $uni-white;
+  font-weight: $uni-font-weight-base;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $uni-shadow-primary-hover;
+  }
+}
+
+@mixin checkin-button {
+  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
+  transition: all 0.3s ease;
+  border-radius: $uni-radius-lg;
+  color: $uni-white;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $uni-shadow-success;
+  }
+  
+  &.checked {
+    background: linear-gradient($uni-deg-base, #D1D5DB 0%, #9CA3AF 100%);
+  }
+  
+  &.missed {
+    background: linear-gradient($uni-deg-base, #F97316 0%, #EA580C 100%);
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4rpx 12rpx rgba(249, 115, 22, 0.4);
+    }
+  }
+}
+
+@mixin sos-button {
+  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+  box-shadow: $uni-shadow-danger-xl;
+  transition: all 0.3s ease;
+  border-radius: $uni-radius-full;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $uni-shadow-danger-hover;
+  }
+  
+  &.blinking {
+    animation: blink-red 0.5s ease-in-out infinite;
+  }
+  
+  &.responded {
+    background: linear-gradient($uni-deg-base, $uni-info 0%, $uni-info-dark 100%);
+    box-shadow: $uni-shadow-info;
+    
+    &.blinking {
+      animation: blink-blue 0.5s ease-in-out infinite;
+    }
+  }
+}
+
+// 浮动按钮混入（从HTML文件提取）
+@mixin floating-button {
+  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+  box-shadow: $uni-shadow-primary-xl;
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: $uni-shadow-primary-hover;
+  }
+}
+
+// 快速操作混入（从HTML文件提取）
+@mixin quick-action {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// 角色标签混入（从HTML文件提取）
+@mixin role-tab {
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+    color: $uni-white;
+    box-shadow: $uni-shadow-primary-md;
+  }
+}
+
+// 输入框混入（从HTML文件提取）
+@mixin search-input {
+  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+  border: 1px solid $uni-border-light;
+  transition: all 0.3s ease;
+  border-radius: $uni-radius-lg;
+  
+  &:focus {
+    border-color: $uni-primary;
+    box-shadow: $uni-shadow-focus;
+  }
+}
+
+// 动画类混入
+@mixin animation-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@mixin animation-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@mixin animation-slide-up {
+  animation: slide-up 0.5s ease-out;
+}
+
+@mixin animation-pulse-red {
+  animation: pulse-red 2s ease-in-out infinite;
 }
