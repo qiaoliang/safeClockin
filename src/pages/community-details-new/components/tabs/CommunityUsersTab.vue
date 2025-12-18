@@ -36,9 +36,9 @@
         <view class="user-info">
           <view class="user-avatar">
             <text class="avatar-icon">👤</text>
-            <view v-if="user.verification_status === 1" class="status-indicator normal" title="已验证" />
-            <view v-else-if="user.verification_status === 0" class="status-indicator abnormal" title="未验证" />
-            <view v-else class="status-indicator unknown" title="状态未知" />
+            <view v-if="user.verification_status === 1" class="status-indicator status-verified" />
+            <view v-else-if="user.verification_status === 0" class="status-indicator status-unverified" />
+            <view v-else class="status-indicator status-unknown" />
           </view>
           
           <view class="user-details">
@@ -307,16 +307,16 @@ const clearSearch = () => {
               background: $uni-text-gray-600;
             }
             
-            // 验证状态样式
-            &[title="已验证"] {
+            // 验证状态样式 - 使用CSS类名
+            &.status-verified {
               background: $uni-success;
             }
             
-            &[title="未验证"] {
+            &.status-unverified {
               background: $uni-warning;
             }
             
-            &[title="状态未知"] {
+            &.status-unknown {
               background: $uni-text-gray-600;
             }
           }
