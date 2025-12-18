@@ -13,7 +13,7 @@
     <view class="staff-list">
       <view
         v-for="staff in normalizedStaffList"
-        :key="staff.id"
+        :key="staff.user_id"
         class="staff-card"
       >
         <view class="staff-info">
@@ -28,7 +28,7 @@
           </view>
         </view>
         
-        <button class="remove-button" @click="$emit('remove-staff', staff.id)">
+        <button class="remove-button" @click="$emit('remove-staff', staff.user_id)">
           <text class="remove-icon">🗑️</text>
         </button>
       </view>

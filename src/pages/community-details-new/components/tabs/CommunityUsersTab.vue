@@ -30,7 +30,7 @@
     <view class="users-list">
       <view
         v-for="user in filteredUsers"
-        :key="user.id"
+        :key="user.user_id"
         class="user-card"
       >
         <view class="user-info">
@@ -55,7 +55,7 @@
           </view>
         </view>
         
-        <button class="remove-button" @click="$emit('remove-user', user.id)">
+        <button class="remove-button" @click="$emit('remove-user', user.user_id)">
           <text class="remove-icon">🗑️</text>
         </button>
       </view>
