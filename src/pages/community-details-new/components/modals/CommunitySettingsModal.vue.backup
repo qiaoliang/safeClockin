@@ -1,0 +1,273 @@
+<template>
+  <view class="community-settings-modal">
+    <!-- 遮罩层 -->
+    <view class="modal-overlay" @click="$emit('close')" />
+    
+    <!-- 模态框内容 -->
+    <view class="modal-content">
+      <view class="modal-header">
+        <h3 class="modal-title">社区设置</h3>
+        <button class="close-button" @click="$emit('close')">
+          <text class="close-icon">×</text>
+        </button>
+      </view>
+      
+      <view class="modal-body">
+        <!-- 社区信息 -->
+        <view class="info-section">
+          <h4 class="section-title">社区信息</h4>
+          <view class="info-grid">
+            <view class="info-item">
+              <text class="info-label">社区名称</text>
+              <text class="info-value">{{ community.name || '未命名' }}</text>
+            </view>
+            
+            <view class="info-item">
+              <text class="info-label">所在位置</text>
+              <text class="info-value">{{ community.location || '未设置' }}</text>
+            </view>
+            
+            <view class="info-item">
+              <text class="info-label">社区主管</text>
+              <text class="info-value">{{ community.manager?.nickname || '未设置' }}</text>
+            </view>
+            
+            <view class="info-item">
+              <text class="info-label">创建时间</text>
+              <text class="info-value">{{ formatDate(community.created_at) }}</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 操作按钮 -->
+        <view class="actions-section">
+          <h4 class="section-title">操作</h4>
+          <view class="action-buttons">
+            <button class="action-button edit-button" @click="$emit('edit')">
+              <text class="action-icon">✏️</text>
+              <text class="action-text">编辑社区</text>
+            </button>
+            
+            <button class="action-button delete-button" @click="$emit('delete')">
+              <text class="action-icon">🗑️</text>
+              <text class="action-text">删除社区</text>
+            </button>
+          </view>
+        </view>
+        
+        <!-- 危险操作 -->
+        <view class="danger-section">
+          <h4 class="section-title danger-title">危险操作</h4>
+          <text class="danger-hint">
+            删除社区将移除所有相关数据，包括专员、用户、规则和记录。此操作不可撤销。
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+defineProps({
+  community: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+defineEmits(['close', 'edit', 'delete'])
+
+const formatDate = (dateString) => {
+  if (!dateString) return '未知'
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('zh-CN')
+  } catch (e) {
+    return dateString
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/uni.scss';
+
+.community-settings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $uni-spacing-base;
+  
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $uni-bg-overlay;
+    backdrop-filter: blur(4px);
+  }
+  
+  .modal-content {
+    position: relative;
+    background: $uni-bg-color-white;
+    border-radius: $uni-radius-xl;
+    width: 100%;
+    max-width: 600rpx;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: $uni-shadow-xl;
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $uni-spacing-xl $uni-spacing-xl $uni-spacing-lg;
+      border-bottom: 1px solid $uni-divider;
+      
+      .modal-title {
+        font-size: $uni-font-size-lg;
+        font-weight: $uni-font-weight-base;
+        color: $uni-accent;
+      }
+      
+      .close-button {
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: $uni-radius-full;
+        background: $uni-bg-color-light;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        
+        .close-icon {
+          font-size: $uni-font-size-lg;
+          color: $uni-text-gray-600;
+          line-height: 1;
+        }
+        
+        &:active {
+          background: $uni-bg-color-grey;
+          transform: scale(0.9);
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: $uni-spacing-xl;
+      
+      .info-section,
+      .actions-section,
+      .danger-section {
+        margin-bottom: $uni-spacing-xl;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .section-title {
+          font-size: $uni-font-size-base;
+          font-weight: $uni-font-weight-base;
+          color: $uni-accent;
+          margin-bottom: $uni-spacing-md;
+          
+          &.danger-title {
+            color: $uni-danger;
+          }
+        }
+      }
+      
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $uni-spacing-md;
+        
+        .info-item {
+          .info-label {
+            display: block;
+            font-size: $uni-font-size-xs;
+            color: $uni-text-gray-600;
+            margin-bottom: $uni-spacing-xs;
+          }
+          
+          .info-value {
+            display: block;
+            font-size: $uni-font-size-sm;
+            color: $uni-text-gray-800;
+            font-weight: $uni-font-weight-base;
+            padding: $uni-spacing-xs $uni-spacing-sm;
+            background: $uni-bg-color-lighter;
+            border-radius: $uni-radius-sm;
+            @include text-ellipsis;
+          }
+        }
+      }
+      
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: $uni-spacing-md;
+        
+        .action-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: $uni-spacing-sm;
+          padding: $uni-spacing-md;
+          border-radius: $uni-radius-lg;
+          font-size: $uni-font-size-base;
+          font-weight: $uni-font-weight-base;
+          transition: all 0.3s ease;
+          
+          .action-icon {
+            font-size: $uni-font-size-lg;
+          }
+          
+          .action-text {
+            font-weight: $uni-font-weight-base;
+          }
+          
+          &.edit-button {
+            background: linear-gradient($uni-deg-base, $uni-info 0%, $uni-info-dark 100%);
+            color: $uni-white;
+            box-shadow: $uni-shadow-info;
+            
+            &:active {
+              transform: translateY(-1px);
+              box-shadow: $uni-shadow-info-hover;
+            }
+          }
+          
+          &.delete-button {
+            background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+            color: $uni-white;
+            box-shadow: $uni-shadow-danger;
+            
+            &:active {
+              transform: translateY(-1px);
+              box-shadow: $uni-shadow-danger-hover;
+            }
+          }
+        }
+      }
+      
+      .danger-hint {
+        display: block;
+        font-size: $uni-font-size-xs;
+        color: $uni-text-gray-600;
+        line-height: 1.5;
+        padding: $uni-spacing-md;
+        background: rgba($uni-danger, 0.05);
+        border-radius: $uni-radius-sm;
+        border-left: 4px solid $uni-danger;
+      }
+    }
+  }
+}
+</script>

@@ -24,6 +24,13 @@ $uni-accent-light: #62473180;
 $uni-accent-dark: #4A3525;
 
 // 辅助色
+$uni-secondary: #909399;
+$uni-secondary-disable: #90939980;
+$uni-secondary-light: #909399CC;
+$uni-secondary-dark: #6B7280;
+$uni-secondary-gradient-start: #909399;
+$uni-secondary-gradient-end: #6B7280;
+
 $uni-success: #10B981;
 $uni-success-disable: #10B98180;
 $uni-success-light: #10B981CC;
@@ -166,6 +173,9 @@ $uni-shadow-xl: 0 12rpx 32rpx rgba(0, 0, 0, 0.15); // HTML: 0 12px 32px
 $uni-shadow-card: 0 4rpx 12rpx rgba(0, 0, 0, 0.08); // HTML: 0 4px 12px rgba(0, 0, 0, 0.08)
 $uni-shadow-card-hover: 0 4rpx 16rpx rgba(0, 0, 0, 0.08); // HTML: 0 4px 16px rgba(0, 0, 0, 0.08)
 $uni-shadow-card-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.1); // HTML: 0 8px 24px rgba(0, 0, 0, 0.1)
+
+// 模态框阴影（从现有模态框组件提取）
+$uni-shadow-modal: 0 24rpx 48rpx rgba(0, 0, 0, 0.2); // 模态框专用阴影
 
 // 按钮阴影（从HTML文件提取）
 $uni-shadow-button: 0 2rpx 8rpx rgba(244, 130, 36, 0.3); // HTML: 0 2px 8px rgba(244, 130, 36, 0.3)

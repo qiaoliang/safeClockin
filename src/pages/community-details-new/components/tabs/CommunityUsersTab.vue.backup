@@ -1,0 +1,396 @@
+<template>
+  <view class="community-users-tab">
+    <!-- 标题和操作按钮 -->
+    <view class="tab-header">
+      <h3 class="tab-title">用户管理</h3>
+      <button class="add-button" @click="$emit('add-user')">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加用户</text>
+      </button>
+    </view>
+    
+    <!-- 搜索框 -->
+    <view class="search-container">
+      <view class="search-input-wrapper">
+        <text class="search-icon">🔍</text>
+        <input
+          v-model="searchQuery"
+          class="search-input"
+          type="text"
+          placeholder="搜索用户姓名或手机号"
+          @input="handleSearch"
+        />
+        <button v-if="searchQuery" class="clear-button" @click="clearSearch">
+          <text class="clear-icon">×</text>
+        </button>
+      </view>
+    </view>
+    
+    <!-- 用户列表 -->
+    <view class="users-list">
+      <view
+        v-for="user in filteredUsers"
+        :key="user.id"
+        class="user-card"
+      >
+        <view class="user-info">
+          <view class="user-avatar">
+            <text class="avatar-icon">👤</text>
+            <view v-if="user.status === '正常'" class="status-indicator normal" />
+            <view v-else-if="user.status === '异常'" class="status-indicator abnormal" />
+            <view v-else class="status-indicator unknown" />
+          </view>
+          
+          <view class="user-details">
+            <text class="user-name">{{ user.name }}</text>
+            <text class="user-phone">{{ user.phone }}</text>
+            <view class="user-tags">
+              <text class="user-status-tag" :class="user.status">{{ user.status }}</text>
+              <text v-if="user.lastCheckin" class="checkin-tag">
+                上次打卡: {{ user.lastCheckin }}
+              </text>
+            </view>
+          </view>
+        </view>
+        
+        <button class="remove-button" @click="$emit('remove-user', user.id)">
+          <text class="remove-icon">🗑️</text>
+          <text class="remove-text">移除</text>
+        </button>
+      </view>
+      
+      <!-- 空状态 -->
+      <view v-if="filteredUsers.length === 0" class="empty-state">
+        <text v-if="searchQuery" class="empty-icon">🔍</text>
+        <text v-else class="empty-icon">👥</text>
+        
+        <text class="empty-text">
+          {{ searchQuery ? '未找到匹配的用户' : '暂无用户' }}
+        </text>
+        
+        <text class="empty-hint">
+          {{ searchQuery ? '请尝试其他搜索关键词' : '点击"添加用户"按钮添加第一个用户' }}
+        </text>
+      </view>
+    </view>
+    
+    <!-- 刷新按钮 -->
+    <button class="refresh-button" @click="$emit('refresh')">
+      <text class="refresh-icon">🔄</text>
+      <text class="refresh-text">刷新列表</text>
+    </button>
+  </view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const props = defineProps({
+  userList: {
+    type: Array,
+    default: () => []
+  },
+  communityId: {
+    type: String,
+    default: ''
+  }
+})
+
+defineEmits(['add-user', 'remove-user', 'refresh'])
+
+// 搜索功能
+const searchQuery = ref('')
+
+const filteredUsers = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return props.userList
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim()
+  return props.userList.filter(user => 
+    user.name.toLowerCase().includes(query) ||
+    user.phone.includes(query)
+  )
+})
+
+const handleSearch = () => {
+  // 搜索逻辑已通过computed属性处理
+}
+
+const clearSearch = () => {
+  searchQuery.value = ''
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/uni.scss';
+
+.community-users-tab {
+  .tab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $uni-spacing-lg;
+    
+    .tab-title {
+      font-size: $uni-font-size-base;
+      font-weight: $uni-font-weight-base;
+      color: $uni-accent;
+    }
+    
+    .add-button {
+      display: flex;
+      align-items: center;
+      gap: $uni-spacing-xs;
+      padding: $uni-spacing-xs $uni-spacing-sm;
+      background: transparent;
+      border-radius: $uni-radius-sm;
+      transition: all 0.2s ease;
+      
+      .add-icon {
+        font-size: $uni-font-size-sm;
+        color: $uni-secondary;
+      }
+      
+      .add-text {
+        font-size: $uni-font-size-xs;
+        color: $uni-secondary;
+        font-weight: $uni-font-weight-base;
+      }
+      
+      &:active {
+        background: rgba($uni-secondary, 0.1);
+        transform: scale(0.98);
+      }
+    }
+  }
+  
+  .search-container {
+    margin-bottom: $uni-spacing-lg;
+    
+    .search-input-wrapper {
+      @include search-input;
+      display: flex;
+      align-items: center;
+      padding: $uni-spacing-sm $uni-spacing-md;
+      
+      .search-icon {
+        font-size: $uni-font-size-sm;
+        color: $uni-text-gray-500;
+        margin-right: $uni-spacing-sm;
+      }
+      
+      .search-input {
+        flex: 1;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-gray-800;
+        background: transparent;
+        border: none;
+        outline: none;
+        
+        &::placeholder {
+          color: $uni-text-gray-500;
+        }
+      }
+      
+      .clear-button {
+        width: 32rpx;
+        height: 32rpx;
+        border-radius: $uni-radius-full;
+        background: $uni-bg-color-light;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        
+        .clear-icon {
+          font-size: $uni-font-size-sm;
+          color: $uni-text-gray-500;
+        }
+        
+        &:active {
+          background: $uni-bg-color-grey;
+          transform: scale(0.9);
+        }
+      }
+    }
+  }
+  
+  .users-list {
+    .user-card {
+      @include card-gradient;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $uni-spacing-md;
+      margin-bottom: $uni-spacing-sm;
+      transition: all 0.3s ease;
+      
+      &:active {
+        transform: translateY(-1px);
+        box-shadow: $uni-shadow-card-hover;
+      }
+      
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: $uni-spacing-md;
+        
+        .user-avatar {
+          position: relative;
+          width: 80rpx;
+          height: 80rpx;
+          border-radius: $uni-radius-full;
+          background: rgba($uni-info, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .avatar-icon {
+            font-size: $uni-font-size-lg;
+            color: $uni-info;
+          }
+          
+          .status-indicator {
+            position: absolute;
+            bottom: -2rpx;
+            right: -2rpx;
+            width: 16rpx;
+            height: 16rpx;
+            border-radius: $uni-radius-full;
+            border: 2rpx solid $uni-white;
+            
+            &.normal {
+              background: $uni-success;
+            }
+            
+            &.abnormal {
+              background: $uni-warning;
+            }
+            
+            &.unknown {
+              background: $uni-text-gray-500;
+            }
+          }
+        }
+        
+        .user-details {
+          .user-name {
+            display: block;
+            font-size: $uni-font-size-base;
+            font-weight: $uni-font-weight-base;
+            color: $uni-accent;
+            margin-bottom: $uni-spacing-xs;
+          }
+          
+          .user-phone {
+            display: block;
+            font-size: $uni-font-size-xs;
+            color: $uni-text-gray-600;
+            margin-bottom: $uni-spacing-xs;
+          }
+          
+          .user-tags {
+            display: flex;
+            align-items: center;
+            gap: $uni-spacing-xs;
+            
+            .user-status-tag {
+              font-size: $uni-font-size-xxs;
+              padding: 2rpx 8rpx;
+              border-radius: $uni-radius-xs;
+              display: inline-block;
+              
+              &.正常 {
+                background: rgba($uni-success, 0.1);
+                color: $uni-success;
+              }
+              
+              &.异常 {
+                background: rgba($uni-warning, 0.1);
+                color: $uni-warning;
+              }
+              
+              &:not(.正常):not(.异常) {
+                background: rgba($uni-text-gray-500, 0.1);
+                color: $uni-text-gray-500;
+              }
+            }
+            
+            .checkin-tag {
+              font-size: $uni-font-size-xxs;
+              color: $uni-text-gray-500;
+              background: rgba($uni-text-gray-500, 0.1);
+              padding: 2rpx 8rpx;
+              border-radius: $uni-radius-xs;
+              display: inline-block;
+            }
+          }
+        }
+      }
+      
+      .remove-button {
+        @include btn-danger;
+        padding: $uni-spacing-xs $uni-spacing-sm;
+        font-size: $uni-font-size-xs;
+        display: flex;
+        align-items: center;
+        gap: $uni-spacing-xs;
+        
+        .remove-icon {
+          font-size: $uni-font-size-sm;
+        }
+        
+        .remove-text {
+          font-weight: $uni-font-weight-base;
+        }
+      }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: $uni-spacing-xxxl $uni-spacing-xl;
+      
+      .empty-icon {
+        font-size: $uni-font-size-xxxl;
+        color: $uni-text-gray-500;
+        display: block;
+        margin-bottom: $uni-spacing-md;
+      }
+      
+      .empty-text {
+        display: block;
+        font-size: $uni-font-size-base;
+        color: $uni-text-gray-700;
+        margin-bottom: $uni-spacing-xs;
+      }
+      
+      .empty-hint {
+        display: block;
+        font-size: $uni-font-size-xs;
+        color: $uni-text-gray-500;
+      }
+    }
+  }
+  
+  .refresh-button {
+    @include btn-primary;
+    width: 100%;
+    padding: $uni-spacing-sm;
+    margin-top: $uni-spacing-lg;
+    font-size: $uni-font-size-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $uni-spacing-sm;
+    
+    .refresh-icon {
+      font-size: $uni-font-size-base;
+    }
+    
+    .refresh-text {
+      font-weight: $uni-font-weight-base;
+    }
+  }
+}
+</script>

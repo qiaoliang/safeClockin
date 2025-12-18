@@ -1,0 +1,115 @@
+<template>
+  <view class="community-tab-bar">
+    <view class="tab-container">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        :class="['tab-button', activeTab === tab.id ? 'active' : '']"
+        @click="$emit('tab-change', tab.id)"
+      >
+        <text class="tab-icon">{{ getTabIcon(tab.icon) }}</text>
+        <text class="tab-text">{{ tab.name }}</text>
+      </button>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+defineProps({
+  tabs: {
+    type: Array,
+    default: () => []
+  },
+  activeTab: {
+    type: String,
+    default: ''
+  }
+})
+
+defineEmits(['tab-change'])
+
+// 图标映射
+const iconMap = {
+  'user-tie': '👔',
+  'users': '👥',
+  'list-check': '✅',
+  'user-check': '✓',
+  'hands-helping': '🤝'
+}
+
+const getTabIcon = (iconName) => {
+  return iconMap[iconName] || '●'
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/uni.scss';
+
+.community-tab-bar {
+  margin-bottom: $uni-spacing-xl;
+  
+  .tab-container {
+    display: flex;
+    background: $uni-bg-color-light;
+    border-radius: $uni-radius-full;
+    padding: $uni-spacing-xs;
+    
+    .tab-button {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: $uni-spacing-sm $uni-spacing-xs;
+      border-radius: $uni-radius-full;
+      transition: all 0.3s ease;
+      background: transparent;
+      
+      .tab-icon {
+        font-size: $uni-font-size-sm;
+        margin-bottom: $uni-spacing-xs;
+        transition: all 0.3s ease;
+      }
+      
+      .tab-text {
+        font-size: $uni-font-size-xs;
+        font-weight: $uni-font-weight-base;
+        transition: all 0.3s ease;
+      }
+      
+      // 非激活状态
+      &:not(.active) {
+        .tab-icon {
+          color: $uni-text-gray-600;
+        }
+        
+        .tab-text {
+          color: $uni-text-gray-600;
+        }
+        
+        &:active {
+          background: rgba(244, 130, 36, 0.1);
+          transform: scale(0.98);
+        }
+      }
+      
+      // 激活状态
+      &.active {
+        @include bg-gradient-orange;
+        box-shadow: $uni-shadow-primary-sm;
+        
+        .tab-icon,
+        .tab-text {
+          color: $uni-white;
+        }
+        
+        &:active {
+          transform: scale(0.98);
+        }
+      }
+    }
+  }
+}
+</style>
