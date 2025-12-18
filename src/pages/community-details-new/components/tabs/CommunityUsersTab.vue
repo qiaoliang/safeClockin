@@ -55,7 +55,6 @@
         
         <button class="remove-button" @click="$emit('remove-user', user.id)">
           <text class="remove-icon">🗑️</text>
-          <text class="remove-text">移除</text>
         </button>
       </view>
       
@@ -330,19 +329,22 @@ const clearSearch = () => {
       }
       
       .remove-button {
-        @include btn-danger;
-        padding: $uni-spacing-xs $uni-spacing-sm;
-        font-size: $uni-font-size-xs;
+        @include btn-primary; /* 使用与刷新按钮相同的橙色背景 */
+        padding: 0;
         display: flex;
         align-items: center;
-        gap: $uni-spacing-xs;
+        justify-content: center;
+        border-radius: $uni-radius-xl; /* 24rpx = 12px，与刷新按钮一致 */
+        width: 60rpx;
+        height: 60rpx;
         
         .remove-icon {
-          font-size: $uni-font-size-sm;
+          font-size: $uni-font-size-xl;
+          color: $uni-white;
         }
         
-        .remove-text {
-          font-weight: $uni-font-weight-base;
+        &:active {
+          transform: scale(0.95);
         }
       }
     }
@@ -383,6 +385,7 @@ const clearSearch = () => {
     align-items: center;
     justify-content: center;
     gap: $uni-spacing-sm;
+    border-radius: $uni-radius-xl; /* 24rpx = 12px */
     
     .refresh-icon {
       font-size: $uni-font-size-base;

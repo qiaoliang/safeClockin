@@ -361,7 +361,8 @@ const loadCommunityDetail = async () => {
 // 加载专员列表
 const loadStaffList = async () => {
   try {
-    const response = await getCommunityStaffList(communityId.value)
+    // 只获取role为staff的专员列表
+    const response = await getCommunityStaffList(communityId.value, { role: 'staff' })
     if (response.code === 1) {
       // 根据API文档，后端返回的是staff_members字段
       // 但为了兼容性，同时检查staff_list字段

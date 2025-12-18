@@ -5,99 +5,99 @@
 
 // === 主色调系统 ===
 // 品牌主色 - 橙色系（从HTML文件提取）
-$uni-primary: #F48224;
-$uni-primary-disable: #F4822480;
-$uni-primary-light: #F48224CC;
-$uni-primary-dark: #E8741A;
-$uni-primary-gradient-start: #F48224;
-$uni-primary-gradient-end: #E8741A;
+$uni-primary: #f48224;
+$uni-primary-disable: #f4822480;
+$uni-primary-light: #f48224cc;
+$uni-primary-dark: #e8741a;
+$uni-primary-gradient-start: #f48224;
+$uni-primary-gradient-end: #e8741a;
 
 // 背景主色 - 米色系（从HTML文件提取）
-$uni-bg-primary: #FAE9DB;
-$uni-bg-primary-light: #F8E0D0;
-$uni-bg-primary-gradient-start: #FAE9DB;
-$uni-bg-primary-gradient-end: #F8E0D0;
+$uni-bg-primary: #fae9db;
+$uni-bg-primary-light: #f8e0d0;
+$uni-bg-primary-gradient-start: #fae9db;
+$uni-bg-primary-gradient-end: #f8e0d0;
 
 // 强调色 - 深棕色（从HTML文件提取）
 $uni-accent: #624731;
 $uni-accent-light: #62473180;
-$uni-accent-dark: #4A3525;
+$uni-accent-dark: #4a3525;
 
 // 辅助色
 $uni-secondary: #909399;
 $uni-secondary-disable: #90939980;
-$uni-secondary-light: #909399CC;
-$uni-secondary-dark: #6B7280;
+$uni-secondary-light: #909399cc;
+$uni-secondary-dark: #6b7280;
 $uni-secondary-gradient-start: #909399;
-$uni-secondary-gradient-end: #6B7280;
+$uni-secondary-gradient-end: #6b7280;
 
-$uni-success: #10B981;
-$uni-success-disable: #10B98180;
-$uni-success-light: #10B981CC;
+$uni-success: #10b981;
+$uni-success-disable: #10b98180;
+$uni-success-light: #10b981cc;
 $uni-success-dark: #059669;
-$uni-success-gradient-start: #10B981;
+$uni-success-gradient-start: #10b981;
 $uni-success-gradient-end: #059669;
 
-$uni-warning: #F59E0B;
-$uni-warning-disable: #F59E0B80;
-$uni-warning-light: #F59E0BCC;
-$uni-warning-dark: #D97706;
-$uni-warning-gradient-start: #F59E0B;
-$uni-warning-gradient-end: #D97706;
+$uni-warning: #f59e0b;
+$uni-warning-disable: #f59e0b80;
+$uni-warning-light: #f59e0bcc;
+$uni-warning-dark: #d97706;
+$uni-warning-gradient-start: #f59e0b;
+$uni-warning-gradient-end: #d97706;
 
-$uni-error: #EF4444;
-$uni-error-disable: #EF444480;
-$uni-error-light: #EF4444CC;
-$uni-error-dark: #DC2626;
-$uni-danger: #EF4444; // 危险色别名
-$uni-danger-dark: #DC2626;
-$uni-danger-gradient-start: #EF4444;
-$uni-danger-gradient-end: #DC2626;
+$uni-error: #ef4444;
+$uni-error-disable: #ef444480;
+$uni-error-light: #ef4444cc;
+$uni-error-dark: #dc2626;
+$uni-danger: #ef4444; // 危险色别名
+$uni-danger-dark: #dc2626;
+$uni-danger-gradient-start: #ef4444;
+$uni-danger-gradient-end: #dc2626;
 
-$uni-info: #3B82F6;
-$uni-info-disable: #3B82F680;
-$uni-info-light: #3B82F6CC;
-$uni-info-dark: #2563EB;
-$uni-info-gradient-start: #3B82F6;
-$uni-info-gradient-end: #2563EB;
+$uni-info: #3b82f6;
+$uni-info-disable: #3b82f680;
+$uni-info-light: #3b82f6cc;
+$uni-info-dark: #2563eb;
+$uni-info-gradient-start: #3b82f6;
+$uni-info-gradient-end: #2563eb;
 
 // 强调色
 $uni-accent: #624731;
 $uni-accent-light: #62473180;
 
 // 状态栏色（从HTML文件提取）
-$uni-statusbar-bg-start: #1F2937;
+$uni-statusbar-bg-start: #1f2937;
 $uni-statusbar-bg-end: #374151;
-$uni-statusbar-gradient-start: #1F2937;
+$uni-statusbar-gradient-start: #1f2937;
 $uni-statusbar-gradient-end: #374151;
 
 // === 文本色系统 ===（从HTML文件提取）
 // 主要文字色
 $uni-main-color: #3a3a3a;
 $uni-text-primary: #374151; // 深灰文本（从HTML提取）
-$uni-text-primary-dark: #1F2937;
+$uni-text-primary-dark: #1f2937;
 // 常规文字色
 $uni-base-color: #6a6a6a;
-$uni-text-base: #6B7280; // 中灰文本（从HTML提取）
+$uni-text-base: #6b7280; // 中灰文本（从HTML提取）
 // 次要文字色
 $uni-secondary-color: #909399;
-$uni-text-secondary: #9CA3AF; // 浅灰文本（从HTML提取）
+$uni-text-secondary: #9ca3af; // 浅灰文本（从HTML提取）
 // 辅助说明文字
 $uni-extra-color: #c7c7c7;
-$uni-text-light: #D1D5DB; // 极浅灰（从HTML提取）
-$uni-text-placeholder: #9CA3AF; // 占位文本（从HTML提取）
-$uni-text-gray-600: #6B7280; // HTML中使用的灰色文本
+$uni-text-light: #d1d5db; // 极浅灰（从HTML提取）
+$uni-text-placeholder: #9ca3af; // 占位文本（从HTML提取）
+$uni-text-gray-600: #6b7280; // HTML中使用的灰色文本
 $uni-text-gray-700: #374151; // HTML中使用的深灰文本
-$uni-text-gray-800: #1F2937; // HTML中使用的更深灰文本
+$uni-text-gray-800: #1f2937; // HTML中使用的更深灰文本
 
 // === 背景色系统 ===（从HTML文件提取）
 // 主背景色 - 暖色调米色
-$uni-bg-color: #FAE9DB;
-$uni-bg-color-primary: #FAE9DB;
+$uni-bg-color: #fae9db;
+$uni-bg-color-primary: #fae9db;
 // 次要背景色
 $uni-bg-color-grey: #f5f5f5;
-$uni-bg-color-light: #E5E7EB;
-$uni-bg-color-lighter: #F3F4F6;
+$uni-bg-color-light: #e5e7eb;
+$uni-bg-color-lighter: #f3f4f6;
 $uni-bg-color-white: #ffffff;
 // 卡片背景色（从HTML文件提取）
 $uni-bg-card-start: #ffffff;
@@ -105,56 +105,59 @@ $uni-bg-card-end: #f8fafc;
 $uni-bg-card-gradient-start: #ffffff;
 $uni-bg-card-gradient-end: #f8fafc;
 // 渐变背景色（从HTML文件提取）
-$uni-bg-gradient-start: #FAE9DB;
-$uni-bg-gradient-end: #F8E0D0;
+$uni-bg-gradient-start: #fae9db;
+$uni-bg-gradient-end: #f8e0d0;
 // 功能背景色（从HTML文件提取）
-$uni-bg-blue-50: #EFF6FF;
-$uni-bg-blue-100: #DBEAFE;
-$uni-bg-purple-50: #F5F3FF;
-$uni-bg-purple-100: #EDE9FE;
-$uni-bg-green-50: #F0FDF4;
-$uni-bg-green-100: #DCFCE7;
-$uni-bg-red-50: #FEF2F2;
-$uni-bg-red-100: #FEE2E2;
-$uni-bg-yellow-50: #FEFCE8;
-$uni-bg-yellow-100: #FEF9C3;
+$uni-bg-blue-50: #eff6ff;
+$uni-bg-blue-100: #dbeafe;
+$uni-bg-purple-50: #f5f3ff;
+$uni-bg-purple-100: #ede9fe;
+$uni-bg-green-50: #f0fdf4;
+$uni-bg-green-100: #dcfce7;
+$uni-bg-red-50: #fef2f2;
+$uni-bg-red-100: #fee2e2;
+$uni-bg-yellow-50: #fefce8;
+$uni-bg-yellow-100: #fef9c3;
 // 半透明背景
 $uni-bg-overlay: rgba(0, 0, 0, 0.5);
 $uni-bg-overlay-light: rgba(0, 0, 0, 0.3);
 
 // === 边框色系统 ===
-$uni-border-1: #F0F0F0;
-$uni-border-2: #EDEDED;
-$uni-border-3: #DCDCDC;
-$uni-border-4: #B9B9B9;
+$uni-border-1: #f0f0f0;
+$uni-border-2: #ededed;
+$uni-border-3: #dcdcdc;
+$uni-border-4: #b9b9b9;
 // 输入框边框色
-$uni-border-input: #E5E5E5;
-$uni-border-light: #E5E7EB;
-$uni-border-base: #D1D5DB;
-$uni-border-dark: #9CA3AF;
+$uni-border-input: #e5e5e5;
+$uni-border-light: #e5e7eb;
+$uni-border-base: #d1d5db;
+$uni-border-dark: #9ca3af;
 // 分隔线颜色
-$uni-divider: #E5E7EB;
+$uni-divider: #e5e7eb;
 
 // === TabBar 配色 ===
 // TabBar 未选中文字色
 $uni-tabbar-color: #624731;
 // TabBar 选中文字色
-$uni-tabbar-active: #F48224;
+$uni-tabbar-active: #f48224;
 
 // === 常规色 ===
 $uni-black: #000000;
 $uni-white: #ffffff;
-$uni-transparent: rgba($color: #000000, $alpha: 0);
+$uni-transparent: rgba(
+    $color: #000000,
+    $alpha: 0,
+);
 
 /* === 特定间距系统 === */
-$uni-spacing-xxs: 2rpx;   // 极小间距
-$uni-spacing-xs: 4rpx;    // 小间距
-$uni-spacing-sm: 8rpx;    // 较小间距
-$uni-spacing-md: 12rpx;   // 中等间距
+$uni-spacing-xxs: 2rpx; // 极小间距
+$uni-spacing-xs: 4rpx; // 小间距
+$uni-spacing-sm: 8rpx; // 较小间距
+$uni-spacing-md: 12rpx; // 中等间距
 $uni-spacing-base: 16rpx; // 基础间距
-$uni-spacing-lg: 20rpx;   // 较大间距
-$uni-spacing-xl: 24rpx;   // 大间距
-$uni-spacing-xxl: 32rpx;  // 超大间距
+$uni-spacing-lg: 20rpx; // 较大间距
+$uni-spacing-xl: 24rpx; // 大间距
+$uni-spacing-xxl: 32rpx; // 超大间距
 $uni-spacing-xxxl: 48rpx; // 特大间距
 
 // 角度
@@ -204,9 +207,15 @@ $uni-shadow-focus: 0 0 0 3rpx rgba(244, 130, 36, 0.1);
 
 // === 蒙版和遮罩 ===
 // 标准蒙版
-$uni-mask: rgba($color: #000000, $alpha: 0.4);
+$uni-mask: rgba(
+    $color: #000000,
+    $alpha: 0.4,
+);
 // 轻蒙版
-$uni-mask-light: rgba($color: #000000, $alpha: 0.2);
+$uni-mask-light: rgba(
+    $color: #000000,
+    $alpha: 0.2,
+);
 
 // === 圆角系统 ===
 // 极小圆角
@@ -230,472 +239,577 @@ $uni-radius-full: 9999rpx;
 
 // === 字体大小系统 ===
 // 极小字体
-$uni-font-size-xxs: 20rpx;  // 10px
-$uni-font-size-xs: 22rpx;   // 11px
+$uni-font-size-xxs: 20rpx; // 10px
+$uni-font-size-xs: 22rpx; // 11px
 // 小字体
-$uni-font-size-sm: 24rpx;   // 12px
+$uni-font-size-sm: 24rpx; // 12px
 // 较小字体
-$uni-font-size-md: 26rpx;   // 13px
+$uni-font-size-md: 26rpx; // 13px
 // 基础字体
 $uni-font-size-base: 28rpx; // 14px
 // 较大字体
-$uni-font-size-lg: 32rpx;   // 16px
+$uni-font-size-lg: 32rpx; // 16px
 // 大字体
-$uni-font-size-xl: 36rpx;   // 18px
+$uni-font-size-xl: 36rpx; // 18px
 // 特大字体
-$uni-font-size-xxl: 40rpx;  // 20px
+$uni-font-size-xxl: 40rpx; // 20px
 $uni-font-size-xxxl: 48rpx; // 24px
 // 超大字体（标题）
-$uni-font-size-h1: 56rpx;   // 28px
-$uni-font-size-h2: 64rpx;   // 32px
-$uni-font-size-h3: 72rpx;   // 36px
+$uni-font-size-h1: 56rpx; // 28px
+$uni-font-size-h2: 64rpx; // 32px
+$uni-font-size-h3: 72rpx; // 36px
 
-$uni-font-weight-base: 600;
+// === 字体粗细系统 ===
+$uni-font-weight-base: 400;
+$uni-font-weight-bold: 600;
 
 // === SafeGuard 实用混入 ===
 // 主色调按钮样式
 @mixin btn-primary {
-  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
-  color: $uni-white;
-  border-radius: $uni-radius-xxl;
-  font-size: $uni-font-size-xl;
-  font-weight: $uni-font-weight-base;
-  box-shadow: $uni-shadow-primary;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $uni-shadow-primary-hover;
-  }
-  
-  &:active {
-    transform: scale(0.98);
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-primary 0%,
+        $uni-primary-dark 100%
+    );
+    color: $uni-white;
+    border-radius: $uni-radius-xxl;
+    font-size: $uni-font-size-xl;
+    font-weight: $uni-font-weight-base;
+    box-shadow: $uni-shadow-primary;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $uni-shadow-primary-hover;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 }
 
 // 成功按钮样式
 @mixin btn-success {
-  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
-  color: $uni-white;
-  border-radius: $uni-radius-xxl;
-  font-size: $uni-font-size-xl;
-  font-weight: $uni-font-weight-base;
-  box-shadow: $uni-shadow-success;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: $uni-shadow-success-hover;
-  }
-  
-  &:active {
-    transform: scale(0.98);
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-success 0%,
+        $uni-success-dark 100%
+    );
+    color: $uni-white;
+    border-radius: $uni-radius-xxl;
+    font-size: $uni-font-size-xl;
+    font-weight: $uni-font-weight-base;
+    box-shadow: $uni-shadow-success;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: $uni-shadow-success-hover;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 }
 
 // 危险按钮样式
 @mixin btn-danger {
-  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
-  color: $uni-white;
-  border-radius: $uni-radius-xxl;
-  font-size: $uni-font-size-xl;
-  font-weight: $uni-font-weight-base;
-  box-shadow: $uni-shadow-danger;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: $uni-shadow-danger-hover;
-  }
-  
-  &:active {
-    transform: scale(0.98);
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-danger 0%,
+        $uni-danger-dark 100%
+    );
+    color: $uni-white;
+    border-radius: $uni-radius-xxl;
+    font-size: $uni-font-size-xl;
+    font-weight: $uni-font-weight-base;
+    box-shadow: $uni-shadow-danger;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: $uni-shadow-danger-hover;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 }
 
 // 输入框样式
 @mixin input-default {
-  background: $uni-bg-color-white;
-  border: 2rpx solid $uni-border-input;
-  border-radius: $uni-radius-lg;
-  padding: 24rpx 32rpx;
-  font-size: $uni-font-size-base;
-  transition: all 0.3s ease;
-  
-  &:focus {
-    border-color: $uni-primary;
-    box-shadow: $uni-shadow-focus;
-    outline: none;
-  }
+    background: $uni-bg-color-white;
+    border: 2rpx solid $uni-border-input;
+    border-radius: $uni-radius-lg;
+    padding: 24rpx 32rpx;
+    font-size: $uni-font-size-base;
+    transition: all 0.3s ease;
+
+    &:focus {
+        border-color: $uni-primary;
+        box-shadow: $uni-shadow-focus;
+        outline: none;
+    }
 }
 
 // 卡片样式
 @mixin card-default {
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-lg;
-  padding: $uni-spacing-xl;
-  box-shadow: $uni-shadow-card;
-  align-items: center;
-  transition: all 0.3s ease;
-  margin-bottom: 32rpx;
-  display: flex;
+    background: $uni-bg-color-white;
+    border-radius: $uni-radius-lg;
+    padding: $uni-spacing-xl;
+    box-shadow: $uni-shadow-card;
+    align-items: center;
+    transition: all 0.3s ease;
+    margin-bottom: 32rpx;
+    display: flex;
 }
 
 // 卡片渐变样式
 @mixin card-gradient {
-  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
-  border-radius: $uni-radius-md;
-  padding: $uni-spacing-xl;
-  box-shadow: $uni-shadow-card;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-1rpx);
-    box-shadow: $uni-shadow-card-hover;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-card-start 0%,
+        $uni-bg-card-end 100%
+    );
+    border-radius: $uni-radius-md;
+    padding: $uni-spacing-xl;
+    box-shadow: $uni-shadow-card;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-1rpx);
+        box-shadow: $uni-shadow-card-hover;
+    }
 }
 
 // 渐变背景
 @mixin bg-gradient {
-  background: linear-gradient($uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-gradient-start 0%,
+        $uni-bg-gradient-end 100%
+    );
 }
 
 // 浮动按钮
 @mixin floating-button {
-  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
-  box-shadow: $uni-shadow-primary-xl;
-  transition: all 0.3s ease;
-  animation: float 3s ease-in-out infinite;
-  
-  &:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: $uni-shadow-primary-hover;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-primary 0%,
+        $uni-primary-dark 100%
+    );
+    box-shadow: $uni-shadow-primary-xl;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+
+    &:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: $uni-shadow-primary-hover;
+    }
 }
 
 // 浮动动画
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px); 
-  }
-  50% { 
-    transform: translateY(-8px); 
-  }
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
 }
 
 // Hover 上浮效果
 @mixin hover-lift {
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $uni-shadow-md;
-  }
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $uni-shadow-md;
+    }
 }
 
 // Hover 缩放效果
 @mixin hover-scale {
-  transition: all 0.2s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
 
 // 文字省略
 @mixin text-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 // 多行文字省略
 @mixin text-ellipsis-multi($lines: 2) {
-  display: -webkit-box;
-  -webkit-line-clamp: $lines;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 // 状态栏样式
 @mixin statusbar {
-  background: linear-gradient($uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-statusbar-bg-start 0%,
+        $uni-statusbar-bg-end 100%
+    );
 }
 
 // 安全区域适配
 @mixin safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 @mixin section-title {
-  font-size: $uni-font-size-xl;
-  font-weight: $uni-font-weight-base;
-  color: $uni-tabbar-color;
-  margin-bottom: 32rpx;
+    font-size: $uni-font-size-xl;
+    font-weight: $uni-font-weight-base;
+    color: $uni-tabbar-color;
+    margin-bottom: 32rpx;
 }
 
 // === 从HTML文件提取的动画系统 ===
 // 浮动动画（从HTML文件提取）
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px); 
-  }
-  50% { 
-    transform: translateY(-8px); 
-  }
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
 }
 
 // 脉冲动画（从HTML文件提取）
 @keyframes pulse {
-  0%, 100% { 
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8;
-    transform: scale(0.98);
-  }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
 }
 
 // 红色脉冲动画（从HTML文件提取）
 @keyframes pulse-red {
-  0%, 100% { 
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8;
-    transform: scale(0.98);
-  }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
 }
 
 // 蓝色脉冲动画（从HTML文件提取）
 @keyframes pulse-blue {
-  0%, 100% { 
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.7;
-    transform: scale(0.98);
-  }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
 }
 
 // 红色闪烁动画（从HTML文件提取）
 @keyframes blink-red {
-  0%, 100% { 
-    opacity: 1;
-    background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
-  }
-  50% { 
-    opacity: 0.7;
-    background: linear-gradient($uni-deg-base, #B91C1C 0%, #991B1B 100%);
-  }
+    0%,
+    100% {
+        opacity: 1;
+        background: linear-gradient(
+            $uni-deg-base,
+            $uni-danger 0%,
+            $uni-danger-dark 100%
+        );
+    }
+    50% {
+        opacity: 0.7;
+        background: linear-gradient($uni-deg-base, #b91c1c 0%, #991b1b 100%);
+    }
 }
 
 // 蓝色闪烁动画（从HTML文件提取）
 @keyframes blink-blue {
-  0%, 100% { 
-    opacity: 1;
-    background: linear-gradient($uni-deg-base, $uni-info 0%, $uni-info-dark 100%);
-  }
-  50% { 
-    opacity: 0.7;
-    background: linear-gradient($uni-deg-base, #1D4ED8 0%, #1E40AF 100%);
-  }
+    0%,
+    100% {
+        opacity: 1;
+        background: linear-gradient(
+            $uni-deg-base,
+            $uni-info 0%,
+            $uni-info-dark 100%
+        );
+    }
+    50% {
+        opacity: 0.7;
+        background: linear-gradient($uni-deg-base, #1d4ed8 0%, #1e40af 100%);
+    }
 }
 
 // 滑入动画（从HTML文件提取）
 @keyframes slide-up {
-  from { 
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 // === 从HTML文件提取的新样式混入 ===
 // 渐变背景混入（从HTML文件提取）
 @mixin bg-gradient-primary {
-  background: linear-gradient($uni-deg-base, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-gradient-start 0%,
+        $uni-bg-gradient-end 100%
+    );
 }
 
 @mixin bg-gradient-orange {
-  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-primary 0%,
+        $uni-primary-dark 100%
+    );
 }
 
 @mixin bg-gradient-success {
-  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-success 0%,
+        $uni-success-dark 100%
+    );
 }
 
 @mixin bg-gradient-danger {
-  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-danger 0%,
+        $uni-danger-dark 100%
+    );
 }
 
 @mixin bg-gradient-statusbar {
-  background: linear-gradient($uni-deg-base, $uni-statusbar-bg-start 0%, $uni-statusbar-bg-end 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-statusbar-bg-start 0%,
+        $uni-statusbar-bg-end 100%
+    );
 }
 
 @mixin bg-gradient-card {
-  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-card-start 0%,
+        $uni-bg-card-end 100%
+    );
 }
 
 // 卡片样式混入（从HTML文件提取）
 @mixin card-gradient {
-  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
-  border-radius: $uni-radius-md;
-  padding: $uni-spacing-xl;
-  box-shadow: $uni-shadow-card;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $uni-shadow-card-hover;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-card-start 0%,
+        $uni-bg-card-end 100%
+    );
+    border-radius: $uni-radius-md;
+    padding: $uni-spacing-xl;
+    box-shadow: $uni-shadow-card;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $uni-shadow-card-hover;
+    }
 }
 
 @mixin greeting-card {
-  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
-  border-radius: $uni-radius-xl;
-  padding: $uni-spacing-xl;
-  box-shadow: $uni-shadow-card;
-  transition: all 0.3s ease;
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-card-start 0%,
+        $uni-bg-card-end 100%
+    );
+    border-radius: $uni-radius-xl;
+    padding: $uni-spacing-xl;
+    box-shadow: $uni-shadow-card;
+    transition: all 0.3s ease;
 }
 
 // 按钮样式混入（从HTML文件提取）
 @mixin login-button {
-  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
-  box-shadow: $uni-shadow-primary;
-  transition: all 0.3s ease;
-  border-radius: $uni-radius-xxl;
-  color: $uni-white;
-  font-weight: $uni-font-weight-base;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $uni-shadow-primary-hover;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-primary 0%,
+        $uni-primary-dark 100%
+    );
+    box-shadow: $uni-shadow-primary;
+    transition: all 0.3s ease;
+    border-radius: $uni-radius-xxl;
+    color: $uni-white;
+    font-weight: $uni-font-weight-base;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $uni-shadow-primary-hover;
+    }
 }
 
 @mixin checkin-button {
-  background: linear-gradient($uni-deg-base, $uni-success 0%, $uni-success-dark 100%);
-  transition: all 0.3s ease;
-  border-radius: $uni-radius-lg;
-  color: $uni-white;
-  
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: $uni-shadow-success;
-  }
-  
-  &.checked {
-    background: linear-gradient($uni-deg-base, #D1D5DB 0%, #9CA3AF 100%);
-  }
-  
-  &.missed {
-    background: linear-gradient($uni-deg-base, #F97316 0%, #EA580C 100%);
-    
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-success 0%,
+        $uni-success-dark 100%
+    );
+    transition: all 0.3s ease;
+    border-radius: $uni-radius-lg;
+    color: $uni-white;
+
     &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4rpx 12rpx rgba(249, 115, 22, 0.4);
+        transform: scale(1.05);
+        box-shadow: $uni-shadow-success;
     }
-  }
+
+    &.checked {
+        background: linear-gradient($uni-deg-base, #d1d5db 0%, #9ca3af 100%);
+    }
+
+    &.missed {
+        background: linear-gradient($uni-deg-base, #f97316 0%, #ea580c 100%);
+
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4rpx 12rpx rgba(249, 115, 22, 0.4);
+        }
+    }
 }
 
 @mixin sos-button {
-  background: linear-gradient($uni-deg-base, $uni-danger 0%, $uni-danger-dark 100%);
-  box-shadow: $uni-shadow-danger-xl;
-  transition: all 0.3s ease;
-  border-radius: $uni-radius-full;
-  
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: $uni-shadow-danger-hover;
-  }
-  
-  &.blinking {
-    animation: blink-red 0.5s ease-in-out infinite;
-  }
-  
-  &.responded {
-    background: linear-gradient($uni-deg-base, $uni-info 0%, $uni-info-dark 100%);
-    box-shadow: $uni-shadow-info;
-    
-    &.blinking {
-      animation: blink-blue 0.5s ease-in-out infinite;
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-danger 0%,
+        $uni-danger-dark 100%
+    );
+    box-shadow: $uni-shadow-danger-xl;
+    transition: all 0.3s ease;
+    border-radius: $uni-radius-full;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: $uni-shadow-danger-hover;
     }
-  }
+
+    &.blinking {
+        animation: blink-red 0.5s ease-in-out infinite;
+    }
+
+    &.responded {
+        background: linear-gradient(
+            $uni-deg-base,
+            $uni-info 0%,
+            $uni-info-dark 100%
+        );
+        box-shadow: $uni-shadow-info;
+
+        &.blinking {
+            animation: blink-blue 0.5s ease-in-out infinite;
+        }
+    }
 }
 
 // 浮动按钮混入（从HTML文件提取）
 @mixin floating-button {
-  background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
-  box-shadow: $uni-shadow-primary-xl;
-  transition: all 0.3s ease;
-  animation: float 3s ease-in-out infinite;
-  
-  &:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: $uni-shadow-primary-hover;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-primary 0%,
+        $uni-primary-dark 100%
+    );
+    box-shadow: $uni-shadow-primary-xl;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+
+    &:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: $uni-shadow-primary-hover;
+    }
 }
 
 // 快速操作混入（从HTML文件提取）
 @mixin quick-action {
-  transition: all 0.2s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
 
 // 角色标签混入（从HTML文件提取）
 @mixin role-tab {
-  transition: all 0.3s ease;
-  
-  &.active {
-    background: linear-gradient($uni-deg-base, $uni-primary 0%, $uni-primary-dark 100%);
-    color: $uni-white;
-    box-shadow: $uni-shadow-primary-md;
-  }
+    transition: all 0.3s ease;
+
+    &.active {
+        background: linear-gradient(
+            $uni-deg-base,
+            $uni-primary 0%,
+            $uni-primary-dark 100%
+        );
+        color: $uni-white;
+        box-shadow: $uni-shadow-primary-md;
+    }
 }
 
 // 输入框混入（从HTML文件提取）
 @mixin search-input {
-  background: linear-gradient($uni-deg-base, $uni-bg-card-start 0%, $uni-bg-card-end 100%);
-  border: 1px solid $uni-border-light;
-  transition: all 0.3s ease;
-  border-radius: $uni-radius-lg;
-  
-  &:focus {
-    border-color: $uni-primary;
-    box-shadow: $uni-shadow-focus;
-  }
+    background: linear-gradient(
+        $uni-deg-base,
+        $uni-bg-card-start 0%,
+        $uni-bg-card-end 100%
+    );
+    border: 1px solid $uni-border-light;
+    transition: all 0.3s ease;
+    border-radius: $uni-radius-lg;
+
+    &:focus {
+        border-color: $uni-primary;
+        box-shadow: $uni-shadow-focus;
+    }
 }
 
 // 动画类混入
 @mixin animation-float {
-  animation: float 3s ease-in-out infinite;
+    animation: float 3s ease-in-out infinite;
 }
 
 @mixin animation-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @mixin animation-slide-up {
-  animation: slide-up 0.5s ease-out;
+    animation: slide-up 0.5s ease-out;
 }
 
 @mixin animation-pulse-red {
-  animation: pulse-red 2s ease-in-out infinite;
+    animation: pulse-red 2s ease-in-out infinite;
 }

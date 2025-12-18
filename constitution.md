@@ -1,6 +1,6 @@
 # 前端项目
 
-这是一个 uni-app + vue3 + TypeScript + scss 编写的多端前台应用。
+这是一个 uni-app + vue3 + TypeScript + scss 编写的多端前台应用，最终会编译成微信小程序发布。
 
 ## 技术栈
 
