@@ -7,20 +7,14 @@
 ## 页面配置
 
 ### 路由路径
-- **新页面**: `pages/community-details-new/community-details-new`
-- **旧页面**: `pages/community-detail/community-detail` (保持原样)
+- **页面**: `pages/community-details-new/community-details-new`
 
 ### 调用方式
 
 ```javascript
-// 跳转到新页面
+// 跳转到页面
 uni.navigateTo({
   url: '/pages/community-details-new/community-details-new?id=社区ID'
-})
-
-// 跳转到旧页面（对比用）
-uni.navigateTo({
-  url: '/pages/community-detail/community-detail?communityId=社区ID'
 })
 ```
 
@@ -105,22 +99,21 @@ uni.navigateTo({
 - 保持原有页面不变
 - 并行测试新旧页面
 
-### 第二阶段：替换
+### 第二阶段：替换 ✅
 - 逐步将业务逻辑迁移到新页面
 - 更新相关页面的跳转链接
 - 全面测试新页面功能
 
-### 第三阶段：删除
+### 第三阶段：删除 ✅
 - 确认新页面稳定运行
 - 删除旧页面文件
 - 清理相关引用
 
 ## 注意事项
 
-1. **并行存在** - 新旧页面目前并行存在，便于对比测试
-2. **平滑过渡** - 采用渐进式重构，确保业务连续性
-3. **向后兼容** - 保持与现有系统的兼容性
-4. **团队协作** - 组件化架构便于团队协作开发
+1. **平滑过渡** - 采用渐进式重构，确保业务连续性
+2. **向后兼容** - 保持与现有系统的兼容性
+3. **团队协作** - 组件化架构便于团队协作开发
 
 ## 快速开始
 
@@ -136,16 +129,10 @@ uni.navigateTo({
    })
    ```
 
-3. 对比新旧页面：
+3. 测试页面跳转：
    ```javascript
-   // 新页面
    uni.navigateTo({
      url: '/pages/community-details-new/community-details-new?id=1'
-   })
-   
-   // 旧页面
-   uni.navigateTo({
-     url: '/pages/community-detail/community-detail?communityId=1'
    })
    ```
 

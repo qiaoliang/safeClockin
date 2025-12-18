@@ -248,15 +248,6 @@
 			}
 		},
 		{
-			"path": "pages/community-detail/community-detail",
-			"style": {
-				"navigationBarTitleText": "社区详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
 			"path": "pages/community-details-new/community-details-new",
 			"style": {
 				"navigationBarTitleText": "社区详情",

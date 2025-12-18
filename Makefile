@@ -1,26 +1,26 @@
 # Makefile for SafeGuard Frontend Testing
 # 用于运行前端项目的三类自动化测试
 
-.PHONY: test-unit test-integration test-e2e test-all help test-coverage test-clean
+.PHONY: ut test-integration e2e test-all help test-coverage test-clean
 
 # 默认目标
 help:
 	@echo "SafeGuard Frontend 测试命令:"
 	@echo ""
-	@echo "  test-unit        - 运行单元测试"
+	@echo "  ut        - 运行单元测试"
 	@echo "  test-integration - 运行集成测试"
-	@echo "  test-e2e         - 运行端到端测试"
+	@echo "  e2e         - 运行端到端测试"
 	@echo "  test-all         - 运行所有测试"
 	@echo "  test-coverage    - 运行测试并生成覆盖率报告"
 	@echo "  test-clean       - 清理测试相关文件"
 	@echo "  help             - 显示此帮助信息"
 	@echo ""
 	@echo "使用示例:"
-	@echo "  make test-unit"
+	@echo "  make ut"
 	@echo "  make test-all"
 
 # 运行单元测试
-test-unit:
+ut:
 	@echo "🔬 运行单元测试..."
 	npm run test:run
 
@@ -30,12 +30,12 @@ test-integration:
 	npx vitest run --config vitest.integration.config.js
 
 # 运行端到端测试（自动检查并启动后端服务）
-test-e2e:
+e2e:
 	@echo "🌐 运行端到端测试..."
 	npm run test:e2e:run
 
 # 运行所有测试（按顺序执行）
-test-all: test-unit test-integration test-e2e
+test-all: ut test-integration e2e
 	@echo "✅ 所有测试完成！"
 
 # 运行测试并生成覆盖率报告
@@ -79,9 +79,9 @@ test-watch-e2e:
 # 性能测试（运行所有测试并显示耗时）
 test-performance:
 	@echo "⏱️  性能测试 - 运行所有测试并显示耗时..."
-	@echo "单元测试耗时：" && time make test-unit
+	@echo "单元测试耗时：" && time make ut
 	@echo "集成测试耗时：" && time make test-integration
-	@echo "E2E测试耗时：" && time make test-e2e
+	@echo "E2E测试耗时：" && time make e2e
 	@echo "总体测试耗时：" && time make test-all
 
 # CI/CD 模式（严格运行，任何失败都会停止）
