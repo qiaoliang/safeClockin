@@ -275,8 +275,10 @@ const decodeCommunityData = (data) => {
 
 // 页面加载
 onLoad((options) => {
-  if (options.id) {
-    communityId.value = options.id
+  // 支持两种参数名：id（新页面）和 communityId（旧页面跳转）
+  const id = options.id || options.communityId
+  if (id) {
+    communityId.value = id
     loadCommunityDetail()
   } else {
     error.value = '未指定社区ID'

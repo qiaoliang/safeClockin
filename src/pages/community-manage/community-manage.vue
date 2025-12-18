@@ -375,7 +375,7 @@ const viewCommunityDetail = (community) => {
   }
   
   uni.navigateTo({
-    url: `/pages/community-detail/community-detail?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+    url: `/pages/community-details-new/community-details-new?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
   })
 }
 
