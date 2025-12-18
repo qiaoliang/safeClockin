@@ -36,18 +36,20 @@
         <view class="user-info">
           <view class="user-avatar">
             <text class="avatar-icon">👤</text>
-            <view v-if="user.status === '正常'" class="status-indicator normal" />
-            <view v-else-if="user.status === '异常'" class="status-indicator abnormal" />
-            <view v-else class="status-indicator unknown" />
+            <view v-if="user.verification_status === 1" class="status-indicator normal" title="已验证" />
+            <view v-else-if="user.verification_status === 0" class="status-indicator abnormal" title="未验证" />
+            <view v-else class="status-indicator unknown" title="状态未知" />
           </view>
           
           <view class="user-details">
-            <text class="user-name">{{ user.name }}</text>
-            <text class="user-phone">{{ user.phone }}</text>
+            <text class="user-name">{{ user.nickname || '未设置昵称' }}</text>
+            <text class="user-phone">{{ user.phone_number || '未设置手机号' }}</text>
             <view class="user-tags">
-              <text class="user-status-tag" :class="user.status">{{ user.status }}</text>
-              <text v-if="user.lastCheckin" class="checkin-tag">
-                上次打卡: {{ user.lastCheckin }}
+              <text class="user-status-tag" :class="getVerificationStatusClass(user.verification_status)">
+                {{ getVerificationStatusText(user.verification_status) }}
+              </text>
+              <text v-if="user.created_at" class="checkin-tag">
+                加入时间: {{ formatDate(user.created_at) }}
               </text>
             </view>
           </view>
@@ -107,10 +109,44 @@ const filteredUsers = computed(() => {
   
   const query = searchQuery.value.toLowerCase().trim()
   return props.userList.filter(user => 
-    user.name.toLowerCase().includes(query) ||
-    user.phone.includes(query)
+    (user.nickname && user.nickname.toLowerCase().includes(query)) ||
+    (user.phone_number && user.phone_number.includes(query))
   )
 })
+
+// 辅助函数：获取验证状态对应的CSS类
+const getVerificationStatusClass = (status) => {
+  switch (status) {
+    case 1: return 'verified'
+    case 0: return 'unverified'
+    default: return 'unknown'
+  }
+}
+
+// 辅助函数：获取验证状态文本
+const getVerificationStatusText = (status) => {
+  switch (status) {
+    case 1: return '已验证'
+    case 0: return '未验证'
+    default: return '状态未知'
+  }
+}
+
+// 辅助函数：格式化日期
+const formatDate = (dateString) => {
+  if (!dateString) return '未知时间'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+  } catch (error) {
+    return '日期格式错误'
+  }
+}
 
 const handleSearch = () => {
   // 搜索逻辑已通过computed属性处理
@@ -270,6 +306,19 @@ const clearSearch = () => {
             &.unknown {
               background: $uni-text-gray-600;
             }
+            
+            // 验证状态样式
+            &[title="已验证"] {
+              background: $uni-success;
+            }
+            
+            &[title="未验证"] {
+              background: $uni-warning;
+            }
+            
+            &[title="状态未知"] {
+              background: $uni-text-gray-600;
+            }
           }
         }
         
@@ -300,17 +349,17 @@ const clearSearch = () => {
               border-radius: $uni-radius-xs;
               display: inline-block;
               
-              &.normal {
+              &.verified {
                 background: rgba(16, 185, 129, 0.1);
                 color: $uni-success;
               }
               
-              &.abnormal {
+              &.unverified {
                 background: rgba(245, 158, 11, 0.1);
                 color: $uni-warning;
               }
               
-              &:not(.normal):not(.abnormal) {
+              &.unknown {
                 background: rgba(107, 114, 128, 0.1);
                 color: $uni-text-gray-600;
               }
