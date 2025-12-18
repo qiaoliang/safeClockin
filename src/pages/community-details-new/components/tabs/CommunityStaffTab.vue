@@ -12,19 +12,19 @@
     <!-- 专员列表 -->
     <view class="staff-list">
       <view
-        v-for="staff in staffList"
+        v-for="staff in normalizedStaffList"
         :key="staff.id"
         class="staff-card"
       >
         <view class="staff-info">
           <view class="staff-avatar">
-            <text class="avatar-icon">👔</text>
+            <text class="avatar-icon">{{ getRoleIcon(staff.role) }}</text>
           </view>
           
           <view class="staff-details">
             <text class="staff-name">{{ staff.name }}</text>
             <text class="staff-phone">{{ staff.phone }}</text>
-            <text class="staff-role">{{ staff.role }}</text>
+            <text class="staff-role">{{ staff.roleDisplay }}</text>
           </view>
         </view>
         
@@ -35,7 +35,7 @@
       </view>
       
       <!-- 空状态 -->
-      <view v-if="staffList.length === 0" class="empty-state">
+      <view v-if="normalizedStaffList.length === 0" class="empty-state">
         <text class="empty-icon">👥</text>
         <text class="empty-text">暂无专员</text>
         <text class="empty-hint">点击"添加专员"按钮添加第一个专员</text>
@@ -51,7 +51,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   staffList: {
     type: Array,
     default: () => []
@@ -63,6 +65,48 @@ defineProps({
 })
 
 defineEmits(['add-staff', 'remove-staff', 'refresh'])
+
+// 规范化工作人员数据，处理字段名映射
+const normalizedStaffList = computed(() => {
+  return props.staffList.map(staff => {
+    // 处理字段名映射：后端返回nickname和phone_number，前端期望name和phone
+    const id = staff.id || staff.user_id
+    const name = staff.name || staff.nickname || '未知'
+    const phone = staff.phone || staff.phone_number || '未知'
+    const role = staff.role || 'staff'
+    const roleDisplay = getRoleDisplay(role)
+    
+    return {
+      id,
+      name,
+      phone,
+      role,
+      roleDisplay,
+      // 保留原始数据用于调试
+      _raw: staff
+    }
+  })
+})
+
+// 获取角色显示文本
+const getRoleDisplay = (role) => {
+  const roleMap = {
+    'manager': '主管',
+    'staff': '专员',
+    'admin': '管理员'
+  }
+  return roleMap[role] || role || '专员'
+}
+
+// 获取角色图标
+const getRoleIcon = (role) => {
+  const iconMap = {
+    'manager': '👑',
+    'staff': '👔',
+    'admin': '⚙️'
+  }
+  return iconMap[role] || '👤'
+}
 </script>
 
 <style lang="scss" scoped>

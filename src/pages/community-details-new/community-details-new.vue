@@ -175,6 +175,9 @@ const ruleList = ref([])
 const assignList = ref([])
 const supportList = ref([])
 
+// 加载状态标记
+const userListLoaded = ref(false)
+
 // 模态框状态
 const showSettingsModal = ref(false)
 const showAddStaffModal = ref(false)
@@ -317,17 +320,24 @@ const loadCommunityDetail = async () => {
       } else {
         // 提取统计信息
         communityStats.value = {
-          staff_count: communityData.value.stats?.staff_count || 0,
+          staff_count: communityData.value.stats?.staff_only_count || communityData.value.stats?.staff_count || 0, // 优先使用专员数量
           user_count: communityData.value.stats?.user_count || 0,
           support_count: communityData.value.stats?.support_count || 0,
           active_events: communityData.value.stats?.active_events || 0,
-          checkin_rate: communityData.value.stats?.checkin_rate || 0
+          checkin_rate: communityData.value.stats?.checkin_rate || 0,
+          // 保留详细统计信息用于调试
+          _detailed: {
+            total_staff: communityData.value.stats?.staff_count || 0,
+            staff_only: communityData.value.stats?.staff_only_count || 0,
+            managers: communityData.value.stats?.manager_count || 0,
+            admins: communityData.value.stats?.admin_count || 0
+          }
         }
         
-        // 加载各Tab数据
+        // 加载各Tab数据（用户列表改为懒加载）
         await Promise.all([
           loadStaffList(),
-          loadUserList(),
+          // loadUserList(), // 改为懒加载，只在切换到用户Tab时加载
           loadRuleList(),
           loadAssignList(),
           loadSupportList()
@@ -353,7 +363,15 @@ const loadStaffList = async () => {
   try {
     const response = await getCommunityStaffList(communityId.value)
     if (response.code === 1) {
-      staffList.value = response.data.staff_list || []
+      // 根据API文档，后端返回的是staff_members字段
+      // 但为了兼容性，同时检查staff_list字段
+      staffList.value = response.data.staff_members || response.data.staff_list || []
+      
+      // 调试日志
+      console.log('加载专员列表成功:', {
+        total: staffList.value.length,
+        data: staffList.value.slice(0, 3) // 只显示前3条用于调试
+      })
     } else {
       console.error('加载专员列表失败:', response.msg)
       staffList.value = []
@@ -364,12 +382,18 @@ const loadStaffList = async () => {
   }
 }
 
-// 加载用户列表
+// 加载用户列表（懒加载）
 const loadUserList = async () => {
+  // 如果已经加载过，直接返回
+  if (userListLoaded.value && userList.value.length > 0) {
+    return
+  }
+  
   try {
     const response = await getCommunityUsers(communityId.value)
     if (response.code === 1) {
       userList.value = response.data.users || []
+      userListLoaded.value = true
     } else {
       console.error('加载用户列表失败:', response.msg)
       userList.value = []
@@ -430,6 +454,11 @@ const handleSettings = () => {
 
 const handleTabChange = (tabId) => {
   activeTab.value = tabId
+  
+  // 懒加载用户列表：当切换到"用户"Tab时加载数据
+  if (tabId === 'users' && !userListLoaded.value) {
+    loadUserList()
+  }
 }
 
 const handleAddStaff = () => {
