@@ -324,7 +324,7 @@ const loadCommunityDetail = async () => {
       } else {
         // 提取统计信息
         communityStats.value = {
-          staff_count: communityData.value.stats?.staff_only_count || communityData.value.stats?.staff_count || 0, // 优先使用专员数量
+          staff_count: communityData.value.stats?.staff_only_count ?? communityData.value.stats?.staff_count ?? 0, // 优先使用专员数量，使用??避免0被当作falsy
           user_count: communityData.value.stats?.user_count || 0,
           support_count: communityData.value.stats?.support_count || 0,
           active_events: communityData.value.stats?.active_events || 0,
@@ -332,7 +332,7 @@ const loadCommunityDetail = async () => {
           // 保留详细统计信息用于调试
           _detailed: {
             total_staff: communityData.value.stats?.staff_count || 0,
-            staff_only: communityData.value.stats?.staff_only_count || 0,
+            staff_only: communityData.value.stats?.staff_only_count ?? 0, // 同样使用??
             managers: communityData.value.stats?.manager_count || 0,
             admins: communityData.value.stats?.admin_count || 0
           }
