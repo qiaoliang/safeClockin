@@ -3,7 +3,7 @@
  * 处理社区规则相关的API调用
  */
 
-import request from './request'
+import { request } from './request'
 
 /**
  * 获取社区规则列表

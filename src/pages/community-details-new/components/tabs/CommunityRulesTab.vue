@@ -202,7 +202,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { getCommunityCheckinRules, createCommunityCheckinRule, updateCommunityCheckinRule, deleteCommunityCheckinRule, enableCommunityCheckinRule, disableCommunityCheckinRule } from '@/api/community-checkin'
+import { getCommunityRules, createCommunityRule, updateCommunityRule, deleteCommunityRule, enableCommunityRule, disableCommunityRule } from '@/api/community-checkin'
 
 const props = defineProps({
   ruleList: {
@@ -270,7 +270,7 @@ const loadRules = async () => {
   error.value = ''
   
   try {
-    const response = await getCommunityCheckinRules(props.communityId)
+    const response = await getCommunityRules(props.communityId)
     if (response.code === 1) {
       rules.value = response.data.rules || []
     } else {
@@ -366,9 +366,9 @@ const handleToggleRule = async (rule, enable) => {
           
           let response
           if (enable) {
-            response = await enableCommunityCheckinRule(rule.community_rule_id)
+            response = await enableCommunityRule(rule.community_rule_id)
           } else {
-            response = await disableCommunityCheckinRule(rule.community_rule_id)
+            response = await disableCommunityRule(rule.community_rule_id)
           }
           
           if (response.code === 1) {
@@ -399,7 +399,7 @@ const handleDeleteRule = async (rule) => {
         try {
           uni.showLoading({ title: '删除中...' })
           
-          const response = await deleteCommunityCheckinRule(rule.community_rule_id)
+          const response = await deleteCommunityRule(rule.community_rule_id)
           
           if (response.code === 1) {
             uni.showToast({ title: '删除成功', icon: 'success' })

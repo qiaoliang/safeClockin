@@ -208,7 +208,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getCommunityCheckinRuleDetail, createCommunityCheckinRule, updateCommunityCheckinRule } from '@/api/community-checkin'
+import { getCommunityRuleDetail, createCommunityRule, updateCommunityRule } from '@/api/community-checkin'
 
 // 页面参数
 const communityId = ref('')
@@ -274,8 +274,7 @@ onLoad((options) => {
 // 加载规则详情
 const loadRuleDetail = async () => {
   try {
-    const response = await getCommunityCheckinRuleDetail(ruleId.value)
-    if (response.code === 1) {
+          const response = await getCommunityRuleDetail(ruleId.value)    if (response.code === 1) {
       const rule = response.data.rule
       
       // 填充表单数据
@@ -444,10 +443,15 @@ const handleSubmit = async () => {
     
     if (isEditMode.value) {
       // 编辑模式
-      response = await updateCommunityCheckinRule(ruleId.value, submitData)
+      response = await updateCommunityRule(ruleId.value, submitData)
     } else {
       // 创建模式
-      response = await createCommunityCheckinRule(communityId.value, submitData)
+      // 添加 community_id 到提交数据中
+      const createData = {
+        ...submitData,
+        community_id: communityId.value
+      }
+      response = await createCommunityRule(createData)
     }
     
     if (response.code === 1) {

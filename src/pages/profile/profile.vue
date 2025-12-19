@@ -235,17 +235,20 @@ const userInfo = computed(() => {
 });
 
 const getRoleText = (role) => {
-  // 后端返回的是中文角色名称，直接返回
-  if (
-    (typeof role === "string" && role.includes("用户")) ||
-    role.includes("管理员") ||
-    role.includes("主管") ||
-    role.includes("专员")
-  ) {
-    return role;
+  // 首先检查 role 是否为字符串
+  if (typeof role === "string") {
+    // 后端返回的是中文角色名称，直接返回
+    if (
+      role.includes("用户") ||
+      role.includes("管理员") ||
+      role.includes("主管") ||
+      role.includes("专员")
+    ) {
+      return role;
+    }
   }
 
-  // 向后兼容：处理数字角色值
+  // 向后兼容：处理数字角色值或其他类型
   const roleMap = {
     1: "普通用户",
     2: "社区专员",

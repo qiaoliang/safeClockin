@@ -3,7 +3,7 @@
  * 处理用户规则查询和聚合的API调用（个人规则 + 社区规则）
  */
 
-import request from './request'
+import { request } from './request'
 
 /**
  * 获取用户所有打卡规则（个人规则 + 社区规则）
