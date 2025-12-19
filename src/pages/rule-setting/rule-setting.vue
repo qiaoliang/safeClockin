@@ -1,63 +1,124 @@
-<!-- pages/rule-setting/rule-setting.vue -->
 <template>
   <view class="rule-setting-container">
     <!-- 顶部标题 -->
     <view class="header-section">
       <text class="header-title">
-        自定义打卡规则
+        打卡规则
       </text>
       <text class="header-subtitle">
-        设置您的日常打卡事项，让关爱更贴心
+        管理您的个人打卡规则和查看社区规则
       </text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view v-if="loading" class="loading-container">
+      <uni-load-more status="loading" />
+    </view>
+
+    <!-- 错误状态 -->
+    <view v-else-if="error" class="error-container">
+      <text class="error-text">{{ error }}</text>
+      <button class="retry-btn" @click="getCheckinRules">重试</button>
     </view>
 
     <!-- 规则列表 -->
     <view
-      v-if="rules.length > 0"
+      v-else-if="rules.length > 0"
       class="rules-list-section"
     >
-      <view class="list-title">
-        我的打卡规则
-      </view>
-      <view 
-        v-for="rule in rules" 
-        :key="rule.rule_id" 
-        class="rule-item"
-      >
-        <view class="rule-icon">
-          {{ rule.icon_url }}
+      <!-- 个人规则 -->
+      <view v-if="personalRules.length > 0" class="rules-group">
+        <view class="group-title">
+          <text class="group-icon">👤</text>
+          <text class="group-text">个人规则</text>
         </view>
-        <view class="rule-info">
-          <text class="rule-name">
-            {{ rule.rule_name }}
-          </text>
-          <text class="rule-details">
-            {{ getFrequencyDetail(rule) }}
-            <text v-if="displayTimeSlot(rule)">
-              • {{ getTimeSlotDetail(rule) }}
+        <view 
+          v-for="rule in personalRules" 
+          :key="rule.rule_id" 
+          class="rule-item"
+        >
+          <view class="rule-icon">
+            <text v-if="rule.icon_url" class="icon-emoji">{{ rule.icon_url }}</text>
+            <text v-else class="icon-default">📋</text>
+          </view>
+          <view class="rule-info">
+            <text class="rule-name">
+              {{ rule.rule_name }}
             </text>
-          </text>
+            <text class="rule-details">
+              {{ getFrequencyDetail(rule) }}
+              <text v-if="displayTimeSlot(rule)">
+                • {{ getTimeSlotDetail(rule) }}
+              </text>
+            </text>
+            <text class="rule-source personal-source">
+              👤 个人规则
+            </text>
+          </view>
+          
+          <view class="rule-actions">
+            <button
+              class="edit-btn"
+              @click="editRule(rule)"
+            >
+              编辑
+            </button>
+            <button
+              class="delete-btn"
+              @click="showDeleteModal(rule)"
+            >
+              删除
+            </button>
+            <button
+              class="invite-btn"
+              @click="inviteForRule(rule)"
+            >
+              邀请
+            </button>
+          </view>
         </view>
-        
-        <view class="rule-actions">
-          <button
-            class="edit-btn"
-            @click="editRule(rule)"
-          >
-            编辑
-          </button>
-          <button
-            class="delete-btn"
-            @click="showDeleteModal(rule)"
-          >
-            删除
-          </button>
-          <button
-            class="invite-btn"
-            @click="inviteForRule(rule)"
-          >
-            邀请
-          </button>
+      </view>
+
+      <!-- 社区规则 -->
+      <view v-if="communityRules.length > 0" class="rules-group">
+        <view class="group-title">
+          <text class="group-icon">🏘️</text>
+          <text class="group-text">社区规则</text>
+          <text class="group-hint">（由社区管理员设置）</text>
+        </view>
+        <view 
+          v-for="rule in communityRules" 
+          :key="rule.community_rule_id" 
+          class="rule-item community-rule-item"
+        >
+          <view class="rule-icon">
+            <text v-if="rule.icon_url" class="icon-emoji">{{ rule.icon_url }}</text>
+            <text v-else class="icon-default">🏘️</text>
+          </view>
+          <view class="rule-info">
+            <text class="rule-name">
+              {{ rule.rule_name }}
+            </text>
+            <text class="rule-details">
+              {{ getFrequencyDetail(rule) }}
+              <text v-if="displayTimeSlot(rule)">
+                • {{ getTimeSlotDetail(rule) }}
+              </text>
+            </text>
+            <text class="rule-source community-source">
+              🏘️ {{ rule.community_name || '社区' }}要求
+              <text v-if="!rule.is_enabled" class="rule-status-disabled">（已停用）</text>
+            </text>
+          </view>
+          
+          <view class="rule-actions">
+            <button
+              class="view-btn"
+              @click="viewCommunityRule(rule)"
+            >
+              查看
+            </button>
+          </view>
         </view>
       </view>
     </view>
@@ -85,7 +146,7 @@
           +
         </text>
         <text class="add-text">
-          添加打卡规则
+          添加个人规则
         </text>
       </button>
     </view>
@@ -164,16 +225,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { authApi } from '@/api/auth'
 import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
+import { getUserAllRules, isRuleEditable } from '@/api/user-checkin'
 
 const userStore = useUserStore()
 const rules = ref([])
+const loading = ref(false)
+const error = ref('')
 const showDeleteConfirm = ref(false)
 const selectedRule = ref(null)
+
+// 计算属性：个人规则
+const personalRules = computed(() => {
+  return rules.value.filter(rule => rule.rule_source === 'personal')
+})
+
+// 计算属性：社区规则
+const communityRules = computed(() => {
+  return rules.value.filter(rule => rule.rule_source === 'community')
+})
 
 // 获取频率类型文本
 const getFrequencyText = (type) => {
@@ -201,7 +275,7 @@ const displayTimeSlot = (rule) => {
   return (rule.time_slot_type >= 1 && rule.time_slot_type <= 3) || (rule.time_slot_type === 4 && !!rule.custom_time)
 }
 
-// 时间段详情：1/2/3显示中文；4只显示时间，不显示“自定义时间”字样
+// 时间段详情：1/2/3显示中文；4只显示时间，不显示"自定义时间"字样
 const getTimeSlotDetail = (rule) => {
   if (rule.time_slot_type === 1) return '上午'
   if (rule.time_slot_type === 2) return '下午'
@@ -212,26 +286,24 @@ const getTimeSlotDetail = (rule) => {
 
 // 获取打卡规则列表
 const getCheckinRules = async () => {
+  loading.value = true
+  error.value = ''
+  
   try {
-    const response = await request({
-      url: '/api/checkin/rules',
-      method: 'GET'
-    })
+    const response = await getUserAllRules()
     
     if (response.code === 1) {
       rules.value = response.data.rules || []
     } else {
-      uni.showToast({
-        title: response.msg || '获取打卡规则失败',
-        icon: 'none'
-      })
+      error.value = response.msg || '获取打卡规则失败'
+      rules.value = []
     }
   } catch (error) {
     console.error('获取打卡规则失败:', error)
-    uni.showToast({
-      title: '获取打卡规则失败',
-      icon: 'none'
-    })
+    error.value = '网络错误，请稍后重试'
+    rules.value = []
+  } finally {
+    loading.value = false
   }
 }
 
@@ -244,13 +316,37 @@ const addNewRule = () => {
 
 // 编辑规则
 const editRule = (rule) => {
+  if (!isRuleEditable(rule)) {
+    uni.showToast({
+      title: '社区规则不可编辑',
+      icon: 'none'
+    })
+    return
+  }
+  
   uni.navigateTo({
     url: `/pages/add-rule/add-rule?ruleId=${rule.rule_id}`
   })
 }
 
+// 查看社区规则
+const viewCommunityRule = (rule) => {
+  uni.showToast({
+    title: '社区规则详情功能开发中',
+    icon: 'none'
+  })
+}
+
 // 显示删除确认弹窗
 const showDeleteModal = (rule) => {
+  if (!isRuleEditable(rule)) {
+    uni.showToast({
+      title: '社区规则不可删除',
+      icon: 'none'
+    })
+    return
+  }
+  
   selectedRule.value = rule
   showDeleteConfirm.value = true
 }
@@ -270,11 +366,13 @@ const confirmDelete = async () => {
       title: '删除中...'
     })
     
+    // 使用新的API删除规则
     const response = await request({
-      url: '/api/checkin/rules',
+      url: '/api/user-checkin/rules',
       method: 'DELETE',
       data: {
-        rule_id: selectedRule.value.rule_id
+        rule_id: selectedRule.value.rule_id,
+        rule_source: selectedRule.value.rule_source
       }
     })
     
@@ -287,7 +385,10 @@ const confirmDelete = async () => {
       })
       
       // 从本地数据中移除
-      const index = rules.value.findIndex(r => r.rule_id === selectedRule.value.rule_id)
+      const index = rules.value.findIndex(r => 
+        r.rule_id === selectedRule.value.rule_id && 
+        r.rule_source === selectedRule.value.rule_source
+      )
       if (index !== -1) {
         rules.value.splice(index, 1)
       }
@@ -327,6 +428,15 @@ const copyInvitePath = () => {
 }
 
 const inviteForRule = async (rule) => {
+  // 社区规则不能邀请
+  if (rule.rule_source === 'community') {
+    uni.showToast({
+      title: '社区规则不能邀请监督人',
+      icon: 'none'
+    })
+    return
+  }
+  
   const res = await authApi.inviteSupervisorLink({ rule_ids: [rule.rule_id] })
   if (res.code === 1) {
     lastInvitePath.value = res.data?.mini_path || ''
@@ -365,8 +475,50 @@ const inviteForRule = async (rule) => {
   color: #666;
 }
 
-.list-title {
-  @include section-title;
+.loading-container,
+.error-container {
+  padding: $uni-spacing-xxxl $uni-spacing-xl;
+  text-align: center;
+  
+  .error-text {
+    color: $uni-error;
+    font-size: $uni-font-size-base;
+    margin-bottom: $uni-spacing-xl;
+  }
+  
+  .retry-btn {
+    @include btn-primary;
+    padding: $uni-spacing-sm $uni-spacing-lg;
+    font-size: $uni-font-size-base;
+  }
+}
+
+.rules-group {
+  margin-bottom: 48rpx;
+}
+
+.group-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-left: 16rpx;
+  
+  .group-icon {
+    font-size: 32rpx;
+    margin-right: 12rpx;
+  }
+  
+  .group-text {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #624731;
+  }
+  
+  .group-hint {
+    font-size: 24rpx;
+    color: #999;
+    margin-left: 12rpx;
+  }
 }
 
 .rule-item {
@@ -380,6 +532,10 @@ const inviteForRule = async (rule) => {
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
+.community-rule-item {
+  border-left: 8rpx solid #52c41a;
+}
+
 .rule-icon {
   width: 80rpx;
   height: 80rpx;
@@ -391,6 +547,14 @@ const inviteForRule = async (rule) => {
   border: 2rpx solid #F59E0B;
   border-radius: 16rpx;
   margin-right: 24rpx;
+  
+  .icon-emoji {
+    font-size: 48rpx;
+  }
+  
+  .icon-default {
+    font-size: 48rpx;
+  }
 }
 
 .rule-info {
@@ -409,12 +573,46 @@ const inviteForRule = async (rule) => {
   display: block;
   font-size: 24rpx;
   color: #666;
+  margin-bottom: 8rpx;
+}
+
+.rule-source {
+  display: block;
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  width: fit-content;
+  
+  &.personal-source {
+    background: #E0F2FE;
+    color: #0284C7;
+  }
+  
+  &.community-source {
+    background: #F6FFED;
+    color: #52c41a;
+  }
+}
+
+.rule-status-disabled {
+  color: #999;
+  font-size: 20rpx;
 }
 
 .rule-actions {
   display: flex;
   gap: 16rpx;
 }
+
+.view-btn {
+  background: #F6FFED;
+  color: #52c41a;
+  border-radius: 16rpx;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  border: 2rpx solid #52c41a;
+}
+
 .invite-btn {
   background: #FFF7ED;
   color: #F48224;

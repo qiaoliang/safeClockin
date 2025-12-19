@@ -168,8 +168,9 @@ const isWithin30Minutes = (checkinTimeStr) => {
 // 获取今日打卡事项
 const getTodayCheckinItems = async () => {
   try {
+    // 使用新的API获取今日打卡计划（混合个人规则和社区规则）
     const response = await request({
-      url: '/api/checkin/today',
+      url: '/api/user-checkin/today-plan',
       method: 'GET'
     })
     
@@ -215,12 +216,20 @@ const performCheckin = async (item) => {
       title: '打卡中...'
     })
     
+    // 构建打卡数据，支持社区规则
+    const checkinData = {
+      rule_id: item.rule_id
+    }
+    
+    // 如果是社区规则，需要传递rule_source
+    if (item.rule_source === 'community') {
+      checkinData.rule_source = 'community'
+    }
+    
     const response = await request({
       url: '/api/checkin',
       method: 'POST',
-      data: {
-        rule_id: item.rule_id
-      }
+      data: checkinData
     })
     
     uni.hideLoading()
