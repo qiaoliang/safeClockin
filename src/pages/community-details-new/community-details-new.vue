@@ -69,10 +69,9 @@
             @refresh="refreshUserList"
           />
 
-          <!-- 规则管理 -->
-          <CommunityRulesTab 
+          <!-- 规则管理（分组显示） -->
+          <CommunityRulesTabGrouped 
             v-if="activeTab === 'rules'"
-            :rule-list="ruleList"
             :community-id="communityId"
             @add-rule="handleAddRule"
             @edit-rule="handleEditRule"
@@ -142,7 +141,7 @@ import CommunityInfoCard from './components/CommunityInfoCard.vue'
 import CommunityTabBar from './components/CommunityTabBar.vue'
 import CommunityStaffTab from './components/tabs/CommunityStaffTab.vue'
 import CommunityUsersTab from './components/tabs/CommunityUsersTab.vue'
-import CommunityRulesTab from './components/tabs/CommunityRulesTab.vue'
+import CommunityRulesTabGrouped from './components/tabs/CommunityRulesTabGrouped.vue'
 import CommunityAssignTab from './components/tabs/CommunityAssignTab.vue'
 import CommunitySupportTab from './components/tabs/CommunitySupportTab.vue'
 import CommunitySettingsModal from './components/modals/CommunitySettingsModal.vue'
@@ -176,7 +175,6 @@ const activeTab = ref('staff')
 // 列表数据
 const staffList = ref([])
 const userList = ref([])
-const ruleList = ref([])
 const assignList = ref([])
 const supportList = ref([])
 
@@ -343,7 +341,7 @@ const loadCommunityDetail = async () => {
         await Promise.all([
           loadStaffList(),
           // loadUserList(), // 改为懒加载，只在切换到用户Tab时加载
-          loadRuleList(),
+          // loadRuleList(), // 规则列表由CommunityRulesTabGrouped组件自己加载
           loadAssignList(),
           loadSupportList()
         ])
@@ -413,21 +411,7 @@ const loadUserList = async () => {
   }
 }
 
-// 加载规则列表
-const loadRuleList = async () => {
-  try {
-    const response = await getCommunityRules(communityId.value)
-    if (response.code === 1) {
-      ruleList.value = response.data.rules || []
-    } else {
-      console.error('加载规则列表失败:', response.msg)
-      ruleList.value = []
-    }
-  } catch (err) {
-    console.error('加载规则列表失败:', err)
-    ruleList.value = []
-  }
-}
+
 
 // 加载分配列表
 const loadAssignList = async () => {
