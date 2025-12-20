@@ -123,6 +123,64 @@ async function handleTokenExpired() {
   })
 }
 
+// Layer 2: 业务逻辑验证 - 兼容性函数
+function buildQueryStringCompat(params) {
+  if (!params || typeof params !== 'object') {
+    return ''
+  }
+  
+  const parts = []
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      // 安全编码键和值
+      const encodedKey = encodeURIComponent(key)
+      const encodedValue = encodeURIComponent(String(value))
+      parts.push(`${encodedKey}=${encodedValue}`)
+    }
+  })
+  
+  return parts.join('&')
+}
+
+// Layer 1: 入口点验证 - URL验证函数
+function isValidURL(url) {
+  if (typeof url !== 'string' || !url.trim()) {
+    return false
+  }
+  
+  // 基本验证：不能包含非法字符
+  const illegalChars = /[<>"{}|\\^`]/g
+  if (illegalChars.test(url)) {
+    console.warn('URL包含非法字符:', url)
+    return false
+  }
+  
+  // 验证URL结构
+  try {
+    // 对于相对URL，添加基础URL进行验证
+    const testUrl = url.startsWith('http') ? url : `http://example.com${url.startsWith('/') ? url : '/' + url}`
+    new URL(testUrl)
+    return true
+  } catch (e) {
+    // 如果URL解析失败，可能是查询参数中有特殊字符
+    // 尝试更宽松的验证：检查是否是有效的路径格式
+    console.warn('URL验证警告:', e.message, 'URL:', url)
+    
+    // 对于相对URL，检查基本格式
+    if (url.startsWith('/')) {
+      // 移除查询参数部分，只检查路径部分
+      const pathOnly = url.split('?')[0]
+      // 检查路径是否包含有效字符 - 更宽松的正则表达式
+      const validPathRegex = /^\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]*$/
+      const isValidPath = validPathRegex.test(pathOnly)
+      console.log('宽松路径验证结果:', isValidPath, '路径:', pathOnly)
+      return isValidPath
+    }
+    
+    return false
+  }
+}
+
 // 不需要token验证的API白名单
 const NO_TOKEN_REQUIRED_URLS = [
   '/api/auth/login_wechat', // 微信登录
@@ -144,13 +202,81 @@ export const request = (options) => {
       // 完全依赖 userStore 获取 token
       const userStore = useUserStore()
     let token = userStore.token
-    const fullUrl = baseURL + options.url
+    
+    // === 系统化调试：诊断请求URL ===
+    let requestUrl = options.url
+    let queryParams = ''
+    
+    // Layer 3: 环境守卫 - 检查URLSearchParams是否可用
+    const isURLSearchParamsSupported = typeof URLSearchParams !== 'undefined'
+    if (!isURLSearchParamsSupported) {
+      console.warn('⚠️ 环境守卫: URLSearchParams不可用，使用兼容方案')
+    }
+    
+    // 检查是否为GET请求且有data参数
+    const method = options.method || 'GET'
+    if (method === 'GET' && options.data && Object.keys(options.data).length > 0) {
+      console.log('🔍 系统化调试 - GET请求诊断:')
+      console.log('  原始URL:', requestUrl)
+      console.log('  data参数:', options.data)
+      console.log('  URLSearchParams支持:', isURLSearchParamsSupported ? '是' : '否')
+      
+      // Layer 4: 调试仪表 - 记录原始数据用于取证
+      console.log('🔍 调试仪表 - 原始请求数据:')
+      console.log('  method:', method)
+      console.log('  options.data类型:', typeof options.data)
+      console.log('  options.data keys:', Object.keys(options.data))
+      
+      if (isURLSearchParamsSupported) {
+        // 使用URLSearchParams
+        try {
+          const params = new URLSearchParams()
+          Object.entries(options.data).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              params.append(key, String(value))
+            }
+          })
+          queryParams = params.toString()
+          console.log('✅ 使用URLSearchParams生成查询参数')
+        } catch (error) {
+          console.error('❌ URLSearchParams错误:', error)
+          // 降级到兼容方案
+          queryParams = buildQueryStringCompat(options.data)
+        }
+      } else {
+        // 使用兼容方案
+        queryParams = buildQueryStringCompat(options.data)
+        console.log('✅ 使用兼容方案生成查询参数')
+      }
+      
+      if (queryParams) {
+        requestUrl = requestUrl.includes('?') 
+          ? `${requestUrl}&${queryParams}`
+          : `${requestUrl}?${queryParams}`
+        console.log('  生成的查询参数:', queryParams)
+        console.log('  最终URL:', requestUrl)
+        
+        // Layer 1: 入口点验证 - 验证URL格式
+        if (!isValidURL(requestUrl)) {
+          console.error('❌ 入口点验证失败: 生成的URL无效')
+          console.error('  原始URL:', options.url)
+          console.error('  查询参数:', queryParams)
+          console.error('  最终URL:', requestUrl)
+          // URL无效，直接拒绝请求
+          reject(new Error('生成的URL无效，请检查请求参数'))
+          return
+        }
+      }
+    }
+    
+    const fullUrl = baseURL + requestUrl
     
     if (!(options && options.suppressErrorLog)) {
       console.log('发起请求:', {
         url: fullUrl,
-        method: options.method || 'GET',
-        data: options.data
+        method: method,
+        data: options.data,
+        queryParams: queryParams
       })
     }
     
@@ -249,22 +375,27 @@ export const request = (options) => {
     if (token) {
       // 确保 token 是有效的 ASCII 字符串
       try {
+        console.log('🔍 Token调试 - 原始token:', token ? `长度: ${token.length}, 前20字符: ${token.substring(0, 20)}...` : 'null')
+        
         // 验证 token 是否包含非 ASCII 字符
         if (/[\u0080-\uFFFF]/.test(token)) {
           console.warn('Token 包含非 ASCII 字符，尝试清理...')
           // 尝试清理 token：移除非 ASCII 字符
+          const originalToken = token
           token = token.replace(/[^\x00-\x7F]/g, '')
-          console.warn('Token 已清理，移除了非 ASCII 字符')
+          console.warn(`Token 已清理: 原始长度 ${originalToken.length} -> 清理后长度 ${token.length}`)
+          console.warn('清理后的token前20字符:', token.substring(0, 20))
         }
         
         // 验证清理后的 token 是否有效
         if (!token || token.length < 10) {
           console.error('Token 清理后无效或过短，放弃使用')
+          console.error('清理后的token:', token ? `长度: ${token.length}, 内容: ${token}` : 'null')
           delete headers['Authorization']
         } else {
           headers['Authorization'] = `Bearer ${token}`
           if (!(options && options.suppressErrorLog)) {
-            console.log('请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`)
+            console.log('✅ 请求发送 - Authorization header 设置:', `Bearer ${token.substring(0, 20)}...`)
           }
         }
       } catch (error) {
@@ -273,7 +404,7 @@ export const request = (options) => {
       }
     } else {
       if (!(options && options.suppressErrorLog)) {
-        console.log('请求发送 - 未找到本地存储的token')
+        console.log('⚠️ 请求发送 - 未找到本地存储的token')
       }
     }
     
