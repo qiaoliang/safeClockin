@@ -15,7 +15,7 @@ export const getCommunityRules = (communityId, includeDisabled = false) => {
   return request({
     url: '/api/community-checkin/rules',
     method: 'GET',
-    params: {
+    data: {
       community_id: communityId,
       include_disabled: includeDisabled
     }

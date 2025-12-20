@@ -37,7 +37,7 @@ export const getUserRuleDetail = (ruleId, ruleSource = 'personal') => {
   return request({
     url: `/api/user-checkin/rules/${ruleId}`,
     method: 'GET',
-    params: {
+    data: {
       rule_source: ruleSource
     }
   })
