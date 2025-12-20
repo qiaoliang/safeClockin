@@ -49,14 +49,10 @@
 
         <!-- Tab内容区域 -->
         <view class="tab-content">
-          <!-- 专员管理 -->
-          <CommunityStaffTab 
+          <!-- 专员管理（新版） -->
+          <CommunityStaffManagement 
             v-if="activeTab === 'staff'"
-            :staff-list="staffList"
             :community-id="communityId"
-            @add-staff="handleAddStaff"
-            @remove-staff="handleRemoveStaff"
-            @refresh="refreshStaffList"
           />
 
           <!-- 用户管理 -->
@@ -139,7 +135,7 @@ import { authApi } from '@/api/auth'
 import CommunityDetailHeader from './components/CommunityDetailHeader.vue'
 import CommunityInfoCard from './components/CommunityInfoCard.vue'
 import CommunityTabBar from './components/CommunityTabBar.vue'
-import CommunityStaffTab from './components/tabs/CommunityStaffTab.vue'
+import CommunityStaffManagement from './components/tabs/CommunityStaffManagement.vue'
 import CommunityUsersTab from './components/tabs/CommunityUsersTab.vue'
 import CommunityRulesTabGrouped from './components/tabs/CommunityRulesTabGrouped.vue'
 import CommunityAssignTab from './components/tabs/CommunityAssignTab.vue'
