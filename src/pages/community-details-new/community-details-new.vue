@@ -135,6 +135,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import { getCommunityDetail, getCommunityStaffList, getCommunityUsers } from '@/api/community'
+import { getCommunityRules } from '@/api/community-checkin'
 import { authApi } from '@/api/auth'
 import CommunityDetailHeader from './components/CommunityDetailHeader.vue'
 import CommunityInfoCard from './components/CommunityInfoCard.vue'
@@ -415,13 +416,16 @@ const loadUserList = async () => {
 // 加载规则列表
 const loadRuleList = async () => {
   try {
-    // TODO: 调用API获取规则列表
-    ruleList.value = [
-      { id: '301', name: '每日打卡', type: 'daily', time: '09:00' },
-      { id: '302', name: '健康检查', type: 'weekly', day: '周一' }
-    ]
+    const response = await getCommunityRules(communityId.value)
+    if (response.code === 1) {
+      ruleList.value = response.data.rules || []
+    } else {
+      console.error('加载规则列表失败:', response.msg)
+      ruleList.value = []
+    }
   } catch (err) {
     console.error('加载规则列表失败:', err)
+    ruleList.value = []
   }
 }
 

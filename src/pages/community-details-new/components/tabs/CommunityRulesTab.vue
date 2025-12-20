@@ -257,6 +257,19 @@ onMounted(() => {
   if (props.communityId) {
     loadRules()
   }
+  
+  // 监听规则刷新事件
+  uni.$on('community-rules-refresh', (refreshedCommunityId) => {
+    if (refreshedCommunityId === props.communityId) {
+      loadRules()
+    }
+  })
+})
+
+// 组件卸载时清理事件监听
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+  uni.$off('community-rules-refresh')
 })
 
 // 加载规则列表

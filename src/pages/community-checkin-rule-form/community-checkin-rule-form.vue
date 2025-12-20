@@ -477,6 +477,9 @@ const handleSubmit = async () => {
         icon: "success",
       });
 
+      // 触发规则列表刷新事件
+      uni.$emit('community-rules-refresh', communityId.value);
+      
       // 延迟返回，让用户看到成功提示
       setTimeout(() => {
         uni.navigateBack();
