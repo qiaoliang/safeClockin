@@ -146,8 +146,12 @@ export const addCommunityStaff = (data) => {
  */
 export const removeCommunityStaff = (communityId, userId) => {
   return request({
-    url: `/api/community/remove-staff/${communityId}/${userId}`,
-    method: 'DELETE'
+    url: '/api/community/remove-staff',
+    method: 'POST',
+    data: {
+      community_id: communityId,
+      user_id: userId
+    }
   })
 }
 

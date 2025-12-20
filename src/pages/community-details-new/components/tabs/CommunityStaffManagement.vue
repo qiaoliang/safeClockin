@@ -106,6 +106,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import AddStaffModal from '../modals/AddStaffModal.vue'
+import { getCommunityStaffList, removeCommunityStaff } from '@/api/community'
 
 const props = defineProps({
   communityId: {
@@ -293,25 +294,19 @@ const formatDate = (dateString) => {
   }
 }
 
-// API调用函数（需要根据实际API实现）
+// API调用函数
 const fetchStaffList = async (page = 1) => {
-  // 调用增强版专员列表API
-  // GET /api/community/staff/list-enhanced?community_id=xxx&page=xxx&limit=xxx
-  return { code: 1, data: { staff_members: [], pagination: { page: 1, limit: 20, total: 0 } } }
+  return getCommunityStaffList(props.communityId, { 
+    page: page, 
+    limit: pageSize.value,
+    role: 'staff' // 只获取专员，不包括主管
+  })
 }
 
-const addStaffMembers = async (userIds) => {
-  // 调用批量添加专员API
-  // POST /api/community/add-staff
-  // body: { community_id: xxx, user_ids: [...], role: 'staff' }
-  return { code: 1, data: {} }
-}
+
 
 const removeStaffMember = async (userId) => {
-  // 调用移除专员API
-  // POST /api/community/remove-staff
-  // body: { community_id: xxx, user_id: xxx }
-  return { code: 1, data: {} }
+  return removeCommunityStaff(props.communityId, userId)
 }
 
 const updateCommunityStaffCount = () => {
