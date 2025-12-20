@@ -28,7 +28,7 @@
             <text class="clear-icon">×</text>
           </button>
         </view>
-        <text class="search-hint">在所有用户中搜索（排除黑屋社区用户）</text>
+        <text class="search-hint">在所有用户中搜索</text>
       </view>
 
       <!-- 加载状态 -->
@@ -144,8 +144,8 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { request } from '@/api/request'
-import { addCommunityStaff } from '@/api/community'
+import { request } from "@/api/request";
+import { addCommunityStaff } from "@/api/community";
 
 const props = defineProps({
   visible: {
@@ -181,13 +181,13 @@ let searchTimer = null;
 watch(
   () => props.visible,
   (newVal) => {
-    console.log('AddStaffModal visible prop变化:', newVal)
+    console.log("AddStaffModal visible prop变化:", newVal);
     if (newVal) {
-      console.log('模态框显示，重置状态并搜索用户')
+      console.log("模态框显示，重置状态并搜索用户");
       resetState();
       // 延迟搜索，避免模态框动画期间搜索
       setTimeout(() => {
-        console.log('开始搜索用户...')
+        console.log("开始搜索用户...");
         searchUsers();
       }, 300);
     }
@@ -207,7 +207,14 @@ const resetState = () => {
 
 // 搜索用户
 const searchUsers = async (page = 1, isLoadMore = false) => {
-  console.log('searchUsers被调用，page:', page, 'isLoadMore:', isLoadMore, 'searchKeyword:', searchKeyword.value)
+  console.log(
+    "searchUsers被调用，page:",
+    page,
+    "isLoadMore:",
+    isLoadMore,
+    "searchKeyword:",
+    searchKeyword.value
+  );
   if (isLoadMore) {
     loadingMore.value = true;
   } else {
@@ -216,13 +223,13 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   }
 
   try {
-    console.log('开始调用searchUsersExcludingBlackroom API...')
+    console.log("开始调用searchUsersExcludingBlackroom API...");
     // 调用后端API搜索用户（排除黑屋社区）
     const response = await searchUsersExcludingBlackroom(page);
-    console.log('searchUsersExcludingBlackroom API响应:', response)
+    console.log("searchUsersExcludingBlackroom API响应:", response);
 
     if (response.code === 1) {
-      console.log('API调用成功，数据:', response.data)
+      console.log("API调用成功，数据:", response.data);
       const { users, pagination } = response.data;
 
       if (isLoadMore) {
@@ -236,9 +243,9 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
       totalCount.value = pagination.total;
       currentPage.value = pagination.page;
       hasMore.value = pagination.has_more || false;
-      console.log('搜索完成，找到用户数:', users.length, '分页信息:', pagination)
+      console.log("搜索完成，找到用户数:", users.length, "分页信息:", pagination);
     } else {
-      console.log('API业务错误:', response.msg)
+      console.log("API业务错误:", response.msg);
       error.value = response.msg || "搜索用户失败";
     }
   } catch (err) {
@@ -247,7 +254,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   } finally {
     loading.value = false;
     loadingMore.value = false;
-    console.log('searchUsers完成')
+    console.log("searchUsers完成");
   }
 };
 
@@ -318,92 +325,96 @@ const handleConfirm = async () => {
 
   try {
     // Layer 1: 入口点验证 - 检查selectedUsers的数据类型和格式
-    console.log('🔍 Layer 1 - 入口点验证:')
-    console.log('  selectedUsers:', selectedUsers.value)
-    console.log('  selectedUsers类型:', typeof selectedUsers.value)
-    console.log('  第一个元素类型:', selectedUsers.value.length > 0 ? typeof selectedUsers.value[0] : '空数组')
-    console.log('  communityId:', props.communityId, '类型:', typeof props.communityId)
-    
+    console.log("🔍 Layer 1 - 入口点验证:");
+    console.log("  selectedUsers:", selectedUsers.value);
+    console.log("  selectedUsers类型:", typeof selectedUsers.value);
+    console.log(
+      "  第一个元素类型:",
+      selectedUsers.value.length > 0 ? typeof selectedUsers.value[0] : "空数组"
+    );
+    console.log("  communityId:", props.communityId, "类型:", typeof props.communityId);
+
     // 验证selectedUsers中的元素是否为有效ID
-    const invalidIds = selectedUsers.value.filter(id => {
+    const invalidIds = selectedUsers.value.filter((id) => {
       // 检查是否为有效数字或数字字符串
-      if (typeof id === 'string') {
-        const num = parseInt(id, 10)
-        return isNaN(num) || num <= 0
-      } else if (typeof id === 'number') {
-        return id <= 0 || !Number.isInteger(id)
+      if (typeof id === "string") {
+        const num = parseInt(id, 10);
+        return isNaN(num) || num <= 0;
+      } else if (typeof id === "number") {
+        return id <= 0 || !Number.isInteger(id);
       }
-      return true // 其他类型都视为无效
-    })
-    
+      return true; // 其他类型都视为无效
+    });
+
     if (invalidIds.length > 0) {
-      console.error('❌ Layer 1验证失败: 发现无效的用户ID', invalidIds)
-      uni.showToast({ 
-        title: `发现${invalidIds.length}个无效的用户ID`, 
-        icon: 'none',
-        duration: 3000
-      })
-      return
+      console.error("❌ Layer 1验证失败: 发现无效的用户ID", invalidIds);
+      uni.showToast({
+        title: `发现${invalidIds.length}个无效的用户ID`,
+        icon: "none",
+        duration: 3000,
+      });
+      return;
     }
-    
+
     // Layer 2: 业务逻辑验证 - 准备发送给后端的数据
     // 确保user_ids是数字类型（后端期望整数）
-    const user_ids_for_api = selectedUsers.value.map(id => {
-      if (typeof id === 'string') {
-        return parseInt(id, 10)
+    const user_ids_for_api = selectedUsers.value.map((id) => {
+      if (typeof id === "string") {
+        return parseInt(id, 10);
       }
-      return id
-    })
-    
-    console.log('🔍 Layer 2 - 业务逻辑验证:')
-    console.log('  转换前的user_ids:', selectedUsers.value)
-    console.log('  转换后的user_ids:', user_ids_for_api)
-    console.log('  发送给API的数据结构:', {
+      return id;
+    });
+
+    console.log("🔍 Layer 2 - 业务逻辑验证:");
+    console.log("  转换前的user_ids:", selectedUsers.value);
+    console.log("  转换后的user_ids:", user_ids_for_api);
+    console.log("  发送给API的数据结构:", {
       community_id: props.communityId,
       user_ids: user_ids_for_api,
-      role: 'staff'
-    })
-    
-    uni.showLoading({ title: '添加中...', mask: true });
-    
+      role: "staff",
+    });
+
+    uni.showLoading({ title: "添加中...", mask: true });
+
     const response = await addCommunityStaff({
       community_id: props.communityId,
       user_ids: user_ids_for_api,
-      role: 'staff'
+      role: "staff",
     });
-    
+
     if (response.code === 1) {
-      uni.showToast({ 
-        title: response.data.added_count > 0 ? 
-               `成功添加${response.data.added_count}名专员` : 
-               '操作完成', 
-        icon: 'success' 
+      uni.showToast({
+        title:
+          response.data.added_count > 0
+            ? `成功添加${response.data.added_count}名专员`
+            : "操作完成",
+        icon: "success",
       });
-      
+
       // 触发父组件重新加载专员列表，传递添加成功的用户信息
       emit("confirm", response.data.added_users || []);
     } else {
       // 显示后端返回的错误信息
-      let errorMessage = response.msg || '添加失败';
-      
+      let errorMessage = response.msg || "添加失败";
+
       // 如果有失败明细，可以提供更详细的错误信息
       if (response.data?.failed?.length > 0) {
         const failedCount = response.data.failed.length;
-        const failedReasons = response.data.failed.map(f => f.reason).join('、');
+        const failedReasons = response.data.failed.map((f) => f.reason).join("、");
         errorMessage = `${errorMessage}（${failedCount}个失败：${failedReasons}）`;
       }
-      
-      uni.showToast({ 
-        title: errorMessage, 
-        icon: 'none',
-        duration: 3000
+
+      uni.showToast({
+        title: errorMessage,
+        icon: "none",
+        duration: 3000,
       });
     }
   } catch (error) {
-    console.error('添加专员失败:', error);
-    uni.showToast({ 
-      title: '网络错误，请稍后重试', 
-      icon: 'none' 
+    console.error("添加专员失败:", error);
+    uni.showToast({
+      title: "网络错误，请稍后重试",
+      icon: "none",
     });
   } finally {
     uni.hideLoading();
@@ -415,16 +426,16 @@ const handleConfirm = async () => {
 const searchUsersExcludingBlackroom = async (page = 1) => {
   try {
     const response = await request({
-      url: '/api/user/search-all-excluding-blackroom',
-      method: 'GET',
+      url: "/api/user/search-all-excluding-blackroom",
+      method: "GET",
       data: {
         keyword: searchKeyword.value,
         page: page,
         limit: pageSize.value,
         exclude_community_id: props.communityId, // 排除当前社区的用户
-      }
+      },
     });
-    
+
     return response;
   } catch (error) {
     console.error("API调用失败:", error);
