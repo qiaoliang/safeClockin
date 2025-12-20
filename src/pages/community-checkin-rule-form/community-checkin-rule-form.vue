@@ -19,9 +19,9 @@
         <button class="back-btn" @click="handleBack">
           <text class="back-icon">‹</text>
         </button>
-        <text class="form-title">{{ isEditMode ? '编辑社区规则' : '创建社区规则' }}</text>
+        <text class="form-title">{{ isEditMode ? "编辑社区规则" : "创建社区规则" }}</text>
         <button class="submit-btn" @click="handleSubmit" :disabled="submitting">
-          {{ submitting ? '保存中...' : '保存' }}
+          {{ submitting ? "保存中..." : "保存" }}
         </button>
       </view>
 
@@ -30,11 +30,11 @@
         <!-- 基本信息 -->
         <view class="form-section">
           <text class="section-title">基本信息</text>
-          
+
           <!-- 规则名称 -->
           <view class="form-item">
             <text class="item-label required">规则名称</text>
-            <input 
+            <input
               class="item-input"
               v-model="formData.rule_name"
               placeholder="请输入规则名称"
@@ -47,7 +47,7 @@
           <!-- 图标URL -->
           <view class="form-item">
             <text class="item-label">图标URL</text>
-            <input 
+            <input
               class="item-input"
               v-model="formData.icon_url"
               placeholder="请输入图标URL（可选）"
@@ -60,19 +60,21 @@
         <!-- 打卡频率 -->
         <view class="form-section">
           <text class="section-title">打卡频率</text>
-          
+
           <!-- 频率类型选择 -->
           <view class="form-item">
             <text class="item-label required">频率类型</text>
             <view class="radio-group">
-              <label 
-                v-for="option in frequencyOptions" 
+              <label
+                v-for="option in frequencyOptions"
                 :key="option.value"
                 class="radio-item"
                 :class="{ 'radio-selected': formData.frequency_type === option.value }"
                 @click="handleFrequencyChange(option.value)"
               >
-                <text class="radio-icon">{{ formData.frequency_type === option.value ? '●' : '○' }}</text>
+                <text class="radio-icon">{{
+                  formData.frequency_type === option.value ? "●" : "○"
+                }}</text>
                 <text class="radio-text">{{ option.label }}</text>
               </label>
             </view>
@@ -82,8 +84,8 @@
           <view v-if="formData.frequency_type === 1" class="form-item">
             <text class="item-label required">适用星期</text>
             <view class="weekday-group">
-              <label 
-                v-for="(day, index) in weekDays" 
+              <label
+                v-for="(day, index) in weekDays"
                 :key="index"
                 class="weekday-item"
                 :class="{ 'weekday-selected': isWeekDaySelected(index) }"
@@ -100,53 +102,61 @@
             <view class="date-range-group">
               <view class="date-item">
                 <text class="date-label">开始日期</text>
-                <picker 
-                  mode="date" 
+                <picker
+                  mode="date"
                   :value="formData.custom_start_date"
                   @change="handleStartDateChange"
                   :disabled="submitting"
                 >
                   <view class="date-picker">
-                    <text class="date-value">{{ formData.custom_start_date || '请选择开始日期' }}</text>
+                    <text class="date-value">{{
+                      formData.custom_start_date || "请选择开始日期"
+                    }}</text>
                     <text class="date-icon">📅</text>
                   </view>
                 </picker>
               </view>
               <view class="date-item">
                 <text class="date-label">结束日期</text>
-                <picker 
-                  mode="date" 
+                <picker
+                  mode="date"
                   :value="formData.custom_end_date"
                   @change="handleEndDateChange"
                   :disabled="submitting"
                 >
                   <view class="date-picker">
-                    <text class="date-value">{{ formData.custom_end_date || '请选择结束日期' }}</text>
+                    <text class="date-value">{{
+                      formData.custom_end_date || "请选择结束日期"
+                    }}</text>
                     <text class="date-icon">📅</text>
                   </view>
                 </picker>
               </view>
             </view>
-            <text v-if="errors.date_range" class="error-text">{{ errors.date_range }}</text>
+            <text v-if="errors.date_range" class="error-text">{{
+              errors.date_range
+            }}</text>
           </view>
         </view>
 
         <!-- 打卡时间 -->
         <view class="form-section">
           <text class="section-title">打卡时间</text>
-          
+
           <!-- 时间段类型选择 -->
           <view class="form-item">
             <text class="item-label required">时间段</text>
             <view class="radio-group">
-              <label 
-                v-for="option in timeSlotOptions" 
+              <label
+                v-for="option in timeSlotOptions"
                 :key="option.value"
                 class="radio-item"
                 :class="{ 'radio-selected': formData.time_slot_type === option.value }"
                 @click="handleTimeSlotChange(option.value)"
               >
-                <text class="radio-icon">{{ formData.time_slot_type === option.value ? '●' : '○' }}</text>
+                <text class="radio-icon">{{
+                  formData.time_slot_type === option.value ? "●" : "○"
+                }}</text>
                 <text class="radio-text">{{ option.label }}</text>
               </label>
             </view>
@@ -155,14 +165,14 @@
           <!-- 自定义时间（当时间段类型为自定义时间时显示） -->
           <view v-if="formData.time_slot_type === 4" class="form-item">
             <text class="item-label required">自定义时间</text>
-            <picker 
-              mode="time" 
+            <picker
+              mode="time"
               :value="formData.custom_time"
               @change="handleCustomTimeChange"
               :disabled="submitting"
             >
               <view class="time-picker">
-                <text class="time-value">{{ formData.custom_time || '请选择时间' }}</text>
+                <text class="time-value">{{ formData.custom_time || "请选择时间" }}</text>
                 <text class="time-icon">⏰</text>
               </view>
             </picker>
@@ -172,20 +182,22 @@
         <!-- 规则状态 -->
         <view class="form-section">
           <text class="section-title">规则状态</text>
-          
+
           <!-- 是否启用 -->
           <view class="form-item">
             <text class="item-label">启用规则</text>
             <view class="switch-group">
               <text class="switch-label">创建后立即启用</text>
-              <switch 
+              <switch
                 :checked="formData.is_enabled"
                 @change="handleEnableChange"
                 :disabled="submitting || isEditMode"
                 color="#f48224"
               />
             </view>
-            <text class="item-hint">启用后规则将立即对所有社区成员生效。编辑模式下请使用启用/停用按钮。</text>
+            <text class="item-hint"
+              >启用后规则将立即对所有社区成员生效。编辑模式下请使用启用/停用按钮。</text
+            >
           </view>
         </view>
 
@@ -206,281 +218,286 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { getCommunityRuleDetail, createCommunityRule, updateCommunityRule } from '@/api/community-checkin'
+import { ref, onMounted, computed } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
+import {
+  getCommunityRuleDetail,
+  createCommunityRule,
+  updateCommunityRule,
+} from "@/api/community-checkin";
 
 // 页面参数
-const communityId = ref('')
-const ruleId = ref('')
-const isEditMode = computed(() => !!ruleId.value)
+const communityId = ref("");
+const ruleId = ref("");
+const isEditMode = computed(() => !!ruleId.value);
 
 // 表单数据
 const formData = ref({
-  rule_name: '',
-  icon_url: '',
+  rule_name: "",
+  icon_url: "",
   frequency_type: 0, // 0-每天, 1-每周, 2-工作日, 3-自定义日期
   time_slot_type: 4, // 1-上午, 2-下午, 3-晚上, 4-自定义时间
-  custom_time: '',
-  custom_start_date: '',
-  custom_end_date: '',
+  custom_time: "",
+  custom_start_date: "",
+  custom_end_date: "",
   week_days: 127, // 默认全选（二进制1111111）
-  is_enabled: false
-})
+  is_enabled: false,
+});
 
 // 表单错误
-const errors = ref({})
+const errors = ref({});
 
 // 提交状态
-const submitting = ref(false)
+const submitting = ref(false);
 
 // 频率选项
 const frequencyOptions = [
-  { value: 0, label: '每天' },
-  { value: 1, label: '每周' },
-  { value: 2, label: '工作日（周一至周五）' },
-  { value: 3, label: '自定义日期范围' }
-]
+  { value: 0, label: "每天" },
+  { value: 1, label: "每周" },
+  { value: 2, label: "工作日（周一至周五）" },
+  { value: 3, label: "自定义日期范围" },
+];
 
 // 时间段选项
 const timeSlotOptions = [
-  { value: 1, label: '上午 (09:00)' },
-  { value: 2, label: '下午 (14:00)' },
-  { value: 3, label: '晚上 (20:00)' },
-  { value: 4, label: '自定义时间' }
-]
+  { value: 1, label: "上午 (09:00)" },
+  { value: 2, label: "下午 (14:00)" },
+  { value: 3, label: "晚上 (20:00)" },
+  { value: 4, label: "自定义时间" },
+];
 
 // 星期数组
-const weekDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+const weekDays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 
 // 字段标签映射
 const fieldLabels = {
-  rule_name: '规则名称',
-  frequency_type: '频率类型',
-  time_slot_type: '时间段',
-  date_range: '日期范围'
-}
+  rule_name: "规则名称",
+  frequency_type: "频率类型",
+  time_slot_type: "时间段",
+  date_range: "日期范围",
+};
 
 // 页面加载
 onLoad((options) => {
-  communityId.value = options.communityId
-  ruleId.value = options.ruleId
-  
+  communityId.value = options.communityId;
+  ruleId.value = options.ruleId;
+
   if (ruleId.value) {
-    loadRuleDetail()
+    loadRuleDetail();
   }
-})
+});
 
 // 加载规则详情
 const loadRuleDetail = async () => {
   try {
-          const response = await getCommunityRuleDetail(ruleId.value)    if (response.code === 1) {
-      const rule = response.data.rule
-      
+    const response = await getCommunityRuleDetail(ruleId.value);
+    if (response.code === 1) {
+      const rule = response.data.rule;
+
       // 填充表单数据
       formData.value = {
-        rule_name: rule.rule_name || '',
-        icon_url: rule.icon_url || '',
+        rule_name: rule.rule_name || "",
+        icon_url: rule.icon_url || "",
         frequency_type: rule.frequency_type || 0,
         time_slot_type: rule.time_slot_type || 4,
-        custom_time: rule.custom_time || '',
-        custom_start_date: rule.custom_start_date || '',
-        custom_end_date: rule.custom_end_date || '',
+        custom_time: rule.custom_time || "",
+        custom_start_date: rule.custom_start_date || "",
+        custom_end_date: rule.custom_end_date || "",
         week_days: rule.week_days || 127,
-        is_enabled: rule.is_enabled || false
-      }
+        is_enabled: rule.is_enabled || false,
+      };
     } else {
-      uni.showToast({ title: response.msg || '加载规则详情失败', icon: 'error' })
+      uni.showToast({ title: response.msg || "加载规则详情失败", icon: "error" });
       setTimeout(() => {
-        uni.navigateBack()
-      }, 1500)
+        uni.navigateBack();
+      }, 1500);
     }
   } catch (err) {
-    console.error('加载规则详情失败:', err)
-    uni.showToast({ title: '网络错误，请稍后重试', icon: 'error' })
+    console.error("加载规则详情失败:", err);
+    uni.showToast({ title: "网络错误，请稍后重试", icon: "error" });
     setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
+      uni.navigateBack();
+    }, 1500);
   }
-}
+};
 
 // 获取字段标签
 const getFieldLabel = (field) => {
-  return fieldLabels[field] || field
-}
+  return fieldLabels[field] || field;
+};
 
 // 检查星期是否被选中
 const isWeekDaySelected = (dayIndex) => {
-  return (formData.value.week_days & (1 << dayIndex)) !== 0
-}
+  return (formData.value.week_days & (1 << dayIndex)) !== 0;
+};
 
 // 切换星期选择
 const toggleWeekDay = (dayIndex) => {
-  const mask = 1 << dayIndex
+  const mask = 1 << dayIndex;
   if (isWeekDaySelected(dayIndex)) {
     // 取消选择
-    formData.value.week_days &= ~mask
+    formData.value.week_days &= ~mask;
   } else {
     // 选择
-    formData.value.week_days |= mask
+    formData.value.week_days |= mask;
   }
-}
+};
 
 // 处理频率类型变化
 const handleFrequencyChange = (value) => {
-  formData.value.frequency_type = value
-  
+  formData.value.frequency_type = value;
+
   // 重置相关字段
   if (value !== 1) {
-    formData.value.week_days = 127 // 重置为全选
+    formData.value.week_days = 127; // 重置为全选
   }
   if (value !== 3) {
-    formData.value.custom_start_date = ''
-    formData.value.custom_end_date = ''
+    formData.value.custom_start_date = "";
+    formData.value.custom_end_date = "";
   }
-}
+};
 
 // 处理时间段类型变化
 const handleTimeSlotChange = (value) => {
-  formData.value.time_slot_type = value
-  
+  formData.value.time_slot_type = value;
+
   // 重置自定义时间
   if (value !== 4) {
-    formData.value.custom_time = ''
+    formData.value.custom_time = "";
   }
-}
+};
 
 // 处理开始日期变化
 const handleStartDateChange = (e) => {
-  formData.value.custom_start_date = e.detail.value
-}
+  formData.value.custom_start_date = e.detail.value;
+};
 
 // 处理结束日期变化
 const handleEndDateChange = (e) => {
-  formData.value.custom_end_date = e.detail.value
-}
+  formData.value.custom_end_date = e.detail.value;
+};
 
 // 处理自定义时间变化
 const handleCustomTimeChange = (e) => {
-  formData.value.custom_time = e.detail.value
-}
+  formData.value.custom_time = e.detail.value;
+};
 
 // 处理启用状态变化
 const handleEnableChange = (e) => {
-  formData.value.is_enabled = e.detail.value
-}
+  formData.value.is_enabled = e.detail.value;
+};
 
 // 表单验证
 const validateForm = () => {
-  errors.value = {}
-  
+  errors.value = {};
+
   // 规则名称验证
   if (!formData.value.rule_name.trim()) {
-    errors.value.rule_name = '规则名称不能为空'
+    errors.value.rule_name = "规则名称不能为空";
   } else if (formData.value.rule_name.trim().length > 50) {
-    errors.value.rule_name = '规则名称不能超过50个字符'
+    errors.value.rule_name = "规则名称不能超过50个字符";
   }
-  
+
   // 频率类型验证
   if (formData.value.frequency_type === 1 && formData.value.week_days === 0) {
-    errors.value.frequency_type = '请至少选择一天'
+    errors.value.frequency_type = "请至少选择一天";
   }
-  
+
   // 自定义日期范围验证
   if (formData.value.frequency_type === 3) {
     if (!formData.value.custom_start_date || !formData.value.custom_end_date) {
-      errors.value.date_range = '请选择完整的日期范围'
+      errors.value.date_range = "请选择完整的日期范围";
     } else if (formData.value.custom_end_date < formData.value.custom_start_date) {
-      errors.value.date_range = '结束日期不能早于开始日期'
+      errors.value.date_range = "结束日期不能早于开始日期";
     }
   }
-  
+
   // 自定义时间验证
   if (formData.value.time_slot_type === 4 && !formData.value.custom_time) {
-    errors.value.time_slot_type = '请选择自定义时间'
+    errors.value.time_slot_type = "请选择自定义时间";
   }
-  
-  return Object.keys(errors.value).length === 0
-}
+
+  return Object.keys(errors.value).length === 0;
+};
 
 // 处理返回
 const handleBack = () => {
-  uni.navigateBack()
-}
+  uni.navigateBack();
+};
 
 // 处理提交
 const handleSubmit = async () => {
   if (!validateForm()) {
-    uni.showToast({ title: '请检查表单错误', icon: 'error' })
-    return
+    uni.showToast({ title: "请检查表单错误", icon: "error" });
+    return;
   }
-  
-  submitting.value = true
-  
+
+  submitting.value = true;
+
   try {
     // 准备提交数据
     const submitData = {
       rule_name: formData.value.rule_name.trim(),
-      icon_url: formData.value.icon_url.trim() || '',
+      icon_url: formData.value.icon_url.trim() || "",
       frequency_type: formData.value.frequency_type,
       time_slot_type: formData.value.time_slot_type,
       week_days: formData.value.week_days,
-      is_enabled: formData.value.is_enabled
-    }
-    
+      is_enabled: formData.value.is_enabled,
+    };
+
     // 添加可选字段
     if (formData.value.custom_time) {
-      submitData.custom_time = formData.value.custom_time
+      submitData.custom_time = formData.value.custom_time;
     }
     if (formData.value.custom_start_date) {
-      submitData.custom_start_date = formData.value.custom_start_date
+      submitData.custom_start_date = formData.value.custom_start_date;
     }
     if (formData.value.custom_end_date) {
-      submitData.custom_end_date = formData.value.custom_end_date
+      submitData.custom_end_date = formData.value.custom_end_date;
     }
-    
-    let response
-    
+
+    let response;
+
     if (isEditMode.value) {
       // 编辑模式
-      response = await updateCommunityRule(ruleId.value, submitData)
+      response = await updateCommunityRule(ruleId.value, submitData);
     } else {
       // 创建模式
       // 添加 community_id 到提交数据中
       const createData = {
         ...submitData,
-        community_id: communityId.value
-      }
-      response = await createCommunityRule(createData)
+        community_id: communityId.value,
+      };
+      response = await createCommunityRule(createData);
     }
-    
+
     if (response.code === 1) {
-      uni.showToast({ 
-        title: isEditMode.value ? '规则更新成功' : '规则创建成功', 
-        icon: 'success' 
-      })
-      
+      uni.showToast({
+        title: isEditMode.value ? "规则更新成功" : "规则创建成功",
+        icon: "success",
+      });
+
       // 延迟返回，让用户看到成功提示
       setTimeout(() => {
-        uni.navigateBack()
-      }, 1500)
+        uni.navigateBack();
+      }, 1500);
     } else {
-      uni.showToast({ 
-        title: response.msg || (isEditMode.value ? '更新失败' : '创建失败'), 
-        icon: 'error' 
-      })
+      uni.showToast({
+        title: response.msg || (isEditMode.value ? "更新失败" : "创建失败"),
+        icon: "error",
+      });
     }
   } catch (err) {
-    console.error('提交规则失败:', err)
-    uni.showToast({ title: '网络错误，请稍后重试', icon: 'error' })
+    console.error("提交规则失败:", err);
+    uni.showToast({ title: "网络错误，请稍后重试", icon: "error" });
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-@import '@/uni.scss';
+@import "@/uni.scss";
 
 .community-checkin-rule-form {
   min-height: 100vh;
@@ -490,22 +507,22 @@ const handleSubmit = async () => {
 .status-bar {
   @include bg-gradient-statusbar;
   padding: $uni-spacing-xs $uni-spacing-base;
-  
+
   .status-bar-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     .status-time {
       color: $uni-white;
       font-size: $uni-font-size-sm;
       font-weight: $uni-font-weight-base;
     }
-    
+
     .status-icons {
       display: flex;
       gap: $uni-spacing-sm;
-      
+
       .icon-signal,
       .icon-wifi,
       .icon-battery {
@@ -527,32 +544,32 @@ const handleSubmit = async () => {
   padding: $uni-spacing-base $uni-spacing-lg;
   background: $uni-white;
   border-bottom: 1px solid $uni-border-color;
-  
+
   .back-btn {
     background: none;
     border: none;
     padding: $uni-spacing-xs;
-    
+
     .back-icon {
       font-size: 24px;
       color: $uni-accent;
     }
   }
-  
+
   .form-title {
     font-size: $uni-font-size-lg;
     font-weight: $uni-font-weight-base;
     color: $uni-accent;
   }
-  
+
   .submit-btn {
     @include btn-primary;
     padding: $uni-spacing-sm $uni-spacing-base;
     font-size: $uni-font-size-base;
-    
+
     &:disabled {
       opacity: 0.6;
-      background: $uni-text-gray-400;
+      background: $uni-text-gray-600;
     }
   }
 }
@@ -567,7 +584,7 @@ const handleSubmit = async () => {
   padding: $uni-spacing-lg;
   border-radius: $uni-radius-lg;
   margin-bottom: $uni-spacing-xl;
-  
+
   .section-title {
     display: block;
     font-size: $uni-font-size-lg;
@@ -581,23 +598,23 @@ const handleSubmit = async () => {
 
 .form-item {
   margin-bottom: $uni-spacing-xl;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
-  
+
   .item-label {
     display: block;
     font-size: $uni-font-size-base;
     color: $uni-text-gray-700;
     margin-bottom: $uni-spacing-sm;
-    
+
     &.required::after {
-      content: ' *';
+      content: " *";
       color: $uni-error;
     }
   }
-  
+
   .item-input {
     width: 100%;
     padding: $uni-spacing-base;
@@ -606,17 +623,17 @@ const handleSubmit = async () => {
     font-size: $uni-font-size-base;
     color: $uni-text-gray-800;
     background: $uni-white;
-    
+
     &:disabled {
       background: $uni-bg-color-light;
-      color: $uni-text-gray-500;
+      color: $uni-text-gray-600;
     }
-    
+
     &::placeholder {
       color: $uni-text-gray-400;
     }
   }
-  
+
   .item-hint {
     display: block;
     font-size: $uni-font-size-sm;
@@ -635,28 +652,28 @@ const handleSubmit = async () => {
     margin-bottom: $uni-spacing-sm;
     background: $uni-white;
     transition: all 0.2s ease;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     &.radio-selected {
       border-color: $uni-primary;
       background: rgba($uni-primary, 0.1);
     }
-    
+
     .radio-icon {
       margin-right: $uni-spacing-base;
       font-size: $uni-font-size-base;
       color: $uni-text-gray-400;
     }
-    
+
     .radio-text {
       flex: 1;
       font-size: $uni-font-size-base;
       color: $uni-text-gray-700;
     }
-    
+
     &.radio-selected .radio-icon {
       color: $uni-primary;
     }
@@ -667,7 +684,7 @@ const handleSubmit = async () => {
   display: flex;
   flex-wrap: wrap;
   gap: $uni-spacing-sm;
-  
+
   .weekday-item {
     flex: 1;
     min-width: 80rpx;
@@ -677,13 +694,13 @@ const handleSubmit = async () => {
     text-align: center;
     background: $uni-white;
     transition: all 0.2s ease;
-    
+
     &.weekday-selected {
       border-color: $uni-primary;
       background: $uni-primary;
       color: $uni-white;
     }
-    
+
     .weekday-text {
       font-size: $uni-font-size-sm;
     }
@@ -693,17 +710,17 @@ const handleSubmit = async () => {
 .date-range-group {
   display: flex;
   gap: $uni-spacing-base;
-  
+
   .date-item {
     flex: 1;
-    
+
     .date-label {
       display: block;
       font-size: $uni-font-size-sm;
       color: $uni-text-gray-600;
       margin-bottom: $uni-spacing-xs;
     }
-    
+
     .date-picker {
       display: flex;
       align-items: center;
@@ -712,17 +729,17 @@ const handleSubmit = async () => {
       border: 1px solid $uni-border-color;
       border-radius: $uni-radius-base;
       background: $uni-white;
-      
+
       .date-value {
         font-size: $uni-font-size-base;
         color: $uni-text-gray-700;
-        
+
         &:empty::before {
-          content: '请选择日期';
+          content: "请选择日期";
           color: $uni-text-gray-400;
         }
       }
-      
+
       .date-icon {
         font-size: $uni-font-size-base;
         color: $uni-text-gray-500;
@@ -739,17 +756,17 @@ const handleSubmit = async () => {
   border: 1px solid $uni-border-color;
   border-radius: $uni-radius-base;
   background: $uni-white;
-  
+
   .time-value {
     font-size: $uni-font-size-base;
     color: $uni-text-gray-700;
-    
+
     &:empty::before {
-      content: '请选择时间';
+      content: "请选择时间";
       color: $uni-text-gray-400;
     }
   }
-  
+
   .time-icon {
     font-size: $uni-font-size-base;
     color: $uni-text-gray-500;
@@ -760,7 +777,7 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   .switch-label {
     font-size: $uni-font-size-base;
     color: $uni-text-gray-700;
@@ -774,7 +791,7 @@ const handleSubmit = async () => {
   border-left: 4px solid $uni-error;
   background: rgba($uni-error, 0.05);
   margin-bottom: $uni-spacing-xl;
-  
+
   .error-title {
     display: block;
     font-size: $uni-font-size-base;
@@ -782,21 +799,21 @@ const handleSubmit = async () => {
     color: $uni-error;
     margin-bottom: $uni-spacing-base;
   }
-  
+
   .error-item {
     display: flex;
     margin-bottom: $uni-spacing-sm;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     .error-field {
       font-size: $uni-font-size-sm;
       color: $uni-text-gray-700;
       min-width: 80rpx;
     }
-    
+
     .error-message {
       flex: 1;
       font-size: $uni-font-size-sm;

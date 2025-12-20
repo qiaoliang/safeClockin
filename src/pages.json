@@ -98,6 +98,14 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
+		{
+			"path": "pages/community-checkin-rule-form/community-checkin-rule-form",
+			"style": {
+				"navigationBarTitleText": "社区打卡规则",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
         {
             "path": "pages/supervisor-manage/supervisor-manage",
             "style": {
