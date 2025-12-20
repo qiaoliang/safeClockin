@@ -293,5 +293,25 @@ export const authApi = {
       response.data.users = transformedUsers
     }
     return response
+  }),
+  // 从安卡大家庭搜索用户（用于添加用户到其他社区）
+  searchAnkaFamilyUsers: (params) => request({
+    url: '/api/communities/ankafamily/users/search',
+    method: 'GET',
+    data: params
+  }).then(response => {
+    // 处理响应数据格式转换
+    if (response && response.code === 1 && response.data && response.data.users) {
+      const transformedUsers = response.data.users.map(user => ({
+        userId: user.user_id,
+        nickname: user.nickname,
+        phoneNumber: user.phone_number,
+        avatarUrl: user.avatar_url,
+        isStaff: user.is_staff,
+        communityId: user.community_id
+      }))
+      response.data.users = transformedUsers
+    }
+    return response
   })
 }

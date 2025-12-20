@@ -115,7 +115,7 @@
     />
 
     <CommunityAddUserModal 
-      v-if="showAddUserModal"
+      :visible="showAddUserModal"
       :community-id="communityId"
       :community-name="communityData.name"
       @close="closeAddUserModal"
@@ -489,7 +489,10 @@ const handleRemoveStaff = async (staffId) => {
 }
 
 const handleAddUser = () => {
+  console.log('community-details-new: handleAddUser被调用')
+  console.log('showAddUserModal当前值:', showAddUserModal.value)
   showAddUserModal.value = true
+  console.log('showAddUserModal设置后:', showAddUserModal.value)
 }
 
 const handleRemoveUser = async (userId) => {

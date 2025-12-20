@@ -3,7 +3,7 @@
     <!-- 标题和操作按钮 -->
     <view class="tab-header">
       <h3 class="tab-title">用户管理</h3>
-      <button class="add-button" @click="$emit('add-user')">
+      <button class="add-button" @click="handleAddUserClick">
         <text class="add-icon">+</text>
         <text class="add-text">添加用户</text>
       </button>
@@ -91,7 +91,13 @@ const props = defineProps({
   }
 })
 
-defineEmits(['add-user', 'remove-user', 'refresh'])
+const emit = defineEmits(['add-user', 'remove-user', 'refresh'])
+
+// 处理添加用户按钮点击
+const handleAddUserClick = () => {
+  console.log('CommunityUsersTab: 添加用户按钮被点击')
+  emit('add-user')
+}
 
 // 搜索功能
 const searchQuery = ref('')
