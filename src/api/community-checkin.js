@@ -8,16 +8,14 @@ import { request } from './request'
 /**
  * 获取社区规则列表
  * @param {number} communityId - 社区ID
- * @param {boolean} includeDisabled - 是否包含已停用规则
  * @returns {Promise}
  */
-export const getCommunityRules = (communityId, includeDisabled = false) => {
+export const getCommunityRules = (communityId) => {
   return request({
     url: '/api/community-checkin/rules',
     method: 'GET',
     data: {
-      community_id: communityId,
-      include_disabled: includeDisabled
+      community_id: communityId
     }
   })
 }
