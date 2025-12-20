@@ -144,6 +144,8 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import { request } from '@/api/request'
+import { addCommunityStaff } from '@/api/community'
 
 const props = defineProps({
   visible: {
@@ -170,7 +172,7 @@ const error = ref("");
 const currentPage = ref(1);
 const pageSize = ref(20);
 const totalCount = ref(0);
-const hasMore = computed(() => currentPage.value * pageSize.value < totalCount.value);
+const hasMore = ref(false); // 由后端API的pagination.has_more字段更新
 
 // 搜索防抖
 let searchTimer = null;
@@ -196,6 +198,7 @@ const resetState = () => {
   selectedUsers.value = [];
   currentPage.value = 1;
   totalCount.value = 0;
+  hasMore.value = false;
   error.value = "";
 };
 
@@ -225,6 +228,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
 
       totalCount.value = pagination.total;
       currentPage.value = pagination.page;
+      hasMore.value = pagination.has_more || false;
     } else {
       error.value = response.msg || "搜索用户失败";
     }
@@ -299,35 +303,72 @@ const handleClose = () => {
 };
 
 // 确认添加
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (selectedUsers.value.length === 0) return;
 
-  emit("confirm", selectedUsers.value);
-  emit("close");
+  try {
+    uni.showLoading({ title: '添加中...', mask: true });
+    
+    const response = await addCommunityStaff({
+      community_id: props.communityId,
+      user_ids: selectedUsers.value,
+      role: 'staff'
+    });
+    
+    if (response.code === 1) {
+      uni.showToast({ 
+        title: response.data.added_count > 0 ? 
+               `成功添加${response.data.added_count}名专员` : 
+               '操作完成', 
+        icon: 'success' 
+      });
+      
+      // 触发父组件重新加载专员列表，传递添加成功的用户信息
+      emit("confirm", response.data.added_users || []);
+    } else {
+      // 显示后端返回的错误信息
+      let errorMessage = response.msg || '添加失败';
+      
+      // 如果有失败明细，可以提供更详细的错误信息
+      if (response.data?.failed?.length > 0) {
+        const failedCount = response.data.failed.length;
+        const failedReasons = response.data.failed.map(f => f.reason).join('、');
+        errorMessage = `${errorMessage}（${failedCount}个失败：${failedReasons}）`;
+      }
+      
+      uni.showToast({ 
+        title: errorMessage, 
+        icon: 'none',
+        duration: 3000
+      });
+    }
+  } catch (error) {
+    console.error('添加专员失败:', error);
+    uni.showToast({ 
+      title: '网络错误，请稍后重试', 
+      icon: 'none' 
+    });
+  } finally {
+    uni.hideLoading();
+    emit("close");
+  }
 };
 
 // API调用函数
 const searchUsersExcludingBlackroom = async (page = 1) => {
-  // 调用后端API：/api/user/search-all-excluding-blackroom
-  // 参数：keyword=xxx, page=xxx, limit=xxx, exclude_community_id=xxx（可选）
-  const params = {
-    keyword: searchKeyword.value,
-    page: page,
-    limit: pageSize.value,
-    exclude_community_id: props.communityId, // 排除当前社区的用户
-  };
-
-  // 构建查询字符串
-  const queryString = Object.entries(params)
-    .filter(([_, value]) => value !== undefined && value !== "")
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-    .join("&");
-
   try {
-    const response = await fetch(
-      `/api/user/search-all-excluding-blackroom?${queryString}`
-    );
-    return await response.json();
+    const response = await request({
+      url: '/api/user/search-all-excluding-blackroom',
+      method: 'GET',
+      data: {
+        keyword: searchKeyword.value,
+        page: page,
+        limit: pageSize.value,
+        exclude_community_id: props.communityId, // 排除当前社区的用户
+      }
+    });
+    
+    return response;
   } catch (error) {
     console.error("API调用失败:", error);
     throw error;

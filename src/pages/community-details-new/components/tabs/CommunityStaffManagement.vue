@@ -207,27 +207,22 @@ const hideAddStaffModal = () => {
 }
 
 // 处理添加专员确认
-const handleAddStaffConfirm = async (selectedUsers) => {
-  if (!selectedUsers || selectedUsers.length === 0) return
-  
+const handleAddStaffConfirm = async (addedUsers) => {
+  // 添加操作已在子组件中完成，这里只需重新加载专员列表
   try {
-    // 调用后端API批量添加专员
-    const response = await addStaffMembers(selectedUsers)
+    // 重新加载专员列表
+    await loadStaffList(1, false)
     
-    if (response.code === 1) {
-      uni.showToast({ title: '添加成功', icon: 'success' })
-      
-      // 重新加载专员列表
-      await loadStaffList(1, false)
-      
-      // 更新社区信息中的专员数量
-      updateCommunityStaffCount()
-    } else {
-      uni.showToast({ title: response.msg || '添加失败', icon: 'error' })
+    // 更新社区信息中的专员数量
+    updateCommunityStaffCount()
+    
+    // 如果addedUsers有值，可以显示添加了多少个专员
+    if (addedUsers && addedUsers.length > 0) {
+      console.log(`添加了${addedUsers.length}个专员:`, addedUsers.map(u => u.nickname || u.user_id))
     }
   } catch (err) {
-    console.error('添加专员失败:', err)
-    uni.showToast({ title: '添加失败', icon: 'error' })
+    console.error('重新加载专员列表失败:', err)
+    // 不显示错误，因为添加操作本身可能已成功
   }
 }
 
