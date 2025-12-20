@@ -96,6 +96,7 @@
     <!-- 添加专员模态框 -->
     <AddStaffModal
       v-if="showAddModal"
+      :visible="showAddModal"
       :community-id="communityId"
       @close="hideAddStaffModal"
       @confirm="handleAddStaffConfirm"
@@ -127,7 +128,7 @@ const showAddModal = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const totalCount = ref(0)
-const hasMore = computed(() => (currentPage.value * pageSize.value) < totalCount.value)
+const hasMore = ref(false) // 由后端API的pagination.has_more字段更新
 
 // 过滤后的专员列表
 const filteredStaffList = computed(() => {
@@ -152,11 +153,27 @@ const loadStaffList = async (page = 1, isLoadMore = false) => {
   }
   
   try {
-    // 调用后端API获取专员列表
+    // Layer 1: 入口点验证 - 调用API
     const response = await fetchStaffList(page)
     
+    // Layer 2: 业务逻辑验证 - 检查响应结构
+    if (!response || typeof response !== 'object') {
+      throw new Error('API返回无效响应')
+    }
+    
     if (response.code === 1) {
-      const { staff_members, pagination } = response.data
+      // Layer 3: 环境守卫 - 安全地访问响应字段
+      const staff_members = response.data?.staff_members || []
+      const pagination = response.data?.pagination || {}
+      
+      // Layer 4: 调试仪表 - 记录响应结构用于取证
+      console.log('专员列表API响应:', {
+        code: response.code,
+        has_staff_members: Array.isArray(staff_members),
+        staff_members_count: staff_members.length,
+        has_pagination: !!pagination,
+        pagination_fields: pagination
+      })
       
       if (isLoadMore) {
         // 加载更多时追加数据
@@ -166,18 +183,34 @@ const loadStaffList = async (page = 1, isLoadMore = false) => {
         staffList.value = staff_members
       }
       
-      totalCount.value = pagination.total
-      currentPage.value = pagination.page
+      // 安全地设置分页值，提供默认值
+      totalCount.value = pagination.total || 0
+      currentPage.value = pagination.page || page
+      hasMore.value = pagination.has_more || false
       
       // 更新社区信息中的专员数量
       updateCommunityStaffCount()
     } else {
+      // Layer 3: 环境守卫 - 处理业务错误
       error.value = response.msg || '加载专员列表失败'
+      
+      // Layer 4: 调试仪表 - 记录错误详情
+      console.error('专员列表API业务错误:', {
+        code: response.code,
+        msg: response.msg,
+        data: response.data
+      })
     }
   } catch (err) {
+    // Layer 3: 环境守卫 - 捕获所有异常
     console.error('加载专员列表失败:', err)
+    
+    // Layer 4: 调试仪表 - 记录完整错误信息
+    console.error('完整错误堆栈:', err.stack || '无堆栈信息')
+    
     error.value = '网络错误，请稍后重试'
   } finally {
+    // 确保加载状态被重置
     loading.value = false
     loadingMore.value = false
   }
@@ -200,7 +233,9 @@ const clearSearch = () => {
 
 // 显示添加专员模态框
 const showAddStaffModal = () => {
+  console.log('添加专员按钮被点击，设置showAddModal为true')
   showAddModal.value = true
+  console.log('showAddModal当前值:', showAddModal.value)
 }
 
 const hideAddStaffModal = () => {
@@ -209,26 +244,80 @@ const hideAddStaffModal = () => {
 
 // 处理添加专员确认
 const handleAddStaffConfirm = async (addedUsers) => {
-  // 添加操作已在子组件中完成，这里只需重新加载专员列表
+  // Layer 1: 入口点验证 - 检查上下文
+  if (!props.communityId) {
+    console.error('handleAddStaffConfirm: 缺少社区ID')
+    return
+  }
+  
+  // Layer 4: 调试仪表 - 记录添加操作
+  console.log('处理添加专员确认:', {
+    communityId: props.communityId,
+    addedUsersCount: addedUsers?.length || 0,
+    addedUsers: addedUsers || []
+  })
+  
+  // Layer 2: 业务逻辑验证 - 重新加载专员列表
   try {
+    // 保存当前列表长度作为基准
+    const beforeRefreshCount = staffList.value.length
+    
     // 重新加载专员列表
     await loadStaffList(1, false)
     
     // 更新社区信息中的专员数量
     updateCommunityStaffCount()
     
+    // Layer 3: 环境守卫 - 验证刷新结果
+    const afterRefreshCount = staffList.value.length
+    const expectedIncrease = addedUsers?.length || 0
+    const actualIncrease = afterRefreshCount - beforeRefreshCount
+    
+    // Layer 4: 调试仪表 - 记录刷新结果
+    console.log('专员列表刷新验证:', {
+      beforeRefreshCount,
+      afterRefreshCount,
+      expectedIncrease,
+      actualIncrease,
+      match: actualIncrease === expectedIncrease
+    })
+    
     // 如果addedUsers有值，可以显示添加了多少个专员
     if (addedUsers && addedUsers.length > 0) {
       console.log(`添加了${addedUsers.length}个专员:`, addedUsers.map(u => u.nickname || u.user_id))
+      
+      // 可选：显示添加成功的提示
+      if (actualIncrease > 0) {
+        // 已经在子组件中显示过成功提示，这里不再重复显示
+      }
     }
   } catch (err) {
+    // Layer 3: 环境守卫 - 优雅地处理错误
     console.error('重新加载专员列表失败:', err)
-    // 不显示错误，因为添加操作本身可能已成功
+    
+    // Layer 4: 调试仪表 - 记录完整错误信息
+    console.error('重新加载专员列表完整错误堆栈:', err.stack || '无堆栈信息')
+    
+    // 不显示错误给用户，因为添加操作本身可能已成功
+    // 但我们可以尝试其他恢复策略，比如只重新加载而不重置分页
+    try {
+      // 尝试使用当前页面重新加载，而不是重置到第一页
+      await loadStaffList(currentPage.value, false)
+    } catch (retryErr) {
+      console.error('恢复策略也失败:', retryErr)
+    }
   }
 }
 
 // 处理删除专员
 const handleDeleteStaff = (staff) => {
+  // Layer 1: 入口点验证 - 检查必要参数
+  if (!staff || !staff.user_id) {
+    console.error('删除专员失败: 无效的专员数据', staff)
+    uni.showToast({ title: '无效的专员数据', icon: 'error' })
+    return
+  }
+  
   uni.showModal({
     title: '确认删除',
     content: `确定要将 ${staff.nickname || '该专员'} 从专员列表中移除吗？`,
@@ -237,22 +326,56 @@ const handleDeleteStaff = (staff) => {
         try {
           uni.showLoading({ title: '删除中...' })
           
+          // Layer 4: 调试仪表 - 记录删除操作
+          console.log('开始删除专员:', {
+            userId: staff.user_id,
+            nickname: staff.nickname,
+            communityId: props.communityId
+          })
+          
           const response = await removeStaffMember(staff.user_id)
+          
+          // Layer 2: 业务逻辑验证 - 检查响应结构
+          if (!response || typeof response !== 'object') {
+            throw new Error('API返回无效响应')
+          }
           
           if (response.code === 1) {
             uni.showToast({ title: '删除成功', icon: 'success' })
             
-            // 从列表中移除
+            // Layer 3: 环境守卫 - 安全地从列表中移除
+            const originalLength = staffList.value.length
             staffList.value = staffList.value.filter(s => s.user_id !== staff.user_id)
+            const newLength = staffList.value.length
+            
+            // Layer 4: 调试仪表 - 验证删除结果
+            console.log('删除结果验证:', {
+              originalLength,
+              newLength,
+              deleted: originalLength > newLength,
+              userId: staff.user_id
+            })
             
             // 更新社区信息中的专员数量
             updateCommunityStaffCount()
           } else {
-            uni.showToast({ title: response.msg || '删除失败', icon: 'error' })
+            // Layer 3: 环境守卫 - 处理业务错误
+            const errorMsg = response.msg || '删除失败'
+            console.error('删除专员业务错误:', {
+              code: response.code,
+              msg: errorMsg,
+              data: response.data
+            })
+            uni.showToast({ title: errorMsg, icon: 'error' })
           }
         } catch (err) {
+          // Layer 3: 环境守卫 - 捕获所有异常
           console.error('删除专员失败:', err)
-          uni.showToast({ title: '删除失败', icon: 'error' })
+          
+          // Layer 4: 调试仪表 - 记录完整错误信息
+          console.error('删除操作完整错误堆栈:', err.stack || '无堆栈信息')
+          
+          uni.showToast({ title: '删除失败，请稍后重试', icon: 'error' })
         } finally {
           uni.hideLoading()
         }
@@ -296,17 +419,108 @@ const formatDate = (dateString) => {
 
 // API调用函数
 const fetchStaffList = async (page = 1) => {
-  return getCommunityStaffList(props.communityId, { 
-    page: page, 
-    limit: pageSize.value,
-    role: 'staff' // 只获取专员，不包括主管
-  })
+  try {
+    // Layer 1: 入口点验证 - 检查必要参数
+    if (!props.communityId) {
+      console.error('缺少社区ID参数')
+      throw new Error('缺少社区ID参数')
+    }
+    
+    if (page < 1) {
+      page = 1
+    }
+    
+    // Layer 2: 业务逻辑验证 - 准备请求参数
+    const params = { 
+      page: page, 
+      limit: pageSize.value,
+      role: 'staff' // 只获取专员，不包括主管
+    }
+    
+    // Layer 4: 调试仪表 - 记录请求详情
+    console.log('请求专员列表:', {
+      communityId: props.communityId,
+      params: params
+    })
+    
+    const response = await getCommunityStaffList(props.communityId, params)
+    
+    // Layer 3: 环境守卫 - 验证响应结构
+    if (!response || typeof response !== 'object') {
+      console.error('API返回无效响应类型:', typeof response)
+      throw new Error('API返回无效响应')
+    }
+    
+    // Layer 4: 调试仪表 - 记录响应摘要
+    console.log('API响应摘要:', {
+      code: response.code,
+      hasData: !!response.data,
+      dataKeys: response.data ? Object.keys(response.data) : []
+    })
+    
+    return response
+  } catch (error) {
+    // Layer 3: 环境守卫 - 捕获并重新包装错误
+    console.error('fetchStaffList失败:', error)
+    
+    // 返回一个结构化的错误响应，避免上游崩溃
+    return {
+      code: 0,
+      msg: error.message || '获取专员列表失败',
+      data: null
+    }
+  }
 }
 
 
 
 const removeStaffMember = async (userId) => {
-  return removeCommunityStaff(props.communityId, userId)
+  try {
+    // Layer 1: 入口点验证 - 检查必要参数
+    if (!props.communityId) {
+      console.error('removeStaffMember: 缺少社区ID')
+      throw new Error('缺少社区ID')
+    }
+    
+    if (!userId) {
+      console.error('removeStaffMember: 缺少用户ID')
+      throw new Error('缺少用户ID')
+    }
+    
+    // Layer 4: 调试仪表 - 记录API调用详情
+    console.log('调用removeCommunityStaff API:', {
+      communityId: props.communityId,
+      userId: userId,
+      timestamp: new Date().toISOString()
+    })
+    
+    const response = await removeCommunityStaff(props.communityId, userId)
+    
+    // Layer 2: 业务逻辑验证 - 检查响应结构
+    if (!response || typeof response !== 'object') {
+      console.error('removeStaffMember: API返回无效响应类型:', typeof response)
+      throw new Error('API返回无效响应')
+    }
+    
+    // Layer 4: 调试仪表 - 记录响应摘要
+    console.log('removeStaffMember API响应:', {
+      code: response.code,
+      msg: response.msg,
+      hasData: !!response.data
+    })
+    
+    return response
+  } catch (error) {
+    // Layer 3: 环境守卫 - 捕获并重新包装错误
+    console.error('removeStaffMember失败:', error)
+    
+    // 返回一个结构化的错误响应，避免上游崩溃
+    return {
+      code: 0,
+      msg: error.message || '移除专员失败',
+      data: null
+    }
+  }
 }
 
 const updateCommunityStaffCount = () => {

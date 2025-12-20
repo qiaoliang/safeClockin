@@ -53,7 +53,7 @@ export const getManagedCommunities = () => {
  */
 export const getCommunityStaffList = (communityId, params = {}) => {
   return request({
-    url: '/api/community/staff/list',
+    url: '/api/community/staff/list-enhanced',
     method: 'GET',
     data: {
       community_id: communityId,

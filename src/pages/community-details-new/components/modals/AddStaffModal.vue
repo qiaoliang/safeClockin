@@ -181,10 +181,13 @@ let searchTimer = null;
 watch(
   () => props.visible,
   (newVal) => {
+    console.log('AddStaffModal visible prop变化:', newVal)
     if (newVal) {
+      console.log('模态框显示，重置状态并搜索用户')
       resetState();
       // 延迟搜索，避免模态框动画期间搜索
       setTimeout(() => {
+        console.log('开始搜索用户...')
         searchUsers();
       }, 300);
     }
@@ -204,6 +207,7 @@ const resetState = () => {
 
 // 搜索用户
 const searchUsers = async (page = 1, isLoadMore = false) => {
+  console.log('searchUsers被调用，page:', page, 'isLoadMore:', isLoadMore, 'searchKeyword:', searchKeyword.value)
   if (isLoadMore) {
     loadingMore.value = true;
   } else {
@@ -212,10 +216,13 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   }
 
   try {
+    console.log('开始调用searchUsersExcludingBlackroom API...')
     // 调用后端API搜索用户（排除黑屋社区）
     const response = await searchUsersExcludingBlackroom(page);
+    console.log('searchUsersExcludingBlackroom API响应:', response)
 
     if (response.code === 1) {
+      console.log('API调用成功，数据:', response.data)
       const { users, pagination } = response.data;
 
       if (isLoadMore) {
@@ -229,7 +236,9 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
       totalCount.value = pagination.total;
       currentPage.value = pagination.page;
       hasMore.value = pagination.has_more || false;
+      console.log('搜索完成，找到用户数:', users.length, '分页信息:', pagination)
     } else {
+      console.log('API业务错误:', response.msg)
       error.value = response.msg || "搜索用户失败";
     }
   } catch (err) {
@@ -238,6 +247,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   } finally {
     loading.value = false;
     loadingMore.value = false;
+    console.log('searchUsers完成')
   }
 };
 
