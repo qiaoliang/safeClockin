@@ -317,11 +317,58 @@ const handleConfirm = async () => {
   if (selectedUsers.value.length === 0) return;
 
   try {
+    // Layer 1: 入口点验证 - 检查selectedUsers的数据类型和格式
+    console.log('🔍 Layer 1 - 入口点验证:')
+    console.log('  selectedUsers:', selectedUsers.value)
+    console.log('  selectedUsers类型:', typeof selectedUsers.value)
+    console.log('  第一个元素类型:', selectedUsers.value.length > 0 ? typeof selectedUsers.value[0] : '空数组')
+    console.log('  communityId:', props.communityId, '类型:', typeof props.communityId)
+    
+    // 验证selectedUsers中的元素是否为有效ID
+    const invalidIds = selectedUsers.value.filter(id => {
+      // 检查是否为有效数字或数字字符串
+      if (typeof id === 'string') {
+        const num = parseInt(id, 10)
+        return isNaN(num) || num <= 0
+      } else if (typeof id === 'number') {
+        return id <= 0 || !Number.isInteger(id)
+      }
+      return true // 其他类型都视为无效
+    })
+    
+    if (invalidIds.length > 0) {
+      console.error('❌ Layer 1验证失败: 发现无效的用户ID', invalidIds)
+      uni.showToast({ 
+        title: `发现${invalidIds.length}个无效的用户ID`, 
+        icon: 'none',
+        duration: 3000
+      })
+      return
+    }
+    
+    // Layer 2: 业务逻辑验证 - 准备发送给后端的数据
+    // 确保user_ids是数字类型（后端期望整数）
+    const user_ids_for_api = selectedUsers.value.map(id => {
+      if (typeof id === 'string') {
+        return parseInt(id, 10)
+      }
+      return id
+    })
+    
+    console.log('🔍 Layer 2 - 业务逻辑验证:')
+    console.log('  转换前的user_ids:', selectedUsers.value)
+    console.log('  转换后的user_ids:', user_ids_for_api)
+    console.log('  发送给API的数据结构:', {
+      community_id: props.communityId,
+      user_ids: user_ids_for_api,
+      role: 'staff'
+    })
+    
     uni.showLoading({ title: '添加中...', mask: true });
     
     const response = await addCommunityStaff({
       community_id: props.communityId,
-      user_ids: selectedUsers.value,
+      user_ids: user_ids_for_api,
       role: 'staff'
     });
     
