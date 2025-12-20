@@ -2,7 +2,7 @@
   <view v-if="visible" class="add-staff-modal">
     <!-- 遮罩层 -->
     <view class="modal-mask" @click="handleClose" />
-    
+
     <!-- 模态框内容 -->
     <view class="modal-content">
       <!-- 标题和关闭按钮 -->
@@ -12,7 +12,7 @@
           <text class="close-icon">×</text>
         </button>
       </view>
-      
+
       <!-- 搜索区域 -->
       <view class="search-section">
         <view class="search-input-wrapper">
@@ -30,18 +30,18 @@
         </view>
         <text class="search-hint">在所有用户中搜索（排除黑屋社区用户）</text>
       </view>
-      
+
       <!-- 加载状态 -->
       <view v-if="loading" class="loading-container">
         <uni-load-more status="loading" />
       </view>
-      
+
       <!-- 错误状态 -->
       <view v-else-if="error" class="error-container">
         <text class="error-text">{{ error }}</text>
         <button class="retry-btn" @click="searchUsers">重试</button>
       </view>
-      
+
       <!-- 用户列表 -->
       <view v-else class="users-list">
         <view
@@ -54,17 +54,17 @@
           <!-- 用户头像和信息 -->
           <view class="user-info">
             <view class="user-avatar-container">
-              <image 
-                v-if="user.avatar_url" 
-                :src="user.avatar_url" 
+              <image
+                v-if="user.avatar_url"
+                :src="user.avatar_url"
                 class="user-avatar"
                 mode="aspectFit"
               />
               <text v-else class="user-avatar-placeholder">👤</text>
             </view>
             <view class="user-details">
-              <text class="user-name">{{ user.nickname || '未设置昵称' }}</text>
-              <text class="user-phone">{{ user.phone_number || '未设置手机号' }}</text>
+              <text class="user-name">{{ user.nickname || "未设置昵称" }}</text>
+              <text class="user-phone">{{ user.phone_number || "未设置手机号" }}</text>
               <view class="user-tags">
                 <text v-if="user.is_staff" class="staff-tag">已是专员</text>
                 <text v-if="user.community_id" class="community-tag">
@@ -73,28 +73,28 @@
               </view>
             </view>
           </view>
-          
+
           <!-- 选择状态指示器 -->
           <view class="selection-indicator">
             <text v-if="isSelected(user.user_id)" class="selected-icon">✓</text>
             <text v-else class="unselected-icon">○</text>
           </view>
         </view>
-        
+
         <!-- 空状态 -->
         <view v-if="userList.length === 0" class="empty-container">
           <text v-if="searchKeyword" class="empty-icon">🔍</text>
           <text v-else class="empty-icon">👥</text>
-          
+
           <text class="empty-title">
-            {{ searchKeyword ? '未找到匹配的用户' : '暂无用户数据' }}
+            {{ searchKeyword ? "未找到匹配的用户" : "暂无用户数据" }}
           </text>
-          
+
           <text class="empty-text">
-            {{ searchKeyword ? '请尝试其他搜索关键词' : '请输入关键词搜索用户' }}
+            {{ searchKeyword ? "请尝试其他搜索关键词" : "请输入关键词搜索用户" }}
           </text>
         </view>
-        
+
         <!-- 加载更多 -->
         <view v-if="hasMore" class="load-more-container">
           <button class="load-more-btn" @click="loadMore" :disabled="loadingMore">
@@ -103,7 +103,7 @@
           </button>
         </view>
       </view>
-      
+
       <!-- 已选用户区域 -->
       <view v-if="selectedUsers.length > 0" class="selected-section">
         <view class="selected-header">
@@ -112,13 +112,9 @@
             <text class="clear-text">清空</text>
           </button>
         </view>
-        
+
         <view class="selected-users">
-          <view
-            v-for="userId in selectedUsers"
-            :key="userId"
-            class="selected-user-tag"
-          >
+          <view v-for="userId in selectedUsers" :key="userId" class="selected-user-tag">
             <text class="selected-user-name">
               {{ getUserName(userId) }}
             </text>
@@ -128,14 +124,14 @@
           </view>
         </view>
       </view>
-      
+
       <!-- 操作按钮 -->
       <view class="modal-footer">
         <button class="cancel-button" @click="handleClose">
           <text class="button-text">取消</text>
         </button>
-        <button 
-          class="confirm-button" 
+        <button
+          class="confirm-button"
           @click="handleConfirm"
           :disabled="selectedUsers.length === 0"
         >
@@ -147,165 +143,168 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from "vue";
 
 const props = defineProps({
   visible: {
     type: Boolean,
-    default: false
+    default: false,
   },
   communityId: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-const emit = defineEmits(['close', 'confirm'])
+const emit = defineEmits(["close", "confirm"]);
 
 // 状态管理
-const searchKeyword = ref('')
-const userList = ref([])
-const selectedUsers = ref([])
-const loading = ref(false)
-const loadingMore = ref(false)
-const error = ref('')
+const searchKeyword = ref("");
+const userList = ref([]);
+const selectedUsers = ref([]);
+const loading = ref(false);
+const loadingMore = ref(false);
+const error = ref("");
 
 // 分页相关
-const currentPage = ref(1)
-const pageSize = ref(20)
-const totalCount = ref(0)
-const hasMore = computed(() => (currentPage.value * pageSize.value) < totalCount.value)
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalCount = ref(0);
+const hasMore = computed(() => currentPage.value * pageSize.value < totalCount.value);
 
 // 搜索防抖
-let searchTimer = null
+let searchTimer = null;
 
 // 监听visible变化，显示时重置状态
-watch(() => props.visible, (newVal) => {
-  if (newVal) {
-    resetState()
-    // 延迟搜索，避免模态框动画期间搜索
-    setTimeout(() => {
-      searchUsers()
-    }, 300)
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (newVal) {
+      resetState();
+      // 延迟搜索，避免模态框动画期间搜索
+      setTimeout(() => {
+        searchUsers();
+      }, 300);
+    }
   }
-})
+);
 
 // 重置状态
 const resetState = () => {
-  searchKeyword.value = ''
-  userList.value = []
-  selectedUsers.value = []
-  currentPage.value = 1
-  totalCount.value = 0
-  error.value = ''
-}
+  searchKeyword.value = "";
+  userList.value = [];
+  selectedUsers.value = [];
+  currentPage.value = 1;
+  totalCount.value = 0;
+  error.value = "";
+};
 
 // 搜索用户
 const searchUsers = async (page = 1, isLoadMore = false) => {
   if (isLoadMore) {
-    loadingMore.value = true
+    loadingMore.value = true;
   } else {
-    loading.value = true
-    error.value = ''
+    loading.value = true;
+    error.value = "";
   }
-  
+
   try {
     // 调用后端API搜索用户（排除黑屋社区）
-    const response = await searchUsersExcludingBlackroom(page)
-    
+    const response = await searchUsersExcludingBlackroom(page);
+
     if (response.code === 1) {
-      const { users, pagination } = response.data
-      
+      const { users, pagination } = response.data;
+
       if (isLoadMore) {
         // 加载更多时追加数据
-        userList.value = [...userList.value, ...users]
+        userList.value = [...userList.value, ...users];
       } else {
         // 首次加载时替换数据
-        userList.value = users
+        userList.value = users;
       }
-      
-      totalCount.value = pagination.total
-      currentPage.value = pagination.page
+
+      totalCount.value = pagination.total;
+      currentPage.value = pagination.page;
     } else {
-      error.value = response.msg || '搜索用户失败'
+      error.value = response.msg || "搜索用户失败";
     }
   } catch (err) {
-    console.error('搜索用户失败:', err)
-    error.value = '网络错误，请稍后重试'
+    console.error("搜索用户失败:", err);
+    error.value = "网络错误，请稍后重试";
   } finally {
-    loading.value = false
-    loadingMore.value = false
+    loading.value = false;
+    loadingMore.value = false;
   }
-}
+};
 
 // 搜索输入处理（防抖）
 const handleSearchInput = () => {
   if (searchTimer) {
-    clearTimeout(searchTimer)
+    clearTimeout(searchTimer);
   }
-  
+
   searchTimer = setTimeout(() => {
-    searchUsers(1, false)
-  }, 500)
-}
+    searchUsers(1, false);
+  }, 500);
+};
 
 // 清除搜索
 const clearSearch = () => {
-  searchKeyword.value = ''
-  searchUsers(1, false)
-}
+  searchKeyword.value = "";
+  searchUsers(1, false);
+};
 
 // 加载更多
 const loadMore = () => {
-  if (!hasMore.value || loadingMore.value) return
-  searchUsers(currentPage.value + 1, true)
-}
+  if (!hasMore.value || loadingMore.value) return;
+  searchUsers(currentPage.value + 1, true);
+};
 
 // 用户选择处理
 const toggleSelect = (userId) => {
-  const index = selectedUsers.value.indexOf(userId)
+  const index = selectedUsers.value.indexOf(userId);
   if (index === -1) {
     // 添加选中
-    selectedUsers.value.push(userId)
+    selectedUsers.value.push(userId);
   } else {
     // 移除选中
-    selectedUsers.value.splice(index, 1)
+    selectedUsers.value.splice(index, 1);
   }
-}
+};
 
 const isSelected = (userId) => {
-  return selectedUsers.value.includes(userId)
-}
+  return selectedUsers.value.includes(userId);
+};
 
 const clearSelection = () => {
-  selectedUsers.value = []
-}
+  selectedUsers.value = [];
+};
 
 const removeSelectedUser = (userId) => {
-  const index = selectedUsers.value.indexOf(userId)
+  const index = selectedUsers.value.indexOf(userId);
   if (index !== -1) {
-    selectedUsers.value.splice(index, 1)
+    selectedUsers.value.splice(index, 1);
   }
-}
+};
 
 // 获取用户名称
 const getUserName = (userId) => {
-  const user = userList.value.find(u => u.user_id === userId)
-  return user ? (user.nickname || '未设置昵称') : '未知用户'
-}
+  const user = userList.value.find((u) => u.user_id === userId);
+  return user ? user.nickname || "未设置昵称" : "未知用户";
+};
 
 // 关闭模态框
 const handleClose = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 // 确认添加
 const handleConfirm = () => {
-  if (selectedUsers.value.length === 0) return
-  
-  emit('confirm', selectedUsers.value)
-  emit('close')
-}
+  if (selectedUsers.value.length === 0) return;
+
+  emit("confirm", selectedUsers.value);
+  emit("close");
+};
 
 // API调用函数
 const searchUsersExcludingBlackroom = async (page = 1) => {
@@ -315,27 +314,29 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
     keyword: searchKeyword.value,
     page: page,
     limit: pageSize.value,
-    exclude_community_id: props.communityId // 排除当前社区的用户
-  }
-  
+    exclude_community_id: props.communityId, // 排除当前社区的用户
+  };
+
   // 构建查询字符串
   const queryString = Object.entries(params)
-    .filter(([_, value]) => value !== undefined && value !== '')
+    .filter(([_, value]) => value !== undefined && value !== "")
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-    .join('&')
-  
+    .join("&");
+
   try {
-    const response = await fetch(`/api/user/search-all-excluding-blackroom?${queryString}`)
-    return await response.json()
+    const response = await fetch(
+      `/api/user/search-all-excluding-blackroom?${queryString}`
+    );
+    return await response.json();
   } catch (error) {
-    console.error('API调用失败:', error)
-    throw error
+    console.error("API调用失败:", error);
+    throw error;
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-@import '@/uni.scss';
+@import "@/uni.scss";
 
 .add-staff-modal {
   position: fixed;
@@ -347,7 +348,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   .modal-mask {
     position: absolute;
     top: 0;
@@ -356,7 +357,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
   }
-  
+
   .modal-content {
     position: relative;
     width: 90%;
@@ -368,20 +369,20 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
     flex-direction: column;
     overflow: hidden;
     box-shadow: $uni-shadow-modal;
-    
+
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: $uni-spacing-lg $uni-spacing-xl;
       border-bottom: 1px solid $uni-border-color;
-      
+
       .modal-title {
         font-size: $uni-font-size-lg;
         font-weight: $uni-font-weight-base;
         color: $uni-accent;
       }
-      
+
       .close-button {
         width: 40rpx;
         height: 40rpx;
@@ -391,36 +392,36 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
-        
+
         .close-icon {
           font-size: $uni-font-size-lg;
           color: $uni-text-gray-600;
         }
-        
+
         &:active {
           background: $uni-bg-color-grey;
           transform: scale(0.9);
         }
       }
     }
-    
+
     .search-section {
       padding: $uni-spacing-lg $uni-spacing-xl;
       border-bottom: 1px solid $uni-border-color;
-      
+
       .search-input-wrapper {
         @include search-input;
         display: flex;
         align-items: center;
         padding: $uni-spacing-sm $uni-spacing-md;
         margin-bottom: $uni-spacing-xs;
-        
+
         .search-icon {
           font-size: $uni-font-size-sm;
           color: $uni-text-gray-600;
           margin-right: $uni-spacing-sm;
         }
-        
+
         .search-input {
           flex: 1;
           font-size: $uni-font-size-sm;
@@ -428,12 +429,12 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           background: transparent;
           border: none;
           outline: none;
-          
+
           &::placeholder {
             color: $uni-text-gray-600;
           }
         }
-        
+
         .clear-button {
           width: 32rpx;
           height: 32rpx;
@@ -443,49 +444,49 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           align-items: center;
           justify-content: center;
           transition: all 0.2s ease;
-          
+
           .clear-icon {
             font-size: $uni-font-size-sm;
             color: $uni-text-gray-600;
           }
-          
+
           &:active {
             background: $uni-bg-color-grey;
             transform: scale(0.9);
           }
         }
       }
-      
+
       .search-hint {
         display: block;
         font-size: $uni-font-size-xs;
         color: $uni-text-gray-600;
       }
     }
-    
+
     .loading-container,
     .error-container {
       padding: $uni-spacing-xxl;
       text-align: center;
-      
+
       .error-text {
         display: block;
         font-size: $uni-font-size-base;
         color: $uni-error;
         margin-bottom: $uni-spacing-md;
       }
-      
+
       .retry-btn {
         @include btn-primary;
         padding: $uni-spacing-sm $uni-spacing-base;
       }
     }
-    
+
     .users-list {
       flex: 1;
       overflow-y: auto;
       padding: $uni-spacing-base $uni-spacing-xl;
-      
+
       .user-item {
         @include card-gradient;
         padding: $uni-spacing-md;
@@ -496,40 +497,40 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
         justify-content: space-between;
         transition: all 0.2s ease;
         cursor: pointer;
-        
+
         &.selected {
           border: 2px solid $uni-primary;
           background: rgba(59, 130, 246, 0.05);
         }
-        
+
         &:active {
           transform: translateY(-1px);
           box-shadow: $uni-shadow-card-hover;
         }
-        
+
         .user-info {
           display: flex;
           align-items: center;
           flex: 1;
-          
+
           .user-avatar-container {
             margin-right: $uni-spacing-base;
-            
+
             .user-avatar {
               width: 60rpx;
               height: 60rpx;
               border-radius: $uni-radius-full;
             }
-            
+
             .user-avatar-placeholder {
               font-size: $uni-font-size-lg;
               color: $uni-secondary;
             }
           }
-          
+
           .user-details {
             flex: 1;
-            
+
             .user-name {
               display: block;
               font-size: $uni-font-size-base;
@@ -537,18 +538,18 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
               color: $uni-text-gray-700;
               margin-bottom: $uni-spacing-xs;
             }
-            
+
             .user-phone {
               display: block;
               font-size: $uni-font-size-sm;
               color: $uni-text-gray-600;
               margin-bottom: $uni-spacing-xs;
             }
-            
+
             .user-tags {
               display: flex;
               gap: $uni-spacing-xs;
-              
+
               .staff-tag {
                 font-size: $uni-font-size-xxs;
                 padding: 2rpx 6rpx;
@@ -556,7 +557,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
                 background: rgba(16, 185, 129, 0.1);
                 color: $uni-success;
               }
-              
+
               .community-tag {
                 font-size: $uni-font-size-xxs;
                 padding: 2rpx 6rpx;
@@ -567,7 +568,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
             }
           }
         }
-        
+
         .selection-indicator {
           width: 40rpx;
           height: 40rpx;
@@ -575,30 +576,30 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          
+
           .selected-icon {
             font-size: $uni-font-size-lg;
             color: $uni-primary;
           }
-          
+
           .unselected-icon {
             font-size: $uni-font-size-lg;
-            color: $uni-text-gray-400;
+            color: $uni-text-gray-600;
           }
         }
       }
-      
+
       .empty-container {
         text-align: center;
         padding: $uni-spacing-xxl $uni-spacing-xl;
-        
+
         .empty-icon {
           font-size: 48rpx;
           color: $uni-text-gray-600;
           display: block;
           margin-bottom: $uni-spacing-md;
         }
-        
+
         .empty-title {
           display: block;
           font-size: $uni-font-size-lg;
@@ -606,27 +607,27 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           color: $uni-accent;
           margin-bottom: $uni-spacing-sm;
         }
-        
+
         .empty-text {
           display: block;
           font-size: $uni-font-size-base;
           color: $uni-text-gray-600;
         }
       }
-      
+
       .load-more-container {
         text-align: center;
         margin-top: $uni-spacing-lg;
-        
+
         .load-more-btn {
           @include btn-primary;
           padding: $uni-spacing-sm $uni-spacing-xl;
-          
+
           &:disabled {
             opacity: 0.5;
             cursor: not-allowed;
           }
-          
+
           .loading-text,
           .load-more-text {
             font-size: $uni-font-size-sm;
@@ -634,24 +635,24 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
         }
       }
     }
-    
+
     .selected-section {
       padding: $uni-spacing-lg $uni-spacing-xl;
       border-top: 1px solid $uni-border-color;
       background: $uni-bg-color-light;
-      
+
       .selected-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: $uni-spacing-sm;
-        
+
         .selected-title {
           font-size: $uni-font-size-base;
           font-weight: $uni-font-weight-base;
           color: $uni-accent;
         }
-        
+
         .clear-selection-btn {
           font-size: $uni-font-size-sm;
           color: $uni-error;
@@ -659,18 +660,18 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           border: none;
           padding: $uni-spacing-xs $uni-spacing-sm;
           border-radius: $uni-radius-sm;
-          
+
           &:active {
             background: rgba(239, 68, 68, 0.1);
           }
         }
       }
-      
+
       .selected-users {
         display: flex;
         flex-wrap: wrap;
         gap: $uni-spacing-xs;
-        
+
         .selected-user-tag {
           display: flex;
           align-items: center;
@@ -680,7 +681,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
           color: $uni-white;
           border-radius: $uni-radius-sm;
           font-size: $uni-font-size-xs;
-          
+
           .remove-user-btn {
             width: 20rpx;
             height: 20rpx;
@@ -689,12 +690,12 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             .remove-icon {
               font-size: $uni-font-size-xs;
               color: $uni-white;
             }
-            
+
             &:active {
               background: rgba(255, 255, 255, 0.3);
             }
@@ -702,13 +703,13 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
         }
       }
     }
-    
+
     .modal-footer {
       display: flex;
       padding: $uni-spacing-lg $uni-spacing-xl;
       border-top: 1px solid $uni-border-color;
       gap: $uni-spacing-base;
-      
+
       .cancel-button,
       .confirm-button {
         flex: 1;
@@ -720,25 +721,25 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
         cursor: pointer;
         transition: all 0.2s ease;
       }
-      
+
       .cancel-button {
         background: $uni-bg-color-light;
         color: $uni-text-gray-700;
-        
+
         &:active {
           background: $uni-bg-color-grey;
         }
       }
-      
+
       .confirm-button {
         background: $uni-primary;
         color: $uni-white;
-        
+
         &:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-        
+
         &:active:not(:disabled) {
           background: darken($uni-primary, 10%);
         }

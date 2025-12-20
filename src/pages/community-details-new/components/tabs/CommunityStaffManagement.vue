@@ -338,21 +338,38 @@ onMounted(() => {
   .tab-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: $uni-spacing-xl;
+    margin-bottom: $uni-spacing-lg;
     
     .tab-title {
-      font-size: $uni-font-size-lg;
+      font-size: $uni-font-size-base;
       font-weight: $uni-font-weight-base;
       color: $uni-accent;
+      flex: 1; /* 标题占据剩余空间，实现左对齐 */
     }
     
     .add-button {
-      @include btn-primary;
-      padding: $uni-spacing-sm $uni-spacing-base;
+      display: flex;
+      align-items: center;
+      gap: $uni-spacing-xs;
+      padding: $uni-spacing-xs $uni-spacing-sm;
+      background: transparent;
+      border-radius: $uni-radius-sm;
+      transition: all 0.2s ease;
       
       .add-icon {
-        margin-right: $uni-spacing-xs;
+        font-size: $uni-font-size-sm;
+        color: $uni-secondary;
+      }
+      
+      .add-text {
+        font-size: $uni-font-size-xs;
+        color: $uni-secondary;
+        font-weight: $uni-font-weight-base;
+      }
+      
+      &:active {
+        background: rgba(144, 147, 153, 0.1);
+        transform: scale(0.98);
       }
     }
   }
