@@ -40,12 +40,6 @@
         <text class="empty-hint">点击"添加专员"按钮添加第一个专员</text>
       </view>
     </view>
-    
-    <!-- 刷新按钮 -->
-    <button class="refresh-button" @click="$emit('refresh')">
-      <text class="refresh-icon">🔄</text>
-      <text class="refresh-text">刷新列表</text>
-    </button>
   </view>
 </template>
 
@@ -115,13 +109,13 @@ const getRoleIcon = (role) => {
   .tab-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     margin-bottom: $uni-spacing-lg;
     
     .tab-title {
       font-size: $uni-font-size-base;
       font-weight: $uni-font-weight-base;
       color: $uni-accent;
+      flex: 1; /* 标题占据剩余空间，实现左对齐 */
     }
     
     .add-button {
@@ -261,25 +255,5 @@ const getRoleIcon = (role) => {
     }
   }
   
-  .refresh-button {
-    @include btn-primary;
-    width: 100%;
-    padding: $uni-spacing-sm;
-    margin-top: $uni-spacing-lg;
-    font-size: $uni-font-size-base;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $uni-spacing-sm;
-    border-radius: $uni-radius-xl; /* 24rpx = 12px */
-    
-    .refresh-icon {
-      font-size: $uni-font-size-base;
-    }
-    
-    .refresh-text {
-      font-weight: $uni-font-weight-base;
-    }
-  }
 }
 </style>
