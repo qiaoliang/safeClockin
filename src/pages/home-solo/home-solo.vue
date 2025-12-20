@@ -27,12 +27,8 @@
           </view>
           <view class="weather-info">
             <view class="weather-content">
-              <text class="weather-icon">
-                ☀️
-              </text>
-              <text class="weather-text">
-                晴 18°C
-              </text>
+              <text class="weather-icon"> ☀️ </text>
+              <text class="weather-text"> 晴 18°C </text>
             </view>
           </view>
         </view>
@@ -43,23 +39,15 @@
             :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
             @click="switchRole('checkin')"
           >
-            <text class="tab-icon">
-              🕐
-            </text>
-            <text class="tab-text">
-              今日打卡
-            </text>
+            <text class="tab-icon"> 🕐 </text>
+            <text class="tab-text"> 今日打卡 </text>
           </view>
           <view
             :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
             @click="switchRole('supervisor')"
           >
-            <text class="tab-icon">
-              🛡️
-            </text>
-            <text class="tab-text">
-              当前监护
-            </text>
+            <text class="tab-icon"> 🛡️ </text>
+            <text class="tab-text"> 当前监护 </text>
           </view>
         </view>
       </view>
@@ -67,114 +55,59 @@
   </uni-card>
 
   <!-- 当前任务悬浮按钮 -->
-  <button
-    class="floating-tasks-btn"
-    @click="goToCheckinList"
-  >
+  <button class="floating-tasks-btn" @click="goToCheckinList">
     <view class="tasks-btn-content">
       <view class="tasks-icon-wrapper">
-        <text class="tasks-icon">
-          📋
-        </text>
+        <text class="tasks-icon"> 📋 </text>
         <view class="tasks-badge">
           {{ pendingCheckinCount }}
         </view>
       </view>
       <view class="tasks-text-content">
-        <text class="tasks-title">
-          当前任务
-        </text>
-        <text class="tasks-subtitle">
-          还有 {{ pendingCheckinCount }} 项未完成
-        </text>
+        <text class="tasks-title"> 当前任务 </text>
+        <text class="tasks-subtitle"> 还有 {{ pendingCheckinCount }} 项未完成 </text>
       </view>
-      <text class="tasks-arrow">
-        ›
-      </text>
+      <text class="tasks-arrow"> › </text>
     </view>
   </button>
 
   <!-- 功能快捷入口 -->
-  <uni-grid
-    :column="3"
-    :show-border="false"
-    :square="false"
-  >
+  <uni-grid :column="3" :show-border="false" :square="false">
     <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleSetRules"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #b37fef"
-        >
-          <text class="grid-icon">
-            ⚙️
-          </text>
+      <view class="grid-item-content" @click="handleSetRules">
+        <view class="grid-icon-wrapper" style="background: #b37fef">
+          <text class="grid-icon"> ⚙️ </text>
         </view>
-        <text class="grid-text">
-          查看规则
-        </text>
+        <text class="grid-text"> 查看规则 </text>
       </view>
     </uni-grid-item>
 
     <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleGuardianManage"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #8ce0a0"
-        >
-          <text class="grid-icon">
-            👨‍👩‍👧
-          </text>
+      <view class="grid-item-content" @click="handleGuardianManage">
+        <view class="grid-icon-wrapper" style="background: #8ce0a0">
+          <text class="grid-icon"> 👨‍👩‍👧 </text>
         </view>
-        <text class="grid-text">
-          监护管理
-        </text>
+        <text class="grid-text"> 监护管理 </text>
       </view>
     </uni-grid-item>
 
     <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleHealthRecord"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #ffa0a0"
-        >
-          <text class="grid-icon">
-            💗
-          </text>
+      <view class="grid-item-content" @click="handleHealthRecord">
+        <view class="grid-icon-wrapper" style="background: #ffa0a0">
+          <text class="grid-icon"> 💗 </text>
         </view>
-        <text class="grid-text">
-          健康记录
-        </text>
+        <text class="grid-text"> 健康记录 </text>
       </view>
     </uni-grid-item>
   </uni-grid>
 
   <!-- 当前任务列表 -->
   <uni-card>
-    <uni-section
-      class="mb-10"
-      title="当前任务"
-    >
+    <uni-section class="mb-10" title="当前任务">
       <template #right>
-        <view
-          class="section-link"
-          @click="goToCheckinList"
-        >
-          <text class="link-text">
-            点击查看今天活动
-          </text>
-          <text class="link-arrow">
-            ›
-          </text>
+        <view class="section-link" @click="goToCheckinList">
+          <text class="link-text"> 点击查看今天活动 </text>
+          <text class="link-arrow"> › </text>
         </view>
       </template>
     </uni-section>
@@ -187,10 +120,7 @@
         :show-arrow="false"
       >
         <template #header>
-          <view
-            class="task-icon-wrapper"
-            :style="{ background: task.iconBg }"
-          >
+          <view class="task-icon-wrapper" :style="{ background: task.iconBg }">
             <text class="task-icon-emoji">
               {{ task.icon }}
             </text>
@@ -208,9 +138,7 @@
               {{ task.status === "pending" ? "🕐" : "🔄" }}
             </text>
             <text class="btn-text">
-              {{
-                task.status === "pending" ? "待打卡" : "补打卡"
-              }}
+              {{ task.status === "pending" ? "待打卡" : "补打卡" }}
             </text>
           </button>
         </template>
@@ -225,16 +153,11 @@
       :disabled="disableMainBtn"
       @click="handleMainAction"
     >
-      <text class="btn-icon">
-        📋
-      </text>
+      <text class="btn-icon"> 📋 </text>
       <text class="btn-text">
         {{ mainBtnText }}
       </text>
-      <text
-        v-if="mainBtnSubtext"
-        class="btn-subtext"
-      >
+      <text v-if="mainBtnSubtext" class="btn-subtext">
         {{ mainBtnSubtext }}
       </text>
     </button>
@@ -345,7 +268,7 @@ const initCheckinData = async () => {
     await checkinStore.initCheckinData();
     updateMainButton();
   } catch (error) {
-    console.error("初始化打卡数据失败:", error);
+    console.warn("⚠️ 初始化打卡数据失败:", error);
   }
 };
 
@@ -433,7 +356,7 @@ const handleMainAction = async () => {
     updateMainButton();
     uni.showToast({ title: "打卡成功", icon: "success" });
   } catch (e) {
-    console.error("打卡失败:", e);
+    console.warn("⚠️ 打卡失败:", e);
     uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
   }
 };

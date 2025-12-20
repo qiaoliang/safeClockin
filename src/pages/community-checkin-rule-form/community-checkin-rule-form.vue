@@ -630,14 +630,14 @@ const handleSubmit = async () => {
     }
 
     &::placeholder {
-      color: $uni-text-gray-400;
+      color: $uni-text-gray-600;
     }
   }
 
   .item-hint {
     display: block;
     font-size: $uni-font-size-sm;
-    color: $uni-text-gray-500;
+    color: $uni-text-gray-600;
     margin-top: $uni-spacing-xs;
   }
 }
@@ -665,7 +665,7 @@ const handleSubmit = async () => {
     .radio-icon {
       margin-right: $uni-spacing-base;
       font-size: $uni-font-size-base;
-      color: $uni-text-gray-400;
+      color: $uni-text-gray-600;
     }
 
     .radio-text {
@@ -736,13 +736,13 @@ const handleSubmit = async () => {
 
         &:empty::before {
           content: "请选择日期";
-          color: $uni-text-gray-400;
+          color: $uni-text-gray-600;
         }
       }
 
       .date-icon {
         font-size: $uni-font-size-base;
-        color: $uni-text-gray-500;
+        color: $uni-text-gray-600;
       }
     }
   }
@@ -763,13 +763,13 @@ const handleSubmit = async () => {
 
     &:empty::before {
       content: "请选择时间";
-      color: $uni-text-gray-400;
+      color: $uni-text-gray-600;
     }
   }
 
   .time-icon {
     font-size: $uni-font-size-base;
-    color: $uni-text-gray-500;
+    color: $uni-text-gray-600;
   }
 }
 
