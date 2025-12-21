@@ -103,13 +103,13 @@ export const useCheckinStore = defineStore("checkin", {
 
             try {
                 const response = await request({
-                    url: "/api/checkin/today",
+                    url: "/api/user-checkin/today-plan",
                     method: "GET",
                 });
 
                 if (response.code === 1) {
                     this.todayCheckinItems = (
-                        response.data.checkin_items || []
+                        response.data || []
                     ).map((item) => ({
                         ...item,
                     }));
@@ -146,7 +146,7 @@ export const useCheckinStore = defineStore("checkin", {
         async fetchAllRulesCount() {
             try {
                 const response = await request({
-                    url: "/api/checkin/rules",
+                    url: "/api/user-checkin/rules",
                     method: "GET",
                 });
 

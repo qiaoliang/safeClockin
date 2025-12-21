@@ -97,7 +97,7 @@ export const authApi = {
   
   // 打卡相关API
   getTodayCheckinItems:() => request({
-    url: '/api/checkin/today',
+    url: '/api/user-checkin/today-plan',
     method: 'GET'
   }),
   performCheckin:(data) => request({
@@ -116,7 +116,7 @@ export const authApi = {
     data: params
   }),
   getCheckinRules:() => request({
-    url: '/api/checkin/rules',
+    url: '/api/user-checkin/rules',
     method: 'GET'
   }),
   createCheckinRule:(data) => request({
