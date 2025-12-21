@@ -142,38 +142,73 @@ function buildQueryStringCompat(params) {
   return parts.join('&')
 }
 
-// Layer 1: 入口点验证 - URL验证函数
+// Layer 1: 入口点验证 - 增强URL验证函数
 function isValidURL(url) {
+  // 基础类型和空值检查
   if (typeof url !== 'string' || !url.trim()) {
+    console.error('❌ Layer 1验证失败: URL不是有效字符串或为空')
     return false
   }
   
-  // 基本验证：不能包含非法字符
-  const illegalChars = /[<>"{}|\\^`]/g
-  if (illegalChars.test(url)) {
-    console.warn('URL包含非法字符:', url)
+  const trimmedUrl = url.trim()
+  
+  // 长度检查 - 防止过长URL导致内存问题
+  if (trimmedUrl.length > 2048) {
+    console.error('❌ Layer 1验证失败: URL过长', trimmedUrl.length)
+    return false
+  }
+  
+  // 危险字符检查 - 防止注入攻击
+  const dangerousChars = /[<>"{}|\\^`[\]]/g
+  if (dangerousChars.test(trimmedUrl)) {
+    console.error('❌ Layer 1验证失败: URL包含危险字符', trimmedUrl)
+    return false
+  }
+  
+  // JavaScript协议检查 - 防止XSS
+  if (trimmedUrl.toLowerCase().includes('javascript:')) {
+    console.error('❌ Layer 1验证失败: URL包含javascript协议')
+    return false
+  }
+  
+  // 路径遍历攻击检查
+  if (trimmedUrl.includes('../') || trimmedUrl.includes('..\\')) {
+    console.error('❌ Layer 1验证失败: URL包含路径遍历字符')
     return false
   }
   
   // 验证URL结构
   try {
     // 对于相对URL，添加基础URL进行验证
-    const testUrl = url.startsWith('http') ? url : `http://example.com${url.startsWith('/') ? url : '/' + url}`
-    new URL(testUrl)
+    const testUrl = trimmedUrl.startsWith('http') ? trimmedUrl : `http://example.com${trimmedUrl.startsWith('/') ? trimmedUrl : '/' + trimmedUrl}`
+    const parsedUrl = new URL(testUrl)
+    
+    // 验证协议
+    if (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol)) {
+      console.error('❌ Layer 1验证失败: 不支持的协议', parsedUrl.protocol)
+      return false
+    }
+    
+    // 验证主机名（如果是完整URL）
+    if (parsedUrl.hostname) {
+      // 防止内网IP访问（可选，根据业务需求）
+      const internalIPPattern = /^(localhost|127\.0\.0\.1|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.|192\.168\.|169\.254\.)/
+      if (internalIPPattern.test(parsedUrl.hostname)) {
+        console.warn('⚠️ Layer 1警告: URL包含内网地址', parsedUrl.hostname)
+      }
+    }
+    
     return true
   } catch (e) {
-    // 如果URL解析失败，可能是查询参数中有特殊字符
-    // 尝试更宽松的验证：检查是否是有效的路径格式
-    console.warn('URL验证警告:', e.message, 'URL:', url)
+    console.error('❌ Layer 1验证失败: URL解析错误', e.message, 'URL:', trimmedUrl)
     
-    // 对于相对URL，检查基本格式
-    if (url.startsWith('/')) {
-      // 移除查询参数部分，只检查路径部分
-      const pathOnly = url.split('?')[0]
-      // 检查路径是否包含有效字符 - 更宽松的正则表达式
+    // 最后的兜底检查：对于相对URL，检查基本格式
+    if (trimmedUrl.startsWith('/')) {
+      const pathOnly = trimmedUrl.split('?')[0]
+      // 更严格的路径验证
       const validPathRegex = /^\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]*$/
       const isValidPath = validPathRegex.test(pathOnly)
-      console.log('宽松路径验证结果:', isValidPath, '路径:', pathOnly)
+      console.log('Layer 1兜底路径验证结果:', isValidPath, '路径:', pathOnly)
       return isValidPath
     }
     
@@ -207,11 +242,66 @@ export const request = (options) => {
     let requestUrl = options.url
     let queryParams = ''
     
-    // Layer 3: 环境守卫 - 检查URLSearchParams是否可用
-    const isURLSearchParamsSupported = typeof URLSearchParams !== 'undefined'
-    if (!isURLSearchParamsSupported) {
-      console.warn('⚠️ 环境守卫: URLSearchParams不可用，使用兼容方案')
+    // Layer 3: 环境守卫 - 全面环境检测
+    const environmentInfo = {
+      urlSearchParamsSupported: typeof URLSearchParams !== 'undefined',
+      platform: '', // 将在下面检测
+      userAgent: '',
+      hasNetwork: true, // 将在下面检测
+      storageAvailable: false // 将在下面检测
     }
+    
+    // 检测平台环境
+    try {
+      // #ifdef MP-WEIXIN
+      environmentInfo.platform = 'mp-weixin'
+      // #endif
+      
+      // #ifdef H5
+      environmentInfo.platform = 'h5'
+      // #endif
+      
+      // #ifdef APP-PLUS
+      environmentInfo.platform = 'app-plus'
+      // #endif
+    } catch (e) {
+      environmentInfo.platform = 'unknown'
+    }
+    
+    // 检测网络状态
+    try {
+      environmentInfo.hasNetwork = uni.getNetworkType ? 
+        new Promise(resolve => {
+          uni.getNetworkType({
+            success: (res) => resolve(res.networkType !== 'none'),
+            fail: () => resolve(false)
+          })
+        }) : true
+    } catch (e) {
+      console.warn('⚠️ Layer 3环境守卫: 无法检测网络状态')
+    }
+    
+    // 检测存储可用性
+    try {
+      environmentInfo.storageAvailable = typeof uni !== 'undefined' && uni.getStorageSync
+    } catch (e) {
+      environmentInfo.storageAvailable = false
+    }
+    
+    // 环境守卫日志
+    if (!environmentInfo.urlSearchParamsSupported) {
+      console.warn('⚠️ Layer 3环境守卫: URLSearchParams不可用，使用兼容方案')
+    }
+    
+    if (environmentInfo.platform === 'unknown') {
+      console.warn('⚠️ Layer 3环境守卫: 无法确定运行平台')
+    }
+    
+    if (!environmentInfo.storageAvailable) {
+      console.warn('⚠️ Layer 3环境守卫: 存储功能不可用')
+    }
+    
+    console.log('🔍 Layer 3环境守卫: 环境信息', environmentInfo)
     
     // 检查是否为GET请求且有data参数
     const method = options.method || 'GET'
@@ -221,11 +311,32 @@ export const request = (options) => {
       console.log('  data参数:', options.data)
       console.log('  URLSearchParams支持:', isURLSearchParamsSupported ? '是' : '否')
       
-      // Layer 4: 调试仪表 - 记录原始数据用于取证
-      console.log('🔍 调试仪表 - 原始请求数据:')
-      console.log('  method:', method)
-      console.log('  options.data类型:', typeof options.data)
-      console.log('  options.data keys:', Object.keys(options.data))
+      // Layer 4: 调试仪表 - 全面调试和取证记录
+      const debugContext = {
+        timestamp: new Date().toISOString(),
+        requestId: Math.random().toString(36).substr(2, 9),
+        method: method,
+        originalUrl: options.url,
+        dataType: typeof options.data,
+        dataKeys: Object.keys(options.data),
+        dataValues: Object.values(options.data),
+        environmentInfo: environmentInfo,
+        stackTrace: new Error().stack?.split('\n').slice(1, 5) // 记录调用栈
+      }
+      
+      console.log('🔍 Layer 4调试仪表 - 请求取证上下文:')
+      console.table(debugContext)
+      
+      // 敏感数据脱敏记录
+      const sanitizedData = {}
+      Object.entries(options.data).forEach(([key, value]) => {
+        if (typeof value === 'string' && value.length > 50) {
+          sanitizedData[key] = value.substring(0, 20) + '...'
+        } else {
+          sanitizedData[key] = value
+        }
+      })
+      console.log('🔍 Layer 4调试仪表 - 脱敏数据:', sanitizedData)
       
       if (isURLSearchParamsSupported) {
         // 使用URLSearchParams
