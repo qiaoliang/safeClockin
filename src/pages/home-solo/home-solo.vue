@@ -149,17 +149,12 @@
   <!-- 一键求助主按钮 -->
   <view class="today-tasks-section">
     <button
-      :class="['today-tasks-btn', { disabled: disableMainBtn }]"
-      :disabled="disableMainBtn"
-      @click="handleMainAction"
+      class="help-btn"
+      @click="handleOneClickHelp"
     >
-      <text class="btn-icon"> 📋 </text>
-      <text class="btn-text">
-        {{ mainBtnText }}
-      </text>
-      <text v-if="mainBtnSubtext" class="btn-subtext">
-        {{ mainBtnSubtext }}
-      </text>
+      <text class="btn-icon"> 🆘 </text>
+      <text class="btn-text">一键求助</text>
+      <text class="btn-subtext">遇到困难？立即求助</text>
     </button>
   </view>
 </template>
@@ -173,25 +168,16 @@ import { useCheckinStore } from "@/store/modules/checkin";
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
 
-const mainBtnText = ref("今日待办");
-const mainBtnSubtext = ref("点击进入打卡事项列表");
-const clicking = ref(false);
-const currentRole = ref("checkin");
-
-// 计算属性：用户信息 - 添加防御性验证
+// 计算属性：用户信息
 const userInfo = computed(() => {
-  // Layer 1: 入口点验证 - 确保用户信息存在
   const user = userStore.userInfo;
-
   if (!user) {
     console.log("用户信息为空");
     return null;
   }
 
-  // Layer 2: 业务逻辑验证 - 确保关键字段存在
+  // 确保昵称字段存在
   if (!user.nickName && !user.nickname) {
-    console.warn("⚠️ 用户信息缺少昵称字段");
-    // 尝试从其他字段获取昵称
     if (user.wechat_openid) {
       user.nickName = `微信用户${user.wechat_openid.slice(-6)}`;
     } else {
@@ -199,23 +185,7 @@ const userInfo = computed(() => {
     }
   }
 
-  console.log("用户信息验证通过:", user.nickName || user.nickname);
   return user;
-});
-
-// 计算属性：今日打卡数量（从store获取）
-const todayCheckinCount = computed(() => checkinStore.todayCheckinCount);
-const pendingCheckinCount = computed(() => checkinStore.pendingCheckinCount);
-const completedCheckinCount = computed(() => checkinStore.completedCheckinCount);
-const missedCheckinCount = computed(() => checkinStore.missedCheckinCount);
-const allRulesCount = computed(() => checkinStore.allRulesCount);
-const nearestPending = computed(() => checkinStore.nearestPending);
-const completionRate = computed(() => checkinStore.completionRate);
-
-const disableMainBtn = computed(() => {
-  if (allRulesCount.value === 0) return false;
-  if (todayCheckinCount.value === 0) return false;
-  return !nearestPending.value;
 });
 
 // 获取用户角色文本
@@ -290,74 +260,96 @@ const parseTodayTime = (hhmmss) => {
   return new Date(`${todayStr}T${t}`);
 };
 
-const updateMainButton = () => {
-  if (allRulesCount.value === 0) {
-    mainBtnText.value = "一键求助";
-    mainBtnSubtext.value = "";
-    return;
-  }
-  if (nearestPending.value) {
-    mainBtnText.value = "打卡";
-    mainBtnSubtext.value = nearestPending.value.rule_name;
-  } else {
-    if (todayCheckinCount.value > 0) {
-      mainBtnText.value = "今日没有打卡任务了";
-      mainBtnSubtext.value = "";
-    } else {
-      mainBtnText.value = "今日待办";
-      mainBtnSubtext.value = "点击进入打卡事项列表";
+
+
+// 一键求助处理函数
+const handleOneClickHelp = async () => {
+  try {
+    // 获取用户信息
+    const userInfo = userStore.userInfo;
+    if (!userInfo || !userInfo.community_id) {
+      uni.showToast({
+        title: "请先加入社区后再使用求助功能",
+        icon: "none",
+        duration: 3000
+      });
+      return;
     }
+
+    // 显示确认对话框
+    uni.showModal({
+      title: "一键求助",
+      content: "确认要发起求助吗？社区工作人员将收到通知并为您提供帮助。",
+      confirmText: "确认求助",
+      cancelText: "取消",
+      success: async (res) => {
+        if (res.confirm) {
+          await createHelpEvent(userInfo);
+        }
+      }
+    });
+  } catch (error) {
+    console.error("一键求助失败:", error);
+    uni.showToast({
+      title: "求助失败，请稍后重试",
+      icon: "none",
+      duration: 3000
+    });
   }
 };
 
-const handleMainAction = async () => {
-  if (clicking.value) return;
-  clicking.value = true;
-  setTimeout(() => (clicking.value = false), 300);
-
-  if (disableMainBtn.value) return;
-
-  if (allRulesCount.value === 0) {
-    uni.navigateTo({ url: "/pages/add-rule/add-rule" });
-    return;
-  }
-  if (!nearestPending.value) {
-    goToCheckinList();
-    return;
-  }
-
-  const now = new Date();
-  const planned = parseTodayTime(nearestPending.value.planned_time);
-  const diffMs = now - planned;
-  const diffMin = diffMs / 60000;
-
-  if (diffMin < -30) {
-    uni.showToast({
-      title: "打卡时间未到，请于规定时间前30分钟内再来打卡",
-      icon: "none",
-      duration: 3000,
-    });
-    return;
-  }
-
-  if (diffMin > 30) {
-    try {
-      await checkinStore.markAsMissed(nearestPending.value.rule_id);
-      updateMainButton();
-    } catch (e) {
-      console.error("" + e);
-    }
-    uni.showToast({ title: "已错过打卡时间", icon: "none", duration: 3000 });
-    return;
-  }
-
+// 创建求助事件
+const createHelpEvent = async (userInfo) => {
   try {
-    await checkinStore.performCheckin(nearestPending.value.rule_id);
-    updateMainButton();
-    uni.showToast({ title: "打卡成功", icon: "success" });
-  } catch (e) {
-    console.warn("⚠️ 打卡失败:", e);
-    uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+    // 显示加载提示
+    uni.showLoading({
+      title: "正在发起求助...",
+      mask: true
+    });
+
+    const response = await uni.request({
+      url: "/api/events",
+      method: "POST",
+      header: {
+        "Authorization": `Bearer ${uni.getStorageSync("token")}`,
+        "Content-Type": "application/json"
+      },
+      data: {
+        community_id: userInfo.community_id,
+        title: "紧急求助",
+        description: "用户通过一键求助功能发起求助",
+        event_type: "call_for_help",
+        location: "", // 可以后续扩展获取地理位置
+        target_user_id: userInfo.user_id
+      }
+    });
+
+    uni.hideLoading();
+
+    if (response.data.code === 1) {
+      uni.showToast({
+        title: "求助已发送，社区工作人员将尽快为您提供帮助",
+        icon: "success",
+        duration: 3000
+      });
+      
+      // 可以在这里添加后续逻辑，比如跳转到求助详情页
+      console.log("求助事件创建成功:", response.data.data);
+    } else {
+      uni.showToast({
+        title: response.data.msg || "求助失败",
+        icon: "none",
+        duration: 3000
+      });
+    }
+  } catch (error) {
+    uni.hideLoading();
+    console.error("创建求助事件失败:", error);
+    uni.showToast({
+      title: "网络错误，请稍后重试",
+      icon: "none",
+      duration: 3000
+    });
   }
 };
 
@@ -450,54 +442,18 @@ const handleTaskAction = async (task) => {
 };
 
 onMounted(() => {
-  initCheckinData();
+  // 页面加载时的初始化逻辑
+  console.log("首页加载完成");
 });
 
 onShow(() => {
-  // Layer 1: 入口点验证 - 确保用户状态正确初始化
-  console.log("=== Layer 1: 首页onShow入口点验证 ===");
-  console.log("当前登录状态:", userStore.isLoggedIn);
-  console.log("用户信息:", userStore.userInfo);
-  console.log("用户角色:", userStore.role);
-
-  // Layer 2: 业务逻辑验证 - 确保数据一致性
+  // 页面显示时的逻辑
+  console.log("首页显示");
+  
+  // 确保用户信息存在
   if (!userStore.userInfo) {
-    console.log("用户信息为空，尝试初始化用户状态");
     userStore.initUserState();
   }
-
-  // Layer 3: 环境保护 - 防止数据过期
-  if (userStore.isLoggedIn && !userStore.userInfo) {
-    console.warn("⚠️ 异常状态：已登录但无用户信息，尝试重新获取");
-    userStore.fetchUserInfo().catch((error) => {
-      console.error("重新获取用户信息失败:", error);
-    });
-  }
-
-  // Layer 4: 调试日志 - 记录数据刷新
-  console.log("=== Layer 4: 开始刷新打卡数据 ===");
-
-  // 刷新打卡数据，确保从其他页面返回时数据是最新的
-  refreshCheckinData().catch((error) => {
-    console.error("首页onShow刷新数据失败:", error);
-  });
-});
-
-// 监听打卡规则更新事件
-uni.$on("checkinRulesUpdated", (data) => {
-  console.log("=== 检测到打卡规则更新事件 ===");
-  console.log("事件数据:", data);
-
-  // 强制刷新打卡数据，确保显示最新状态
-  checkinStore
-    .refreshData()
-    .then(() => {
-      console.log("✅ 响应规则更新事件，数据已刷新");
-      updateMainButton();
-    })
-    .catch((error) => {
-      console.error("❌ 响应规则更新事件失败:", error);
-    });
 });
 </script>
 
@@ -840,6 +796,57 @@ uni.$on("checkinRulesUpdated", (data) => {
 }
 
 .btn-subtext {
+  display: block;
+  font-size: $uni-font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// 一键求助按钮样式
+.help-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+  border: none;
+  border-radius: $uni-radius-lg;
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 16rpx 48rpx rgba(255, 71, 87, 0.4);
+  transition: all 0.3s ease;
+}
+
+.help-btn:active {
+  transform: translateY(4rpx);
+  box-shadow: 0 8rpx 24rpx rgba(255, 71, 87, 0.3);
+}
+
+.help-btn .btn-icon {
+  font-size: 64rpx;
+  margin-bottom: 16rpx;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.help-btn .btn-text {
+  display: block;
+  font-size: $uni-font-size-xl;
+  font-weight: 600;
+  color: $uni-white;
+  margin-bottom: 8rpx;
+}
+
+.help-btn .btn-subtext {
   display: block;
   font-size: $uni-font-size-sm;
   color: rgba(255, 255, 255, 0.8);

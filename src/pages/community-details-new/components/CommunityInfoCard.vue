@@ -33,14 +33,14 @@
           <text class="stat-label">成员</text>
         </view>
         
-        <view class="stat-item">
+        <view class="stat-item" @click="handleEventCountClick">
           <text class="stat-number support-count">{{ stats.support_count || 0 }}</text>
           <text class="stat-label">应援</text>
         </view>
         
-        <view class="stat-item">
-          <text class="stat-number active-count">{{ stats.active_events || 0 }}</text>
-          <text class="stat-label">活跃</text>
+        <view class="stat-item" @click="handleEventCountClick">
+          <text class="stat-number active-count clickable">{{ stats.active_events || 0 }}</text>
+          <text class="stat-label">事件</text>
         </view>
       </view>
       
@@ -62,7 +62,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { useUserStore } from '@/store/modules/user';
+
+const props = defineProps({
   community: {
     type: Object,
     default: () => ({})
@@ -71,7 +73,41 @@ defineProps({
     type: Object,
     default: () => ({})
   }
-})
+});
+
+const userStore = useUserStore();
+
+// 处理事件数量点击
+const handleEventCountClick = () => {
+  // 检查用户是否为社区工作人员
+  const userInfo = userStore.userInfo;
+  if (!userInfo) {
+    uni.showToast({
+      title: "请先登录",
+      icon: "none",
+      duration: 2000
+    });
+    return;
+  }
+
+  // 简单的权限检查：检查用户角色或社区成员关系
+  // 这里假设user_id和community_id可以用来判断权限
+  const isStaffMember = userInfo.role >= 2; // 假设role >= 2是工作人员
+  
+  if (!isStaffMember) {
+    // 普通用户点击不做任何处理
+    console.log("普通用户点击事件数量，无响应");
+    return;
+  }
+
+  // 工作人员点击跳转到事件列表页面
+  uni.navigateTo({
+    url: `/pages/community-events/community-events?community_id=${props.community.community_id}`
+  });
+};
+
+// 定义emit事件
+const emit = defineEmits(['event-count-click']);
 </script>
 
 <style lang="scss" scoped>
@@ -154,6 +190,16 @@ defineProps({
           
           &.active-count {
             color: $uni-danger;
+          }
+          
+          &.clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &:active {
+              transform: scale(0.95);
+              opacity: 0.8;
+            }
           }
         }
         

@@ -339,7 +339,8 @@ const loadCommunityDetail = async () => {
           // loadUserList(), // 改为懒加载，只在切换到用户Tab时加载
           // loadRuleList(), // 规则列表由CommunityRulesTabGrouped组件自己加载
           loadAssignList(),
-          loadSupportList()
+          loadSupportList(),
+          loadCommunityEventStats()
         ])
         
         pageTitle.value = communityData.value.name
@@ -432,6 +433,41 @@ const loadSupportList = async () => {
     ]
   } catch (err) {
     console.error('加载应援列表失败:', err)
+  }
+}
+
+// 加载社区事件统计
+const loadCommunityEventStats = async () => {
+  try {
+    const token = uni.getStorageSync('token');
+    if (!token) {
+      console.warn('未找到token，无法获取事件统计');
+      return;
+    }
+
+    const response = await uni.request({
+      url: `/api/communities/${communityId.value}/stats`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.data.code === 1) {
+      // 更新统计数据
+      communityStats.value = {
+        ...communityStats.value,
+        active_events: response.data.data.active_events || 0,
+        support_count: response.data.data.support_count || 0
+      };
+      
+      console.log('社区事件统计:', response.data.data);
+    } else {
+      console.warn('获取社区事件统计失败:', response.data.msg);
+    }
+  } catch (err) {
+    console.error('加载社区事件统计失败:', err);
   }
 }
 

@@ -247,6 +247,14 @@
         "navigationBarTextStyle": "black",
         "enablePullDownRefresh": true
       }
+    },
+    {
+      "path": "pages/community-events/community-events",
+      "style": {
+        "navigationBarTitleText": "社区事件",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "easycom": {
