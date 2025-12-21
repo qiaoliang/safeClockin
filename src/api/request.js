@@ -150,7 +150,15 @@ function isValidURL(url) {
     return false
   }
   
-  const trimmedUrl = url.trim()
+  // 去除首尾空白
+  let trimmedUrl = url.trim()
+  
+  // 清理微信小程序环境添加的后缀信息
+  // 微信小程序会在console.log中自动添加环境信息，如：(env: macOS,mp,1.06.2504060; lib: 3.11.3)
+  const wechatEnvSuffix = /\(env:.*?; lib:.*?\)$/
+  if (wechatEnvSuffix.test(trimmedUrl)) {
+    trimmedUrl = trimmedUrl.replace(wechatEnvSuffix, '').trim()
+  }
   
   // 长度检查 - 防止过长URL导致内存问题
   if (trimmedUrl.length > 2048) {
