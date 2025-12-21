@@ -450,6 +450,11 @@ export const useUserStore = defineStore("user", {
                     ...apiResponse.data,
                 };
 
+                // 调试：记录社区信息
+                if (target.profile.community_id || target.profile.community_name) {
+                    console.log(`用户社区信息已保存: ID=${target.profile.community_id}, 名称=${target.profile.community_name}`);
+                }
+
                 this.isLoggedIn = true;
 
                 // 更新缓存时间

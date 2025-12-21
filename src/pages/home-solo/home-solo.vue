@@ -184,6 +184,11 @@ const userInfo = computed(() => {
     return null;
   }
 
+  // 调试：检查社区信息
+  if (user.community_id || user.community_name) {
+    console.log(`用户社区信息: ID=${user.community_id}, 名称=${user.community_name}`);
+  }
+
   // 确保昵称字段存在
   if (!user.nickName && !user.nickname) {
     if (user.wechat_openid) {
