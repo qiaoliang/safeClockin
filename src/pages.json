@@ -1,298 +1,290 @@
 {
-	"pages": [
-		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "安全守护",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"backgroundColor": "#FAE9DB"
-			}
-		},
-		{
-			"path": "pages/phone-login/phone-login",
-			"style": {
-				"navigationBarTitleText": "手机号注册/登录",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"backgroundColor": "#FAE9DB"
-			}
-		},
-		{
-			"path": "pages/role-select/role-select",
-			"style": {
-				"navigationBarTitleText": "选择角色",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-auth/community-auth",
-			"style": {
-				"navigationBarTitleText": "身份验证",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/home-solo/home-solo",
-			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/home-supervisor/home-supervisor",
-			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/home-community/home-community",
-			"style": {
-				"navigationBarTitleText": "数据看板",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/profile/profile",
-			"style": {
-				"navigationBarTitleText": "个人中心",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/profile-edit/profile-edit",
-			"style": {
-				"navigationBarTitleText": "编辑个人信息",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/checkin-list/checkin-list",
-			"style": {
-				"navigationBarTitleText": "打卡事项",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/rule-setting/rule-setting",
-			"style": {
-				"navigationBarTitleText": "打卡规则",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/add-rule/add-rule",
-			"style": {
-				"navigationBarTitleText": "添加规则",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-checkin-rule-form/community-checkin-rule-form",
-			"style": {
-				"navigationBarTitleText": "社区打卡规则",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/supervisor-manage/supervisor-manage",
-			"style": {
-				"navigationBarTitleText": "监护管理",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/invite-supervisor/invite-supervisor",
-			"style": {
-				"navigationBarTitleText": "邀请监护人",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/supervisor-detail/supervisor-detail",
-			"style": {
-				"navigationBarTitleText": "监护详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/supervisor-invite/supervisor-invite",
-			"style": {
-				"navigationBarTitleText": "监督邀请",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/notification-settings/notification-settings",
-			"style": {
-				"navigationBarTitleText": "通知设置",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/unchecked-detail/unchecked-detail",
-			"style": {
-				"navigationBarTitleText": "未打卡详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-manage/community-manage",
-			"style": {
-				"navigationBarTitleText": "社区管理",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"enablePullDownRefresh": true,
-				"onReachBottomDistance": 50
-			}
-		},
-		{
-			"path": "pages/community-form/community-form",
-			"style": {
-				"navigationBarTitleText": "社区信息",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-merge/community-merge",
-			"style": {
-				"navigationBarTitleText": "社区合并",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-split/community-split",
-			"style": {
-				"navigationBarTitleText": "社区拆分",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-staff-manage/community-staff-manage",
-			"style": {
-				"navigationBarTitleText": "工作人员管理",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
-			"path": "pages/staff-detail/staff-detail",
-			"style": {
-				"navigationBarTitleText": "工作人员详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/staff-add/staff-add",
-			"style": {
-				"navigationBarTitleText": "添加工作人员",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-user-manage/community-user-manage",
-			"style": {
-				"navigationBarTitleText": "社区用户管理",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"enablePullDownRefresh": true,
-				"onReachBottomDistance": 50
-			}
-		},
-		{
-			"path": "pages/community-user-add/community-user-add",
-			"style": {
-				"navigationBarTitleText": "添加用户",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/uni-ui-test/uni-ui-test",
-			"style": {
-				"navigationBarTitleText": "uni-ui 组件测试",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/uni-ui-time/uni-ui-time",
-			"style": {
-				"navigationBarTitleText": "uni-ui time测试",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/community-details-new/community-details-new",
-			"style": {
-				"navigationBarTitleText": "社区详情",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black",
-				"enablePullDownRefresh": true
-			}
-		}
-	],
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			"^uni-(.*)": "@/uni_modules/uni-$1/components/uni-$1/uni-$1.vue"
-		}
-	},
-	"tabBar": {
-		"color": "#624731",
-		"selectedColor": "#F48224",
-		"backgroundColor": "#FAE9DB",
-		"borderStyle": "white",
-		"list": [
-			{
-				"pagePath": "pages/home-solo/home-solo",
-				"text": "打卡",
-				"iconPath": "static/tabbar/clockin_deactive.png",
-				"selectedIconPath": "static/tabbar/clockin_active.png"
-			},
-			{
-				"pagePath": "pages/home-community/home-community",
-				"text": "社区",
-				"iconPath": "static/tabbar/supervise_deactive.png",
-				"selectedIconPath": "static/tabbar/supervise_active.png"
-			},
-			{
-				"pagePath": "pages/profile/profile",
-				"text": "我的",
-				"iconPath": "static/tabbar/my_deactive.png",
-				"selectedIconPath": "static/tabbar/my_active.png"
-			}
-		]
-	},
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "安全守护",
-		"navigationBarBackgroundColor": "#FAE9DB",
-		"backgroundColor": "#FAE9DB"
-	}
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "安全守护",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "backgroundColor": "#FAE9DB"
+      }
+    },
+    {
+      "path": "pages/phone-login/phone-login",
+      "style": {
+        "navigationBarTitleText": "手机号注册/登录",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "backgroundColor": "#FAE9DB"
+      }
+    },
+    {
+      "path": "pages/role-select/role-select",
+      "style": {
+        "navigationBarTitleText": "选择角色",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-auth/community-auth",
+      "style": {
+        "navigationBarTitleText": "身份验证",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/home-solo/home-solo",
+      "style": {
+        "navigationBarTitleText": "首页",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/home-community/home-community",
+      "style": {
+        "navigationBarTitleText": "数据看板",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/profile-edit/profile-edit",
+      "style": {
+        "navigationBarTitleText": "编辑个人信息",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/checkin-list/checkin-list",
+      "style": {
+        "navigationBarTitleText": "打卡事项",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/rule-setting/rule-setting",
+      "style": {
+        "navigationBarTitleText": "打卡规则",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/add-rule/add-rule",
+      "style": {
+        "navigationBarTitleText": "添加规则",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-checkin-rule-form/community-checkin-rule-form",
+      "style": {
+        "navigationBarTitleText": "社区打卡规则",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/supervisor-manage/supervisor-manage",
+      "style": {
+        "navigationBarTitleText": "监护管理",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/invite-supervisor/invite-supervisor",
+      "style": {
+        "navigationBarTitleText": "邀请监护人",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/supervisor-detail/supervisor-detail",
+      "style": {
+        "navigationBarTitleText": "监护详情",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/supervisor-invite/supervisor-invite",
+      "style": {
+        "navigationBarTitleText": "监督邀请",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/notification-settings/notification-settings",
+      "style": {
+        "navigationBarTitleText": "通知设置",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/unchecked-detail/unchecked-detail",
+      "style": {
+        "navigationBarTitleText": "未打卡详情",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-manage/community-manage",
+      "style": {
+        "navigationBarTitleText": "社区管理",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/community-form/community-form",
+      "style": {
+        "navigationBarTitleText": "社区信息",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-merge/community-merge",
+      "style": {
+        "navigationBarTitleText": "社区合并",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-split/community-split",
+      "style": {
+        "navigationBarTitleText": "社区拆分",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-staff-manage/community-staff-manage",
+      "style": {
+        "navigationBarTitleText": "工作人员管理",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/staff-detail/staff-detail",
+      "style": {
+        "navigationBarTitleText": "工作人员详情",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/staff-add/staff-add",
+      "style": {
+        "navigationBarTitleText": "添加工作人员",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-user-manage/community-user-manage",
+      "style": {
+        "navigationBarTitleText": "社区用户管理",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/community-user-add/community-user-add",
+      "style": {
+        "navigationBarTitleText": "添加用户",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/uni-ui-test/uni-ui-test",
+      "style": {
+        "navigationBarTitleText": "uni-ui 组件测试",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/uni-ui-time/uni-ui-time",
+      "style": {
+        "navigationBarTitleText": "uni-ui time测试",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/community-details-new/community-details-new",
+      "style": {
+        "navigationBarTitleText": "社区详情",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true
+      }
+    }
+  ],
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@/uni_modules/uni-$1/components/uni-$1/uni-$1.vue"
+    }
+  },
+  "tabBar": {
+    "color": "#624731",
+    "selectedColor": "#F48224",
+    "backgroundColor": "#FAE9DB",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home-solo/home-solo",
+        "text": "打卡",
+        "iconPath": "static/tabbar/clockin_deactive.png",
+        "selectedIconPath": "static/tabbar/clockin_active.png"
+      },
+      {
+        "pagePath": "pages/home-community/home-community",
+        "text": "社区",
+        "iconPath": "static/tabbar/supervise_deactive.png",
+        "selectedIconPath": "static/tabbar/supervise_active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/tabbar/my_deactive.png",
+        "selectedIconPath": "static/tabbar/my_active.png"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "安全守护",
+    "navigationBarBackgroundColor": "#FAE9DB",
+    "backgroundColor": "#FAE9DB"
+  }
 }

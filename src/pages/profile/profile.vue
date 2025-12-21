@@ -84,15 +84,6 @@
 
       <view
         class="menu-item"
-        @click="navigateTo('/pages/home-supervisor/home-supervisor')"
-      >
-        <view class="menu-icon"> 👁️ </view>
-        <text class="menu-text"> 我的监督 </text>
-        <text class="menu-arrow"> › </text>
-      </view>
-
-      <view
-        class="menu-item"
         @click="navigateTo('/pages/notification-settings/notification-settings')"
       >
         <view class="menu-icon"> 🔔 </view>

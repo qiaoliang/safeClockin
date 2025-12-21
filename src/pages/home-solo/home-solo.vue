@@ -292,7 +292,7 @@ const parseTodayTime = (hhmmss) => {
 
 const updateMainButton = () => {
   if (allRulesCount.value === 0) {
-    mainBtnText.value = "马上行动吧";
+    mainBtnText.value = "一键求助";
     mainBtnSubtext.value = "";
     return;
   }
