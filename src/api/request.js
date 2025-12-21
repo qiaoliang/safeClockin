@@ -187,6 +187,22 @@ function isValidURL(url) {
   
   // 验证URL结构
   try {
+    // 检查URL构造函数是否可用
+    if (typeof URL === 'undefined') {
+      console.warn('⚠️ URL构造函数不可用，使用替代验证方案')
+      // 替代验证方案：基本URL格式检查
+      if (trimmedUrl.startsWith('/')) {
+        const pathOnly = trimmedUrl.split('?')[0]
+        const validPathRegex = /^\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]*$/
+        return validPathRegex.test(pathOnly)
+      } else if (trimmedUrl.startsWith('http')) {
+        // 简单的HTTP URL格式检查
+        const httpUrlRegex = /^https?:\/\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]+$/
+        return httpUrlRegex.test(trimmedUrl)
+      }
+      return false
+    }
+    
     // 对于相对URL，添加基础URL进行验证
     const testUrl = trimmedUrl.startsWith('http') ? trimmedUrl : `http://example.com${trimmedUrl.startsWith('/') ? trimmedUrl : '/' + trimmedUrl}`
     const parsedUrl = new URL(testUrl)
