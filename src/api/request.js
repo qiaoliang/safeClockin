@@ -309,7 +309,7 @@ export const request = (options) => {
       console.log('🔍 系统化调试 - GET请求诊断:')
       console.log('  原始URL:', requestUrl)
       console.log('  data参数:', options.data)
-      console.log('  URLSearchParams支持:', isURLSearchParamsSupported ? '是' : '否')
+      console.log('  URLSearchParams支持:', environmentInfo.urlSearchParamsSupported ? '是' : '否')
       
       // Layer 4: 调试仪表 - 全面调试和取证记录
       const debugContext = {
@@ -338,7 +338,7 @@ export const request = (options) => {
       })
       console.log('🔍 Layer 4调试仪表 - 脱敏数据:', sanitizedData)
       
-      if (isURLSearchParamsSupported) {
+      if (environmentInfo.urlSearchParamsSupported) {
         // 使用URLSearchParams
         try {
           const params = new URLSearchParams()
