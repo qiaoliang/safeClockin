@@ -20,6 +20,9 @@
               <text class="greeting-text">
                 {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
               </text>
+              <text class="community-text" v-if="userInfo?.community_name">
+                {{ userInfo.community_name }}
+              </text>
               <text class="date-text">
                 {{ getCurrentDate() }}
               </text>
@@ -168,6 +171,11 @@ import { useCheckinStore } from "@/store/modules/checkin";
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
 
+// 响应式变量
+const currentRole = ref('checkin');
+const pendingCheckinCount = ref(0);
+const nearbyTasks = ref([]);
+
 // 计算属性：用户信息
 const userInfo = computed(() => {
   const user = userStore.userInfo;
@@ -239,6 +247,17 @@ const initCheckinData = async () => {
     updateMainButton();
   } catch (error) {
     console.warn("⚠️ 初始化打卡数据失败:", error);
+  }
+};
+
+// 更新主按钮状态
+const updateMainButton = () => {
+  try {
+    // 根据当前任务状态更新按钮显示
+    const hasPendingTasks = pendingCheckinCount.value > 0;
+    console.log(`更新主按钮状态: ${hasPendingTasks ? '有待完成任务' : '无待完成任务'}`);
+  } catch (error) {
+    console.error("更新主按钮状态失败:", error);
   }
 };
 
@@ -444,6 +463,7 @@ const handleTaskAction = async (task) => {
 onMounted(() => {
   // 页面加载时的初始化逻辑
   console.log("首页加载完成");
+  initializePageData();
 });
 
 onShow(() => {
@@ -454,7 +474,49 @@ onShow(() => {
   if (!userStore.userInfo) {
     userStore.initUserState();
   }
+  
+  // 刷新页面数据
+  initializePageData();
 });
+
+// 初始化页面数据
+const initializePageData = async () => {
+  try {
+    // 初始化打卡数据
+    await initCheckinData();
+    
+    // 更新任务数据
+    updateTaskData();
+  } catch (error) {
+    console.warn("⚠️ 初始化页面数据失败:", error);
+  }
+};
+
+// 更新任务数据
+const updateTaskData = () => {
+  try {
+    // 获取今日任务数据
+    const todayTasks = checkinStore.todayCheckinRules || [];
+    nearbyTasks.value = todayTasks.map(task => ({
+      rule_id: task.rule_id,
+      rule_name: task.rule_name,
+      planned_time: task.planned_time,
+      end_time: task.end_time,
+      icon: task.icon || '📋',
+      iconBg: task.icon_bg || '#4CAF50',
+      status: task.status || 'pending'
+    }));
+    
+    // 计算待打卡数量
+    pendingCheckinCount.value = nearbyTasks.value.filter(task => task.status === 'pending').length;
+    
+    console.log(`更新任务数据: ${nearbyTasks.value.length} 项任务，${pendingCheckinCount.value} 项待完成`);
+  } catch (error) {
+    console.error("更新任务数据失败:", error);
+    nearbyTasks.value = [];
+    pendingCheckinCount.value = 0;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -506,6 +568,14 @@ onShow(() => {
   font-weight: 700;
   color: $uni-tabbar-color;
   margin-bottom: 8rpx;
+}
+
+.community-text {
+  display: block;
+  font-size: $uni-font-size-sm;
+  color: $uni-primary;
+  font-weight: 600;
+  margin-bottom: 4rpx;
 }
 
 .date-text {
