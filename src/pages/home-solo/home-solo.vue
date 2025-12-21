@@ -146,7 +146,7 @@
     </uni-list>
   </uni-card>
 
-  <!-- 今日行动主按钮 -->
+  <!-- 一键求助主按钮 -->
   <view class="today-tasks-section">
     <button
       :class="['today-tasks-btn', { disabled: disableMainBtn }]"

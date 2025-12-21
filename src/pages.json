@@ -106,14 +106,14 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
-        {
-            "path": "pages/supervisor-manage/supervisor-manage",
-            "style": {
-                "navigationBarTitleText": "监护管理",
-                "navigationBarBackgroundColor": "#FAE9DB",
-                "navigationBarTextStyle": "black"
-            }
-        },
+		{
+			"path": "pages/supervisor-manage/supervisor-manage",
+			"style": {
+				"navigationBarTitleText": "监护管理",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
 		{
 			"path": "pages/invite-supervisor/invite-supervisor",
 			"style": {
@@ -122,22 +122,22 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
-        {
-            "path": "pages/supervisor-detail/supervisor-detail",
-            "style": {
-                "navigationBarTitleText": "监护详情",
-                "navigationBarBackgroundColor": "#FAE9DB",
-                "navigationBarTextStyle": "black"
-            }
-        },
-        {
-            "path": "pages/supervisor-invite/supervisor-invite",
-            "style": {
-                "navigationBarTitleText": "监督邀请",
-                "navigationBarBackgroundColor": "#FAE9DB",
-                "navigationBarTextStyle": "black"
-            }
-        },
+		{
+			"path": "pages/supervisor-detail/supervisor-detail",
+			"style": {
+				"navigationBarTitleText": "监护详情",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/supervisor-invite/supervisor-invite",
+			"style": {
+				"navigationBarTitleText": "监督邀请",
+				"navigationBarBackgroundColor": "#FAE9DB",
+				"navigationBarTextStyle": "black"
+			}
+		},
 		{
 			"path": "pages/notification-settings/notification-settings",
 			"style": {
@@ -227,14 +227,6 @@
 			"path": "pages/community-user-add/community-user-add",
 			"style": {
 				"navigationBarTitleText": "添加用户",
-				"navigationBarBackgroundColor": "#FAE9DB",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/debug/user-debug",
-			"style": {
-				"navigationBarTitleText": "用户调试",
 				"navigationBarBackgroundColor": "#FAE9DB",
 				"navigationBarTextStyle": "black"
 			}
