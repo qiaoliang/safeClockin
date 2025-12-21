@@ -175,7 +175,7 @@ const getTodayCheckinItems = async () => {
     })
     
     if (response.code === 1) {
-      checkinItems.value = (response.data.checkin_items || []).map(it => ({ ...it }))
+      checkinItems.value = (response.data || []).map(it => ({ ...it }))
       normalizeMissedStatuses()
     } else {
       uni.showToast({
