@@ -136,50 +136,50 @@ export const authApi = {
   }),
   // 监督相关API
   searchUsers:(params) => request({
-    url: '/api/users/search',
+    url: '/api/user/search',
     method: 'GET',
     data: params
   }),
   inviteSupervisor:(data) => request({
-    url: '/api/rules/supervision/invite',
+    url: '/api/supervision/invite',
     method: 'POST',
     data
   }),
   inviteSupervisorLink:(data) => request({
-    url: '/api/rules/supervision/invite_link',
+    url: '/api/supervision/invite_link',
     method: 'POST',
     data
   }),
   resolveInviteToken:(params) => request({
-    url: '/api/rules/supervision/invite/resolve',
+    url: '/api/supervision/invite/resolve',
     method: 'GET',
     data: params
   }),
   getSupervisionInvitations:(params) => request({
-    url: '/api/rules/supervision/invitations',
+    url: '/api/supervision/invitations',
     method: 'GET',
     data: params
   }),
   acceptSupervisionInvitation:(data) => request({
-    url: '/api/rules/supervision/accept',
+    url: '/api/supervision/accept',
     method: 'POST',
     data
   }),
   rejectSupervisionInvitation:(data) => request({
-    url: '/api/rules/supervision/reject',
+    url: '/api/supervision/reject',
     method: 'POST',
     data
   }),
   getMySupervisedUsers:() => request({
-    url: '/api/rules/supervision/my_supervised',
+    url: '/api/supervision/my_supervised',
     method: 'GET'
   }),
   getMyGuardians:() => request({
-    url: '/api/rules/supervision/my_guardians',
+    url: '/api/supervision/my_guardians',
     method: 'GET'
   }),
   getSupervisedRecords:(params) => request({
-    url: '/api/rules/supervision/records',
+    url: '/api/supervision/records',
     method: 'GET',
     data: params
   }),
@@ -277,7 +277,7 @@ export const authApi = {
   }),
   // 搜索用户（用于社区添加用户）
   searchUsers: (params) => request({
-    url: '/api/users/search',
+    url: '/api/user/search',
     method: 'GET',
     data: params
   }).then(response => {
