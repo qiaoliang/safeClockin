@@ -108,9 +108,9 @@ export const useCheckinStore = defineStore("checkin", {
                 });
 
                 if (response.code === 1) {
-                    this.todayCheckinItems = (
-                        response.data || []
-                    ).map((item) => ({
+                    // 适配新的数据结构格式
+                    const items = response.data?.items || response.data || []
+                    this.todayCheckinItems = items.map((item) => ({
                         ...item,
                     }));
 

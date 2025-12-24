@@ -175,7 +175,9 @@ const getTodayCheckinItems = async () => {
     })
     
     if (response.code === 1) {
-      checkinItems.value = (response.data || []).map(it => ({ ...it }))
+      // 适配新的数据结构格式
+      const items = response.data?.items || response.data || []
+      checkinItems.value = items.map(it => ({ ...it }))
       normalizeMissedStatuses()
     } else {
       uni.showToast({
