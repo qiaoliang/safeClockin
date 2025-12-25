@@ -498,13 +498,13 @@ const initializePageData = async () => {
 const updateTaskData = () => {
   try {
     // 获取今日任务数据
-    const todayTasks = checkinStore.todayCheckinRules || [];
+    const todayTasks = checkinStore.todayCheckinItems || [];
     nearbyTasks.value = todayTasks.map(task => ({
       rule_id: task.rule_id,
       rule_name: task.rule_name,
       planned_time: task.planned_time,
       end_time: task.end_time,
-      icon: task.icon || '📋',
+      icon: task.icon_url || '📋',
       iconBg: task.icon_bg || '#4CAF50',
       status: task.status || 'pending'
     }));
