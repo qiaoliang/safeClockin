@@ -144,6 +144,9 @@ import CommunitySettingsModal from './components/modals/CommunitySettingsModal.v
 import CommunityAddStaffModal from './components/modals/CommunityAddStaffModal.vue'
 import CommunityAddUserModal from './components/modals/CommunityAddUserModal.vue'
 
+// API
+import { addCommunityStaff } from '@/api/community'
+
 // Store
 const userStore = useUserStore()
 const communityStore = useCommunityStore()
@@ -625,19 +628,50 @@ const closeAddStaffModal = () => {
 
 const confirmAddStaff = async (staffData) => {
   try {
-    // TODO: 调用API添加专员
-    await new Promise(resolve => setTimeout(resolve, 300))
+    console.log('开始添加专员:', staffData)
     
-    const newStaff = {
-      id: `staff_${Date.now()}`,
-      ...staffData
+    // 调用真实的API添加专员
+    const response = await addCommunityStaff({
+      community_id: communityId.value,
+      user_ids: staffData.userIds,
+      role: 'staff'
+    })
+    
+    console.log('添加专员API响应:', response)
+    
+    if (response.code === 1) {
+      const addedCount = response.data?.added_count || 0
+      const failedCount = response.data?.failed_count || 0
+      
+      if (addedCount > 0) {
+        uni.showToast({ 
+          title: `成功添加${addedCount}名专员`, 
+          icon: 'success' 
+        })
+        
+        // 关闭模态框
+        showAddStaffModal.value = false
+        
+        // 刷新专员列表 - 这是最关键的修复
+        console.log('开始刷新专员列表...')
+        await refreshStaffList()
+        
+        console.log('专员列表刷新完成')
+      } else {
+        uni.showToast({ 
+          title: '添加失败', 
+          icon: 'error' 
+        })
+      }
+    } else {
+      console.error('添加专员失败:', response.msg)
+      uni.showToast({ 
+        title: response.msg || '添加失败', 
+        icon: 'error' 
+      })
     }
-    
-    staffList.value.unshift(newStaff)
-    uni.showToast({ title: '添加成功', icon: 'success' })
-    showAddStaffModal.value = false
   } catch (err) {
-    console.error('添加专员失败:', err)
+    console.error('添加专员异常:', err)
     uni.showToast({ title: '添加失败', icon: 'error' })
   }
 }
