@@ -385,8 +385,8 @@ const loadRules = async () => {
   error.value = "";
 
   try {
-    // 注意：这里不传include_disabled参数，后端会返回分组数据
-    const response = await getCommunityRules(props.communityId);
+    // 传递grouped=true参数，后端会返回分组数据
+    const response = await getCommunityRules(props.communityId, true);
     if (response.code === 1) {
       // 后端返回的是分组数据
       groupedRules.value = {

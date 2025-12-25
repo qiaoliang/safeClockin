@@ -8,14 +8,16 @@ import { request } from "./request";
 /**
  * 获取社区规则列表
  * @param {number} communityId - 社区ID
+ * @param {boolean} grouped - 是否返回分组数据（默认false）
  * @returns {Promise}
  */
-export const getCommunityRules = (communityId) => {
+export const getCommunityRules = (communityId, grouped = false) => {
     return request({
         url: "/api/community_checkin/rules",
         method: "GET",
         data: {
             community_id: communityId,
+            grouped: grouped,
         },
     });
 };
