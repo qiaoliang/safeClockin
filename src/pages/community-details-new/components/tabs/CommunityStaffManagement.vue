@@ -163,24 +163,24 @@ const loadStaffList = async (page = 1, isLoadMore = false) => {
     
     if (response.code === 1) {
       // Layer 3: 环境守卫 - 安全地访问响应字段
-      const staff_members = response.data?.staff_members || []
+      const staff = response.data?.staff || []
       const pagination = response.data?.pagination || {}
       
       // Layer 4: 调试仪表 - 记录响应结构用于取证
       console.log('专员列表API响应:', {
         code: response.code,
-        has_staff_members: Array.isArray(staff_members),
-        staff_members_count: staff_members.length,
+        has_staff: Array.isArray(staff),
+        staff_count: staff.length,
         has_pagination: !!pagination,
         pagination_fields: pagination
       })
       
       if (isLoadMore) {
         // 加载更多时追加数据
-        staffList.value = [...staffList.value, ...staff_members]
+        staffList.value = [...staffList.value, ...staff]
       } else {
         // 首次加载时替换数据
-        staffList.value = staff_members
+        staffList.value = staff
       }
       
       // 安全地设置分页值，提供默认值

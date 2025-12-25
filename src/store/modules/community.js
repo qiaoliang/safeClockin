@@ -268,7 +268,7 @@ export const useCommunityStore = defineStore('community', {
         })
         
         if (response.code === 1) {
-          this.staffMembers = response.data.staff_members || []
+          this.staffMembers = response.data.staff || []
         }
         
         return response

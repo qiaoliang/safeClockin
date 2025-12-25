@@ -52,19 +52,19 @@
           <view class="card-stats">
             <view class="stat-item">
               <text class="stat-number">
-                {{ community.user_count || 0 }}
+                {{ community.worker_count || 0 }}
               </text>
               <text class="stat-label">
-                用户
+                工作人员
               </text>
             </view>
             <view class="stat-divider" />
             <view class="stat-item">
               <text class="stat-number">
-                {{ community.admin_count || 0 }}
+                {{ community.manager_count || 0 }}
               </text>
               <text class="stat-label">
-                管理员
+                主管
               </text>
             </view>
           </view>
