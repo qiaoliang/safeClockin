@@ -95,6 +95,28 @@
     <!-- 社区管理菜单组 -->
     <view v-if="communityManagementItems.length > 0" class="menu-section">
       <view class="menu-group-title"> 社区管理 </view>
+      
+      <!-- 管理的社区列表 -->
+      <view v-if="managedCommunities.length > 0" class="managed-communities">
+        <view class="menu-group-subtitle"> 我管理的社区 </view>
+        <view
+          v-for="community in managedCommunities"
+          :key="community.community_id"
+          class="community-item"
+          @click="navigateToCommunity(community)"
+        >
+          <view class="community-info">
+            <text class="community-name">{{ community.name }}</text>
+            <text class="community-desc">{{ community.description || '暂无描述' }}</text>
+          </view>
+          <view class="community-stats">
+            <text class="member-count">{{ community.member_count || 0 }}人</text>
+            <text class="menu-arrow"> › </text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 管理功能菜单 -->
       <view
         v-for="item in communityManagementItems"
         :key="item.name"
@@ -134,12 +156,17 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 import { routeGuard } from "@/utils/router";
+import { getManagedCommunities } from "@/api/community";
 
 const userStore = useUserStore();
+
+// 管理的社区列表
+const managedCommunities = ref([]);
+const isLoadingCommunities = ref(false);
 
 // 计算属性：社区管理菜单项 - 根据角色动态生成
 const communityManagementItems = computed(() => {
@@ -311,6 +338,36 @@ const navigateTo = (url) => {
   routeGuard(url);
 };
 
+// 加载管理的社区列表
+const loadManagedCommunities = async () => {
+  // 只有社区工作人员才加载
+  if (!userStore.hasCommunityPermission) {
+    return;
+  }
+
+  try {
+    isLoadingCommunities.value = true;
+    const response = await getManagedCommunities();
+    
+    if (response.code === 1) {
+      managedCommunities.value = response.data.communities || [];
+      console.log('管理的社区列表加载成功:', managedCommunities.value.length);
+    } else {
+      console.error('加载管理的社区列表失败:', response.msg);
+    }
+  } catch (error) {
+    console.error('加载管理的社区列表异常:', error);
+  } finally {
+    isLoadingCommunities.value = false;
+  }
+};
+
+// 导航到社区详情
+const navigateToCommunity = (community) => {
+  // 导航到社区详情页面
+  routeGuard(`/pages/community-detail/community-detail?community_id=${community.community_id}`);
+};
+
 const editProfile = () => {
   routeGuard("/pages/profile-edit/profile-edit");
 };
@@ -375,6 +432,9 @@ onShow(() => {
       console.error("重新获取用户信息失败:", error);
     });
   }
+
+  // 加载管理的社区列表（如果是社区工作人员）
+  loadManagedCommunities();
 
   // Layer 4: 调试日志 - 记录当前状态
   console.log("=== Layer 4: 个人中心页面显示完成 ===");
@@ -508,6 +568,68 @@ onShow(() => {
   font-weight: 500;
   background: #fafafa;
   border-bottom: 2rpx solid #f0f0f0;
+}
+
+.menu-group-subtitle {
+  padding: 16rpx 48rpx 8rpx;
+  font-size: 26rpx;
+  color: #666;
+  font-weight: 500;
+  background: #fafafa;
+}
+
+.managed-communities {
+  background: #f8f8f8;
+}
+
+.community-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 48rpx;
+  background: white;
+  margin: 0 24rpx 16rpx 24rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.community-item:active {
+  transform: scale(0.98);
+  background-color: #f8f8f8;
+}
+
+.community-info {
+  flex: 1;
+  margin-right: 24rpx;
+}
+
+.community-name {
+  display: block;
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.community-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-stats {
+  display: flex;
+  align-items: center;
+}
+
+.member-count {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 16rpx;
 }
 
 .menu-item {
