@@ -59,27 +59,21 @@ export const useCommunityStore = defineStore('community', {
       try {
         this.loading = true
         
-        const page = refresh ? 1 : this.currentPage
-        
+        // 使用 /api/user/managed-communities API
         const response = await request({
-          url: '/api/community/list',
-          method: 'GET',
-          data: {
-            page,
-            page_size: this.pageSize
-          }
+          url: '/api/user/managed-communities',
+          method: 'GET'
         })
         
         if (response.code === 1) {
-          if (refresh) {
-            this.communities = response.data.communities || []
-            this.currentPage = 1
-          } else {
-            this.communities.push(...(response.data.communities || []))
-          }
+          // /api/user/managed-communities 返回格式不同
+          // managed-communities API 不支持分页，直接替换数据
+          this.communities = response.data.communities || []
           
-          this.hasMore = response.data.has_more || false
-          this.currentPage = page + 1
+          // managed-communities API 不返回 has_more，设为false
+          this.hasMore = false
+          // 重置页码为1，虽然新API不支持分页
+          this.currentPage = 1
         }
         
         return response
