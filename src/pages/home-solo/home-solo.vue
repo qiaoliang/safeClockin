@@ -165,7 +165,8 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
-import { useUserStore } from "@/store/modules/user";
+import { useUserStore } from '@/store/modules/user'
+import { request } from '@/api/request'
 import { useCheckinStore } from "@/store/modules/checkin";
 
 const userStore = useUserStore();
@@ -331,13 +332,9 @@ const createHelpEvent = async (userInfo) => {
       mask: true
     });
 
-    const response = await uni.request({
+    const response = await request({
       url: "/api/events",
       method: "POST",
-      header: {
-        "Authorization": `Bearer ${uni.getStorageSync("token")}`,
-        "Content-Type": "application/json"
-      },
       data: {
         community_id: userInfo.community_id,
         title: "紧急求助",
