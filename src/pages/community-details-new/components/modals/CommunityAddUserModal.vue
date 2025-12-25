@@ -277,13 +277,13 @@ const performSearch = async () => {
       // 安卡大家庭：使用通用搜索API
       response = await authApi.searchUsers({
         nickname: query,
-        limit: 20,
+        per_page: 20,
       });
     } else {
       // 普通社区：只从安卡大家庭搜索用户
       response = await authApi.searchAnkaFamilyUsers({
         keyword: query,
-        limit: 20,
+        per_page: 20,
       });
     }
 
