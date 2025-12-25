@@ -231,27 +231,37 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
     if (response.code === 1) {
       console.log("API调用成功，数据:", response.data);
       
-      // 适应后端返回的扁平化分页结构
+      // 适应后端返回的分页结构
       const users = response.data.users || [];
-      const pagination = {
-        total: response.data.total || 0,
-        page: response.data.page || 1,
-        per_page: response.data.per_page || 20,
-        has_more: response.data.has_next || false
-      };
+      const pagination = response.data.pagination || {};
+      
+      // 过滤掉当前社区的工作人员和超级管理员
+      const filteredUsers = users.filter(user => {
+        // 排除当前社区的专员和管理员
+        if (user.is_current_community_staff || user.is_current_community_manager) {
+          return false;
+        }
+        
+        // 排除超级管理员（role=4）
+        if (user.role === 4) {
+          return false;
+        }
+        
+        return true;
+      });
 
       if (isLoadMore) {
         // 加载更多时追加数据
-        userList.value = [...userList.value, ...users];
+        userList.value = [...userList.value, ...filteredUsers];
       } else {
         // 首次加载时替换数据
-        userList.value = users;
+        userList.value = filteredUsers;
       }
 
-      totalCount.value = pagination.total;
-      currentPage.value = pagination.page;
-      hasMore.value = pagination.has_more;
-      console.log("搜索完成，找到用户数:", users.length, "分页信息:", pagination);
+      totalCount.value = pagination.total || 0;
+      currentPage.value = pagination.page || 1;
+      hasMore.value = pagination.has_more || false;
+      console.log("搜索完成，找到用户数:", filteredUsers.length, "分页信息:", pagination);
     } else {
       console.log("API业务错误:", response.msg);
       error.value = response.msg || "搜索用户失败";
@@ -434,13 +444,14 @@ const handleConfirm = async () => {
 const searchUsersExcludingBlackroom = async (page = 1) => {
   try {
     const response = await request({
-      url: "/api/user/search-all-excluding-blackroom",
+      url: "/api/user/search",
       method: "GET",
       data: {
         keyword: searchKeyword.value,
+        type: "all", // 全局搜索
         page: page,
         per_page: pageSize.value,
-        exclude_community_id: props.communityId, // 排除当前社区的用户
+        community_id: props.communityId, // 传递社区ID用于过滤
       },
     });
 
