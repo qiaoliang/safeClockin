@@ -29,7 +29,7 @@
         </view>
         
         <view class="stat-item">
-          <text class="stat-number user-count">{{ stats.worker_count || 0 }}</text>
+          <text class="stat-number user-count">{{ stats.user_count || 0 }}</text>
           <text class="stat-label">成员</text>
         </view>
         
