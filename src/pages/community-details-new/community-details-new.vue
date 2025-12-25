@@ -313,24 +313,17 @@ const loadCommunityDetail = async () => {
       communityData.value = decodeCommunityData(response.data.community || {})
       
       // 验证返回的数据是否属于当前用户有权限的社区
-      if (communityData.value.id && communityData.value.id.toString() !== communityId.value.toString()) {
+      if (communityData.value.community_id && communityData.value.community_id.toString() !== communityId.value.toString()) {
         error.value = '数据验证失败'
         communityData.value = {}
       } else {
-        // 提取统计信息
-        communityStats.value = {
-          staff_count: communityData.value.stats?.staff_only_count ?? communityData.value.stats?.staff_count ?? 0, // 优先使用专员数量，使用??避免0被当作falsy
-          user_count: communityData.value.stats?.user_count || 0,
-          support_count: communityData.value.stats?.support_count || 0,
-          active_events: communityData.value.stats?.active_events || 0,
-          checkin_rate: communityData.value.stats?.checkin_rate || 0,
-          // 保留详细统计信息用于调试
-          _detailed: {
-            total_staff: communityData.value.stats?.staff_count || 0,
-            staff_only: communityData.value.stats?.staff_only_count ?? 0, // 同样使用??
-            managers: communityData.value.stats?.manager_count || 0,
-            admins: communityData.value.stats?.admin_count || 0
-          }
+        // 直接使用API返回的统计数据
+        communityStats.value = response.data.stats || {
+          staff_count: 0,
+          user_count: 0,
+          support_count: 0,
+          active_events: 0,
+          checkin_rate: 0
         }
         
         // 加载各Tab数据（用户列表改为懒加载）
@@ -339,8 +332,8 @@ const loadCommunityDetail = async () => {
           // loadUserList(), // 改为懒加载，只在切换到用户Tab时加载
           // loadRuleList(), // 规则列表由CommunityRulesTabGrouped组件自己加载
           loadAssignList(),
-          loadSupportList(),
-          loadCommunityEventStats()
+          loadSupportList()
+          // loadCommunityEventStats() // 统计数据已在社区详情API中返回
         ])
         
         pageTitle.value = communityData.value.name
@@ -436,40 +429,7 @@ const loadSupportList = async () => {
   }
 }
 
-// 加载社区事件统计
-const loadCommunityEventStats = async () => {
-  try {
-    const token = uni.getStorageSync('token');
-    if (!token) {
-      console.warn('未找到token，无法获取事件统计');
-      return;
-    }
 
-    const response = await uni.request({
-      url: `/api/communities/${communityId.value}/stats`,
-      method: 'GET',
-      header: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.data.code === 1) {
-      // 更新统计数据
-      communityStats.value = {
-        ...communityStats.value,
-        active_events: response.data.data.active_events || 0,
-        support_count: response.data.data.support_count || 0
-      };
-      
-      console.log('社区事件统计:', response.data.data);
-    } else {
-      console.warn('获取社区事件统计失败:', response.data.msg);
-    }
-  } catch (err) {
-    console.error('加载社区事件统计失败:', err);
-  }
-}
 
 // 事件处理
 const handleBack = () => {
