@@ -29,7 +29,7 @@
       <uni-swipe-action>
         <uni-swipe-action-item
           v-for="item in displayCommunities"
-          :key="item.id"
+          :key="item.community_id"
           :options="swipeOptions"
           @click="handleSwipeClick($event, item)"
         >
@@ -54,7 +54,7 @@
                 📍
               </text>
               <text class="location-text">
-                {{ item.location }}
+                {{ item.location || '未知地址' }}
               </text>
             </view>
 
@@ -352,21 +352,21 @@ const showActionMenu = (item) => {
 // 查看社区的工作人员
 const viewStaff = (community) => {
   uni.navigateTo({
-    url: `/pages/community-staff-manage/community-staff-manage?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+    url: `/pages/community-staff-manage/community-staff-manage?communityId=${community.community_id}&communityName=${encodeURIComponent(community.name)}`
   })
 }
 
 // 查看社区的用户
 const viewUsers = (community) => {
   uni.navigateTo({
-    url: `/pages/community-user-manage/community-user-manage?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+    url: `/pages/community-user-manage/community-user-manage?communityId=${community.community_id}&communityName=${encodeURIComponent(community.name)}`
   })
 }
 
 // 查看社区详情
 const viewCommunityDetail = (community) => {
   // 检查用户权限
-  if (!hasCommunityAccess(community.id)) {
+  if (!hasCommunityAccess(community.community_id)) {
     uni.showToast({
       title: '无权限查看该社区详情',
       icon: 'none'
@@ -375,7 +375,7 @@ const viewCommunityDetail = (community) => {
   }
   
   uni.navigateTo({
-    url: `/pages/community-details-new/community-details-new?communityId=${community.id}&communityName=${encodeURIComponent(community.name)}`
+    url: `/pages/community-details-new/community-details-new?communityId=${community.community_id}&communityName=${encodeURIComponent(community.name)}`
   })
 }
 
@@ -413,7 +413,7 @@ const createCommunity = () => {
 // 编辑社区
 const editCommunity = (item) => {
   uni.navigateTo({
-    url: `/pages/community-form/community-form?id=${item.id}`
+    url: `/pages/community-form/community-form?id=${item.community_id}`
   })
 }
 
@@ -431,7 +431,7 @@ const toggleCommunityStatus = (item, newStatus) => {
         try {
           uni.showLoading({ title: LOADING_MESSAGES.PROCESSING })
 
-          await communityStore.toggleCommunityStatus(item.id, newStatus)
+          await communityStore.toggleCommunityStatus(item.community_id, newStatus)
 
           uni.hideLoading()
           uni.showToast({
@@ -470,7 +470,7 @@ const deleteCommunity = (item) => {
         try {
           uni.showLoading({ title: LOADING_MESSAGES.DELETING })
 
-          await communityStore.deleteCommunity(item.id)
+          await communityStore.deleteCommunity(item.community_id)
 
           uni.hideLoading()
           uni.showToast({

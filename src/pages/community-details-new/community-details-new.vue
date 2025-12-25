@@ -126,7 +126,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import { getCommunityDetail, getCommunityStaffList, getCommunityUsers } from '@/api/community'
@@ -285,6 +285,15 @@ onLoad((options) => {
   } else {
     error.value = '未指定社区ID'
     loading.value = false
+  }
+})
+
+// 页面重新显示时刷新数据（处理从编辑页面返回的情况）
+onShow(() => {
+  // 如果已经有社区ID，重新加载详情以确保数据是最新的
+  if (communityId.value && !loading.value) {
+    console.log('页面重新显示，刷新社区详情数据')
+    loadCommunityDetail()
   }
 })
 

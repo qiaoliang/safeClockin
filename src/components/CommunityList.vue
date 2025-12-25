@@ -44,11 +44,8 @@
             >
               {{ community.description }}
             </text>
-            <text
-              v-if="community.location"
-              class="community-location"
-            >
-              📍 {{ community.location }}
+            <text class="community-location">
+              📍 {{ community.location || '未知地址' }}
             </text>
           </view>
           

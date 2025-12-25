@@ -38,7 +38,7 @@
           v-for="community in staffInfo.communities"
           :key="community.id"
           :title="community.name"
-          :note="community.location"
+          :note="community.location || '未知地址'"
           show-arrow
           @click="viewCommunity(community)"
         />
