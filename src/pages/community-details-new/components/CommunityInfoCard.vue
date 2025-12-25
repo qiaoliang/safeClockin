@@ -122,8 +122,6 @@ const emit = defineEmits(['event-count-click']);
     
     .info-header {
       margin-bottom: $uni-spacing-xl;
-      padding-bottom: $uni-spacing-lg;
-      border-bottom: 1px solid $uni-divider;
       
       .community-name {
         font-size: $uni-font-size-xxl;

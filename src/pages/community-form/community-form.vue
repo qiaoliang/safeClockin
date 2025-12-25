@@ -99,6 +99,7 @@
 import { ref, onMounted } from 'vue'
 import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
+import { getCommunityDetail } from '@/api/community'
 import {
   validateCommunityName,
   formatDate
@@ -254,22 +255,23 @@ const loadCommunityDetail = async (id) => {
   try {
     uni.showLoading({ title: LOADING_MESSAGES.LOADING })
 
-    // 从 store 中查找社区
-    const community = communityStore.communities.find(c => c.id === id)
+    // 通过 API 获取社区详情
+    const response = await getCommunityDetail(id)
 
-    if (community) {
+    if (response.code === 1 && response.data) {
+      const community = response.data.community || response.data
       formData.value = {
-        name: community.name,
-        location: community.location,
-        location_lat: community.location_lat,
-        location_lon: community.location_lon,
+        name: community.name || '',
+        location: community.location || '',
+        location_lat: community.location_lat || null,
+        location_lon: community.location_lon || null,
         manager_id: community.manager_id || '',
-        manager_name: community.manager_name || '',
+        manager_name: community.manager_name || community.manager?.nickname || '',
         description: community.description || ''
       }
     } else {
       uni.showToast({
-        title: ERROR_MESSAGES.COMMUNITY_NOT_FOUND,
+        title: response.msg || ERROR_MESSAGES.COMMUNITY_NOT_FOUND,
         icon: 'none'
       })
       setTimeout(() => {

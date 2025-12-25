@@ -1,6 +1,7 @@
 // store/modules/community.js
 import { defineStore } from 'pinia'
 import { request } from '@/api/request'
+import { updateCommunity as updateCommunityAPI } from '@/api/community'
 
 export const useCommunityStore = defineStore('community', {
   state: () => ({
@@ -116,14 +117,7 @@ export const useCommunityStore = defineStore('community', {
      */
     async updateCommunity(communityId, data) {
       try {
-        const response = await request({
-          url: '/api/community/update',
-          method: 'POST',
-          data: {
-            community_id: communityId,
-            ...data
-          }
-        })
+        const response = await updateCommunityAPI(communityId, data)
         
         if (response.code === 1) {
           // 更新本地数据
@@ -161,7 +155,7 @@ export const useCommunityStore = defineStore('community', {
         
         if (response.code === 1) {
           // 更新本地数据
-          const index = this.communities.findIndex(c => c.id === communityId)
+          const index = this.communities.findIndex(c => c.community_id === communityId)
           if (index !== -1) {
             this.communities[index].status = status
           }
@@ -188,7 +182,7 @@ export const useCommunityStore = defineStore('community', {
         
         if (response.code === 1) {
           // 从列表中移除
-          this.communities = this.communities.filter(c => c.id !== communityId)
+          this.communities = this.communities.filter(c => c.community_id !== communityId)
         }
         
         return response

@@ -104,9 +104,12 @@ export const createCommunity = (data) => {
  */
 export const updateCommunity = (communityId, data) => {
   return request({
-    url: `/api/communities/${communityId}`,
-    method: 'PUT',
-    data
+    url: '/api/community/update',
+    method: 'POST',
+    data: {
+      community_id: communityId,
+      ...data
+    }
   })
 }
 
