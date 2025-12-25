@@ -39,7 +39,7 @@
       <!-- 错误状态 -->
       <view v-else-if="error" class="error-container">
         <text class="error-text">{{ error }}</text>
-        <button class="retry-btn" @click="searchUsers">重试</button>
+        <button class="retry-btn" @click="searchUsers(1, false)">重试</button>
       </view>
 
       <!-- 用户列表 -->
@@ -230,7 +230,15 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
 
     if (response.code === 1) {
       console.log("API调用成功，数据:", response.data);
-      const { users, pagination } = response.data;
+      
+      // 适应后端返回的扁平化分页结构
+      const users = response.data.users || [];
+      const pagination = {
+        total: response.data.total || 0,
+        page: response.data.page || 1,
+        per_page: response.data.per_page || 20,
+        has_more: response.data.has_next || false
+      };
 
       if (isLoadMore) {
         // 加载更多时追加数据
@@ -242,7 +250,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
 
       totalCount.value = pagination.total;
       currentPage.value = pagination.page;
-      hasMore.value = pagination.has_more || false;
+      hasMore.value = pagination.has_more;
       console.log("搜索完成，找到用户数:", users.length, "分页信息:", pagination);
     } else {
       console.log("API业务错误:", response.msg);
@@ -431,7 +439,7 @@ const searchUsersExcludingBlackroom = async (page = 1) => {
       data: {
         keyword: searchKeyword.value,
         page: page,
-        limit: pageSize.value,
+        per_page: pageSize.value,
         exclude_community_id: props.communityId, // 排除当前社区的用户
       },
     });
