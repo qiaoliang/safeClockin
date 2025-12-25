@@ -1,10 +1,10 @@
 <template>
   <CheckinRuleForm
-    :ruleType="'community'"
-    :formTitle="isEditMode ? '编辑社区规则' : '创建社区规则'"
-    :showEnableButton="true"
+    :ruleType="'personal'"
+    :formTitle="isEditMode ? '编辑个人规则' : '创建个人规则'"
+    :showEnableButton="false"
     :ruleId="ruleId"
-    :communityId="communityId"
+    :communityId="''"
     :initialData="initialData"
     @submit="handleSubmit"
     @back="handleBack"
@@ -17,13 +17,12 @@ import { ref, computed, onMounted } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import CheckinRuleForm from "@/components/CheckinRuleForm.vue";
 import {
-  getCommunityRuleDetail,
-  createCommunityRule,
-  updateCommunityRule,
-} from "@/api/community-checkin";
+  getPersonalRuleDetail,
+  createPersonalRule,
+  updatePersonalRule,
+} from "@/api/personal-checkin";
 
 // 页面参数
-const communityId = ref("");
 const ruleId = ref("");
 const isEditMode = computed(() => !!ruleId.value);
 
@@ -35,7 +34,6 @@ const ruleFormRef = ref(null);
 
 // 页面加载
 onLoad((options) => {
-  communityId.value = options.communityId;
   ruleId.value = options.ruleId;
 
   if (ruleId.value) {
@@ -46,7 +44,7 @@ onLoad((options) => {
 // 加载规则详情
 const loadRuleDetail = async () => {
   try {
-    const response = await getCommunityRuleDetail(ruleId.value);
+    const response = await getPersonalRuleDetail(ruleId.value);
     if (response.code === 1) {
       const rule = response.data.rule;
       initialData.value = {
@@ -87,10 +85,10 @@ const handleSubmit = async (submitData) => {
 
     if (isEditMode.value) {
       // 编辑模式
-      response = await updateCommunityRule(ruleId.value, submitData);
+      response = await updatePersonalRule(ruleId.value, submitData);
     } else {
       // 创建模式
-      response = await createCommunityRule(submitData);
+      response = await createPersonalRule(submitData);
     }
 
     if (response.code === 1) {
@@ -100,7 +98,7 @@ const handleSubmit = async (submitData) => {
       });
 
       // 触发规则列表刷新事件
-      uni.$emit("community-rules-refresh", communityId.value);
+      uni.$emit("personal-rules-refresh");
 
       // 延迟返回，让用户看到成功提示
       setTimeout(() => {
