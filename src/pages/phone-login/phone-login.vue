@@ -17,16 +17,6 @@
 
     <view class="form">
       <view class="row">
-        <picker
-          mode="selector"
-          :range="countryCodes"
-          :value="countryIndex"
-          @change="onCountryChange"
-        >
-          <view class="picker">
-            {{ countryCodes[countryIndex] }}
-          </view>
-        </picker>
         <input
           v-model="phone"
           class="input"
@@ -101,8 +91,6 @@ import { storage } from '@/store/modules/storage'
 
 const userStore = useUserStore()
 const activeTab = ref('login')
-const countryCodes = ['+86', '+852', '+853', '+886']
-const countryIndex = ref(0)
 const phone = ref('')
 const code = ref('')
 const password = ref('')
@@ -112,7 +100,7 @@ const sending = ref(false)
 const submitting = ref(false)
 let timer = null
 
-const fullPhone = computed(() => `${countryCodes[countryIndex.value]}${phone.value}`)
+const fullPhone = computed(() => phone.value)
 const submitText = computed(() => {
   return activeTab.value==='register' ? '注册' : '登录'
 })
@@ -126,10 +114,6 @@ function startCountdown() {
       timer = null
     }
   }, 1000)
-}
-
-function onCountryChange(e) {
-  countryIndex.value = Number(e.detail.value || 0)
 }
 
 async function onSendCode() {

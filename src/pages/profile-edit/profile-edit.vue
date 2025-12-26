@@ -189,16 +189,6 @@
           绑定/更换手机号
         </text>
         <view class="row">
-          <picker
-            mode="selector"
-            :range="countryCodes"
-            :value="countryIndex"
-            @change="onCountryChange"
-          >
-            <view class="picker">
-              {{ countryCodes[countryIndex] }}
-            </view>
-          </picker>
           <input
             v-model="phone"
             class="input"
@@ -342,8 +332,6 @@ const phoneBindText = computed(() => (userStore.userInfo?.phone_number ? '更换
 
 // Phone bind modal
 const phoneModal = ref(false)
-const countryCodes = ['+86', '+852', '+853', '+886']
-const countryIndex = ref(0)
 const phone = ref('')
 const code = ref('')
 const sending = ref(false)
@@ -462,8 +450,6 @@ async function uploadAvatar(filePath) {
 // Phone bind functions
 function openPhoneBind() { phoneModal.value = true }
 function closePhoneBind() { phoneModal.value = false; code.value = ''; phone.value = ''; stopCountdown() }
-function onCountryChange(e) { countryIndex.value = Number(e.detail.value || 0) }
-function fullPhone() { return `${countryCodes[countryIndex.value]}${phone.value}` }
 function startCountdown() { countdown.value = 60; timer = setInterval(() => { countdown.value -= 1; if (countdown.value <= 0) stopCountdown() }, 1000) }
 function stopCountdown() { if (timer) { clearInterval(timer); timer = null } countdown.value = 0 }
 
@@ -471,7 +457,7 @@ async function sendCode() {
   if (!phone.value) return uni.showToast({ title: '请输入手机号', icon: 'none' })
   try {
     sending.value = true
-    const res = await authApi.sendSmsCode({ phone: fullPhone(), purpose: 'bind_phone' })
+    const res = await authApi.sendSmsCode({ phone: phone.value, purpose: 'bind_phone' })
     if (res.code === 1) { startCountdown(); uni.showToast({ title: '验证码已发送', icon: 'none' }) }
     else { uni.showToast({ title: res.msg || '发送失败', icon: 'none' }) }
   } finally { sending.value = false }
@@ -481,7 +467,7 @@ async function confirmBindPhone() {
   if (!phone.value || !code.value) return uni.showToast({ title: '请输入手机号和验证码', icon: 'none' })
   try {
     binding.value = true
-    const res = await authApi.bindPhone({ phone: fullPhone(), code: code.value })
+    const res = await authApi.bindPhone({ phone: phone.value, code: code.value })
     if (res.code === 1) { await userStore.fetchUserInfo(); closePhoneBind(); uni.showToast({ title: '手机号已关联', icon: 'none' }) }
     else { uni.showToast({ title: res.msg || '绑定失败', icon: 'none' }) }
   } finally { binding.value = false }
