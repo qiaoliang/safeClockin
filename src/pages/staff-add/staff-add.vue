@@ -44,7 +44,7 @@
             {{ user.nickname }}
           </text>
           <text class="user-phone">
-            {{ user.phone_number }}
+            {{ user.phone_number || (user.wechat_openid ? `微信用户${user.wechat_openid.slice(-6)}` : '未绑定手机号') }}
           </text>
         </view>
 
