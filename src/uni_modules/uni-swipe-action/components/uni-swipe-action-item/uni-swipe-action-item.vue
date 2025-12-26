@@ -203,7 +203,7 @@
         </view>
       </view>
     </view>
-  </view>
+    <!-- #endif -->
 </template>
 <script src="./wx.wxs" module="wxsswipe" lang="wxs"></script>
 
