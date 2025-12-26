@@ -8,15 +8,6 @@
         </h2>
         
         <view class="info-details">
-          <view class="detail-item">
-            <text class="detail-icon">
-              📍
-            </text>
-            <text class="detail-text">
-              {{ community.location || '未设置位置' }}
-            </text>
-          </view>
-          
           <view
             v-if="community.manager"
             class="detail-item"
@@ -26,6 +17,15 @@
             </text>
             <text class="detail-text">
               主管：{{ community.manager.nickname || '未知' }}
+            </text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-icon">
+              📍
+            </text>
+            <text class="detail-text">
+              {{ community.location || '未设置位置' }}
             </text>
           </view>
         </view>
