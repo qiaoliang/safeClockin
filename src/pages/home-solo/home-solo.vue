@@ -164,64 +164,6 @@
     </uni-grid-item>
   </uni-grid>
 
-  <!-- 当前任务列表 -->
-  <uni-card>
-    <uni-section
-      class="mb-10"
-      title="当前任务"
-    >
-      <template #right>
-        <view
-          class="section-link"
-          @click="goToCheckinList"
-        >
-          <text class="link-text">
-            点击查看今天活动
-          </text>
-          <text class="link-arrow">
-            ›
-          </text>
-        </view>
-      </template>
-    </uni-section>
-    <uni-list :border="false">
-      <uni-list-item
-        v-for="task in nearbyTasks"
-        :key="task.rule_id"
-        :title="task.rule_name"
-        :note="`${task.planned_time} - ${task.end_time || '23:59'}`"
-        :show-arrow="false"
-      >
-        <template #header>
-          <view
-            class="task-icon-wrapper"
-            :style="{ background: task.iconBg }"
-          >
-            <text class="task-icon-emoji">
-              {{ task.icon }}
-            </text>
-          </view>
-        </template>
-        <template #footer>
-          <button
-            :class="[
-              'task-action-btn',
-              task.status === 'pending' ? 'btn-pending' : 'btn-makeup',
-            ]"
-            @click="handleTaskAction(task)"
-          >
-            <text class="btn-icon">
-              {{ task.status === "pending" ? "🕐" : "🔄" }}
-            </text>
-            <text class="btn-text">
-              {{ task.status === "pending" ? "待打卡" : "补打卡" }}
-            </text>
-          </button>
-        </template>
-      </uni-list-item>
-    </uni-list>
-  </uni-card>
-
   <!-- 一键求助主按钮 -->
   <view class="today-tasks-section">
     <button
