@@ -84,12 +84,29 @@
     </uni-forms>
 
     <view class="form-actions">
+      <view class="action-row">
+        <button
+          class="submit-btn"
+          :disabled="submitting"
+          @click="submitForm"
+        >
+          {{ submitting ? '提交中...' : (isEdit ? '保存修改' : '创建社区') }}
+        </button>
+        <button
+          class="cancel-btn"
+          :disabled="submitting"
+          @click="handleCancel"
+        >
+          取消
+        </button>
+      </view>
       <button
-        class="submit-btn"
+        v-if="isEdit"
+        class="delete-btn"
         :disabled="submitting"
-        @click="submitForm"
+        @click="handleDelete"
       >
-        {{ submitting ? '提交中...' : (isEdit ? '保存修改' : '创建社区') }}
+        删除社区
       </button>
     </view>
   </view>
@@ -290,6 +307,48 @@ const loadCommunityDetail = async (id) => {
   }
 }
 
+// 删除社区
+const handleDelete = () => {
+  uni.showModal({
+    title: '确认删除',
+    content: '删除按钮会涉及很多用户，它们会到默认社区中，你确定吗？',
+    confirmColor: '#E53935',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          uni.showLoading({ title: '删除中...' })
+
+          // 调用删除API
+          await communityStore.deleteCommunity(communityId.value)
+
+          uni.hideLoading()
+          uni.showToast({
+            title: '删除成功',
+            icon: 'success'
+          })
+
+          // 延迟返回到上一页
+          setTimeout(() => {
+            uni.navigateBack()
+          }, 1500)
+        } catch (error) {
+          console.error('删除社区失败:', error)
+          uni.hideLoading()
+          uni.showToast({
+            title: error.msg || '删除失败',
+            icon: 'none'
+          })
+        }
+      }
+    }
+  })
+}
+
+// 取消操作
+const handleCancel = () => {
+  uni.navigateBack()
+}
+
 // 页面加载
 onLoad((options) => {
   if (options.id) {
@@ -366,18 +425,51 @@ uni.$on('managerSelected', (manager) => {
   background: $uni-bg-color-white;
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
   @include safe-area-bottom;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.action-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.submit-btn,
+.cancel-btn {
+  flex: 1;
+  height: 88rpx;
+  border: none;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+  font-weight: $uni-font-weight-base;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 .submit-btn {
+  @include btn-primary;
+}
+
+.cancel-btn {
+  background: $uni-bg-color-grey;
+  color: $uni-text-gray-800;
+}
+
+.delete-btn {
   width: 100%;
   height: 88rpx;
-  @include btn-primary;
+  background: $uni-bg-color-grey;
+  color: $uni-text-gray-800;
   border: none;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+  font-weight: $uni-font-weight-base;
 
   &:disabled {
-    background: $uni-bg-color-grey;
-    color: $uni-secondary-color;
-    box-shadow: none;
+    opacity: 0.5;
   }
 }
 </style>

@@ -318,7 +318,7 @@ onLoad((options) => {
 // 页面重新显示时刷新数据（处理从编辑页面返回的情况）
 onShow(() => {
   // 如果已经有社区ID，重新加载详情以确保数据是最新的
-  if (communityId.value && !loading.value) {
+  if (communityId.value) {
     loadCommunityDetail()
   }
 })
@@ -465,7 +465,9 @@ const handleBack = () => {
 }
 
 const handleSettings = () => {
-  showSettingsModal.value = true
+  uni.navigateTo({
+    url: `/pages/community-form/community-form?id=${communityId.value}`
+  })
 }
 
 const handleTabChange = (tabId) => {

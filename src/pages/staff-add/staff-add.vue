@@ -130,7 +130,7 @@ const searchResults = ref([])
 const selectedUsers = ref([])
 
 // 选中的角色
-const selectedRole = ref([StaffRole.STAFF])
+const selectedRole = ref([StaffRole.MANAGER])
 
 // 当前社区ID
 const currentCommunityId = ref('')
@@ -140,7 +140,6 @@ const mode = ref('add')
 
 // 角色选项
 const roleOptions = [
-  { text: '专员', value: StaffRole.STAFF },
   { text: '主管', value: StaffRole.MANAGER }
 ]
 
