@@ -1,20 +1,30 @@
 <template>
-	<view :class="[styleType === 'text'?'segmented-control--text' : 'segmented-control--button' ]"
-		:style="{ borderColor: styleType === 'text' ? '' : activeColor }" class="segmented-control">
-		<view v-for="(item, index) in values" :class="[styleType === 'text' ? '' : 'segmented-control__item--button',
-					index === 0 && styleType === 'button' ? 'segmented-control__item--button--first' : '',
-					index === values.length - 1 && styleType === 'button' ? 'segmented-control__item--button--last':'']" :key="index"
-			:style="{backgroundColor: index === currentIndex && styleType === 'button' ? activeColor : styleType === 'button' ?inActiveColor:'transparent', borderColor: index === currentIndex && styleType === 'text' || styleType === 'button' ? activeColor : inActiveColor}"
-			class="segmented-control__item" @click="_onClick(index)">
-			<view>
-				<text
-					:style="{color:index === currentIndex? styleType === 'text'? activeColor: '#fff': styleType === 'text'? '#000': activeColor}"
-					class="segmented-control__text"
-					:class="styleType === 'text' && index === currentIndex ? 'segmented-control__item--text': ''">{{ item }}</text>
-			</view>
-
-		</view>
-	</view>
+  <view
+    :class="[styleType === 'text'?'segmented-control--text' : 'segmented-control--button' ]"
+    :style="{ borderColor: styleType === 'text' ? '' : activeColor }"
+    class="segmented-control"
+  >
+    <view
+      v-for="(item, index) in values"
+      :key="index"
+      :class="[styleType === 'text' ? '' : 'segmented-control__item--button',
+               index === 0 && styleType === 'button' ? 'segmented-control__item--button--first' : '',
+               index === values.length - 1 && styleType === 'button' ? 'segmented-control__item--button--last':'']"
+      :style="{backgroundColor: index === currentIndex && styleType === 'button' ? activeColor : styleType === 'button' ?inActiveColor:'transparent', borderColor: index === currentIndex && styleType === 'text' || styleType === 'button' ? activeColor : inActiveColor}"
+      class="segmented-control__item"
+      @click="_onClick(index)"
+    >
+      <view>
+        <text
+          :style="{color:index === currentIndex? styleType === 'text'? activeColor: '#fff': styleType === 'text'? '#000': activeColor}"
+          class="segmented-control__text"
+          :class="styleType === 'text' && index === currentIndex ? 'segmented-control__item--text': ''"
+        >
+          {{ item }}
+        </text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -34,7 +44,6 @@
 
 	export default {
 		name: 'UniSegmentedControl',
-		emits: ['clickItem'],
 		props: {
 			current: {
 				type: Number,
@@ -59,11 +68,13 @@
 				default: 'button'
 			}
 		},
+		emits: ['clickItem'],
 		data() {
 			return {
 				currentIndex: 0
 			}
 		},
+		computed: {},
 		watch: {
 			current(val) {
 				if (val !== this.currentIndex) {
@@ -71,7 +82,6 @@
 				}
 			}
 		},
-		computed: {},
 		created() {
 			this.currentIndex = this.current
 		},

@@ -1,33 +1,68 @@
 <template>
-	<view class="uni-file-picker__container">
-		<view class="file-picker__box" v-for="(item,index) in filesList" :key="index" :style="boxStyle">
-			<view class="file-picker__box-content" :style="borderStyle">
-				<image class="file-image" :src="item.url" mode="aspectFill" @click.stop="prviewImage(item,index)"></image>
-				<view v-if="delIcon && !readonly" class="icon-del-box" @click.stop="delFile(index)">
-					<view class="icon-del"></view>
-					<view class="icon-del rotate"></view>
-				</view>
-				<view v-if="(item.progress && item.progress !== 100) ||item.progress===0 " class="file-picker__progress">
-					<progress class="file-picker__progress-item" :percent="item.progress === -1?0:item.progress" stroke-width="4"
-					 :backgroundColor="item.errMsg?'#ff5a5f':'#EBEBEB'" />
-				</view>
-				<view v-if="item.errMsg" class="file-picker__mask" @click.stop="uploadFiles(item,index)">
-					点击重试
-				</view>
-			</view>
-		</view>
-		<view v-if="filesList.length < limit" class="file-picker__box" :style="boxStyle">
-			<view class="file-picker__box-content is-add" :style="borderStyle" @click="choose">
-				<slot></slot>
-			</view>
-		</view>
-	</view>
+  <view class="uni-file-picker__container">
+    <view
+      v-for="(item,index) in filesList"
+      :key="index"
+      class="file-picker__box"
+      :style="boxStyle"
+    >
+      <view
+        class="file-picker__box-content"
+        :style="borderStyle"
+      >
+        <image
+          class="file-image"
+          :src="item.url"
+          mode="aspectFill"
+          @click.stop="prviewImage(item,index)"
+        />
+        <view
+          v-if="delIcon && !readonly"
+          class="icon-del-box"
+          @click.stop="delFile(index)"
+        >
+          <view class="icon-del" />
+          <view class="icon-del rotate" />
+        </view>
+        <view
+          v-if="(item.progress && item.progress !== 100) ||item.progress===0 "
+          class="file-picker__progress"
+        >
+          <progress
+            class="file-picker__progress-item"
+            :percent="item.progress === -1?0:item.progress"
+            stroke-width="4"
+            :backgroundColor="item.errMsg?'#ff5a5f':'#EBEBEB'"
+          />
+        </view>
+        <view
+          v-if="item.errMsg"
+          class="file-picker__mask"
+          @click.stop="uploadFiles(item,index)"
+        >
+          点击重试
+        </view>
+      </view>
+    </view>
+    <view
+      v-if="filesList.length < limit"
+      class="file-picker__box"
+      :style="boxStyle"
+    >
+      <view
+        class="file-picker__box-content is-add"
+        :style="borderStyle"
+        @click="choose"
+      >
+        <slot />
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
 	export default {
-		name: "uploadImage",
-		emits:['uploadFiles','choose','delFile'],
+		name: "UploadImage",
 		props: {
 			filesList: {
 				type: Array,
@@ -66,9 +101,10 @@
 				default:false
 			}
 		},
+		emits:['uploadFiles','choose','delFile'],
 		computed: {
 			styles() {
-				let styles = {
+				const styles = {
 					width: 'auto',
 					height: 'auto',
 					border: {}
@@ -80,7 +116,7 @@
 					width = 'auto',
 						height = 'auto'
 				} = this.styles
-				let obj = {}
+				const obj = {}
 				if (height === 'auto') {
 					if (width !== 'auto') {
 						obj.height = this.value2px(width)
@@ -104,13 +140,13 @@
 				}
 
 				let classles = ''
-				for(let i in obj){
+				for(const i in obj){
 					classles+= `${i}:${obj[i]};`
 				}
 				return classles
 			},
 			borderStyle() {
-				let {
+				const {
 					border
 				} = this.styles
 				let obj = {}
@@ -131,7 +167,7 @@
 					}
 				}
 				let classles = ''
-				for(let i in obj){
+				for(const i in obj){
 					classles+= `${i}:${obj[i]};`
 				}
 				return classles
@@ -151,7 +187,7 @@
 			},
 			prviewImage(img, index) {
 				if(this.readonly) return
-				let urls = []
+				const urls = []
 				if(Number(this.limit) === 1&&this.disablePreview&&!this.disabled){
 					this.$emit("choose")
 				}

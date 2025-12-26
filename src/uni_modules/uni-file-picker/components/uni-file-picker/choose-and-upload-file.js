@@ -194,14 +194,14 @@ function uploadCloudFiles(files, max = 5, onUploadProgress) {
 	files = JSON.parse(JSON.stringify(files))
 	const len = files.length
 	let count = 0
-	let self = this
+	const self = this
 	return new Promise(resolve => {
 		while (count < max) {
 			next()
 		}
 
 		function next() {
-			let cur = count++
+			const cur = count++
 			if (cur >= len) {
 				!files.find(item => !item.url && !item.errMsg) && resolve(files)
 				return

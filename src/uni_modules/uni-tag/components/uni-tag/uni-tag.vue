@@ -1,5 +1,13 @@
 <template>
-	<text class="uni-tag" v-if="showTag" :class="classes" :style="customStyle" @click="onClick">{{text}}</text>
+  <text
+    v-if="showTag"
+    class="uni-tag"
+    :class="classes"
+    :style="customStyle"
+    @click="onClick"
+  >
+    {{ text }}
+  </text>
 </template>
 
 <script>
@@ -26,7 +34,6 @@
 
 	export default {
 		name: "UniTag",
-		emits: ['click'],
 		props: {
 			type: {
 				// 标签类型default、primary、success、warning、error、royal
@@ -68,6 +75,7 @@
 				default: ''
 			}
 		},
+		emits: ['click'],
 		computed: {
 			showTag() {
 				return !!this.text.toString()

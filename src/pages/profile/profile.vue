@@ -3,12 +3,20 @@
   <view class="profile-container">
     <!-- 用户信息区域 -->
     <view class="user-info-section">
-      <view class="user-avatar" @click="editProfile">
+      <view
+        class="user-avatar"
+        @click="editProfile"
+      >
         <image
           :src="userInfo?.avatarUrl || '/static/logo.png'"
           class="avatar-image"
           mode="aspectFill"
         />
+        <view class="edit-btn">
+          <text class="edit-icon">
+            ✏️
+          </text>
+        </view>
       </view>
       <view class="user-details">
         <text class="user-name">
@@ -20,12 +28,95 @@
       </view>
     </view>
 
-    <view v-if="needCompleteInfo" class="hint-section">
-      <text class="hint-text"> 完善头像、昵称、联系方式，提升使用体验 </text>
+    <!-- 扩展用户信息 -->
+    <view class="user-extended-info">
+      <!-- 真实姓名 -->
+      <view class="info-item">
+        <text class="info-icon">
+          👤
+        </text>
+        <text class="info-label">
+          姓名
+        </text>
+        <text class="info-value">
+          {{ userInfo?.name || '未设置姓名' }}
+        </text>
+      </view>
+
+      <!-- 所在社区 -->
+      <view class="info-item">
+        <text class="info-icon">
+          🏠
+        </text>
+        <text class="info-label">
+          社区
+        </text>
+        <text class="info-value">
+          {{ userInfo?.community_name || '未加入社区' }}
+        </text>
+      </view>
+
+      <!-- 电话号码 -->
+      <view
+        class="info-item"
+        @click="copyPhone"
+      >
+        <text class="info-icon">
+          📞
+        </text>
+        <text class="info-label">
+          电话
+        </text>
+        <text class="info-value">
+          {{ userInfo?.phone_number || '未绑定手机' }}
+        </text>
+        <text class="copy-hint">
+          点击复制
+        </text>
+      </view>
+
+      <!-- 个人地址 -->
+      <view
+        class="info-item address-item"
+        @click="toggleAddress"
+      >
+        <text class="info-icon">
+          📍
+        </text>
+        <text class="info-label">
+          地址
+        </text>
+        <text
+          class="info-value"
+          :class="{ 'address-collapsed': !addressExpanded }"
+        >
+          {{ userInfo?.address || '未设置地址' }}
+        </text>
+        <text
+          v-if="userInfo?.address && userInfo.address.length > 30"
+          class="expand-hint"
+        >
+          {{ addressExpanded ? '收起' : '展开' }}
+        </text>
+      </view>
     </view>
 
-    <view v-if="needCommunityVerify" class="hint-section">
-      <text class="hint-text"> 社区身份未验证，完成后可使用社区功能 </text>
+    <view
+      v-if="needCompleteInfo"
+      class="hint-section"
+    >
+      <text class="hint-text">
+        完善头像、昵称、联系方式，提升使用体验
+      </text>
+    </view>
+
+    <view
+      v-if="needCommunityVerify"
+      class="hint-section"
+    >
+      <text class="hint-text">
+        社区身份未验证，完成后可使用社区功能
+      </text>
       <button
         class="hint-btn"
         @click="navigateTo('/pages/community-auth/community-auth')"
@@ -35,41 +126,75 @@
     </view>
 
     <!-- 用户统计区域 -->
-    <view v-if="userInfo" class="user-stats-section">
+    <view
+      v-if="userInfo"
+      class="user-stats-section"
+    >
       <view class="user-stats-card">
         <view class="stat-item">
           <text class="stat-value success-color">
             {{ getConsecutiveCheckins() }}
           </text>
-          <text class="stat-label"> 连续打卡 </text>
+          <text class="stat-label">
+            连续打卡
+          </text>
         </view>
         <view class="stat-item">
-          <text class="stat-value warning-color"> {{ getCompletionRate() }}% </text>
-          <text class="stat-label"> 完成率 </text>
+          <text class="stat-value warning-color">
+            {{ getCompletionRate() }}%
+          </text>
+          <text class="stat-label">
+            完成率
+          </text>
         </view>
         <view class="stat-item">
           <text class="stat-value accent-color">
             {{ getSupervisorCount() }}
           </text>
-          <text class="stat-label"> 监督人 </text>
+          <text class="stat-label">
+            监督人
+          </text>
         </view>
       </view>
     </view>
 
     <!-- 功能菜单列表 -->
     <!-- 打卡选项管理：社区相关角色不显示 -->
-    <view v-if="showCheckinManagement" class="menu-section">
-      <view class="menu-group-title"> 打卡选项管理 </view>
-      <view class="menu-item" @click="navigateTo('/pages/checkin-list/checkin-list')">
-        <view class="menu-icon"> 📋 </view>
-        <text class="menu-text"> 打卡事项 </text>
-        <text class="menu-arrow"> › </text>
+    <view
+      v-if="showCheckinManagement"
+      class="menu-section"
+    >
+      <view class="menu-group-title">
+        打卡选项管理
+      </view>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/checkin-list/checkin-list')"
+      >
+        <view class="menu-icon">
+          📋
+        </view>
+        <text class="menu-text">
+          打卡事项
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
 
-      <view class="menu-item" @click="navigateTo('/pages/rule-setting/rule-setting')">
-        <view class="menu-icon"> ⚙️ </view>
-        <text class="menu-text"> 打卡规则 </text>
-        <text class="menu-arrow"> › </text>
+      <view
+        class="menu-item"
+        @click="navigateTo('/pages/rule-setting/rule-setting')"
+      >
+        <view class="menu-icon">
+          ⚙️
+        </view>
+        <text class="menu-text">
+          打卡规则
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
 
       <!-- 监督功能菜单：所有用户都可以访问 -->
@@ -77,24 +202,41 @@
         class="menu-item"
         @click="navigateTo('/pages/supervisor-manage/supervisor-manage')"
       >
-        <view class="menu-icon"> 👥 </view>
-        <text class="menu-text"> 监护人管理 </text>
-        <text class="menu-arrow"> › </text>
+        <view class="menu-icon">
+          👥
+        </view>
+        <text class="menu-text">
+          监护人管理
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
 
       <view
         class="menu-item"
         @click="navigateTo('/pages/notification-settings/notification-settings')"
       >
-        <view class="menu-icon"> 🔔 </view>
-        <text class="menu-text"> 通知设置 </text>
-        <text class="menu-arrow"> › </text>
+        <view class="menu-icon">
+          🔔
+        </view>
+        <text class="menu-text">
+          通知设置
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
     </view>
 
     <!-- 社区管理菜单组 -->
-    <view v-if="communityManagementItems.length > 0" class="menu-section">
-      <view class="menu-group-title"> 社区管理 </view>
+    <view
+      v-if="communityManagementItems.length > 0"
+      class="menu-section"
+    >
+      <view class="menu-group-title">
+        社区管理
+      </view>
       
       <!-- 管理功能菜单 -->
       <view
@@ -109,39 +251,67 @@
         <text class="menu-text">
           {{ item.name }}
         </text>
-        <text class="menu-arrow"> › </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
     </view>
 
     <!-- 其他设置 -->
     <view class="menu-section">
-      <view class="menu-item" @click="showAbout">
-        <view class="menu-icon"> ℹ️ </view>
-        <text class="menu-text"> 关于我们 </text>
-        <text class="menu-arrow"> › </text>
+      <view
+        class="menu-item"
+        @click="showAbout"
+      >
+        <view class="menu-icon">
+          ℹ️
+        </view>
+        <text class="menu-text">
+          关于我们
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
 
-      <view class="menu-item" @click="showHelp">
-        <view class="menu-icon"> ❓ </view>
-        <text class="menu-text"> 帮助中心 </text>
-        <text class="menu-arrow"> › </text>
+      <view
+        class="menu-item"
+        @click="showHelp"
+      >
+        <view class="menu-icon">
+          ❓
+        </view>
+        <text class="menu-text">
+          帮助中心
+        </text>
+        <text class="menu-arrow">
+          ›
+        </text>
       </view>
     </view>
 
     <!-- 退出登录按钮 -->
     <view class="logout-section">
-      <button class="logout-btn" @click="handleLogout">退出登录</button>
+      <button
+        class="logout-btn"
+        @click="handleLogout"
+      >
+        退出登录
+      </button>
     </view>
   </view>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 import { routeGuard } from "@/utils/router";
 
 const userStore = useUserStore();
+
+// 地址展开状态
+const addressExpanded = ref(false);
 
 // 计算属性：社区管理菜单项 - 根据角色动态生成
 const communityManagementItems = computed(() => {
@@ -325,6 +495,43 @@ const editProfile = () => {
   routeGuard("/pages/profile-edit/profile-edit");
 };
 
+// 复制电话号码
+const copyPhone = () => {
+  const phone = userInfo.value?.phone_number;
+  if (!phone) {
+    uni.showToast({
+      title: '未绑定手机',
+      icon: 'none'
+    });
+    return;
+  }
+  uni.setClipboardData({
+    data: phone,
+    success: () => {
+      uni.showToast({
+        title: '已复制',
+        icon: 'success'
+      });
+    }
+  });
+};
+
+// 切换地址展开状态
+const toggleAddress = () => {
+  const address = userInfo.value?.address;
+  if (!address) {
+    uni.showToast({
+      title: '未设置地址',
+      icon: 'none'
+    });
+    return;
+  }
+  // 只有地址较长时才允许展开/收起
+  if (address.length > 30) {
+    addressExpanded.value = !addressExpanded.value;
+  }
+};
+
 const needCompleteInfo = computed(() => {
   const u = userInfo.value || {};
   return !u.avatarUrl || !u.nickName || !u.phoneNumber;
@@ -428,6 +635,39 @@ onShow(() => {
 
 .user-info-section {
   @include card-default;
+  position: relative;
+}
+
+.user-avatar {
+  margin-right: 32rpx;
+  position: relative;
+}
+
+.avatar-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 4rpx solid #f48224;
+}
+
+.edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  background: #f48224;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #fff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+}
+
+.edit-icon {
+  font-size: 20rpx;
+  color: #fff;
 }
 
 .user-stats-section {
@@ -503,6 +743,67 @@ onShow(() => {
   padding: 8rpx 16rpx;
   border-radius: 16rpx;
   width: fit-content;
+}
+
+.user-extended-info {
+  background: white;
+  border-radius: 24rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: 24rpx 32rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f0f0f0;
+  transition: background-color 0.3s ease;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item:active {
+  background-color: #f8f8f8;
+}
+
+.info-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  width: 32rpx;
+  text-align: center;
+}
+
+.info-label {
+  font-size: 24rpx;
+  color: #999;
+  width: 80rpx;
+}
+
+.info-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.address-collapsed {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copy-hint,
+.expand-hint {
+  font-size: 24rpx;
+  color: #f48224;
+  margin-left: 16rpx;
 }
 
 .menu-section {

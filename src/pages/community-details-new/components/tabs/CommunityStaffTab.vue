@@ -2,10 +2,19 @@
   <view class="community-staff-tab">
     <!-- 标题和操作按钮 -->
     <view class="tab-header">
-      <h3 class="tab-title">专员管理</h3>
-      <button class="add-button" @click="$emit('add-staff')">
-        <text class="add-icon">+</text>
-        <text class="add-text">添加专员</text>
+      <h3 class="tab-title">
+        专员管理
+      </h3>
+      <button
+        class="add-button"
+        @click="$emit('add-staff')"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          添加专员
+        </text>
       </button>
     </view>
     
@@ -18,26 +27,48 @@
       >
         <view class="staff-info">
           <view class="staff-avatar">
-            <text class="avatar-icon">{{ getRoleIcon(staff.role) }}</text>
+            <text class="avatar-icon">
+              {{ getRoleIcon(staff.role) }}
+            </text>
           </view>
           
           <view class="staff-details">
-            <text class="staff-name">{{ staff.name }}</text>
-            <text class="staff-phone">{{ staff.phone }}</text>
-            <text class="staff-role">{{ staff.roleDisplay }}</text>
+            <text class="staff-name">
+              {{ staff.name }}
+            </text>
+            <text class="staff-phone">
+              {{ staff.phone }}
+            </text>
+            <text class="staff-role">
+              {{ staff.roleDisplay }}
+            </text>
           </view>
         </view>
         
-        <button class="remove-button" @click="$emit('remove-staff', staff.user_id)">
-          <text class="remove-icon">🗑️</text>
+        <button
+          class="remove-button"
+          @click="$emit('remove-staff', staff.user_id)"
+        >
+          <text class="remove-icon">
+            🗑️
+          </text>
         </button>
       </view>
       
       <!-- 空状态 -->
-      <view v-if="normalizedStaffList.length === 0" class="empty-state">
-        <text class="empty-icon">👥</text>
-        <text class="empty-text">暂无专员</text>
-        <text class="empty-hint">点击"添加专员"按钮添加第一个专员</text>
+      <view
+        v-if="normalizedStaffList.length === 0"
+        class="empty-state"
+      >
+        <text class="empty-icon">
+          👥
+        </text>
+        <text class="empty-text">
+          暂无专员
+        </text>
+        <text class="empty-hint">
+          点击"添加专员"按钮添加第一个专员
+        </text>
       </view>
     </view>
   </view>

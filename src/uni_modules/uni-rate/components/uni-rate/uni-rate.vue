@@ -1,25 +1,54 @@
 <template>
-	<view>
-		<view ref="uni-rate" class="uni-rate">
-			<view class="uni-rate__icon" :class="{'uni-cursor-not-allowed': disabled}"
-				:style="{ 'margin-right': marginNumber + 'px' }" v-for="(star, index) in stars" :key="index"
-				@touchstart.stop="touchstart" @touchmove.stop="touchmove" @mousedown.stop="mousedown"
-				@mousemove.stop="mousemove" @mouseleave="mouseleave">
-				<uni-icons :color="color" :size="size" :type="isFill ? 'star-filled' : 'star'" />
-				<!-- #ifdef APP-NVUE -->
-				<view :style="{ width: star.activeWitch.replace('%','')*size/100+'px'}" class="uni-rate__icon-on">
-					<uni-icons style="text-align: left;" :color="disabled?'#ccc':activeColor" :size="size"
-						type="star-filled" />
-				</view>
-				<!-- #endif -->
-				<!-- #ifndef APP-NVUE -->
-				<view :style="{ width: star.activeWitch}" class="uni-rate__icon-on">
-					<uni-icons :color="disabled?disabledColor:activeColor" :size="size" type="star-filled" />
-				</view>
-				<!-- #endif -->
-			</view>
-		</view>
-	</view>
+  <view>
+    <view
+      ref="uni-rate"
+      class="uni-rate"
+    >
+      <view
+        v-for="(star, index) in stars"
+        :key="index"
+        class="uni-rate__icon"
+        :class="{'uni-cursor-not-allowed': disabled}"
+        :style="{ 'margin-right': marginNumber + 'px' }"
+        @touchstart.stop="touchstart"
+        @touchmove.stop="touchmove"
+        @mousedown.stop="mousedown"
+        @mousemove.stop="mousemove"
+        @mouseleave="mouseleave"
+      >
+        <uni-icons
+          :color="color"
+          :size="size"
+          :type="isFill ? 'star-filled' : 'star'"
+        />
+        <!-- #ifdef APP-NVUE -->
+        <view
+          :style="{ width: star.activeWitch.replace('%','')*size/100+'px'}"
+          class="uni-rate__icon-on"
+        >
+          <uni-icons
+            style="text-align: left;"
+            :color="disabled?'#ccc':activeColor"
+            :size="size"
+            type="star-filled"
+          />
+        </view>
+        <!-- #endif -->
+        <!-- #ifndef APP-NVUE -->
+        <view
+          :style="{ width: star.activeWitch}"
+          class="uni-rate__icon-on"
+        >
+          <uni-icons
+            :color="disabled?disabledColor:activeColor"
+            :size="size"
+            type="star-filled"
+          />
+        </view>
+        <!-- #endif -->
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -122,14 +151,6 @@
 				userLastRate: 1
 			};
 		},
-		watch: {
-			value(newVal) {
-				this.valueSync = Number(newVal);
-			},
-			modelValue(newVal) {
-				this.valueSync = Number(newVal);
-			},
-		},
 		computed: {
 			stars() {
 				const value = this.valueSync ? this.valueSync : 0;
@@ -157,6 +178,14 @@
 			marginNumber() {
 				return Number(this.margin)
 			}
+		},
+		watch: {
+			value(newVal) {
+				this.valueSync = Number(newVal);
+			},
+			modelValue(newVal) {
+				this.valueSync = Number(newVal);
+			},
 		},
 		created() {
 			this.valueSync = Number(this.value || this.modelValue);

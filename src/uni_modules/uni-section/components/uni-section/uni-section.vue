@@ -1,23 +1,48 @@
 <template>
-	<view class="uni-section">
-		<view class="uni-section-header" @click="onClick">
-				<view class="uni-section-header__decoration" v-if="type" :class="type" />
-        <slot v-else name="decoration"></slot>
+  <view class="uni-section">
+    <view
+      class="uni-section-header"
+      @click="onClick"
+    >
+      <view
+        v-if="type"
+        class="uni-section-header__decoration"
+        :class="type"
+      />
+      <slot
+        v-else
+        name="decoration"
+      />
 
-        <view class="uni-section-header__content">
-          <text :style="{'font-size':titleFontSize,'color':titleColor}" class="uni-section__content-title" :class="{'distraction':!subTitle}">{{ title }}</text>
-          <text v-if="subTitle" :style="{'font-size':subTitleFontSize,'color':subTitleColor}" class="uni-section-header__content-sub">{{ subTitle }}</text>
-        </view>
+      <view class="uni-section-header__content">
+        <text
+          :style="{'font-size':titleFontSize,'color':titleColor}"
+          class="uni-section__content-title"
+          :class="{'distraction':!subTitle}"
+        >
+          {{ title }}
+        </text>
+        <text
+          v-if="subTitle"
+          :style="{'font-size':subTitleFontSize,'color':subTitleColor}"
+          class="uni-section-header__content-sub"
+        >
+          {{ subTitle }}
+        </text>
+      </view>
 
-        <view class="uni-section-header__slot-right">
-          <slot name="right"></slot>
-        </view>
-		</view>
+      <view class="uni-section-header__slot-right">
+        <slot name="right" />
+      </view>
+    </view>
 
-		<view class="uni-section-content" :style="{padding: _padding}">
-			<slot />
-		</view>
-	</view>
+    <view
+      class="uni-section-content"
+      :style="{padding: _padding}"
+    >
+      <slot />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -40,7 +65,6 @@
 
 	export default {
 		name: 'UniSection',
-    emits:['click'],
 		props: {
 			type: {
 				type: String,
@@ -76,6 +100,7 @@
 				default: false
 			}
 		},
+    emits:['click'],
     computed:{
       _padding(){
         if(typeof this.padding === 'string'){
@@ -99,7 +124,7 @@
 		}
 	}
 </script>
-<style lang="scss" >
+<style lang="scss">
 	$uni-primary: #2979ff !default;
 
 	.uni-section {

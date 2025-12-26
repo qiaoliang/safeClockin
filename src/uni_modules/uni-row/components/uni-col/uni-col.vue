@@ -1,26 +1,32 @@
 <template>
-	<!-- #ifndef APP-NVUE -->
-	<view :class="['uni-col', sizeClass, pointClassList]" :style="{
-		paddingLeft:`${Number(gutter)}rpx`,
-		paddingRight:`${Number(gutter)}rpx`,
-	}">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
-	<!-- #ifdef APP-NVUE -->
-	<!-- 在nvue上，类名样式不生效，换为style -->
-	<!-- 设置right正值失效，设置 left 负值 -->
-	<view :class="['uni-col']" :style="{
-		paddingLeft:`${Number(gutter)}rpx`,
-		paddingRight:`${Number(gutter)}rpx`,
-		width:`${nvueWidth}rpx`,
-		position:'relative',
-		marginLeft:`${marginLeft}rpx`,
-		left:`${right === 0 ? left : -right}rpx`
-	}">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
+  <!-- #ifndef APP-NVUE -->
+  <view
+    :class="['uni-col', sizeClass, pointClassList]"
+    :style="{
+      paddingLeft:`${Number(gutter)}rpx`,
+      paddingRight:`${Number(gutter)}rpx`,
+    }"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <!-- 在nvue上，类名样式不生效，换为style -->
+  <!-- 设置right正值失效，设置 left 负值 -->
+  <view
+    :class="['uni-col']"
+    :style="{
+      paddingLeft:`${Number(gutter)}rpx`,
+      paddingRight:`${Number(gutter)}rpx`,
+      width:`${nvueWidth}rpx`,
+      position:'relative',
+      marginLeft:`${marginLeft}rpx`,
+      left:`${right === 0 ? left : -right}rpx`
+    }"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -49,7 +55,7 @@
 
 	// -1 默认值，因为在微信小程序端只给Number会有默认值0
 	export default {
-		name: 'uniCol',
+		name: 'UniCol',
 		// #ifdef MP-WEIXIN
 		options: {
 			virtualHost: true // 在微信小程序中将组件节点渲染为虚拟节点，更加接近Vue组件的表现
@@ -89,29 +95,9 @@
 				left: 0
 			}
 		},
-		created() {
-			// 字节小程序中，在computed中读取$parent为undefined
-			let parent = this.$parent;
-
-			while (parent && parent.$options.componentName !== 'uniRow') {
-				parent = parent.$parent;
-			}
-
-			this.updateGutter(parent.gutter)
-			parent.$watch('gutter', (gutter) => {
-				this.updateGutter(gutter)
-			})
-
-			// #ifdef APP-NVUE
-			this.updateNvueWidth(parent.width)
-			parent.$watch('width', (width) => {
-				this.updateNvueWidth(width)
-			})
-			// #endif
-		},
 		computed: {
 			sizeList() {
-				let {
+				const {
 					span,
 					offset,
 					pull,
@@ -127,7 +113,7 @@
 			},
 			// #ifndef APP-NVUE
 			pointClassList() {
-				let classList = [];
+				const classList = [];
 
 				['xs', 'sm', 'md', 'lg', 'xl'].forEach(point => {
 					const props = this[point];
@@ -147,6 +133,51 @@
 				// 支付宝小程序使用 :class=[ ['a','b'] ]，渲染错误
 				return classList.join(' ');
 			}
+			// #endif
+		},
+		watch: {
+			sizeList: {
+				immediate: true,
+				handler(newVal) {
+					// #ifndef APP-NVUE
+					const classList = [];
+					for (const size in newVal) {
+						const curSize = newVal[size];
+						if ((curSize || curSize === 0) && curSize !== -1) {
+							classList.push(
+								size === 'span' ?
+								`${ComponentClass}-${curSize}` :
+								`${ComponentClass}-${size}-${curSize}`
+							)
+						}
+					}
+					// 支付宝小程序使用 :class=[ ['a','b'] ]，渲染错误
+					this.sizeClass = classList.join(' ');
+					// #endif
+					// #ifdef APP-NVUE
+					this.updateNvueWidth(this.parentWidth);
+					// #endif
+				}
+			}
+		},
+		created() {
+			// 字节小程序中，在computed中读取$parent为undefined
+			let parent = this.$parent;
+
+			while (parent && parent.$options.componentName !== 'uniRow') {
+				parent = parent.$parent;
+			}
+
+			this.updateGutter(parent.gutter)
+			parent.$watch('gutter', (gutter) => {
+				this.updateGutter(gutter)
+			})
+
+			// #ifdef APP-NVUE
+			this.updateNvueWidth(parent.width)
+			parent.$watch('width', (width) => {
+				this.updateNvueWidth(width)
+			})
 			// #endif
 		},
 		methods: {
@@ -183,31 +214,6 @@
 				});
 			}
 			// #endif
-		},
-		watch: {
-			sizeList: {
-				immediate: true,
-				handler(newVal) {
-					// #ifndef APP-NVUE
-					let classList = [];
-					for (let size in newVal) {
-						const curSize = newVal[size];
-						if ((curSize || curSize === 0) && curSize !== -1) {
-							classList.push(
-								size === 'span' ?
-								`${ComponentClass}-${curSize}` :
-								`${ComponentClass}-${size}-${curSize}`
-							)
-						}
-					}
-					// 支付宝小程序使用 :class=[ ['a','b'] ]，渲染错误
-					this.sizeClass = classList.join(' ');
-					// #endif
-					// #ifdef APP-NVUE
-					this.updateNvueWidth(this.parentWidth);
-					// #endif
-				}
-			}
 		}
 	}
 </script>

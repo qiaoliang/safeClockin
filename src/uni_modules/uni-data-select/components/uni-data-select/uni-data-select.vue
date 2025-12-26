@@ -1,63 +1,153 @@
 <template>
-	<view class="uni-stat__select">
-		<span v-if="label" class="uni-label-text hide-on-phone">{{label + '：'}}</span>
-		<view class="uni-stat-box" :class="{'uni-stat__actived': current}">
-			<view class="uni-select" :class="{'uni-select--disabled':disabled, 'uni-select--wrap': shouldWrap , 'border-default': mode == 'default','border-bottom': mode == 'underline'}">
-				<view class="uni-select__input-box" @click="toggleSelector" :class="{'uni-select__input-box--wrap': shouldWrap}">
-          <view v-if="slotSelected" class="slot-content padding-top-bottom" :class="{'uni-select__input-text--wrap': shouldWrap}">
-            <slot name="selected" :selectedItems="getSelectedItems()"></slot>
+  <view class="uni-stat__select">
+    <span
+      v-if="label"
+      class="uni-label-text hide-on-phone"
+    >{{ label + '：' }}</span>
+    <view
+      class="uni-stat-box"
+      :class="{'uni-stat__actived': current}"
+    >
+      <view
+        class="uni-select"
+        :class="{'uni-select--disabled':disabled, 'uni-select--wrap': shouldWrap , 'border-default': mode == 'default','border-bottom': mode == 'underline'}"
+      >
+        <view
+          class="uni-select__input-box"
+          :class="{'uni-select__input-box--wrap': shouldWrap}"
+          @click="toggleSelector"
+        >
+          <view
+            v-if="slotSelected"
+            class="slot-content padding-top-bottom"
+            :class="{'uni-select__input-text--wrap': shouldWrap}"
+          >
+            <slot
+              name="selected"
+              :selected-items="getSelectedItems()"
+            />
           </view>
           <template v-else>
-            <view v-if="textShow" class="uni-select__input-text" :class="{'uni-select__input-text--wrap': shouldWrap}">
-              <view class="padding-top-bottom" :class="'align-'+align">{{textShow}}</view>
+            <view
+              v-if="textShow"
+              class="uni-select__input-text"
+              :class="{'uni-select__input-text--wrap': shouldWrap}"
+            >
+              <view
+                class="padding-top-bottom"
+                :class="'align-'+align"
+              >
+                {{ textShow }}
+              </view>
             </view>
-            <view v-else class="uni-select__input-text uni-select__input-placeholder" :class="'align-'+align">{{typePlaceholder}}</view>
+            <view
+              v-else
+              class="uni-select__input-text uni-select__input-placeholder"
+              :class="'align-'+align"
+            >
+              {{ typePlaceholder }}
+            </view>
           </template>
-					<view key="clear-button" v-if="!hideRight && shouldShowClear && clear && !disabled" @click.stop="clearVal">
-						<uni-icons type="clear" color="#c0c4cc" size="24" />
-					</view>
-					<view key="arrow-button" v-else-if="!hideRight">
-						<uni-icons :type="showSelector? 'top' : 'bottom'" size="14" color="#999" />
-					</view>
-				</view>
-				<view class="uni-select--mask" v-if="showSelector" @click="toggleSelector" />
-					<view class="uni-select__selector" :style="getOffsetByPlacement" v-if="showSelector">
-						<view :class="placement=='bottom'?'uni-popper__arrow_bottom':'uni-popper__arrow_top'"></view>
-						<scroll-view scroll-y="true" class="uni-select__selector-scroll">
-							<template v-if="slotEmpty && mixinDatacomResData.length === 0">
-								<view class="uni-select__selector-empty">
-									<slot name="empty" :empty="emptyTips"></slot>
-								</view>
-							</template>
-							<template v-else>
-								<view v-if="mixinDatacomResData.length === 0" class="uni-select__selector-empty">
-									<text>{{emptyTips}}</text>
-								</view>
-							</template>
-							<template v-if="slotOption">
-								<view v-for="(itemData,index) in mixinDatacomResData" :key="index" @click="change(itemData)">
-									<slot name="option" :item="itemData" :itemSelected="multiple? getCurrentValues().includes(itemData.value):getCurrentValues() == itemData.value"></slot>
-								</view>
-							</template>
-							<template v-else>
-								<view v-if="!multiple && mixinDatacomResData.length > 0" class="uni-select__selector-item" v-for="(item,index) in mixinDatacomResData" :key="index"
-									@click="change(item)">
-									<text :class="{'uni-select__selector__disabled': item.disable}">{{formatItemName(item)}}</text>
-								</view>
-								<view v-if="multiple && mixinDatacomResData.length > 0" >
-									<checkbox-group @change="checkBoxChange">
-										<label class="uni-select__selector-item" v-for="(item,index) in mixinDatacomResData" :key="index" >
-											<checkbox :value="index+''" :checked="getCurrentValues().includes(item.value)" :disabled="item.disable"></checkbox>
-											<view :class="{'uni-select__selector__disabled': item.disable}">{{formatItemName(item)}}</view>
-										</label>
-									</checkbox-group>
-								</view>
-							</template>
-						</scroll-view>
-					</view>
-			</view>
-		</view>
-	</view>
+          <view
+            v-if="!hideRight && shouldShowClear && clear && !disabled"
+            key="clear-button"
+            @click.stop="clearVal"
+          >
+            <uni-icons
+              type="clear"
+              color="#c0c4cc"
+              size="24"
+            />
+          </view>
+          <view
+            v-else-if="!hideRight"
+            key="arrow-button"
+          >
+            <uni-icons
+              :type="showSelector? 'top' : 'bottom'"
+              size="14"
+              color="#999"
+            />
+          </view>
+        </view>
+        <view
+          v-if="showSelector"
+          class="uni-select--mask"
+          @click="toggleSelector"
+        />
+        <view
+          v-if="showSelector"
+          class="uni-select__selector"
+          :style="getOffsetByPlacement"
+        >
+          <view :class="placement=='bottom'?'uni-popper__arrow_bottom':'uni-popper__arrow_top'" />
+          <scroll-view
+            scroll-y="true"
+            class="uni-select__selector-scroll"
+          >
+            <template v-if="slotEmpty && mixinDatacomResData.length === 0">
+              <view class="uni-select__selector-empty">
+                <slot
+                  name="empty"
+                  :empty="emptyTips"
+                />
+              </view>
+            </template>
+            <template v-else>
+              <view
+                v-if="mixinDatacomResData.length === 0"
+                class="uni-select__selector-empty"
+              >
+                <text>{{ emptyTips }}</text>
+              </view>
+            </template>
+            <template v-if="slotOption">
+              <view
+                v-for="(itemData,index) in mixinDatacomResData"
+                :key="index"
+                @click="change(itemData)"
+              >
+                <slot
+                  name="option"
+                  :item="itemData"
+                  :item-selected="multiple? getCurrentValues().includes(itemData.value):getCurrentValues() == itemData.value"
+                />
+              </view>
+            </template>
+            <template v-else>
+              <view
+                v-for="(item,index) in mixinDatacomResData"
+                v-if="!multiple && mixinDatacomResData.length > 0"
+                :key="index"
+                class="uni-select__selector-item"
+                @click="change(item)"
+              >
+                <text :class="{'uni-select__selector__disabled': item.disable}">
+                  {{ formatItemName(item) }}
+                </text>
+              </view>
+              <view v-if="multiple && mixinDatacomResData.length > 0">
+                <checkbox-group @change="checkBoxChange">
+                  <label
+                    v-for="(item,index) in mixinDatacomResData"
+                    :key="index"
+                    class="uni-select__selector-item"
+                  >
+                    <checkbox
+                      :value="index+''"
+                      :checked="getCurrentValues().includes(item.value)"
+                      :disabled="item.disable"
+                    />
+                    <view :class="{'uni-select__selector__disabled': item.disable}">{{ formatItemName(item) }}</view>
+                  </label>
+                </checkbox-group>
+              </view>
+            </template>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -93,27 +183,11 @@
 	 */
 
 	export default {
-		name: "uni-data-select",
+		name: "UniDataSelect",
 		mixins: [uniCloud.mixinDatacom || {}],
-		emits: [
-			'open',
-			'close',
-			'update:modelValue',
-			'input',
-			'clear',
-			'change'
-		],
 		model: {
 			prop: 'modelValue',
 			event: 'update:modelValue'
-		},
-		options: {
-			// #ifdef MP-TOUTIAO
-			virtualHost: false,
-			// #endif
-			// #ifndef MP-TOUTIAO
-			virtualHost: true
-			// #endif
 		},
 		props: {
 			localdata: {
@@ -184,6 +258,22 @@
         default: 'default'
       }
 		},
+		emits: [
+			'open',
+			'close',
+			'update:modelValue',
+			'input',
+			'clear',
+			'change'
+		],
+		options: {
+			// #ifdef MP-TOUTIAO
+			virtualHost: false,
+			// #endif
+			// #ifndef MP-TOUTIAO
+			virtualHost: true
+			// #endif
+		},
 		data() {
 			return {
 				showSelector: false,
@@ -193,14 +283,6 @@
 				channels: [],
 				cacheKey: "uni-data-select-lastSelectedValue",
 			};
-		},
-		created() {
-			this.debounceGet = this.debounce(() => {
-				this.query();
-			}, 300);
-			if (this.collection && !this.localdata.length) {
-				this.debounceGet();
-			}
 		},
 		computed: {
 			typePlaceholder() {
@@ -256,7 +338,7 @@
 			},
       slotSelected(){
         // #ifdef VUE2
-        return this.$scopedSlots ? this.$scopedSlots.selected : false
+        return this.$slots ? this.$slots.selected : false
         // #endif
         // #ifdef VUE3
         return this.$slots ? this.$slots.selected : false
@@ -264,7 +346,7 @@
       },
       slotEmpty(){
         // #ifdef VUE2
-        return this.$scopedSlots ? this.$scopedSlots.empty : false
+        return this.$slots ? this.$slots.empty : false
         // #endif
         // #ifdef VUE3
         return this.$slots ? this.$slots.empty : false
@@ -272,7 +354,7 @@
       },
 			slotOption(){
 				// #ifdef VUE2
-				return this.$scopedSlots ? this.$scopedSlots.option : false
+				return this.$slots ? this.$slots.option : false
 				// #endif
 				// #ifdef VUE3
 				return this.$slots ? this.$slots.option : false
@@ -304,6 +386,14 @@
 					}
 				}
 			},
+		},
+		created() {
+			this.debounceGet = this.debounce(() => {
+				this.query();
+			}, 300);
+			if (this.collection && !this.localdata.length) {
+				this.debounceGet();
+			}
 		},
 		methods: {
 			getSelectedItems() {
@@ -417,9 +507,9 @@
 				this.$emit('clear')
 			},
 			checkBoxChange(res){
-				let range = res.detail.value
+				const range = res.detail.value
 
-				let currentValues = range && range.length > 0? range.map((item)=>{
+				const currentValues = range && range.length > 0? range.map((item)=>{
 					const index = parseInt(item, 10);
 
 					if (isNaN(index)) {
@@ -494,7 +584,7 @@
 					// 格式化输出
 					let str = "";
 					str = this.format;
-					for (let key in item) {
+					for (const key in item) {
 						str = str.replace(new RegExp(`{${key}}`, "g"), item[key]);
 					}
 					return str;
@@ -518,18 +608,18 @@
 			},
 			// 获取缓存
 			getCache(name = this.getCurrentCacheKey()) {
-				let cacheData = uni.getStorageSync(this.cacheKey) || {};
+				const cacheData = uni.getStorageSync(this.cacheKey) || {};
 				return cacheData[name];
 			},
 			// 设置缓存
 			setCache(value, name = this.getCurrentCacheKey()) {
-				let cacheData = uni.getStorageSync(this.cacheKey) || {};
+				const cacheData = uni.getStorageSync(this.cacheKey) || {};
 				cacheData[name] = value;
 				uni.setStorageSync(this.cacheKey, cacheData);
 			},
 			// 删除缓存
 			removeCache(name = this.getCurrentCacheKey()) {
-				let cacheData = uni.getStorageSync(this.cacheKey) || {};
+				const cacheData = uni.getStorageSync(this.cacheKey) || {};
 				delete cacheData[name];
 				uni.setStorageSync(this.cacheKey, cacheData);
 			},

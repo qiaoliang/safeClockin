@@ -1,29 +1,62 @@
 <template>
-	<view class="uni-popup-dialog" :style="{ borderRadius }">
-		<view class="uni-dialog-title">
-			<text class="uni-dialog-title-text" :class="['uni-popup__'+dialogType]">{{titleText}}</text>
-		</view>
-		<view v-if="mode === 'base'" class="uni-dialog-content">
-			<slot>
-				<text class="uni-dialog-content-text">{{content}}</text>
-			</slot>
-		</view>
-		<view v-else class="uni-dialog-content">
-			<slot>
-				<input class="uni-dialog-input" :maxlength="maxlength" v-model="val" :type="inputType"
-					:placeholder="placeholderText" :focus="focus">
-			</slot>
-		</view>
-		<view class="uni-dialog-button-group">
-			<view class="uni-dialog-button" v-if="showClose" @click="closeDialog">
-				<text class="uni-dialog-button-text">{{closeText}}</text>
-			</view>
-			<view class="uni-dialog-button" :class="showClose?'uni-border-left':''" @click="onOk">
-				<text class="uni-dialog-button-text uni-button-color">{{okText}}</text>
-			</view>
-		</view>
-
-	</view>
+  <view
+    class="uni-popup-dialog"
+    :style="{ borderRadius }"
+  >
+    <view class="uni-dialog-title">
+      <text
+        class="uni-dialog-title-text"
+        :class="['uni-popup__'+dialogType]"
+      >
+        {{ titleText }}
+      </text>
+    </view>
+    <view
+      v-if="mode === 'base'"
+      class="uni-dialog-content"
+    >
+      <slot>
+        <text class="uni-dialog-content-text">
+          {{ content }}
+        </text>
+      </slot>
+    </view>
+    <view
+      v-else
+      class="uni-dialog-content"
+    >
+      <slot>
+        <input
+          v-model="val"
+          class="uni-dialog-input"
+          :maxlength="maxlength"
+          :type="inputType"
+          :placeholder="placeholderText"
+          :focus="focus"
+        >
+      </slot>
+    </view>
+    <view class="uni-dialog-button-group">
+      <view
+        v-if="showClose"
+        class="uni-dialog-button"
+        @click="closeDialog"
+      >
+        <text class="uni-dialog-button-text">
+          {{ closeText }}
+        </text>
+      </view>
+      <view
+        class="uni-dialog-button"
+        :class="showClose?'uni-border-left':''"
+        @click="onOk"
+      >
+        <text class="uni-dialog-button-text uni-button-color">
+          {{ okText }}
+        </text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -59,9 +92,8 @@
 	 */
 
 	export default {
-		name: "uniPopupDialog",
+		name: "UniPopupDialog",
 		mixins: [popup],
-		emits: ['confirm', 'close', 'update:modelValue', 'input'],
 		props: {
 			inputType: {
 				type: String,
@@ -130,6 +162,7 @@
 				default: '11px',
 			}
 		},
+		emits: ['confirm', 'close', 'update:modelValue', 'input'],
 		data() {
 			return {
 				dialogType: 'error',

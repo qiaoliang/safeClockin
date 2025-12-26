@@ -1,23 +1,39 @@
 <template>
-	<!-- #ifdef H5 -->
-	<tr class="uni-table-tr">
-		<th v-if="selection === 'selection' && ishead" class="checkbox" :class="{ 'tr-table--border': border }">
-			<table-checkbox :checked="checked" :indeterminate="indeterminate" :disabled="disabled"
-				@checkboxSelected="checkboxSelected"></table-checkbox>
-		</th>
-		<slot></slot>
-		<!-- <uni-th class="th-fixed">123</uni-th> -->
-	</tr>
-	<!-- #endif -->
-	<!-- #ifndef H5 -->
-	<view class="uni-table-tr">
-		<view v-if="selection === 'selection' " class="checkbox" :class="{ 'tr-table--border': border }">
-			<table-checkbox :checked="checked" :indeterminate="indeterminate" :disabled="disabled"
-				@checkboxSelected="checkboxSelected"></table-checkbox>
-		</view>
-		<slot></slot>
-	</view>
-	<!-- #endif -->
+  <!-- #ifdef H5 -->
+  <tr class="uni-table-tr">
+    <th
+      v-if="selection === 'selection' && ishead"
+      class="checkbox"
+      :class="{ 'tr-table--border': border }"
+    >
+      <table-checkbox
+        :checked="checked"
+        :indeterminate="indeterminate"
+        :disabled="disabled"
+        @checkbox-selected="checkboxSelected"
+      />
+    </th>
+    <slot />
+    <!-- <uni-th class="th-fixed">123</uni-th> -->
+  </tr>
+  <!-- #endif -->
+  <!-- #ifndef H5 -->
+  <view class="uni-table-tr">
+    <view
+      v-if="selection === 'selection' "
+      class="checkbox"
+      :class="{ 'tr-table--border': border }"
+    >
+      <table-checkbox
+        :checked="checked"
+        :indeterminate="indeterminate"
+        :disabled="disabled"
+        @checkbox-selected="checkboxSelected"
+      />
+    </view>
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -28,7 +44,7 @@
 	 * @tutorial https://ext.dcloud.net.cn/plugin?id=
 	 */
 	export default {
-		name: 'uniTr',
+		name: 'UniTr',
 		components: {
 			tableCheckbox
 		},
@@ -84,7 +100,7 @@
 			}
 		},
 		// #ifndef VUE3
-		destroyed() {
+		unmounted() {
 			const index = this.root.trChildren.findIndex(i => i === this)
 			this.root.trChildren.splice(index, 1)
 			this.root.isNodata()
@@ -107,7 +123,7 @@
 			},
 			// 选中
 			checkboxSelected(e) {
-				let rootData = this.root.data.find(v => v[this.root.rowKey] === this.keyValue)
+				const rootData = this.root.data.find(v => v[this.root.rowKey] === this.keyValue)
 				this.checked = e.checked
 				this.root.check(rootData || this, e.checked, rootData ? this.keyValue : null)
 			},

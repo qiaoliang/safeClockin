@@ -1,31 +1,114 @@
 <template>
-	<view class="uni-easyinput" :class="{ 'uni-easyinput-error': msg }" :style="boxStyle">
-		<view class="uni-easyinput__content" :class="inputContentClass" :style="inputContentStyle">
-			<uni-icons v-if="prefixIcon" class="content-clear-icon" :type="prefixIcon" color="#c0c4cc" @click="onClickIcon('prefix')" size="22"></uni-icons>
-			<slot name="left">
-			</slot>
-			<!-- #ifdef MP-ALIPAY -->
-			<textarea :enableNative="enableNative" v-if="type === 'textarea'" class="uni-easyinput__content-textarea" :class="{ 'input-padding': inputBorder }" :name="name" :value="val" :placeholder="placeholder" :placeholderStyle="placeholderStyle" :disabled="disabled" placeholder-class="uni-easyinput__placeholder-class" :maxlength="inputMaxlength" :focus="focused" :autoHeight="autoHeight" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @input="onInput" @blur="_Blur" @focus="_Focus" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"></textarea>
-			<input :enableNative="enableNative" v-else :type="type === 'password' ? 'text' : type" class="uni-easyinput__content-input" :style="inputStyle" :name="name" :value="val" :password="!showPassword && type === 'password'" :placeholder="placeholder" :placeholderStyle="placeholderStyle" placeholder-class="uni-easyinput__placeholder-class" :disabled="disabled" :maxlength="inputMaxlength" :focus="focused" :confirmType="confirmType" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @focus="_Focus" @blur="_Blur" @input="onInput" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange" />
-			<!-- #endif -->
-			<!-- #ifndef MP-ALIPAY -->
-			<textarea v-if="type === 'textarea'" class="uni-easyinput__content-textarea" :class="{ 'input-padding': inputBorder }" :name="name" :value="val" :placeholder="placeholder" :placeholderStyle="placeholderStyle" :disabled="disabled" placeholder-class="uni-easyinput__placeholder-class" :maxlength="inputMaxlength" :focus="focused" :autoHeight="autoHeight" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @input="onInput" @blur="_Blur" @focus="_Focus" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"></textarea>
-			<input v-else :type="type === 'password' ? 'text' : type" class="uni-easyinput__content-input" :style="inputStyle" :name="name" :value="val" :password="!showPassword && type === 'password'" :placeholder="placeholder" :placeholderStyle="placeholderStyle" placeholder-class="uni-easyinput__placeholder-class" :disabled="disabled" :maxlength="inputMaxlength" :focus="focused" :confirmType="confirmType" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @focus="_Focus" @blur="_Blur" @input="onInput" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange" />
-			<!-- #endif -->
+  <view
+    class="uni-easyinput"
+    :class="{ 'uni-easyinput-error': msg }"
+    :style="boxStyle"
+  >
+    <view
+      class="uni-easyinput__content"
+      :class="inputContentClass"
+      :style="inputContentStyle"
+    >
+      <uni-icons
+        v-if="prefixIcon"
+        class="content-clear-icon"
+        :type="prefixIcon"
+        color="#c0c4cc"
+        size="22"
+        @click="onClickIcon('prefix')"
+      />
+      <slot name="left" />
+      <!-- #ifdef MP-ALIPAY -->
+      <textarea
+        v-if="type === 'textarea'"
+        :enableNative="enableNative"
+        class="uni-easyinput__content-textarea"
+        :class="{ 'input-padding': inputBorder }"
+        :name="name"
+        :value="val"
+        :placeholder="placeholder"
+        :placeholderStyle="placeholderStyle"
+        :disabled="disabled"
+placeholder-class="uni-easyinput__placeholder-class" :maxlength="inputMaxlength" :focus="focused" :autoHeight="autoHeight" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @input="onInput" @blur="_Blur" @focus="_Focus" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"
+      />
+      <input
+        v-else
+        :enableNative="enableNative"
+        :type="type === 'password' ? 'text' : type"
+        class="uni-easyinput__content-input"
+        :style="inputStyle"
+        :name="name"
+        :value="val"
+        :password="!showPassword && type === 'password'"
+        :placeholder="placeholder"
+:placeholderStyle="placeholderStyle" placeholder-class="uni-easyinput__placeholder-class" :disabled="disabled" :maxlength="inputMaxlength" :focus="focused" :confirmType="confirmType" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @focus="_Focus" @blur="_Blur" @input="onInput" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"
+      >
+      <!-- #endif -->
+      <!-- #ifndef MP-ALIPAY -->
+      <textarea
+        v-if="type === 'textarea'"
+        class="uni-easyinput__content-textarea"
+        :class="{ 'input-padding': inputBorder }"
+        :name="name"
+        :value="val"
+        :placeholder="placeholder"
+        :placeholderStyle="placeholderStyle"
+        :disabled="disabled"
+        placeholder-class="uni-easyinput__placeholder-class"
+        :maxlength="inputMaxlength"
+:focus="focused" :autoHeight="autoHeight" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @input="onInput" @blur="_Blur" @focus="_Focus" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"
+      />
+      <input
+        v-else
+        :type="type === 'password' ? 'text' : type"
+        class="uni-easyinput__content-input"
+        :style="inputStyle"
+        :name="name"
+        :value="val"
+        :password="!showPassword && type === 'password'"
+        :placeholder="placeholder"
+        :placeholderStyle="placeholderStyle"
+        placeholder-class="uni-easyinput__placeholder-class"
+:disabled="disabled" :maxlength="inputMaxlength" :focus="focused" :confirmType="confirmType" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @focus="_Focus" @blur="_Blur" @input="onInput" @confirm="onConfirm" @keyboardheightchange="onkeyboardheightchange"
+      >
+      <!-- #endif -->
 
-			<template v-if="type === 'password' && passwordIcon">
-				<!-- 开启密码时显示小眼睛 -->
-				<uni-icons v-if="isVal" class="content-clear-icon" :class="{ 'is-textarea-icon': type === 'textarea' }" :type="showPassword ? 'eye-slash-filled' : 'eye-filled'" :size="22" :color="focusShow ? primaryColor : '#c0c4cc'" @click="onEyes"></uni-icons>
-			</template>
-			<template v-if="suffixIcon">
-				<uni-icons v-if="suffixIcon" class="content-clear-icon" :type="suffixIcon" color="#c0c4cc" @click="onClickIcon('suffix')" size="22"></uni-icons>
-			</template>
-			<template v-else>
-				<uni-icons v-if="clearable && isVal && !disabled && type !== 'textarea'" class="content-clear-icon" :class="{ 'is-textarea-icon': type === 'textarea' }" type="clear" :size="clearSize" :color="msg ? '#dd524d' : focusShow ? primaryColor : '#c0c4cc'" @click="onClear"></uni-icons>
-			</template>
-			<slot name="right"></slot>
-		</view>
-	</view>
+      <template v-if="type === 'password' && passwordIcon">
+        <!-- 开启密码时显示小眼睛 -->
+        <uni-icons
+          v-if="isVal"
+          class="content-clear-icon"
+          :class="{ 'is-textarea-icon': type === 'textarea' }"
+          :type="showPassword ? 'eye-slash-filled' : 'eye-filled'"
+          :size="22"
+          :color="focusShow ? primaryColor : '#c0c4cc'"
+          @click="onEyes"
+        />
+      </template>
+      <template v-if="suffixIcon">
+        <uni-icons
+          v-if="suffixIcon"
+          class="content-clear-icon"
+          :type="suffixIcon"
+          color="#c0c4cc"
+          size="22"
+          @click="onClickIcon('suffix')"
+        />
+      </template>
+      <template v-else>
+        <uni-icons
+          v-if="clearable && isVal && !disabled && type !== 'textarea'"
+          class="content-clear-icon"
+          :class="{ 'is-textarea-icon': type === 'textarea' }"
+          type="clear"
+          :size="clearSize"
+          :color="msg ? '#dd524d' : focusShow ? primaryColor : '#c0c4cc'"
+          @click="onClear"
+        />
+      </template>
+      <slot name="right" />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -75,7 +158,7 @@
 	 */
 	function obj2strClass(obj) {
 		let classess = '';
-		for (let key in obj) {
+		for (const key in obj) {
 			const val = obj[key];
 			if (val) {
 				classess += `${key} `;
@@ -86,39 +169,14 @@
 
 	function obj2strStyle(obj) {
 		let style = '';
-		for (let key in obj) {
+		for (const key in obj) {
 			const val = obj[key];
 			style += `${key}:${val};`;
 		}
 		return style;
 	}
 	export default {
-		name: 'uni-easyinput',
-		emits: [
-			'click',
-			'iconClick',
-			'update:modelValue',
-			'input',
-			'focus',
-			'blur',
-			'confirm',
-			'clear',
-			'eyes',
-			'change',
-			'keyboardheightchange'
-		],
-		model: {
-			prop: 'modelValue',
-			event: 'update:modelValue'
-		},
-		options: {
-			// #ifdef MP-TOUTIAO
-			virtualHost: false,
-			// #endif
-			// #ifndef MP-TOUTIAO
-			virtualHost: true
-			// #endif
-		},
+		name: 'UniEasyinput',
 		inject: {
 			form: {
 				from: 'uniForm',
@@ -128,6 +186,10 @@
 				from: 'uniFormItem',
 				default: null
 			}
+		},
+		model: {
+			prop: 'modelValue',
+			event: 'update:modelValue'
 		},
 		props: {
 			name: String,
@@ -222,6 +284,27 @@
 				type: Boolean,
 				default: false
 			}
+			// #endif
+		},
+		emits: [
+			'click',
+			'iconClick',
+			'update:modelValue',
+			'input',
+			'focus',
+			'blur',
+			'confirm',
+			'clear',
+			'eyes',
+			'change',
+			'keyboardheightchange'
+		],
+		options: {
+			// #ifdef MP-TOUTIAO
+			virtualHost: false,
+			// #endif
+			// #ifndef MP-TOUTIAO
+			virtualHost: true
 			// #endif
 		},
 		data() {
@@ -427,7 +510,7 @@
 				this.$emit('blur', null);
 			},
 			_Blur(event) {
-				let value = event.detail.value;
+				const value = event.detail.value;
 				this.focusShow = false;
 				this.$emit('blur', event);
 				// 根据类型返回值，在event中获取的值理论上讲都是string

@@ -7,11 +7,11 @@
 export const debounce = function(func, wait = 1000, immediate = true) {
 	let timer;
 	return function() {
-		let context = this,
+		const context = this,
 			args = arguments;
 		if (timer) clearTimeout(timer);
 		if (immediate) {
-			let callNow = !timer;
+			const callNow = !timer;
 			timer = setTimeout(() => {
 				timer = null;
 			}, wait);
@@ -33,10 +33,10 @@ export const throttle = (func, wait = 1000, type = 1) => {
 	let previous = 0;
 	let timeout;
 	return function() {
-		let context = this;
-		let args = arguments;
+		const context = this;
+		const args = arguments;
 		if (type === 1) {
-			let now = Date.now();
+			const now = Date.now();
 
 			if (now - previous > wait) {
 				func.apply(context, args);

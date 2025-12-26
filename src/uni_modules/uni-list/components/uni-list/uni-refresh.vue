@@ -1,14 +1,22 @@
 <template>
-    <!-- #ifdef APP-NVUE -->
-    <refresh :display="display" @refresh="onrefresh" @pullingdown="onpullingdown">
-        <slot />
-    </refresh>
-    <!-- #endif -->
-    <!-- #ifndef APP-NVUE -->
-    <view ref="uni-refresh" class="uni-refresh" v-show="isShow">
-        <slot />
-    </view>
-    <!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <refresh
+    :display="display"
+    @refresh="onrefresh"
+    @pullingdown="onpullingdown"
+  >
+    <slot />
+  </refresh>
+  <!-- #endif -->
+  <!-- #ifndef APP-NVUE -->
+  <view
+    v-show="isShow"
+    ref="uni-refresh"
+    class="uni-refresh"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>

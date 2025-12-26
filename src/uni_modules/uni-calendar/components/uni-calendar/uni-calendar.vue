@@ -1,63 +1,136 @@
 <template>
-	<view class="uni-calendar">
-		<view v-if="!insert&&show" class="uni-calendar__mask" :class="{'uni-calendar--mask-show':aniMaskShow}" @click="clean"></view>
-		<view v-if="insert || show" class="uni-calendar__content" :class="{'uni-calendar--fixed':!insert,'uni-calendar--ani-show':aniMaskShow}">
-			<view v-if="!insert" class="uni-calendar__header uni-calendar--fixed-top">
-				<view class="uni-calendar__header-btn-box" @click="close">
-					<text class="uni-calendar__header-text uni-calendar--fixed-width">{{cancelText}}</text>
-				</view>
-				<view class="uni-calendar__header-btn-box" @click="confirm">
-					<text class="uni-calendar__header-text uni-calendar--fixed-width">{{okText}}</text>
-				</view>
-			</view>
-			<view class="uni-calendar__header">
-				<view class="uni-calendar__header-btn-box" @click.stop="pre">
-					<view class="uni-calendar__header-btn uni-calendar--left"></view>
-				</view>
-				<picker mode="date" :value="date" fields="month" @change="bindDateChange">
-					<text class="uni-calendar__header-text">{{ (nowDate.year||'') +' / '+( nowDate.month||'')}}</text>
-				</picker>
-				<view class="uni-calendar__header-btn-box" @click.stop="next">
-					<view class="uni-calendar__header-btn uni-calendar--right"></view>
-				</view>
-				<text class="uni-calendar__backtoday" @click="backToday">{{todayText}}</text>
-
-			</view>
-			<view class="uni-calendar__box">
-				<view v-if="showMonth" class="uni-calendar__box-bg">
-					<text class="uni-calendar__box-bg-text">{{nowDate.month}}</text>
-				</view>
-				<view class="uni-calendar__weeks">
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{SUNText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{monText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{TUEText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{WEDText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{THUText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{FRIText}}</text>
-					</view>
-					<view class="uni-calendar__weeks-day">
-						<text class="uni-calendar__weeks-day-text">{{SATText}}</text>
-					</view>
-				</view>
-				<view class="uni-calendar__weeks" v-for="(item,weekIndex) in weeks" :key="weekIndex">
-					<view class="uni-calendar__weeks-item" v-for="(weeks,weeksIndex) in item" :key="weeksIndex">
-						<calendar-item class="uni-calendar-item--hook" :weeks="weeks" :calendar="calendar" :selected="selected" :lunar="lunar" @change="choiceDate"></calendar-item>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+  <view class="uni-calendar">
+    <view
+      v-if="!insert&&show"
+      class="uni-calendar__mask"
+      :class="{'uni-calendar--mask-show':aniMaskShow}"
+      @click="clean"
+    />
+    <view
+      v-if="insert || show"
+      class="uni-calendar__content"
+      :class="{'uni-calendar--fixed':!insert,'uni-calendar--ani-show':aniMaskShow}"
+    >
+      <view
+        v-if="!insert"
+        class="uni-calendar__header uni-calendar--fixed-top"
+      >
+        <view
+          class="uni-calendar__header-btn-box"
+          @click="close"
+        >
+          <text class="uni-calendar__header-text uni-calendar--fixed-width">
+            {{ cancelText }}
+          </text>
+        </view>
+        <view
+          class="uni-calendar__header-btn-box"
+          @click="confirm"
+        >
+          <text class="uni-calendar__header-text uni-calendar--fixed-width">
+            {{ okText }}
+          </text>
+        </view>
+      </view>
+      <view class="uni-calendar__header">
+        <view
+          class="uni-calendar__header-btn-box"
+          @click.stop="pre"
+        >
+          <view class="uni-calendar__header-btn uni-calendar--left" />
+        </view>
+        <picker
+          mode="date"
+          :value="date"
+          fields="month"
+          @change="bindDateChange"
+        >
+          <text class="uni-calendar__header-text">
+            {{ (nowDate.year||'') +' / '+( nowDate.month||'') }}
+          </text>
+        </picker>
+        <view
+          class="uni-calendar__header-btn-box"
+          @click.stop="next"
+        >
+          <view class="uni-calendar__header-btn uni-calendar--right" />
+        </view>
+        <text
+          class="uni-calendar__backtoday"
+          @click="backToday"
+        >
+          {{ todayText }}
+        </text>
+      </view>
+      <view class="uni-calendar__box">
+        <view
+          v-if="showMonth"
+          class="uni-calendar__box-bg"
+        >
+          <text class="uni-calendar__box-bg-text">
+            {{ nowDate.month }}
+          </text>
+        </view>
+        <view class="uni-calendar__weeks">
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ SUNText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ monText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ TUEText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ WEDText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ THUText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ FRIText }}
+            </text>
+          </view>
+          <view class="uni-calendar__weeks-day">
+            <text class="uni-calendar__weeks-day-text">
+              {{ SATText }}
+            </text>
+          </view>
+        </view>
+        <view
+          v-for="(item,weekIndex) in weeks"
+          :key="weekIndex"
+          class="uni-calendar__weeks"
+        >
+          <view
+            v-for="(weeks,weeksIndex) in item"
+            :key="weeksIndex"
+            class="uni-calendar__weeks-item"
+          >
+            <calendar-item
+              class="uni-calendar-item--hook"
+              :weeks="weeks"
+              :calendar="calendar"
+              :selected="selected"
+              :lunar="lunar"
+              @change="choiceDate"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -92,7 +165,6 @@
 		components: {
 			CalendarItem
 		},
-		emits:['close','confirm','change','monthSwitch'],
 		props: {
 			date: {
 				type: String,
@@ -133,6 +205,7 @@
 				default: true
 			}
 		},
+		emits:['close','confirm','change','monthSwitch'],
 		data() {
 			return {
 				show: false,
@@ -276,7 +349,7 @@
 			 * 选择月份触发
 			 */
 			monthSwitch() {
-				let {
+				const {
 					year,
 					month
 				} = this.nowDate
@@ -290,7 +363,7 @@
 			 * @param {Object} name
 			 */
 			setEmit(name) {
-				let {
+				const {
 					year,
 					month,
 					date,

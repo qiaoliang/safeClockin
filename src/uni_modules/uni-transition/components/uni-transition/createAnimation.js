@@ -21,7 +21,7 @@ class MPAnimation {
 	}
 
 	_nvuePushAnimates(type, args) {
-		let aniObj = this.currentStepAnimates[this.next]
+		const aniObj = this.currentStepAnimates[this.next]
 		let styles = {}
 		if (!aniObj) {
 			styles = {
@@ -46,7 +46,7 @@ class MPAnimation {
 		this.currentStepAnimates[this.next] = styles
 	}
 	_animateRun(styles = {}, config = {}) {
-		let ref = this.$.$refs['ani'].ref
+		const ref = this.$.$refs['ani'].ref
 		if (!ref) return
 		return new Promise((resolve, reject) => {
 			nvueAnimation.transition(ref, {
@@ -59,9 +59,9 @@ class MPAnimation {
 	}
 
 	_nvueNextAnimate(animates, step = 0, fn) {
-		let obj = animates[step]
+		const obj = animates[step]
 		if (obj) {
-			let {
+			const {
 				styles,
 				config
 			} = obj
@@ -97,7 +97,7 @@ class MPAnimation {
 		// #endif
 		// #ifdef APP-NVUE
 		this.isEnd = false
-		let ref = this.$.$refs['ani'] && this.$.$refs['ani'].ref
+		const ref = this.$.$refs['ani'] && this.$.$refs['ani'].ref
 		if(!ref) return
 		this._nvueNextAnimate(this.currentStepAnimates, 0, fn)
 		this.next = 0

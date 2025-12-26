@@ -1,34 +1,63 @@
 <template>
   <view class="uni-data-pickerview">
-    <scroll-view v-if="!isCloudDataList" class="selected-area" scroll-x="true">
+    <scroll-view
+      v-if="!isCloudDataList"
+      class="selected-area"
+      scroll-x="true"
+    >
       <view class="selected-list">
-          <view 
-            class="selected-item"
-            v-for="(item,index) in selected"
-            :key="index"
-            :class="{
-              'selected-item-active':index == selectedIndex
-            }"
-            @click="handleSelect(index)"
-          >
-            <text>{{item.text || ''}}</text>
-          </view>
+        <view 
+          v-for="(item,index) in selected"
+          :key="index"
+          class="selected-item"
+          :class="{
+            'selected-item-active':index == selectedIndex
+          }"
+          @click="handleSelect(index)"
+        >
+          <text>{{ item.text || '' }}</text>
+        </view>
       </view>
     </scroll-view>
     <view class="tab-c">
-      <scroll-view class="list" :scroll-y="true">
-        <view class="item" :class="{'is-disabled': !!item.disable}" v-for="(item, j) in dataList[selectedIndex]" :key="j"
-          @click="handleNodeClick(item, selectedIndex, j)">
-          <text class="item-text">{{item[map.text]}}</text>
-          <view class="check" v-if="selected.length > selectedIndex && item[map.value] == selected[selectedIndex].value"></view>
+      <scroll-view
+        class="list"
+        :scroll-y="true"
+      >
+        <view
+          v-for="(item, j) in dataList[selectedIndex]"
+          :key="j"
+          class="item"
+          :class="{'is-disabled': !!item.disable}"
+          @click="handleNodeClick(item, selectedIndex, j)"
+        >
+          <text class="item-text">
+            {{ item[map.text] }}
+          </text>
+          <view
+            v-if="selected.length > selectedIndex && item[map.value] == selected[selectedIndex].value"
+            class="check"
+          />
         </view>
       </scroll-view>
 
-      <view class="loading-cover" v-if="loading">
-        <uni-load-more class="load-more" :contentText="loadMore" status="loading"></uni-load-more>
+      <view
+        v-if="loading"
+        class="loading-cover"
+      >
+        <uni-load-more
+          class="load-more"
+          :content-text="loadMore"
+          status="loading"
+        />
       </view>
-      <view class="error-message" v-if="errorMessage">
-        <text class="error-text">{{errorMessage}}</text>
+      <view
+        v-if="errorMessage"
+        class="error-message"
+      >
+        <text class="error-text">
+          {{ errorMessage }}
+        </text>
       </view>
     </view>
   </view>
@@ -54,7 +83,6 @@
    */
   export default {
     name: 'UniDataPickerView',
-    emits: ['nodeclick', 'change', 'datachange', 'update:modelValue'],
     mixins: [dataPicker],
     props: {
       managedMode: {
@@ -66,6 +94,7 @@
         default: true
       }
     },
+    emits: ['nodeclick', 'change', 'datachange', 'update:modelValue'],
     created() {
       if (!this.managedMode) {
         this.$nextTick(() => {

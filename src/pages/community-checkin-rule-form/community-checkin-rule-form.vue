@@ -1,14 +1,14 @@
 <template>
   <CheckinRuleForm
-    :ruleType="'community'"
-    :formTitle="isEditMode ? '编辑社区规则' : '创建社区规则'"
-    :showEnableButton="true"
-    :ruleId="ruleId"
-    :communityId="communityId"
-    :initialData="initialData"
+    ref="ruleFormRef"
+    :rule-type="'community'"
+    :form-title="isEditMode ? '编辑社区规则' : '创建社区规则'"
+    :show-enable-button="true"
+    :rule-id="ruleId"
+    :community-id="communityId"
+    :initial-data="initialData"
     @submit="handleSubmit"
     @back="handleBack"
-    ref="ruleFormRef"
   />
 </template>
 

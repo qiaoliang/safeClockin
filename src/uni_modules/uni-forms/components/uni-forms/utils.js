@@ -25,7 +25,7 @@ export const getValue = (key, value, rules) => {
 	const isRuleNumType = rules.find(val => val.format && typeFilter(val.format));
 	const isRuleBoolType = rules.find(val => (val.format && val.format === 'boolean') || val.format === 'bool');
 	// 输入类型为 number
-	if (!!isRuleNumType) {
+	if (isRuleNumType) {
 		if (!value && value !== 0) {
 			value = null
 		} else {
@@ -34,7 +34,7 @@ export const getValue = (key, value, rules) => {
 	}
 
 	// 输入类型为 boolean
-	if (!!isRuleBoolType) {
+	if (isRuleBoolType) {
 		value = isBoolean(value) ? value : false
 	}
 
@@ -102,10 +102,10 @@ export const isRealName = (name) => {
  * @@return {Object|Array} object 需要解析的数据
  */
 export const rawData = (object = {}, name) => {
-	let newData = JSON.parse(JSON.stringify(object))
-	let formData = {}
-	for(let i in newData){
-		let path = name2arr(i)
+	const newData = JSON.parse(JSON.stringify(object))
+	const formData = {}
+	for(const i in newData){
+		const path = name2arr(i)
 		objSet(formData,path,newData[i])
 	}
 	return formData
@@ -163,9 +163,9 @@ function _basePath(path) {
  */
 export const objGet = (object, path, defaultVal = 'undefined') => {
 	// 先将path处理成统一格式
-	let newPath = _basePath(path)
+	const newPath = _basePath(path)
 	// 递归处理，返回最后结果
-	let val = newPath.reduce((o, k) => {
+	const val = newPath.reduce((o, k) => {
 		return (o || {})[k]
 	}, object);
 	return !val || val !== undefined ? val : defaultVal

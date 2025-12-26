@@ -1,7 +1,16 @@
 <template>
-	<view class="uni-title__box" :style="{'align-items':textAlign}">
-		<text class="uni-title__base" :class="['uni-'+type]" :style="{'color':color}">{{title}}</text>
-	</view>
+  <view
+    class="uni-title__box"
+    :style="{'align-items':textAlign}"
+  >
+    <text
+      class="uni-title__base"
+      :class="['uni-'+type]"
+      :style="{'color':color}"
+    >
+      {{ title }}
+    </text>
+  </view>
 </template>
 
 <script>
@@ -92,7 +101,7 @@
 				if (this.stat === '') {
 					this.isStat = false
 				}
-				let stat_type = (typeof(this.stat) === 'boolean' && this.stat) || (typeof(this.stat) === 'string' && this.stat !==
+				const stat_type = (typeof(this.stat) === 'boolean' && this.stat) || (typeof(this.stat) === 'string' && this.stat !==
 					'')
 				if (this.type === "") {
 					this.isStat = true

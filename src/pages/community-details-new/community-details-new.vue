@@ -3,11 +3,19 @@
     <!-- 状态栏 -->
     <view class="status-bar">
       <view class="status-bar-content">
-        <text class="status-time">9:41</text>
+        <text class="status-time">
+          9:41
+        </text>
         <view class="status-icons">
-          <text class="icon-signal">📶</text>
-          <text class="icon-wifi">📡</text>
-          <text class="icon-battery">🔋</text>
+          <text class="icon-signal">
+            📶
+          </text>
+          <text class="icon-wifi">
+            📡
+          </text>
+          <text class="icon-battery">
+            🔋
+          </text>
         </view>
       </view>
     </view>
@@ -22,18 +30,34 @@
       />
 
       <!-- 加载状态 -->
-      <view v-if="loading" class="loading-container">
+      <view
+        v-if="loading"
+        class="loading-container"
+      >
         <uni-load-more status="loading" />
       </view>
 
       <!-- 错误状态 -->
-      <view v-else-if="error" class="error-container">
-        <text class="error-text">{{ error }}</text>
-        <button class="retry-btn" @click="loadCommunityDetail">重试</button>
+      <view
+        v-else-if="error"
+        class="error-container"
+      >
+        <text class="error-text">
+          {{ error }}
+        </text>
+        <button
+          class="retry-btn"
+          @click="loadCommunityDetail"
+        >
+          重试
+        </button>
       </view>
 
       <!-- 内容区域 -->
-      <view v-else class="content-area">
+      <view
+        v-else
+        class="content-area"
+      >
         <!-- 社区基本信息卡片 -->
         <CommunityInfoCard 
           :community="communityData"

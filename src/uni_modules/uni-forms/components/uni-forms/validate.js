@@ -24,8 +24,8 @@ function formatMessage(args, resources = '') {
 	})
 
 	let str = resources
-	for (let key in args) {
-		let reg = new RegExp('{' + key + '}')
+	for (const key in args) {
+		const reg = new RegExp('{' + key + '}')
 		str = str.replace(reg, args[key])
 	}
 	return str
@@ -127,9 +127,9 @@ class RuleValidator {
 	async validateRule(fieldKey, fieldValue, value, data, allData) {
 		var result = null
 
-		let rules = fieldValue.rules
+		const rules = fieldValue.rules
 
-		let hasRequired = rules.findIndex((item) => {
+		const hasRequired = rules.findIndex((item) => {
 			return item.required
 		})
 		if (hasRequired < 0) {
@@ -148,8 +148,8 @@ class RuleValidator {
 		}
 
 		for (var i = 0; i < rules.length; i++) {
-			let rule = rules[i]
-			let vt = this._getValidateType(rule)
+			const rule = rules[i]
+			const vt = this._getValidateType(rule)
 
 			Object.assign(rule, {
 				label: fieldValue.label || `["${fieldKey}"]`
@@ -163,8 +163,8 @@ class RuleValidator {
 			}
 
 			if (rule.validateExpr) {
-				let now = Date.now()
-				let resultExpr = rule.validateExpr(value, allData, now)
+				const now = Date.now()
+				const resultExpr = rule.validateExpr(value, allData, now)
 				if (resultExpr === false) {
 					result = this._getMessage(rule, rule.errorMessage || this._message['default'])
 					break
@@ -244,7 +244,7 @@ const RuleValidatorHelper = {
 			errorMessage
 		} = rule;
 
-		let list = new Array(range.length);
+		const list = new Array(range.length);
 		for (let i = 0; i < range.length; i++) {
 			const item = range[i];
 			if (types.object(item) && item.value !== undefined) {
@@ -275,14 +275,14 @@ const RuleValidatorHelper = {
 			return formatMessage(rule, rule.errorMessage || message.pattern.mismatch);
 		}
 
-		let {
+		const {
 			minimum,
 			maximum,
 			exclusiveMinimum,
 			exclusiveMaximum
 		} = rule;
-		let min = exclusiveMinimum ? value <= minimum : value < minimum;
-		let max = exclusiveMaximum ? value >= maximum : value > maximum;
+		const min = exclusiveMinimum ? value <= minimum : value < minimum;
+		const max = exclusiveMaximum ? value >= maximum : value > maximum;
 
 		if (minimum !== undefined && min) {
 			return formatMessage(rule, rule.errorMessage || message['number'][exclusiveMinimum ?
@@ -304,9 +304,9 @@ const RuleValidatorHelper = {
 			return formatMessage(rule, rule.errorMessage || message.pattern.mismatch);
 		}
 
-		let min = rule.minLength;
-		let max = rule.maxLength;
-		let val = value.length;
+		const min = rule.minLength;
+		const max = rule.maxLength;
+		const val = value.length;
 
 		if (min !== undefined && val < min) {
 			return formatMessage(rule, rule.errorMessage || message['length'].minLength)
@@ -347,7 +347,7 @@ const RuleValidatorHelper = {
 
 		for (let i = 0; i < value.length; i++) {
 			const element = value[i];
-			let formatResult = this.format(rule, element, message)
+			const formatResult = this.format(rule, element, message)
 			if (formatResult !== null) {
 				return formatResult
 			}
@@ -395,11 +395,11 @@ class SchemaValidator extends RuleValidator {
 	}
 
 	async invokeValidate(data, all, allData) {
-		let result = []
-		let schema = this._schema
-		for (let key in schema) {
-			let value = schema[key]
-			let errorMessage = await this.validateRule(key, value, data[key], data, allData)
+		const result = []
+		const schema = this._schema
+		for (const key in schema) {
+			const value = schema[key]
+			const errorMessage = await this.validateRule(key, value, data[key], data, allData)
 			if (errorMessage != null) {
 				result.push({
 					key,
@@ -412,9 +412,9 @@ class SchemaValidator extends RuleValidator {
 	}
 
 	async invokeValidateUpdate(data, all, allData) {
-		let result = []
-		for (let key in data) {
-			let errorMessage = await this.validateRule(key, this._schema[key], data[key], data, allData)
+		const result = []
+		for (const key in data) {
+			const errorMessage = await this.validateRule(key, this._schema[key], data[key], data, allData)
 			if (errorMessage != null) {
 				result.push({
 					key,

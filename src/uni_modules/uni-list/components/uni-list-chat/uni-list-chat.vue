@@ -1,55 +1,103 @@
 <template>
-	<!-- #ifdef APP-NVUE -->
-	<cell>
-		<!-- #endif -->
-		<view :hover-class="!clickable && !link ? '' : 'uni-list-chat--hover'" class="uni-list-chat" @click.stop="onClick">
-			<view :class="{ 'uni-list--border': border, 'uni-list-chat--first': isFirstChild }"></view>
-			<view class="uni-list-chat__container">
-				<view class="uni-list-chat__header-warp">
-					<view v-if="avatarCircle || avatarList.length === 0" class="uni-list-chat__header" :class="{ 'header--circle': avatarCircle }">
-						<image class="uni-list-chat__header-image" :class="{ 'header--circle': avatarCircle }" :src="avatarUrl" mode="aspectFill"></image>
-					</view>
-					<!-- 头像组 -->
-					<view v-else class="uni-list-chat__header">
-						<view v-for="(item, index) in avatarList" :key="index" class="uni-list-chat__header-box" :class="computedAvatar"
-						 :style="{ width: imageWidth + 'px', height: imageWidth + 'px' }">
-							<image class="uni-list-chat__header-image" :style="{ width: imageWidth + 'px', height: imageWidth + 'px' }" :src="item.url"
-							 mode="aspectFill"></image>
-						</view>
-					</view>
-				</view>
-				<!-- #ifndef APP -->
-				<view class="slot-header">
-				<!-- #endif -->
-					<slot name="header"></slot>
-				<!-- #ifndef APP -->
-				</view>
-				<!-- #endif -->
-				<view v-if="badgeText && badgePositon === 'left'" class="uni-list-chat__badge uni-list-chat__badge-pos" :class="[isSingle]">
-					<text class="uni-list-chat__badge-text">{{ badgeText === 'dot' ? '' : badgeText }}</text>
-				</view>
-				<view class="uni-list-chat__content">
-					<view class="uni-list-chat__content-main">
-						<text class="uni-list-chat__content-title uni-ellipsis">{{ title }}</text>
-						<view style="flex-direction: row;">
-							<text class="draft" v-if="isDraft">[草稿]</text>
-							<text class="uni-list-chat__content-note uni-ellipsis">{{isDraft?note.slice(14):note}}</text>
-						</view>
-					</view>
-					<view class="uni-list-chat__content-extra">
-						<slot>
-							<text class="uni-list-chat__content-extra-text">{{ time }}</text>
-							<view v-if="badgeText && badgePositon === 'right'" class="uni-list-chat__badge" :class="[isSingle, badgePositon === 'right' ? 'uni-list-chat--right' : '']">
-								<text class="uni-list-chat__badge-text">{{ badgeText === 'dot' ? '' : badgeText }}</text>
-							</view>
-						</slot>
-					</view>
-				</view>
-			</view>
-		</view>
-		<!-- #ifdef APP-NVUE -->
-	</cell>
-	<!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <cell>
+    <!-- #endif -->
+    <view
+      :hover-class="!clickable && !link ? '' : 'uni-list-chat--hover'"
+      class="uni-list-chat"
+      @click.stop="onClick"
+    >
+      <view :class="{ 'uni-list--border': border, 'uni-list-chat--first': isFirstChild }" />
+      <view class="uni-list-chat__container">
+        <view class="uni-list-chat__header-warp">
+          <view
+            v-if="avatarCircle || avatarList.length === 0"
+            class="uni-list-chat__header"
+            :class="{ 'header--circle': avatarCircle }"
+          >
+            <image
+              class="uni-list-chat__header-image"
+              :class="{ 'header--circle': avatarCircle }"
+              :src="avatarUrl"
+              mode="aspectFill"
+            />
+          </view>
+          <!-- 头像组 -->
+          <view
+            v-else
+            class="uni-list-chat__header"
+          >
+            <view
+              v-for="(item, index) in avatarList"
+              :key="index"
+              class="uni-list-chat__header-box"
+              :class="computedAvatar"
+              :style="{ width: imageWidth + 'px', height: imageWidth + 'px' }"
+            >
+              <image
+                class="uni-list-chat__header-image"
+                :style="{ width: imageWidth + 'px', height: imageWidth + 'px' }"
+                :src="item.url"
+                mode="aspectFill"
+              />
+            </view>
+          </view>
+        </view>
+        <!-- #ifndef APP -->
+        <view class="slot-header">
+          <!-- #endif -->
+          <slot name="header" />
+          <!-- #ifndef APP -->
+        </view>
+        <!-- #endif -->
+        <view
+          v-if="badgeText && badgePositon === 'left'"
+          class="uni-list-chat__badge uni-list-chat__badge-pos"
+          :class="[isSingle]"
+        >
+          <text class="uni-list-chat__badge-text">
+            {{ badgeText === 'dot' ? '' : badgeText }}
+          </text>
+        </view>
+        <view class="uni-list-chat__content">
+          <view class="uni-list-chat__content-main">
+            <text class="uni-list-chat__content-title uni-ellipsis">
+              {{ title }}
+            </text>
+            <view style="flex-direction: row;">
+              <text
+                v-if="isDraft"
+                class="draft"
+              >
+                [草稿]
+              </text>
+              <text class="uni-list-chat__content-note uni-ellipsis">
+                {{ isDraft?note.slice(14):note }}
+              </text>
+            </view>
+          </view>
+          <view class="uni-list-chat__content-extra">
+            <slot>
+              <text class="uni-list-chat__content-extra-text">
+                {{ time }}
+              </text>
+              <view
+                v-if="badgeText && badgePositon === 'right'"
+                class="uni-list-chat__badge"
+                :class="[isSingle, badgePositon === 'right' ? 'uni-list-chat--right' : '']"
+              >
+                <text class="uni-list-chat__badge-text">
+                  {{ badgeText === 'dot' ? '' : badgeText }}
+                </text>
+              </view>
+            </slot>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- #ifdef APP-NVUE -->
+  </cell>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -80,7 +128,6 @@
 	 */
 	export default {
 		name: 'UniListChat',
-		emits:['click'],
 		props: {
 			title: {
 				type: String,
@@ -129,6 +176,16 @@
 				}
 			}
 		},
+		emits:['click'],
+		data() {
+			return {
+				isFirstChild: false,
+				border: true,
+				// avatarList: 3,
+				imageWidth: 50,
+				avatarUrl:''
+			};
+		},
 		// inject: ['list'],
 		computed: {
 			isDraft(){
@@ -168,7 +225,7 @@
 						}).then(res=>{
 							// console.log(res);
 							// 兼容uniCloud私有化部署
-							let fileList = res.fileList || res.result.fileList
+							const fileList = res.fileList || res.result.fileList
 							this.avatarUrl = fileList[0].tempFileURL
 						})
 					}else{
@@ -177,15 +234,6 @@
 				},
 				immediate: true
 			}
-		},
-		data() {
-			return {
-				isFirstChild: false,
-				border: true,
-				// avatarList: 3,
-				imageWidth: 50,
-				avatarUrl:''
-			};
 		},
 		mounted() {
 			this.list = this.getForm()
@@ -231,7 +279,7 @@
 				}
 			},
 			pageApi(api) {
-				let callback = {
+				const callback = {
 					url: this.to,
 					success: res => {
 						this.$emit('click', {
@@ -265,7 +313,7 @@
 	};
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	$uni-font-size-lg:16px;
 	$uni-spacing-row-sm: 5px;
 	$uni-spacing-row-base: 10px;

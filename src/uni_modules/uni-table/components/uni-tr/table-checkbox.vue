@@ -1,18 +1,27 @@
 <template>
-	<view class="uni-table-checkbox" @click="selected">
-		<view v-if="!indeterminate" class="checkbox__inner" :class="{'is-checked':isChecked,'is-disable':isDisabled}">
-			<view class="checkbox__inner-icon"></view>
-		</view>
-		<view v-else class="checkbox__inner checkbox--indeterminate">
-			<view class="checkbox__inner-icon"></view>
-		</view>
-	</view>
+  <view
+    class="uni-table-checkbox"
+    @click="selected"
+  >
+    <view
+      v-if="!indeterminate"
+      class="checkbox__inner"
+      :class="{'is-checked':isChecked,'is-disable':isDisabled}"
+    >
+      <view class="checkbox__inner-icon" />
+    </view>
+    <view
+      v-else
+      class="checkbox__inner checkbox--indeterminate"
+    >
+      <view class="checkbox__inner-icon" />
+    </view>
+  </view>
 </template>
 
 <script>
 	export default {
 		name: 'TableCheckbox',
-		emits:['checkboxSelected'],
 		props: {
 			indeterminate: {
 				type: Boolean,
@@ -37,6 +46,14 @@
 				}
 			}
 		},
+		emits:['checkboxSelected'],
+		data() {
+			return {
+				isChecked: false,
+				isDisabled: false,
+				isIndeterminate:false
+			}
+		},
 		watch:{
 			checked(newVal){
 				if(typeof this.checked === 'boolean'){
@@ -47,13 +64,6 @@
 			},
 			indeterminate(newVal){
 				this.isIndeterminate = newVal
-			}
-		},
-		data() {
-			return {
-				isChecked: false,
-				isDisabled: false,
-				isIndeterminate:false
 			}
 		},
 		created() {

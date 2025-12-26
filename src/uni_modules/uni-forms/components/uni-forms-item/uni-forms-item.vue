@@ -1,32 +1,50 @@
 <template>
-	<view class="uni-forms-item"
-		:class="['is-direction-' + localLabelPos ,border?'uni-forms-item--border':'' ,border && isFirstBorder?'is-first-border':'']">
-		<slot name="label">
-			<view class="uni-forms-item__label" :class="{'no-label':!label && !required}"
-				:style="{width:localLabelWidth,justifyContent: localLabelAlign}">
-				<text v-if="required" class="is-required">*</text>
-				<text>{{label}}</text>
-			</view>
-		</slot>
-		<!-- #ifndef APP-NVUE -->
-		<view class="uni-forms-item__content">
-			<slot></slot>
-			<view class="uni-forms-item__error" :class="{'msg--active':msg}">
-				<text>{{msg}}</text>
-			</view>
-		</view>
-		<!-- #endif -->
-		<!-- #ifdef APP-NVUE -->
-		<view class="uni-forms-item__nuve-content">
-			<view class="uni-forms-item__content">
-				<slot></slot>
-			</view>
-			<view class="uni-forms-item__error" :class="{'msg--active':msg}">
-				<text class="error-text">{{msg}}</text>
-			</view>
-		</view>
-		<!-- #endif -->
-	</view>
+  <view
+    class="uni-forms-item"
+    :class="['is-direction-' + localLabelPos ,border?'uni-forms-item--border':'' ,border && isFirstBorder?'is-first-border':'']"
+  >
+    <slot name="label">
+      <view
+        class="uni-forms-item__label"
+        :class="{'no-label':!label && !required}"
+        :style="{width:localLabelWidth,justifyContent: localLabelAlign}"
+      >
+        <text
+          v-if="required"
+          class="is-required"
+        >
+          *
+        </text>
+        <text>{{ label }}</text>
+      </view>
+    </slot>
+    <!-- #ifndef APP-NVUE -->
+    <view class="uni-forms-item__content">
+      <slot />
+      <view
+        class="uni-forms-item__error"
+        :class="{'msg--active':msg}"
+      >
+        <text>{{ msg }}</text>
+      </view>
+    </view>
+    <!-- #endif -->
+    <!-- #ifdef APP-NVUE -->
+    <view class="uni-forms-item__nuve-content">
+      <view class="uni-forms-item__content">
+        <slot />
+      </view>
+      <view
+        class="uni-forms-item__error"
+        :class="{'msg--active':msg}"
+      >
+        <text class="error-text">
+          {{ msg }}
+        </text>
+      </view>
+    </view>
+    <!-- #endif -->
+  </view>
 </template>
 
 <script>
@@ -55,7 +73,7 @@
 	 */
 
 	export default {
-		name: 'uniFormsItem',
+		name: 'UniFormsItem',
 		options: {
 			// #ifdef MP-TOUTIAO
 			virtualHost: false,
@@ -199,7 +217,7 @@
 
 		},
 		// #ifndef VUE3
-		destroyed() {
+		unmounted() {
 			if (this.__isUnmounted) return
 			this.unInit()
 		},
@@ -404,7 +422,7 @@
 					const {
 						labelAlign
 					} = this.form
-					let labelAli = this.labelAlign ? this.labelAlign : labelAlign;
+					const labelAli = this.labelAlign ? this.labelAlign : labelAlign;
 					if (labelAli === 'left') return 'flex-start';
 					if (labelAli === 'center') return 'center';
 					if (labelAli === 'right') return 'flex-end';

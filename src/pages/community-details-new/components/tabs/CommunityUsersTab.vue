@@ -2,26 +2,43 @@
   <view class="community-users-tab">
     <!-- 标题和操作按钮 -->
     <view class="tab-header">
-      <h3 class="tab-title">用户管理</h3>
-      <button class="add-button" @click="handleAddUserClick">
-        <text class="add-icon">+</text>
-        <text class="add-text">添加用户</text>
+      <h3 class="tab-title">
+        用户管理
+      </h3>
+      <button
+        class="add-button"
+        @click="handleAddUserClick"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          添加用户
+        </text>
       </button>
     </view>
     
     <!-- 搜索框 -->
     <view class="search-container">
       <view class="search-input-wrapper">
-        <text class="search-icon">🔍</text>
+        <text class="search-icon">
+          🔍
+        </text>
         <input
           v-model="searchQuery"
           class="search-input"
           type="text"
           placeholder="搜索用户姓名或手机号"
           @input="handleSearch"
-        />
-        <button v-if="searchQuery" class="clear-button" @click="clearSearch">
-          <text class="clear-icon">×</text>
+        >
+        <button
+          v-if="searchQuery"
+          class="clear-button"
+          @click="clearSearch"
+        >
+          <text class="clear-icon">
+            ×
+          </text>
         </button>
       </view>
     </view>
@@ -35,35 +52,74 @@
       >
         <view class="user-info">
           <view class="user-avatar">
-            <text class="avatar-icon">👤</text>
-            <view v-if="user.verification_status === 1" class="status-indicator status-verified" />
-            <view v-else-if="user.verification_status === 0" class="status-indicator status-unverified" />
-            <view v-else class="status-indicator status-unknown" />
+            <text class="avatar-icon">
+              👤
+            </text>
+            <view
+              v-if="user.verification_status === 1"
+              class="status-indicator status-verified"
+            />
+            <view
+              v-else-if="user.verification_status === 0"
+              class="status-indicator status-unverified"
+            />
+            <view
+              v-else
+              class="status-indicator status-unknown"
+            />
           </view>
           
           <view class="user-details">
-            <text class="user-name">{{ user.nickname || '未设置昵称' }}</text>
-            <text class="user-phone">{{ user.phone_number || '未设置手机号' }}</text>
+            <text class="user-name">
+              {{ user.nickname || '未设置昵称' }}
+            </text>
+            <text class="user-phone">
+              {{ user.phone_number || '未设置手机号' }}
+            </text>
             <view class="user-tags">
-              <text class="user-status-tag" :class="getVerificationStatusClass(user.verification_status)">
+              <text
+                class="user-status-tag"
+                :class="getVerificationStatusClass(user.verification_status)"
+              >
                 {{ getVerificationStatusText(user.verification_status) }}
               </text>
-              <text v-if="user.created_at" class="checkin-tag">
+              <text
+                v-if="user.created_at"
+                class="checkin-tag"
+              >
                 加入时间: {{ formatDate(user.created_at) }}
               </text>
             </view>
           </view>
         </view>
         
-        <button class="remove-button" @click="$emit('remove-user', user.user_id)">
-          <text class="remove-icon">🗑️</text>
+        <button
+          class="remove-button"
+          @click="$emit('remove-user', user.user_id)"
+        >
+          <text class="remove-icon">
+            🗑️
+          </text>
         </button>
       </view>
       
       <!-- 空状态 -->
-      <view v-if="filteredUsers.length === 0" class="empty-state">
-        <text v-if="searchQuery" class="empty-icon">🔍</text>
-        <text v-else class="empty-icon">👥</text>
+      <view
+        v-if="filteredUsers.length === 0"
+        class="empty-state"
+      >
+        <text
+          v-if="searchQuery"
+          class="empty-icon"
+        >
+          🔍
+        </text>
+        <text
+          v-else
+          class="empty-icon"
+        >
+          👥
+        </text>
         
         <text class="empty-text">
           {{ searchQuery ? '未找到匹配的用户' : '暂无用户' }}

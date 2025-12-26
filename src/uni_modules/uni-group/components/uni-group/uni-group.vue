@@ -1,14 +1,27 @@
 <template>
-	<view class="uni-group" :class="['uni-group--'+mode ,margin?'group-margin':'']" :style="{marginTop: `${top}px` }">
-		<slot name="title">
-			<view v-if="title" class="uni-group__title" :style="{'padding-left':border?'30px':'15px'}">
-				<text class="uni-group__title-text">{{ title }}</text>
-			</view>
-		</slot>
-		<view class="uni-group__content" :class="{'group-conent-padding':border}">
-			<slot />
-		</view>
-	</view>
+  <view
+    class="uni-group"
+    :class="['uni-group--'+mode ,margin?'group-margin':'']"
+    :style="{marginTop: `${top}px` }"
+  >
+    <slot name="title">
+      <view
+        v-if="title"
+        class="uni-group__title"
+        :style="{'padding-left':border?'30px':'15px'}"
+      >
+        <text class="uni-group__title-text">
+          {{ title }}
+        </text>
+      </view>
+    </slot>
+    <view
+      class="uni-group__content"
+      :class="{'group-conent-padding':border}"
+    >
+      <slot />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -21,8 +34,7 @@
 	 * @property {Number} mode 模式
 	 */
 	export default {
-		name: 'uniGroup',
-		emits:['click'],
+		name: 'UniGroup',
 		props: {
 			title: {
 				type: String,
@@ -41,6 +53,7 @@
 				default: false
 			}
 		},
+		emits:['click'],
 		data() {
 			return {
 				margin: false,
@@ -81,7 +94,7 @@
 		}
 	}
 </script>
-<style lang="scss" >
+<style lang="scss">
 	.uni-group {
 		background: #fff;
 		margin-top: 10px;

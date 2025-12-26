@@ -1,19 +1,54 @@
 <template>
-	<view class="uni-file-picker">
-		<view v-if="title" class="uni-file-picker__header">
-			<text class="file-title">{{ title }}</text>
-			<text class="file-count">{{ filesList.length }}/{{ limitLength }}</text>
-		</view>
-		<upload-image v-if="fileMediatype === 'image' && showType === 'grid'" :readonly="readonly" :image-styles="imageStyles" :files-list="filesList" :limit="limitLength" :disablePreview="disablePreview" :delIcon="delIcon" @uploadFiles="uploadFiles" @choose="choose" @delFile="delFile">
-			<slot>
-				<view class="icon-add"></view>
-				<view class="icon-add rotate"></view>
-			</slot>
-		</upload-image>
-		<upload-file v-if="fileMediatype !== 'image' || showType !== 'grid'" :readonly="readonly" :list-styles="listStyles" :files-list="filesList" :showType="showType" :delIcon="delIcon" @uploadFiles="uploadFiles" @choose="choose" @delFile="delFile">
-			<slot><button type="primary" size="mini">选择文件</button></slot>
-		</upload-file>
-	</view>
+  <view class="uni-file-picker">
+    <view
+      v-if="title"
+      class="uni-file-picker__header"
+    >
+      <text class="file-title">
+        {{ title }}
+      </text>
+      <text class="file-count">
+        {{ filesList.length }}/{{ limitLength }}
+      </text>
+    </view>
+    <upload-image
+      v-if="fileMediatype === 'image' && showType === 'grid'"
+      :readonly="readonly"
+      :image-styles="imageStyles"
+      :files-list="filesList"
+      :limit="limitLength"
+      :disable-preview="disablePreview"
+      :del-icon="delIcon"
+      @upload-files="uploadFiles"
+      @choose="choose"
+      @del-file="delFile"
+    >
+      <slot>
+        <view class="icon-add" />
+        <view class="icon-add rotate" />
+      </slot>
+    </upload-image>
+    <upload-file
+      v-if="fileMediatype !== 'image' || showType !== 'grid'"
+      :readonly="readonly"
+      :list-styles="listStyles"
+      :files-list="filesList"
+      :show-type="showType"
+      :del-icon="delIcon"
+      @upload-files="uploadFiles"
+      @choose="choose"
+      @del-file="delFile"
+    >
+      <slot>
+        <button
+          type="primary"
+          size="mini"
+        >
+          选择文件
+        </button>
+      </slot>
+    </upload-file>
+  </view>
 </template>
 
 <script>
@@ -30,7 +65,7 @@
 	} from './utils.js'
 	import uploadImage from './upload-image.vue'
 	import uploadFile from './upload-file.vue'
-	let fileInput = null
+	const fileInput = null
 	/**
 	 * FilePicker 文件选择上传
 	 * @description 文件选择上传组件，可以选择图片、视频等任意文件并上传到当前绑定的服务空间
@@ -73,7 +108,7 @@
 	 * @event {Function} delete 	文件从列表移除时触发
 	 */
 	export default {
-		name: 'uniFilePicker',
+		name: 'UniFilePicker',
 		components: {
 			uploadImage,
 			uploadFile
@@ -81,7 +116,6 @@
 		options: {
 			virtualHost: true
 		},
-		emits: ['select', 'success', 'fail', 'progress', 'delete', 'update:modelValue', 'input'],
 		props: {
 			modelValue: {
 				type: [Array, Object],
@@ -189,6 +223,7 @@
 				default: ''
 			}
 		},
+		emits: ['select', 'success', 'fail', 'progress', 'delete', 'update:modelValue', 'input'],
 		data() {
 			return {
 				files: [],
@@ -196,29 +231,9 @@
 				dirPath: ''
 			}
 		},
-		watch: {
-			value: {
-				handler(newVal, oldVal) {
-					this.setValue(newVal, oldVal)
-				},
-				immediate: true
-			},
-			modelValue: {
-				handler(newVal, oldVal) {
-					this.setValue(newVal, oldVal)
-				},
-				immediate: true
-			},
-			dir: {
-				handler(newVal) {
-					this.dirPath = newVal
-				},
-				immediate: true
-			},
-		},
 		computed: {
 			filesList() {
-				let files = []
+				const files = []
 				this.files.forEach(v => {
 					files.push(v)
 				})
@@ -242,6 +257,26 @@
 				}
 				return this.limit
 			}
+		},
+		watch: {
+			value: {
+				handler(newVal, oldVal) {
+					this.setValue(newVal, oldVal)
+				},
+				immediate: true
+			},
+			modelValue: {
+				handler(newVal, oldVal) {
+					this.setValue(newVal, oldVal)
+				},
+				immediate: true
+			},
+			dir: {
+				handler(newVal) {
+					this.dirPath = newVal
+				},
+				immediate: true
+			},
 		},
 		created() {
 			// TODO 兼容不开通服务空间的情况
@@ -280,7 +315,7 @@
 			 * 公开用户使用，继续上传
 			 */
 			upload() {
-				let files = []
+				const files = []
 				this.files.forEach((v, index) => {
 					if (v.status === 'ready' || v.status === 'error') {
 						files.push(Object.assign({}, v))
@@ -313,7 +348,7 @@
 				} else {
 					if (!newVal) newVal = []
 					for (let i = 0; i < newVal.length; i++) {
-						let v = newVal[i]
+						const v = newVal[i]
 						await newData(v)
 					}
 				}
@@ -322,7 +357,7 @@
 					this.is_reset = false
 					this.formItem.setValue(this.localValue)
 				}
-				let filesData = Object.keys(newVal).length > 0 ? newVal : [];
+				const filesData = Object.keys(newVal).length > 0 ? newVal : [];
 				this.files = [].concat(filesData)
 			},
 
@@ -396,15 +431,15 @@
 					files = res.tempFiles
 				}
 
-				let currentData = []
+				const currentData = []
 				for (let i = 0; i < files.length; i++) {
 					if (this.limitLength - this.files.length <= 0) break
 					files[i].uuid = Date.now()
-					let filedata = await get_file_data(files[i], this.fileMediatype)
+					const filedata = await get_file_data(files[i], this.fileMediatype)
 					filedata.progress = 0
 					filedata.status = 'ready'
 					// fix by mehaotian ,统一返回，删除也包含file对象
-					let fileTempData = {
+					const fileTempData = {
 						...filedata,
 						file: files[i]
 					}
@@ -462,10 +497,10 @@
 			 * 成功或失败
 			 */
 			async setSuccessAndError(res, fn) {
-				let successData = []
-				let errorData = []
-				let tempFilePath = []
-				let errorTempFilePath = []
+				const successData = []
+				const errorData = []
+				const tempFilePath = []
+				const errorTempFilePath = []
 				for (let i = 0; i < res.length; i++) {
 					const item = res[i]
 					const index = item.uuid ? this.files.findIndex(p => p.uuid === item.uuid) : item.index
@@ -594,7 +629,7 @@
 			 * @param {Object} files
 			 */
 			backObject(files) {
-				let newFilesData = []
+				const newFilesData = []
 				files.forEach(v => {
 					newFilesData.push({
 						extname: v.extname,

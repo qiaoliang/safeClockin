@@ -2,57 +2,110 @@
   <view class="community-support-tab">
     <!-- 标题 -->
     <view class="tab-header">
-      <h3 class="tab-title">应援管理</h3>
-      <button class="add-button" @click="$emit('add-support')">
-        <text class="add-icon">+</text>
-        <text class="add-text">发起应援</text>
+      <h3 class="tab-title">
+        应援管理
+      </h3>
+      <button
+        class="add-button"
+        @click="$emit('add-support')"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          发起应援
+        </text>
       </button>
     </view>
     
     <!-- 占位提示 -->
     <view class="placeholder-container">
-      <text class="placeholder-icon">🤝</text>
-      <text class="placeholder-title">应援管理功能</text>
-      <text class="placeholder-text">正在开发中...</text>
-      <text class="placeholder-hint">此功能将用于管理社区支持和互助活动</text>
+      <text class="placeholder-icon">
+        🤝
+      </text>
+      <text class="placeholder-title">
+        应援管理功能
+      </text>
+      <text class="placeholder-text">
+        正在开发中...
+      </text>
+      <text class="placeholder-hint">
+        此功能将用于管理社区支持和互助活动
+      </text>
     </view>
     
     <!-- 占位应援列表 -->
     <view class="placeholder-list">
       <view class="placeholder-item">
         <view class="item-header">
-          <text class="item-icon">🍱</text>
-          <text class="item-title">送餐服务</text>
-          <text class="item-status active">进行中</text>
+          <text class="item-icon">
+            🍱
+          </text>
+          <text class="item-title">
+            送餐服务
+          </text>
+          <text class="item-status active">
+            进行中
+          </text>
         </view>
-        <text class="item-description">为独居老人提供每周三次的送餐服务</text>
+        <text class="item-description">
+          为独居老人提供每周三次的送餐服务
+        </text>
         <view class="item-stats">
-          <text class="stat">👥 5人参与</text>
-          <text class="stat">📅 持续2周</text>
+          <text class="stat">
+            👥 5人参与
+          </text>
+          <text class="stat">
+            📅 持续2周
+          </text>
         </view>
       </view>
       <view class="placeholder-item">
         <view class="item-header">
-          <text class="item-icon">🏥</text>
-          <text class="item-title">医疗陪同</text>
-          <text class="item-status pending">待确认</text>
+          <text class="item-icon">
+            🏥
+          </text>
+          <text class="item-title">
+            医疗陪同
+          </text>
+          <text class="item-status pending">
+            待确认
+          </text>
         </view>
-        <text class="item-description">陪同社区成员进行定期医疗检查</text>
+        <text class="item-description">
+          陪同社区成员进行定期医疗检查
+        </text>
         <view class="item-stats">
-          <text class="stat">👥 3人报名</text>
-          <text class="stat">📅 本周六</text>
+          <text class="stat">
+            👥 3人报名
+          </text>
+          <text class="stat">
+            📅 本周六
+          </text>
         </view>
       </view>
       <view class="placeholder-item">
         <view class="item-header">
-          <text class="item-icon">📚</text>
-          <text class="item-title">学习辅导</text>
-          <text class="item-status completed">已结束</text>
+          <text class="item-icon">
+            📚
+          </text>
+          <text class="item-title">
+            学习辅导
+          </text>
+          <text class="item-status completed">
+            已结束
+          </text>
         </view>
-        <text class="item-description">为社区儿童提供课后学习辅导</text>
+        <text class="item-description">
+          为社区儿童提供课后学习辅导
+        </text>
         <view class="item-stats">
-          <text class="stat">👥 8人受益</text>
-          <text class="stat">⭐ 4.8评分</text>
+          <text class="stat">
+            👥 8人受益
+          </text>
+          <text class="stat">
+            ⭐ 4.8评分
+          </text>
         </view>
       </view>
     </view>

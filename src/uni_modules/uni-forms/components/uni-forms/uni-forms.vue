@@ -1,9 +1,9 @@
 <template>
-	<view class="uni-forms">
-		<form>
-			<slot></slot>
-		</form>
-	</view>
+  <view class="uni-forms">
+    <form>
+      <slot />
+    </form>
+  </view>
 </template>
 
 <script>
@@ -28,7 +28,7 @@
 			this.$refs[formName].setValue(name, value);
 		} else {
 			let formVm;
-			for (let i in this.$refs) {
+			for (const i in this.$refs) {
 				const vm = this.$refs[i];
 				if (vm && vm.$options && vm.$options.name === 'uniForms') {
 					formVm = vm;
@@ -65,15 +65,11 @@
 	 * @event {Function} validate	校验结果发生变化触发
 	 */
 	export default {
-		name: 'uniForms',
-		emits: ['validate', 'submit'],
-		options: {
-			// #ifdef MP-TOUTIAO
-			virtualHost: false,
-			// #endif
-			// #ifndef MP-TOUTIAO
-			virtualHost: true
-			// #endif
+		name: 'UniForms',
+		provide() {
+			return {
+				uniForm: this
+			}
 		},
 		props: {
 			// 即将弃用
@@ -134,10 +130,14 @@
 				default: false
 			}
 		},
-		provide() {
-			return {
-				uniForm: this
-			}
+		emits: ['validate', 'submit'],
+		options: {
+			// #ifdef MP-TOUTIAO
+			virtualHost: false,
+			// #endif
+			// #ifndef MP-TOUTIAO
+			virtualHost: true
+			// #endif
 		},
 		data() {
 			return {
@@ -170,14 +170,14 @@
 		},
 		created() {
 			// #ifdef VUE3
-			let getbinddata = getApp().$vm.$.appContext.config.globalProperties.binddata
+			const getbinddata = getApp().$vm.$.appContext.config.globalProperties.binddata
 			if (!getbinddata) {
 				getApp().$vm.$.appContext.config.globalProperties.binddata = function(name, value, formName) {
 					if (formName) {
 						this.$refs[formName].setValue(name, value);
 					} else {
 						let formVm;
-						for (let i in this.$refs) {
+						for (const i in this.$refs) {
 							const vm = this.$refs[i];
 							if (vm && vm.$options && vm.$options.name === 'uniForms') {
 								formVm = vm;
@@ -219,7 +219,7 @@
 			 * @param {Object} value
 			 */
 			setValue(key, value) {
-				let example = this.childrens.find(child => child.name === key);
+				const example = this.childrens.find(child => child.name === key);
 				if (!example) return null;
 				this.formData[key] = getValue(key, value, (this.formRules[key] && this.formRules[key].rules) || [])
 				return example.onFieldChange(this.formData[key]);
@@ -283,7 +283,7 @@
 			 * @param {type} callback 方法回调
 			 */
 			submit(keepitem, callback, type) {
-				for (let i in this.dataValue) {
+				for (const i in this.dataValue) {
 					const itemData = this.childrens.find(v => v.name === i);
 					if (itemData) {
 						if (this.formData[i] === undefined) {
@@ -303,9 +303,9 @@
 			async checkAll(invalidFields, keepitem, callback, type) {
 				// 不存在校验规则 ，则停止校验流程
 				if (!this.validator) return
-				let childrens = []
+				const childrens = []
 				// 处理参与校验的item实例
-				for (let i in invalidFields) {
+				for (const i in invalidFields) {
 					const item = this.childrens.find(v => realName(v.name) === i)
 					if (item) {
 						childrens.push(item)
@@ -329,11 +329,11 @@
 
 				let results = [];
 				// 避免引用错乱 ，建议拷贝对象处理
-				let tempFormData = JSON.parse(JSON.stringify(invalidFields))
+				const tempFormData = JSON.parse(JSON.stringify(invalidFields))
 				// 所有子组件参与校验,使用 for 可以使用  awiat
-				for (let i in childrens) {
+				for (const i in childrens) {
 					const child = childrens[i]
-					let name = realName(child.name);
+					const name = realName(child.name);
 					const result = await child.onFieldChange(tempFormData[name]);
 					if (result) {
 						results.push(result);
@@ -348,8 +348,8 @@
 				}
 				if (Array.isArray(keepitem)) {
 					keepitem.forEach(v => {
-						let vName = realName(v);
-						let value = getDataValue(v, this.localData)
+						const vName = realName(v);
+						const value = getDataValue(v, this.localData)
 						if (value !== undefined) {
 							tempFormData[vName] = value
 						}

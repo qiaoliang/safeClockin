@@ -17,7 +17,7 @@ export const get_file_ext = (name) => {
  */
 export const get_extname = (fileExtname) => {
 	if (!Array.isArray(fileExtname)) {
-		let extname = fileExtname.replace(/(\[|\])/g, '')
+		const extname = fileExtname.replace(/(\[|\])/g, '')
 		return extname.split(',')
 	} else {
 		return fileExtname
@@ -29,8 +29,8 @@ export const get_extname = (fileExtname) => {
  * 获取文件和检测是否可选
  */
 export const get_files_and_is_max = (res, _extname) => {
-	let filePaths = []
-	let files = []
+	const filePaths = []
+	const files = []
 	if(!_extname || _extname.length === 0){
 		return {
 			filePaths,
@@ -38,7 +38,7 @@ export const get_files_and_is_max = (res, _extname) => {
 		}
 	}
 	res.tempFiles.forEach(v => {
-		let fileFullName = get_file_ext(v.name)
+		const fileFullName = get_file_ext(v.name)
 		const extname = fileFullName.ext.toLowerCase()
 		if (_extname.indexOf(extname) !== -1) {
 			files.push(v)
@@ -82,9 +82,9 @@ export const get_file_info = (filepath) => {
  */
 export const get_file_data = async (files, type = 'image') => {
 	// 最终需要上传数据库的数据
-	let fileFullName = get_file_ext(files.name)
+	const fileFullName = get_file_ext(files.name)
 	const extname = fileFullName.ext.toLowerCase()
-	let filedata = {
+	const filedata = {
 		name: files.name,
 		uuid: files.uuid,
 		extname: extname || '',

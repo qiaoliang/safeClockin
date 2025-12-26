@@ -1,17 +1,29 @@
 <template>
   <view class="community-detail-header">
     <header class="header-container">
-      <button class="header-button back-button" @click="$emit('back')">
+      <button
+        class="header-button back-button"
+        @click="$emit('back')"
+      >
         <view class="button-icon">
-          <text class="icon-arrow">←</text>
+          <text class="icon-arrow">
+            ←
+          </text>
         </view>
       </button>
       
-      <h1 class="header-title">{{ title }}</h1>
+      <h1 class="header-title">
+        {{ title }}
+      </h1>
       
-      <button class="header-button settings-button" @click="$emit('settings')">
+      <button
+        class="header-button settings-button"
+        @click="$emit('settings')"
+      >
         <view class="button-icon">
-          <text class="icon-settings">⚙️</text>
+          <text class="icon-settings">
+            ⚙️
+          </text>
         </view>
       </button>
     </header>

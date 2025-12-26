@@ -1,62 +1,160 @@
 <template>
-	<view class="uni-filter-dropdown">
-		<view class="dropdown-btn" @click="onDropdown">
-			<view class="icon-select" :class="{active: canReset}" v-if="isSelect || isRange"></view>
-			<view class="icon-search" :class="{active: canReset}" v-if="isSearch">
-				<view class="icon-search-0"></view>
-				<view class="icon-search-1"></view>
-			</view>
-			<view class="icon-calendar" :class="{active: canReset}" v-if="isDate">
-				<view class="icon-calendar-0"></view>
-				<view class="icon-calendar-1"></view>
-			</view>
-		</view>
-		<view class="uni-dropdown-cover" v-if="isOpened" @click="handleClose"></view>
-		<view class="dropdown-popup dropdown-popup-right" v-if="isOpened" @click.stop>
-			<!-- select-->
-			<view v-if="isSelect" class="list">
-				<label class="flex-r a-i-c list-item" v-for="(item,index) in dataList" :key="index"
-					@click="onItemClick($event, index)">
-					<check-box class="check" :checked="item.checked" />
-					<view class="checklist-content">
-						<text class="checklist-text" :style="item.styleIconText">{{item[map.text]}}</text>
-					</view>
-				</label>
-			</view>
-			<view v-if="isSelect" class="flex-r opera-area">
-				<view class="flex-f btn btn-default" :class="{disable: !canReset}" @click="handleSelectReset">
-					{{resource.reset}}</view>
-				<view class="flex-f btn btn-submit" @click="handleSelectSubmit">{{resource.submit}}</view>
-			</view>
-			<!-- search -->
-			<view v-if="isSearch" class="search-area">
-				<input class="search-input" v-model="filterValue" />
-			</view>
-			<view v-if="isSearch" class="flex-r opera-area">
-				<view class="flex-f btn btn-submit" @click="handleSearchSubmit">{{resource.search}}</view>
-				<view class="flex-f btn btn-default" :class="{disable: !canReset}" @click="handleSearchReset">
-					{{resource.reset}}</view>
-			</view>
-			<!-- range -->
-			<view v-if="isRange">
-				<view class="input-label">{{resource.gt}}</view>
-				<input class="input" v-model="gtValue" />
-				<view class="input-label">{{resource.lt}}</view>
-				<input class="input" v-model="ltValue" />
-			</view>
-			<view v-if="isRange" class="flex-r opera-area">
-				<view class="flex-f btn btn-default" :class="{disable: !canReset}" @click="handleRangeReset">
-					{{resource.reset}}</view>
-				<view class="flex-f btn btn-submit" @click="handleRangeSubmit">{{resource.submit}}</view>
-			</view>
-			<!-- date -->
-			<view v-if="isDate">
-				<uni-datetime-picker ref="datetimepicker" :value="dateRange" type="datetimerange" return-type="timestamp" @change="datetimechange" @maskClick="timepickerclose">
-					<view></view>
-				</uni-datetime-picker>
-			</view>
-		</view>
-	</view>
+  <view class="uni-filter-dropdown">
+    <view
+      class="dropdown-btn"
+      @click="onDropdown"
+    >
+      <view
+        v-if="isSelect || isRange"
+        class="icon-select"
+        :class="{active: canReset}"
+      />
+      <view
+        v-if="isSearch"
+        class="icon-search"
+        :class="{active: canReset}"
+      >
+        <view class="icon-search-0" />
+        <view class="icon-search-1" />
+      </view>
+      <view
+        v-if="isDate"
+        class="icon-calendar"
+        :class="{active: canReset}"
+      >
+        <view class="icon-calendar-0" />
+        <view class="icon-calendar-1" />
+      </view>
+    </view>
+    <view
+      v-if="isOpened"
+      class="uni-dropdown-cover"
+      @click="handleClose"
+    />
+    <view
+      v-if="isOpened"
+      class="dropdown-popup dropdown-popup-right"
+      @click.stop
+    >
+      <!-- select-->
+      <view
+        v-if="isSelect"
+        class="list"
+      >
+        <label
+          v-for="(item,index) in dataList"
+          :key="index"
+          class="flex-r a-i-c list-item"
+          @click="onItemClick($event, index)"
+        >
+          <check-box
+            class="check"
+            :checked="item.checked"
+          />
+          <view class="checklist-content">
+            <text
+              class="checklist-text"
+              :style="item.styleIconText"
+            >{{ item[map.text] }}</text>
+          </view>
+        </label>
+      </view>
+      <view
+        v-if="isSelect"
+        class="flex-r opera-area"
+      >
+        <view
+          class="flex-f btn btn-default"
+          :class="{disable: !canReset}"
+          @click="handleSelectReset"
+        >
+          {{ resource.reset }}
+        </view>
+        <view
+          class="flex-f btn btn-submit"
+          @click="handleSelectSubmit"
+        >
+          {{ resource.submit }}
+        </view>
+      </view>
+      <!-- search -->
+      <view
+        v-if="isSearch"
+        class="search-area"
+      >
+        <input
+          v-model="filterValue"
+          class="search-input"
+        >
+      </view>
+      <view
+        v-if="isSearch"
+        class="flex-r opera-area"
+      >
+        <view
+          class="flex-f btn btn-submit"
+          @click="handleSearchSubmit"
+        >
+          {{ resource.search }}
+        </view>
+        <view
+          class="flex-f btn btn-default"
+          :class="{disable: !canReset}"
+          @click="handleSearchReset"
+        >
+          {{ resource.reset }}
+        </view>
+      </view>
+      <!-- range -->
+      <view v-if="isRange">
+        <view class="input-label">
+          {{ resource.gt }}
+        </view>
+        <input
+          v-model="gtValue"
+          class="input"
+        >
+        <view class="input-label">
+          {{ resource.lt }}
+        </view>
+        <input
+          v-model="ltValue"
+          class="input"
+        >
+      </view>
+      <view
+        v-if="isRange"
+        class="flex-r opera-area"
+      >
+        <view
+          class="flex-f btn btn-default"
+          :class="{disable: !canReset}"
+          @click="handleRangeReset"
+        >
+          {{ resource.reset }}
+        </view>
+        <view
+          class="flex-f btn btn-submit"
+          @click="handleRangeSubmit"
+        >
+          {{ resource.submit }}
+        </view>
+      </view>
+      <!-- date -->
+      <view v-if="isDate">
+        <uni-datetime-picker
+          ref="datetimepicker"
+          :value="dateRange"
+          type="datetimerange"
+          return-type="timestamp"
+          @change="datetimechange"
+          @mask-click="timepickerclose"
+        >
+          <view />
+        </uni-datetime-picker>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -82,12 +180,8 @@
 
 	export default {
 		name: 'FilterDropdown',
-		emits:['change'],
 		components: {
 			checkBox
-		},
-		options: {
-			virtualHost: true
 		},
 		props: {
 			filterType: {
@@ -119,6 +213,24 @@
 					return ""
 				}
 			}
+		},
+		emits:['change'],
+		options: {
+			virtualHost: true
+		},
+		data() {
+			return {
+				resource,
+				enabled: true,
+				isOpened: false,
+				dataList: [],
+				filterValue: this.filterDefaultValue,
+				checkedValues: [],
+				gtValue: '',
+				ltValue: '',
+				dateRange: [],
+				dateSelect: []
+			};
 		},
 		computed: {
 			canReset() {
@@ -157,26 +269,12 @@
 				this.isIndeterminate = newVal
 			}
 		},
-		data() {
-			return {
-				resource,
-				enabled: true,
-				isOpened: false,
-				dataList: [],
-				filterValue: this.filterDefaultValue,
-				checkedValues: [],
-				gtValue: '',
-				ltValue: '',
-				dateRange: [],
-				dateSelect: []
-			};
-		},
 		created() {
 			this._copyFilters()
 		},
 		methods: {
 			_copyFilters() {
-				let dl = JSON.parse(JSON.stringify(this.filterData))
+				const dl = JSON.parse(JSON.stringify(this.filterData))
 				for (let i = 0; i < dl.length; i++) {
 					if (dl[i].checked === undefined) {
 						dl[i].checked = false
@@ -202,23 +300,23 @@
 				this.closePopup()
 			},
 			resetDate() {
-				let date = new Date()
-				let dateText = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+				const date = new Date()
+				const dateText = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 				this.dateRange = [dateText + ' 0:00:00', dateText + ' 23:59:59']
 			},
 			onDropdown(e) {
 				this.openPopup()
 			},
 			onItemClick(e, index) {
-				let items = this.dataList
-				let listItem = items[index]
+				const items = this.dataList
+				const listItem = items[index]
 				if (listItem.checked === undefined) {
 					items[index].checked = true
 				} else {
 					items[index].checked = !listItem.checked
 				}
 
-				let checkvalues = []
+				const checkvalues = []
 				for (let i = 0; i < items.length; i++) {
 					const item = items[i]
 					if (item.checked) {
@@ -252,7 +350,7 @@
 				}
 				var items = this.dataList
 				for (let i = 0; i < items.length; i++) {
-					let item = items[i]
+					const item = items[i]
 					this.$set(item, 'checked', false)
 				}
 				this.checkedValues = []

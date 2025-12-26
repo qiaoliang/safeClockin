@@ -1,83 +1,177 @@
 <template>
-	<view class="uni-datetime-picker">
-		<view @click="initTimePicker">
-			<slot>
-				<view class="uni-datetime-picker-timebox-pointer"
-					:class="{'uni-datetime-picker-disabled': disabled, 'uni-datetime-picker-timebox': border}">
-					<text class="uni-datetime-picker-text">{{time}}</text>
-					<view v-if="!time" class="uni-datetime-picker-time">
-						<text class="uni-datetime-picker-text">{{selectTimeText}}</text>
-					</view>
-				</view>
-			</slot>
-		</view>
-		<view v-if="visible" id="mask" class="uni-datetime-picker-mask" @click="tiggerTimePicker"></view>
-		<view v-if="visible" class="uni-datetime-picker-popup" :class="[dateShow && timeShow ? '' : 'fix-nvue-height']"
-			:style="fixNvueBug">
-			<view class="uni-title">
-				<text class="uni-datetime-picker-text">{{selectTimeText}}</text>
-			</view>
-			<view v-if="dateShow" class="uni-datetime-picker__container-box">
-				<picker-view class="uni-datetime-picker-view" :indicator-style="indicatorStyle" :value="ymd"
-					@change="bindDateChange">
-					<picker-view-column>
-						<view class="uni-datetime-picker-item" v-for="(item,index) in years" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-					<picker-view-column>
-						<view class="uni-datetime-picker-item" v-for="(item,index) in months" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-					<picker-view-column>
-						<view class="uni-datetime-picker-item" v-for="(item,index) in days" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-				</picker-view>
-				<!-- 兼容 nvue 不支持伪类 -->
-				<text class="uni-datetime-picker-sign sign-left">-</text>
-				<text class="uni-datetime-picker-sign sign-right">-</text>
-			</view>
-			<view v-if="timeShow" class="uni-datetime-picker__container-box">
-				<picker-view class="uni-datetime-picker-view" :class="[hideSecond ? 'time-hide-second' : '']"
-					:indicator-style="indicatorStyle" :value="hms" @change="bindTimeChange">
-					<picker-view-column>
-						<view class="uni-datetime-picker-item" v-for="(item,index) in hours" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-					<picker-view-column>
-						<view class="uni-datetime-picker-item" v-for="(item,index) in minutes" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-					<picker-view-column v-if="!hideSecond">
-						<view class="uni-datetime-picker-item" v-for="(item,index) in seconds" :key="index">
-							<text class="uni-datetime-picker-item">{{lessThanTen(item)}}</text>
-						</view>
-					</picker-view-column>
-				</picker-view>
-				<!-- 兼容 nvue 不支持伪类 -->
-				<text class="uni-datetime-picker-sign" :class="[hideSecond ? 'sign-center' : 'sign-left']">:</text>
-				<text v-if="!hideSecond" class="uni-datetime-picker-sign sign-right">:</text>
-			</view>
-			<view class="uni-datetime-picker-btn">
-				<view @click="clearTime">
-					<text class="uni-datetime-picker-btn-text">{{clearText}}</text>
-				</view>
-				<view class="uni-datetime-picker-btn-group">
-					<view class="uni-datetime-picker-cancel" @click="tiggerTimePicker">
-						<text class="uni-datetime-picker-btn-text">{{cancelText}}</text>
-					</view>
-					<view @click="setTime">
-						<text class="uni-datetime-picker-btn-text">{{okText}}</text>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+  <view class="uni-datetime-picker">
+    <view @click="initTimePicker">
+      <slot>
+        <view
+          class="uni-datetime-picker-timebox-pointer"
+          :class="{'uni-datetime-picker-disabled': disabled, 'uni-datetime-picker-timebox': border}"
+        >
+          <text class="uni-datetime-picker-text">
+            {{ time }}
+          </text>
+          <view
+            v-if="!time"
+            class="uni-datetime-picker-time"
+          >
+            <text class="uni-datetime-picker-text">
+              {{ selectTimeText }}
+            </text>
+          </view>
+        </view>
+      </slot>
+    </view>
+    <view
+      v-if="visible"
+      id="mask"
+      class="uni-datetime-picker-mask"
+      @click="tiggerTimePicker"
+    />
+    <view
+      v-if="visible"
+      class="uni-datetime-picker-popup"
+      :class="[dateShow && timeShow ? '' : 'fix-nvue-height']"
+      :style="fixNvueBug"
+    >
+      <view class="uni-title">
+        <text class="uni-datetime-picker-text">
+          {{ selectTimeText }}
+        </text>
+      </view>
+      <view
+        v-if="dateShow"
+        class="uni-datetime-picker__container-box"
+      >
+        <picker-view
+          class="uni-datetime-picker-view"
+          :indicator-style="indicatorStyle"
+          :value="ymd"
+          @change="bindDateChange"
+        >
+          <picker-view-column>
+            <view
+              v-for="(item,index) in years"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view
+              v-for="(item,index) in months"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view
+              v-for="(item,index) in days"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+        </picker-view>
+        <!-- 兼容 nvue 不支持伪类 -->
+        <text class="uni-datetime-picker-sign sign-left">
+          -
+        </text>
+        <text class="uni-datetime-picker-sign sign-right">
+          -
+        </text>
+      </view>
+      <view
+        v-if="timeShow"
+        class="uni-datetime-picker__container-box"
+      >
+        <picker-view
+          class="uni-datetime-picker-view"
+          :class="[hideSecond ? 'time-hide-second' : '']"
+          :indicator-style="indicatorStyle"
+          :value="hms"
+          @change="bindTimeChange"
+        >
+          <picker-view-column>
+            <view
+              v-for="(item,index) in hours"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+          <picker-view-column>
+            <view
+              v-for="(item,index) in minutes"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+          <picker-view-column v-if="!hideSecond">
+            <view
+              v-for="(item,index) in seconds"
+              :key="index"
+              class="uni-datetime-picker-item"
+            >
+              <text class="uni-datetime-picker-item">
+                {{ lessThanTen(item) }}
+              </text>
+            </view>
+          </picker-view-column>
+        </picker-view>
+        <!-- 兼容 nvue 不支持伪类 -->
+        <text
+          class="uni-datetime-picker-sign"
+          :class="[hideSecond ? 'sign-center' : 'sign-left']"
+        >
+          :
+        </text>
+        <text
+          v-if="!hideSecond"
+          class="uni-datetime-picker-sign sign-right"
+        >
+          :
+        </text>
+      </view>
+      <view class="uni-datetime-picker-btn">
+        <view @click="clearTime">
+          <text class="uni-datetime-picker-btn-text">
+            {{ clearText }}
+          </text>
+        </view>
+        <view class="uni-datetime-picker-btn-group">
+          <view
+            class="uni-datetime-picker-cancel"
+            @click="tiggerTimePicker"
+          >
+            <text class="uni-datetime-picker-btn-text">
+              {{ cancelText }}
+            </text>
+          </view>
+          <view @click="setTime">
+            <text class="uni-datetime-picker-btn-text">
+              {{ okText }}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -107,6 +201,44 @@
 
 	export default {
 		name: 'UniDatetimePicker',
+		props: {
+			type: {
+				type: String,
+				default: 'datetime'
+			},
+			value: {
+				type: [String, Number],
+				default: ''
+			},
+			modelValue: {
+				type: [String, Number],
+				default: ''
+			},
+			start: {
+				type: [Number, String],
+				default: ''
+			},
+			end: {
+				type: [Number, String],
+				default: ''
+			},
+			returnType: {
+				type: String,
+				default: 'string'
+			},
+			disabled: {
+				type: [Boolean, String],
+				default: false
+			},
+			border: {
+				type: [Boolean, String],
+				default: true
+			},
+			hideSecond: {
+				type: [Boolean, String],
+				default: false
+			}
+		},
 		data() {
 			return {
 				indicatorStyle: `height: 50px;`,
@@ -147,121 +279,6 @@
 			// #ifndef MP-TOUTIAO
 			virtualHost: true
 			// #endif
-		},
-		props: {
-			type: {
-				type: String,
-				default: 'datetime'
-			},
-			value: {
-				type: [String, Number],
-				default: ''
-			},
-			modelValue: {
-				type: [String, Number],
-				default: ''
-			},
-			start: {
-				type: [Number, String],
-				default: ''
-			},
-			end: {
-				type: [Number, String],
-				default: ''
-			},
-			returnType: {
-				type: String,
-				default: 'string'
-			},
-			disabled: {
-				type: [Boolean, String],
-				default: false
-			},
-			border: {
-				type: [Boolean, String],
-				default: true
-			},
-			hideSecond: {
-				type: [Boolean, String],
-				default: false
-			}
-		},
-		watch: {
-			// #ifndef VUE3
-			value: {
-				handler(newVal) {
-					if (newVal) {
-						this.parseValue(fixIosDateFormat(newVal))
-						this.initTime(false)
-					} else {
-						this.time = ''
-						this.parseValue(Date.now())
-					}
-				},
-				immediate: true
-			},
-			// #endif
-			// #ifdef VUE3
-			modelValue: {
-				handler(newVal) {
-					if (newVal) {
-						this.parseValue(fixIosDateFormat(newVal))
-						this.initTime(false)
-					} else {
-						this.time = ''
-						this.parseValue(Date.now())
-					}
-				},
-				immediate: true
-			},
-			// #endif
-			type: {
-				handler(newValue) {
-					if (newValue === 'date') {
-						this.dateShow = true
-						this.timeShow = false
-						this.title = '日期'
-					} else if (newValue === 'time') {
-						this.dateShow = false
-						this.timeShow = true
-						this.title = '时间'
-					} else {
-						this.dateShow = true
-						this.timeShow = true
-						this.title = '日期和时间'
-					}
-				},
-				immediate: true
-			},
-			start: {
-				handler(newVal) {
-					this.parseDatetimeRange(fixIosDateFormat(newVal), 'start')
-				},
-				immediate: true
-			},
-			end: {
-				handler(newVal) {
-					this.parseDatetimeRange(fixIosDateFormat(newVal), 'end')
-				},
-				immediate: true
-			},
-
-			// 月、日、时、分、秒可选范围变化后，检查当前值是否在范围内，不在则当前值重置为可选范围第一项
-			months(newVal) {
-				this.checkValue('month', this.month, newVal)
-			},
-			days(newVal) {
-				this.checkValue('day', this.day, newVal)
-			},
-			hours(newVal) {
-				this.checkValue('hour', this.hour, newVal)
-			},
-			minutes(newVal) {
-				this.checkValue('minute', this.minute, newVal)
-			},
-			seconds(newVal) {
-				this.checkValue('second', this.second, newVal)
-			}
 		},
 		computed: {
 			// 当前年、月、日、时、分、秒选择范围
@@ -447,6 +464,83 @@
 				return t("uni-datetime-picker.cancel")
 			}
 		},
+		watch: {
+			// #ifndef VUE3
+			value: {
+				handler(newVal) {
+					if (newVal) {
+						this.parseValue(fixIosDateFormat(newVal))
+						this.initTime(false)
+					} else {
+						this.time = ''
+						this.parseValue(Date.now())
+					}
+				},
+				immediate: true
+			},
+			// #endif
+			// #ifdef VUE3
+			modelValue: {
+				handler(newVal) {
+					if (newVal) {
+						this.parseValue(fixIosDateFormat(newVal))
+						this.initTime(false)
+					} else {
+						this.time = ''
+						this.parseValue(Date.now())
+					}
+				},
+				immediate: true
+			},
+			// #endif
+			type: {
+				handler(newValue) {
+					if (newValue === 'date') {
+						this.dateShow = true
+						this.timeShow = false
+						this.title = '日期'
+					} else if (newValue === 'time') {
+						this.dateShow = false
+						this.timeShow = true
+						this.title = '时间'
+					} else {
+						this.dateShow = true
+						this.timeShow = true
+						this.title = '日期和时间'
+					}
+				},
+				immediate: true
+			},
+			start: {
+				handler(newVal) {
+					this.parseDatetimeRange(fixIosDateFormat(newVal), 'start')
+				},
+				immediate: true
+			},
+			end: {
+				handler(newVal) {
+					this.parseDatetimeRange(fixIosDateFormat(newVal), 'end')
+				},
+				immediate: true
+			},
+
+			// 月、日、时、分、秒可选范围变化后，检查当前值是否在范围内，不在则当前值重置为可选范围第一项
+			months(newVal) {
+				this.checkValue('month', this.month, newVal)
+			},
+			days(newVal) {
+				this.checkValue('day', this.day, newVal)
+			},
+			hours(newVal) {
+				this.checkValue('hour', this.hour, newVal)
+			},
+			minutes(newVal) {
+				this.checkValue('minute', this.minute, newVal)
+			},
+			seconds(newVal) {
+				this.checkValue('second', this.second, newVal)
+			}
+		},
 
 		mounted() {
 			// #ifdef APP-NVUE
@@ -474,7 +568,7 @@
 			 */
 			parseTimeType(timeString) {
 				if (timeString) {
-					let timeArr = timeString.split(':')
+					const timeArr = timeString.split(':')
 					this.hour = Number(timeArr[0])
 					this.minute = Number(timeArr[1])
 					this.second = Number(timeArr[2])

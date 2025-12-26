@@ -1,46 +1,81 @@
 <template>
-	<view class="uni-cursor-point">
-		<view v-if="popMenu && (leftBottom||rightBottom||leftTop||rightTop) && content.length > 0" :class="{
+  <view class="uni-cursor-point">
+    <view
+      v-if="popMenu && (leftBottom||rightBottom||leftTop||rightTop) && content.length > 0"
+      :class="{
         'uni-fab--leftBottom': leftBottom,
         'uni-fab--rightBottom': rightBottom,
         'uni-fab--leftTop': leftTop,
         'uni-fab--rightTop': rightTop
-      }" class="uni-fab"
-				:style="nvueBottom"
-			>
-			<view :class="{
+      }"
+      class="uni-fab"
+      :style="nvueBottom"
+    >
+      <view
+        :class="{
           'uni-fab__content--left': horizontal === 'left',
           'uni-fab__content--right': horizontal === 'right',
           'uni-fab__content--flexDirection': direction === 'vertical',
           'uni-fab__content--flexDirectionStart': flexDirectionStart,
           'uni-fab__content--flexDirectionEnd': flexDirectionEnd,
-		  'uni-fab__content--other-platform': !isAndroidNvue
-        }" :style="{ width: boxWidth, height: boxHeight, backgroundColor: styles.backgroundColor }"
-				class="uni-fab__content" elevation="5">
-				<view v-if="flexDirectionStart || horizontalLeft" class="uni-fab__item uni-fab__item--first" />
-				<view v-for="(item, index) in content" :key="index" :class="{ 'uni-fab__item--active': isShow }"
-					class="uni-fab__item" @click="_onItemClick(index, item)">
-					<image :src="item.active ? item.selectedIconPath : item.iconPath" class="uni-fab__item-image"
-						mode="aspectFit" />
-					<text class="uni-fab__item-text"
-						:style="{ color: item.active ? styles.selectedColor : styles.color }">{{ item.text }}</text>
-				</view>
-				<view v-if="flexDirectionEnd || horizontalRight" class="uni-fab__item uni-fab__item--first" />
-			</view>
-		</view>
-		<view :class="{
-		  'uni-fab__circle--leftBottom': leftBottom,
-		  'uni-fab__circle--rightBottom': rightBottom,
-		  'uni-fab__circle--leftTop': leftTop,
-		  'uni-fab__circle--rightTop': rightTop,
-		  'uni-fab__content--other-platform': !isAndroidNvue
-		}" class="uni-fab__circle uni-fab__plus" :style="{ 'background-color': styles.buttonColor, 'bottom': nvueBottom }" @click="_onClick">
-			<uni-icons class="fab-circle-icon" :type="styles.icon" :color="styles.iconColor" size="32"
-				:class="{'uni-fab__plus--active': isShow && content.length > 0}"></uni-icons>
-			<!-- <view class="fab-circle-v"  :class="{'uni-fab__plus--active': isShow && content.length > 0}"></view>
+          'uni-fab__content--other-platform': !isAndroidNvue
+        }"
+        :style="{ width: boxWidth, height: boxHeight, backgroundColor: styles.backgroundColor }"
+        class="uni-fab__content"
+        elevation="5"
+      >
+        <view
+          v-if="flexDirectionStart || horizontalLeft"
+          class="uni-fab__item uni-fab__item--first"
+        />
+        <view
+          v-for="(item, index) in content"
+          :key="index"
+          :class="{ 'uni-fab__item--active': isShow }"
+          class="uni-fab__item"
+          @click="_onItemClick(index, item)"
+        >
+          <image
+            :src="item.active ? item.selectedIconPath : item.iconPath"
+            class="uni-fab__item-image"
+            mode="aspectFit"
+          />
+          <text
+            class="uni-fab__item-text"
+            :style="{ color: item.active ? styles.selectedColor : styles.color }"
+          >
+            {{ item.text }}
+          </text>
+        </view>
+        <view
+          v-if="flexDirectionEnd || horizontalRight"
+          class="uni-fab__item uni-fab__item--first"
+        />
+      </view>
+    </view>
+    <view
+      :class="{
+        'uni-fab__circle--leftBottom': leftBottom,
+        'uni-fab__circle--rightBottom': rightBottom,
+        'uni-fab__circle--leftTop': leftTop,
+        'uni-fab__circle--rightTop': rightTop,
+        'uni-fab__content--other-platform': !isAndroidNvue
+      }"
+      class="uni-fab__circle uni-fab__plus"
+      :style="{ 'background-color': styles.buttonColor, 'bottom': nvueBottom }"
+      @click="_onClick"
+    >
+      <uni-icons
+        class="fab-circle-icon"
+        :type="styles.icon"
+        :color="styles.iconColor"
+        size="32"
+        :class="{'uni-fab__plus--active': isShow && content.length > 0}"
+      />
+      <!-- <view class="fab-circle-v"  :class="{'uni-fab__plus--active': isShow && content.length > 0}"></view>
 			<view class="fab-circle-h" :class="{'uni-fab__plus--active': isShow  && content.length > 0}"></view> -->
-		</view>
-	</view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -70,7 +105,6 @@
 	 */
 	export default {
 		name: 'UniFab',
-		emits: ['fabClick', 'trigger'],
 		props: {
 			pattern: {
 				type: Object,
@@ -105,6 +139,7 @@
 				default: true
 			}
 		},
+		emits: ['fabClick', 'trigger'],
 		data() {
 			return {
 				fabShow: false,
@@ -233,7 +268,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	$uni-shadow-base:0 1px 5px 2px rgba($color: #000000, $alpha: 0.3) !default;
 
 	.uni-fab {

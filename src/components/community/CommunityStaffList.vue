@@ -1,8 +1,12 @@
 <template>
   <view class="community-staff-list">
     <view class="section-header">
-      <text class="section-title">社区专员列表</text>
-      <text class="section-subtitle">管理社区的工作人员</text>
+      <text class="section-title">
+        社区专员列表
+      </text>
+      <text class="section-subtitle">
+        管理社区的工作人员
+      </text>
     </view>
 
     <!-- 搜索和筛选 -->
@@ -30,20 +34,39 @@
 
     <!-- 专员列表 -->
     <view class="staff-list">
-      <view v-for="staff in filteredStaff" :key="staff.id" class="staff-item">
+      <view
+        v-for="staff in filteredStaff"
+        :key="staff.id"
+        class="staff-item"
+      >
         <view class="staff-avatar">
-          <image v-if="staff.avatar" :src="staff.avatar" class="avatar-image" />
-          <text v-else class="avatar-placeholder">
+          <image
+            v-if="staff.avatar"
+            :src="staff.avatar"
+            class="avatar-image"
+          />
+          <text
+            v-else
+            class="avatar-placeholder"
+          >
             {{ getInitials(staff.name) }}
           </text>
         </view>
 
         <view class="staff-info">
-          <text class="staff-name">{{ staff.nickname }}</text>
-          <text class="staff-role">{{ getRoleLabel(staff.role) }}</text>
+          <text class="staff-name">
+            {{ staff.nickname }}
+          </text>
+          <text class="staff-role">
+            {{ getRoleLabel(staff.role) }}
+          </text>
         </view>
         <view class="staff-actions">
-          <button v-if="hasEditPermission" class="action-btn" @click="editStaff(staff)">
+          <button
+            v-if="hasEditPermission"
+            class="action-btn"
+            @click="editStaff(staff)"
+          >
             编辑
           </button>
           <button
@@ -57,7 +80,10 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="filteredStaff.length === 0" class="empty-state">
+      <view
+        v-if="filteredStaff.length === 0"
+        class="empty-state"
+      >
         <text class="empty-text">
           {{ searchKeyword ? "未找到匹配的专员" : "暂无专员" }}
         </text>
@@ -77,7 +103,9 @@
       class="floating-add-btn"
       @click="addStaff"
     >
-      <text class="add-icon">+</text>
+      <text class="add-icon">
+        +
+      </text>
     </view>
   </view>
 </template>

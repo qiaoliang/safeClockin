@@ -132,7 +132,7 @@ class Calendar {
 				disableAfter = dateCompare(currentDate, this.endDate)
 			}
 
-			let multiples = this.multipleStatus.data
+			const multiples = this.multipleStatus.data
 			let multiplesStatus = -1
 			if (this.range && multiples) {
 				multiplesStatus = multiples.findIndex((item) => {
@@ -243,7 +243,7 @@ class Calendar {
 	setMultiple(fullDate) {
 		if (!this.range) return
 
-		let {
+		const {
 			before,
 			after
 		} = this.multipleStatus

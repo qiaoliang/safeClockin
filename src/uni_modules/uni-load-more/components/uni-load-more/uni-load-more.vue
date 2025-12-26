@@ -1,37 +1,76 @@
 <template>
-	<view class="uni-load-more" @click="onClick">
-		<!-- #ifdef APP-NVUE -->
-		<loading-indicator v-if="!webviewHide && status === 'loading' && showIcon"
-			:style="{color: color,width:iconSize+'px',height:iconSize+'px'}" :animating="true"
-			class="uni-load-more__img uni-load-more__img--nvue"></loading-indicator>
-		<!-- #endif -->
-		<!-- #ifdef H5 -->
-		<svg width="24" height="24" viewBox="25 25 50 50"
-			v-if="!webviewHide && (iconType==='circle' || iconType==='auto' && platform === 'android') && status === 'loading' && showIcon"
-			:style="{width:iconSize+'px',height:iconSize+'px'}"
-			class="uni-load-more__img uni-load-more__img--android-H5">
-			<circle cx="50" cy="50" r="20" fill="none" :style="{color:color}" :stroke-width="3"></circle>
-		</svg>
-		<!-- #endif -->
-		<!-- #ifndef APP-NVUE || H5 -->
-		<view
-			v-if="!webviewHide && (iconType==='circle' || iconType==='auto' && platform === 'android') && status === 'loading' && showIcon"
-			:style="{width:iconSize+'px',height:iconSize+'px'}"
-			class="uni-load-more__img uni-load-more__img--android-MP">
-			<view class="uni-load-more__img-icon" :style="{borderTopColor:color,borderTopWidth:iconSize/12}"></view>
-			<view class="uni-load-more__img-icon" :style="{borderTopColor:color,borderTopWidth:iconSize/12}"></view>
-			<view class="uni-load-more__img-icon" :style="{borderTopColor:color,borderTopWidth:iconSize/12}"></view>
-		</view>
-		<!-- #endif -->
-		<!-- #ifndef APP-NVUE -->
-		<view v-else-if="!webviewHide && status === 'loading' && showIcon"
-			:style="{width:iconSize+'px',height:iconSize+'px'}" class="uni-load-more__img uni-load-more__img--ios-H5">
-			<image class="image" :src="imgBase64" mode="widthFix"></image>
-		</view>
-		<!-- #endif -->
-		<text v-if="showText" class="uni-load-more__text"
-			:style="{color: color}">{{ status === 'more' ? contentdownText : status === 'loading' ? contentrefreshText : contentnomoreText }}</text>
-	</view>
+  <view
+    class="uni-load-more"
+    @click="onClick"
+  >
+    <!-- #ifdef APP-NVUE -->
+    <loading-indicator
+      v-if="!webviewHide && status === 'loading' && showIcon"
+      :style="{color: color,width:iconSize+'px',height:iconSize+'px'}"
+      :animating="true"
+      class="uni-load-more__img uni-load-more__img--nvue"
+    />
+    <!-- #endif -->
+    <!-- #ifdef H5 -->
+    <svg
+      v-if="!webviewHide && (iconType==='circle' || iconType==='auto' && platform === 'android') && status === 'loading' && showIcon"
+      width="24"
+      height="24"
+      viewBox="25 25 50 50"
+      :style="{width:iconSize+'px',height:iconSize+'px'}"
+      class="uni-load-more__img uni-load-more__img--android-H5"
+    >
+      <circle
+        cx="50"
+        cy="50"
+        r="20"
+        fill="none"
+        :style="{color:color}"
+        :stroke-width="3"
+      />
+    </svg>
+    <!-- #endif -->
+    <!-- #ifndef APP-NVUE || H5 -->
+    <view
+      v-if="!webviewHide && (iconType==='circle' || iconType==='auto' && platform === 'android') && status === 'loading' && showIcon"
+      :style="{width:iconSize+'px',height:iconSize+'px'}"
+      class="uni-load-more__img uni-load-more__img--android-MP"
+    >
+      <view
+        class="uni-load-more__img-icon"
+        :style="{borderTopColor:color,borderTopWidth:iconSize/12}"
+      />
+      <view
+        class="uni-load-more__img-icon"
+        :style="{borderTopColor:color,borderTopWidth:iconSize/12}"
+      />
+      <view
+        class="uni-load-more__img-icon"
+        :style="{borderTopColor:color,borderTopWidth:iconSize/12}"
+      />
+    </view>
+    <!-- #endif -->
+    <!-- #ifndef APP-NVUE -->
+    <view
+      v-else-if="!webviewHide && status === 'loading' && showIcon"
+      :style="{width:iconSize+'px',height:iconSize+'px'}"
+      class="uni-load-more__img uni-load-more__img--ios-H5"
+    >
+      <image
+        class="image"
+        :src="imgBase64"
+        mode="widthFix"
+      />
+    </view>
+    <!-- #endif -->
+    <text
+      v-if="showText"
+      class="uni-load-more__text"
+      :style="{color: color}"
+    >
+      {{ status === 'more' ? contentdownText : status === 'loading' ? contentrefreshText : contentnomoreText }}
+    </text>
+  </view>
 </template>
 
 <script>
@@ -73,7 +112,6 @@
 	 */
 	export default {
 		name: 'UniLoadMore',
-		emits: ['clickLoadMore'],
 		props: {
 			status: {
 				// 上拉的状态：more-loading前；loading-loading中；noMore-没有更多了
@@ -111,6 +149,7 @@
 				default: true
 			}
 		},
+		emits: ['clickLoadMore'],
 		data() {
 			return {
 				webviewHide: false,
@@ -157,7 +196,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.uni-load-more {
 		/* #ifndef APP-NVUE */
 		display: flex;

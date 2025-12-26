@@ -2,39 +2,82 @@
   <view class="community-rules-tab-grouped">
     <!-- 标题 -->
     <view class="tab-header">
-      <h3 class="tab-title">社区打卡规则</h3>
-      <button class="add-button" @click="handleAddRule">
-        <text class="add-icon">+</text>
-        <text class="add-text">添加规则</text>
+      <h3 class="tab-title">
+        社区打卡规则
+      </h3>
+      <button
+        class="add-button"
+        @click="handleAddRule"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          添加规则
+        </text>
       </button>
     </view>
 
     <!-- 加载状态 -->
-    <view v-if="loading" class="loading-container">
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
       <uni-load-more status="loading" />
     </view>
 
     <!-- 错误状态 -->
-    <view v-else-if="error" class="error-container">
-      <text class="error-text">{{ error }}</text>
-      <button class="retry-btn" @click="loadRules">重试</button>
+    <view
+      v-else-if="error"
+      class="error-container"
+    >
+      <text class="error-text">
+        {{ error }}
+      </text>
+      <button
+        class="retry-btn"
+        @click="loadRules"
+      >
+        重试
+      </button>
     </view>
 
     <!-- 空状态（所有分组都为空） -->
-    <view v-else-if="totalRules === 0" class="empty-container">
-      <text class="empty-icon">📋</text>
-      <text class="empty-title">暂无社区打卡规则</text>
-      <text class="empty-text">点击右上角"添加规则"创建第一条规则</text>
-      <text class="empty-hint">社区规则将自动应用于所有社区成员</text>
+    <view
+      v-else-if="totalRules === 0"
+      class="empty-container"
+    >
+      <text class="empty-icon">
+        📋
+      </text>
+      <text class="empty-title">
+        暂无社区打卡规则
+      </text>
+      <text class="empty-text">
+        点击右上角"添加规则"创建第一条规则
+      </text>
+      <text class="empty-hint">
+        社区规则将自动应用于所有社区成员
+      </text>
     </view>
 
     <!-- 分组规则列表 -->
-    <view v-else class="rules-grouped-container">
+    <view
+      v-else
+      class="rules-grouped-container"
+    >
       <!-- 启用规则组 -->
-      <view class="rules-group" v-if="groupedRules.enabled.length > 0">
+      <view
+        v-if="groupedRules.enabled.length > 0"
+        class="rules-group"
+      >
         <view class="group-header">
-          <text class="group-title">启用规则</text>
-          <text class="group-count">{{ groupedRules.enabled.length }} 条</text>
+          <text class="group-title">
+            启用规则
+          </text>
+          <text class="group-count">
+            {{ groupedRules.enabled.length }} 条
+          </text>
         </view>
         <view class="rules-list">
           <view
@@ -51,10 +94,17 @@
                   class="rule-icon"
                   mode="aspectFit"
                 />
-                <text v-else class="rule-icon-placeholder">📋</text>
+                <text
+                  v-else
+                  class="rule-icon-placeholder"
+                >
+                  📋
+                </text>
               </view>
               <view class="rule-info">
-                <text class="rule-name">{{ rule.rule_name }}</text>
+                <text class="rule-name">
+                  {{ rule.rule_name }}
+                </text>
                 <text class="rule-time">
                   最后更新：{{ formatDate(rule.updated_at || rule.created_at) }}
                 </text>
@@ -73,15 +123,27 @@
           </view>
         </view>
       </view>
-      <view v-else class="empty-group">
-        <text class="empty-group-text">无启用规则</text>
+      <view
+        v-else
+        class="empty-group"
+      >
+        <text class="empty-group-text">
+          无启用规则
+        </text>
       </view>
 
       <!-- 停用规则组 -->
-      <view class="rules-group" v-if="groupedRules.disabled.length > 0">
+      <view
+        v-if="groupedRules.disabled.length > 0"
+        class="rules-group"
+      >
         <view class="group-header">
-          <text class="group-title">停用规则</text>
-          <text class="group-count">{{ groupedRules.disabled.length }} 条</text>
+          <text class="group-title">
+            停用规则
+          </text>
+          <text class="group-count">
+            {{ groupedRules.disabled.length }} 条
+          </text>
         </view>
         <view class="rules-list">
           <view
@@ -98,10 +160,17 @@
                   class="rule-icon"
                   mode="aspectFit"
                 />
-                <text v-else class="rule-icon-placeholder">📋</text>
+                <text
+                  v-else
+                  class="rule-icon-placeholder"
+                >
+                  📋
+                </text>
               </view>
               <view class="rule-info">
-                <text class="rule-name">{{ rule.rule_name }}</text>
+                <text class="rule-name">
+                  {{ rule.rule_name }}
+                </text>
                 <text class="rule-time">
                   最后更新：{{ formatDate(rule.updated_at || rule.created_at) }}
                 </text>
@@ -110,28 +179,49 @@
 
             <!-- 操作按钮 -->
             <view class="rule-actions">
-              <button class="action-btn edit-btn" @click.stop="handleEditRule(rule)">
+              <button
+                class="action-btn edit-btn"
+                @click.stop="handleEditRule(rule)"
+              >
                 编辑
               </button>
-              <button class="action-btn enable-btn" @click.stop="handleEnableRule(rule)">
+              <button
+                class="action-btn enable-btn"
+                @click.stop="handleEnableRule(rule)"
+              >
                 启用
               </button>
-              <button class="action-btn delete-btn" @click.stop="handleDeleteRule(rule)">
+              <button
+                class="action-btn delete-btn"
+                @click.stop="handleDeleteRule(rule)"
+              >
                 删除
               </button>
             </view>
           </view>
         </view>
       </view>
-      <view v-else class="empty-group">
-        <text class="empty-group-text">无停用规则</text>
+      <view
+        v-else
+        class="empty-group"
+      >
+        <text class="empty-group-text">
+          无停用规则
+        </text>
       </view>
 
       <!-- 删除规则组 -->
-      <view class="rules-group" v-if="groupedRules.deleted.length > 0">
+      <view
+        v-if="groupedRules.deleted.length > 0"
+        class="rules-group"
+      >
         <view class="group-header">
-          <text class="group-title">删除规则</text>
-          <text class="group-count">{{ groupedRules.deleted.length }} 条</text>
+          <text class="group-title">
+            删除规则
+          </text>
+          <text class="group-count">
+            {{ groupedRules.deleted.length }} 条
+          </text>
         </view>
         <view class="rules-list">
           <view
@@ -148,10 +238,17 @@
                   class="rule-icon"
                   mode="aspectFit"
                 />
-                <text v-else class="rule-icon-placeholder">📋</text>
+                <text
+                  v-else
+                  class="rule-icon-placeholder"
+                >
+                  📋
+                </text>
               </view>
               <view class="rule-info">
-                <text class="rule-name">{{ rule.rule_name }}</text>
+                <text class="rule-name">
+                  {{ rule.rule_name }}
+                </text>
                 <text class="rule-time">
                   最后更新：{{ formatDate(rule.updated_at || rule.created_at) }}
                 </text>
@@ -160,7 +257,10 @@
 
             <!-- 操作按钮 -->
             <view class="rule-actions">
-              <button class="action-btn enable-btn" @click.stop="handleEnableRule(rule)">
+              <button
+                class="action-btn enable-btn"
+                @click.stop="handleEnableRule(rule)"
+              >
                 启用
               </button>
               <button
@@ -173,75 +273,138 @@
           </view>
         </view>
       </view>
-      <view v-else class="empty-group">
-        <text class="empty-group-text">无删除规则</text>
+      <view
+        v-else
+        class="empty-group"
+      >
+        <text class="empty-group-text">
+          无删除规则
+        </text>
       </view>
     </view>
 
     <!-- 规则详情模态框 -->
-    <uni-popup ref="ruleDetailPopup" type="bottom">
-      <view class="rule-detail-modal" v-if="selectedRule">
+    <uni-popup
+      ref="ruleDetailPopup"
+      type="bottom"
+    >
+      <view
+        v-if="selectedRule"
+        class="rule-detail-modal"
+      >
         <view class="modal-header">
-          <text class="modal-title">规则详情</text>
-          <button class="modal-close" @click="closeRuleDetail">×</button>
+          <text class="modal-title">
+            规则详情
+          </text>
+          <button
+            class="modal-close"
+            @click="closeRuleDetail"
+          >
+            ×
+          </button>
         </view>
 
         <view class="modal-content">
           <!-- 规则基本信息 -->
           <view class="detail-section">
-            <text class="section-title">基本信息</text>
+            <text class="section-title">
+              基本信息
+            </text>
             <view class="detail-item">
-              <text class="detail-label">规则名称：</text>
-              <text class="detail-value">{{ selectedRule.rule_name }}</text>
+              <text class="detail-label">
+                规则名称：
+              </text>
+              <text class="detail-value">
+                {{ selectedRule.rule_name }}
+              </text>
             </view>
             <view class="detail-item">
-              <text class="detail-label">规则状态：</text>
-              <text class="detail-value" :class="getStatusClass(selectedRule.status)">
+              <text class="detail-label">
+                规则状态：
+              </text>
+              <text
+                class="detail-value"
+                :class="getStatusClass(selectedRule.status)"
+              >
                 {{ getStatusText(selectedRule.status) }}
               </text>
             </view>
             <view class="detail-item">
-              <text class="detail-label">创建时间：</text>
-              <text class="detail-value">{{ formatDate(selectedRule.created_at) }}</text>
+              <text class="detail-label">
+                创建时间：
+              </text>
+              <text class="detail-value">
+                {{ formatDate(selectedRule.created_at) }}
+              </text>
             </view>
             <view class="detail-item">
-              <text class="detail-label">创建者：</text>
-              <text class="detail-value">{{
-                selectedRule.created_by_name || "未知"
-              }}</text>
+              <text class="detail-label">
+                创建者：
+              </text>
+              <text class="detail-value">
+                {{
+                  selectedRule.created_by_name || "未知"
+                }}
+              </text>
             </view>
           </view>
 
           <!-- 规则设置 -->
           <view class="detail-section">
-            <text class="section-title">规则设置</text>
+            <text class="section-title">
+              规则设置
+            </text>
             <view class="detail-item">
-              <text class="detail-label">打卡频率：</text>
-              <text class="detail-value">{{
-                getFrequencyText(selectedRule.frequency_type)
-              }}</text>
+              <text class="detail-label">
+                打卡频率：
+              </text>
+              <text class="detail-value">
+                {{
+                  getFrequencyText(selectedRule.frequency_type)
+                }}
+              </text>
             </view>
             <view class="detail-item">
-              <text class="detail-label">打卡时间：</text>
-              <text class="detail-value">{{
-                getTimeSlotText(selectedRule.time_slot_type)
-              }}</text>
+              <text class="detail-label">
+                打卡时间：
+              </text>
+              <text class="detail-value">
+                {{
+                  getTimeSlotText(selectedRule.time_slot_type)
+                }}
+              </text>
             </view>
-            <view v-if="selectedRule.custom_time" class="detail-item">
-              <text class="detail-label">自定义时间：</text>
-              <text class="detail-value">{{ formatTime(selectedRule.custom_time) }}</text>
+            <view
+              v-if="selectedRule.custom_time"
+              class="detail-item"
+            >
+              <text class="detail-label">
+                自定义时间：
+              </text>
+              <text class="detail-value">
+                {{ formatTime(selectedRule.custom_time) }}
+              </text>
             </view>
-            <view v-if="selectedRule.week_days !== 127" class="detail-item">
-              <text class="detail-label">适用星期：</text>
-              <text class="detail-value">{{
-                getWeekDaysText(selectedRule.week_days)
-              }}</text>
+            <view
+              v-if="selectedRule.week_days !== 127"
+              class="detail-item"
+            >
+              <text class="detail-label">
+                适用星期：
+              </text>
+              <text class="detail-value">
+                {{
+                  getWeekDaysText(selectedRule.week_days)
+                }}
+              </text>
             </view>
             <view
               v-if="selectedRule.custom_start_date && selectedRule.custom_end_date"
               class="detail-item"
             >
-              <text class="detail-label">适用日期：</text>
+              <text class="detail-label">
+                适用日期：
+              </text>
               <text class="detail-value">
                 {{ formatDate(selectedRule.custom_start_date) }} 至
                 {{ formatDate(selectedRule.custom_end_date) }}
@@ -251,20 +414,35 @@
 
           <!-- 规则影响 -->
           <view class="detail-section">
-            <text class="section-title">规则影响</text>
+            <text class="section-title">
+              规则影响
+            </text>
             <view class="detail-item">
-              <text class="detail-label">适用用户数：</text>
-              <text class="detail-value">{{ selectedRule.user_count || 0 }} 人</text>
+              <text class="detail-label">
+                适用用户数：
+              </text>
+              <text class="detail-value">
+                {{ selectedRule.user_count || 0 }} 人
+              </text>
             </view>
             <view class="detail-item">
-              <text class="detail-label">今日打卡数：</text>
-              <text class="detail-value">{{ selectedRule.today_checkins || 0 }} 次</text>
+              <text class="detail-label">
+                今日打卡数：
+              </text>
+              <text class="detail-value">
+                {{ selectedRule.today_checkins || 0 }} 次
+              </text>
             </view>
           </view>
         </view>
 
         <view class="modal-footer">
-          <button class="modal-btn secondary-btn" @click="closeRuleDetail">关闭</button>
+          <button
+            class="modal-btn secondary-btn"
+            @click="closeRuleDetail"
+          >
+            关闭
+          </button>
           <button
             v-if="selectedRule.status === 0"
             class="modal-btn primary-btn"

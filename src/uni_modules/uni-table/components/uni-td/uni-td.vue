@@ -1,16 +1,25 @@
 <template>
-	<!-- #ifdef H5 -->
-	<td class="uni-table-td" :rowspan="rowspan" :colspan="colspan" :class="{'table--border':border}" :style="{width:width + 'px','text-align':align}">
-		<slot></slot>
-	</td>
-	<!-- #endif -->
-	<!-- #ifndef H5 -->
-	<!-- :class="{'table--border':border}"  -->
-	<view class="uni-table-td" :class="{'table--border':border}" :style="{width:width + 'px','text-align':align}">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
-
+  <!-- #ifdef H5 -->
+  <td
+    class="uni-table-td"
+    :rowspan="rowspan"
+    :colspan="colspan"
+    :class="{'table--border':border}"
+    :style="{width:width + 'px','text-align':align}"
+  >
+    <slot />
+  </td>
+  <!-- #endif -->
+  <!-- #ifndef H5 -->
+  <!-- :class="{'table--border':border}"  -->
+  <view
+    class="uni-table-td"
+    :class="{'table--border':border}"
+    :style="{width:width + 'px','text-align':align}"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -21,7 +30,7 @@
 	 * @property {Number} 	align = [left|center|right]	单元格对齐方式
 	 */
 	export default {
-		name: 'uniTd',
+		name: 'UniTd',
 		options: {
 			// #ifdef MP-TOUTIAO
 			virtualHost: false,

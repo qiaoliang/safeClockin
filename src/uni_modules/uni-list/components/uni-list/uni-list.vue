@@ -1,17 +1,32 @@
 <template>
-	<!-- #ifndef APP-NVUE -->
-	<view class="uni-list uni-border-top-bottom">
-		<view v-if="border" class="uni-list--border-top"></view>
-		<slot />
-		<view v-if="border" class="uni-list--border-bottom"></view>
-	</view>
-	<!-- #endif -->
-	<!-- #ifdef APP-NVUE -->
-	<list :bounce="false" :scrollable="true" show-scrollbar :render-reverse="renderReverse" @scroll="scroll" class="uni-list" :class="{ 'uni-list--border': border }" :enableBackToTop="enableBackToTop"
-		loadmoreoffset="15">
-		<slot />
-	</list>
-	<!-- #endif -->
+  <!-- #ifndef APP-NVUE -->
+  <view class="uni-list uni-border-top-bottom">
+    <view
+      v-if="border"
+      class="uni-list--border-top"
+    />
+    <slot />
+    <view
+      v-if="border"
+      class="uni-list--border-bottom"
+    />
+  </view>
+  <!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <list
+    :bounce="false"
+    :scrollable="true"
+    show-scrollbar
+    :render-reverse="renderReverse"
+    class="uni-list"
+    :class="{ 'uni-list--border': border }"
+    :enable-back-to-top="enableBackToTop"
+    loadmoreoffset="15"
+    @scroll="scroll"
+  >
+    <slot />
+  </list>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -22,7 +37,7 @@
 	 * @property {String} 	border = [true|false] 		标题
 	 */
 	export default {
-		name: 'uniList',
+		name: 'UniList',
 		'mp-weixin': {
 			options: {
 				multipleSlots: false

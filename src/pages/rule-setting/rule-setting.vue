@@ -11,14 +11,27 @@
     </view>
 
     <!-- 加载状态 -->
-    <view v-if="loading" class="loading-container">
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
       <uni-load-more status="loading" />
     </view>
 
     <!-- 错误状态 -->
-    <view v-else-if="error" class="error-container">
-      <text class="error-text">{{ error }}</text>
-      <button class="retry-btn" @click="getCheckinRules">重试</button>
+    <view
+      v-else-if="error"
+      class="error-container"
+    >
+      <text class="error-text">
+        {{ error }}
+      </text>
+      <button
+        class="retry-btn"
+        @click="getCheckinRules"
+      >
+        重试
+      </button>
     </view>
 
     <!-- 规则列表 -->
@@ -27,10 +40,17 @@
       class="rules-list-section"
     >
       <!-- 个人规则 -->
-      <view v-if="personalRules.length > 0" class="rules-group">
+      <view
+        v-if="personalRules.length > 0"
+        class="rules-group"
+      >
         <view class="group-title">
-          <text class="group-icon">👤</text>
-          <text class="group-text">个人规则</text>
+          <text class="group-icon">
+            👤
+          </text>
+          <text class="group-text">
+            个人规则
+          </text>
         </view>
         <view 
           v-for="rule in personalRules" 
@@ -38,8 +58,18 @@
           class="rule-item"
         >
           <view class="rule-icon">
-            <text v-if="rule.icon_url" class="icon-emoji">{{ rule.icon_url }}</text>
-            <text v-else class="icon-default">📋</text>
+            <text
+              v-if="rule.icon_url"
+              class="icon-emoji"
+            >
+              {{ rule.icon_url }}
+            </text>
+            <text
+              v-else
+              class="icon-default"
+            >
+              📋
+            </text>
           </view>
           <view class="rule-info">
             <text class="rule-name">
@@ -80,11 +110,20 @@
       </view>
 
       <!-- 社区规则 -->
-      <view v-if="communityRules.length > 0" class="rules-group">
+      <view
+        v-if="communityRules.length > 0"
+        class="rules-group"
+      >
         <view class="group-title">
-          <text class="group-icon">🏘️</text>
-          <text class="group-text">社区规则</text>
-          <text class="group-hint">（由社区管理员设置）</text>
+          <text class="group-icon">
+            🏘️
+          </text>
+          <text class="group-text">
+            社区规则
+          </text>
+          <text class="group-hint">
+            （由社区管理员设置）
+          </text>
         </view>
         <view 
           v-for="rule in communityRules" 
@@ -92,8 +131,18 @@
           class="rule-item community-rule-item"
         >
           <view class="rule-icon">
-            <text v-if="rule.icon_url" class="icon-emoji">{{ rule.icon_url }}</text>
-            <text v-else class="icon-default">🏘️</text>
+            <text
+              v-if="rule.icon_url"
+              class="icon-emoji"
+            >
+              {{ rule.icon_url }}
+            </text>
+            <text
+              v-else
+              class="icon-default"
+            >
+              🏘️
+            </text>
           </view>
           <view class="rule-info">
             <text class="rule-name">
@@ -107,7 +156,12 @@
             </text>
             <text class="rule-source community-source">
               🏘️ {{ rule.community_name || '社区' }}要求
-              <text v-if="!rule.is_enabled" class="rule-status-disabled">（已停用）</text>
+              <text
+                v-if="!rule.is_enabled"
+                class="rule-status-disabled"
+              >
+                （已停用）
+              </text>
             </text>
           </view>
           

@@ -1,41 +1,93 @@
 <template>
-	<view v-if="show" class="uni-noticebar" :style="{ backgroundColor }" @click="onClick">
-		<slot v-if="showIcon === true || showIcon === 'true'" name="noticebarIcon">
-			<uni-icons class="uni-noticebar-icon" type="sound" :color="color" :size="fontSize * 1.5" />
-		</slot>
-		<view ref="textBox" class="uni-noticebar__content-wrapper" :class="{
-				'uni-noticebar__content-wrapper--scrollable': scrollable,
-				'uni-noticebar__content-wrapper--single': !scrollable && (single || moreText)
-			}" :style="{ height: scrollable ? fontSize * 1.5 + 'px' : 'auto' }">
-			<view :id="elIdBox" class="uni-noticebar__content" :class="{
-					'uni-noticebar__content--scrollable': scrollable,
-					'uni-noticebar__content--single': !scrollable && (single || moreText)
-				}">
-				<text :id="elId" ref="animationEle" class="uni-noticebar__content-text" :class="{
-						'uni-noticebar__content-text--scrollable': scrollable,
-						'uni-noticebar__content-text--single': !scrollable && (single || showGetMore)
-					}" :style="{
-						color: color,
-						fontSize: fontSize + 'px',
-						lineHeight: fontSize * 1.5 + 'px',
-						width: wrapWidth + 'px',
-						'animationDuration': animationDuration,
-						'-webkit-animationDuration': animationDuration,
-						animationPlayState: webviewHide ? 'paused' : animationPlayState,
-						'-webkit-animationPlayState': webviewHide ? 'paused' : animationPlayState,
-						animationDelay: animationDelay,
-						'-webkit-animationDelay': animationDelay
-					}">{{text}}</text>
-			</view>
-		</view>
-		<view v-if="isShowGetMore" class="uni-noticebar__more uni-cursor-point" @click="clickMore">
-			<text v-if="moreText.length > 0" :style="{ color: moreColor, fontSize: fontSize + 'px' }">{{ moreText }}</text>
-			<uni-icons v-else type="right" :color="moreColor" :size="fontSize * 1.1" />
-		</view>
-		<view class="uni-noticebar-close uni-cursor-point" v-if="isShowClose">
-			<uni-icons type="closeempty" :color="color" :size="fontSize * 1.1" @click="close" />
-		</view>
-	</view>
+  <view
+    v-if="show"
+    class="uni-noticebar"
+    :style="{ backgroundColor }"
+    @click="onClick"
+  >
+    <slot
+      v-if="showIcon === true || showIcon === 'true'"
+      name="noticebarIcon"
+    >
+      <uni-icons
+        class="uni-noticebar-icon"
+        type="sound"
+        :color="color"
+        :size="fontSize * 1.5"
+      />
+    </slot>
+    <view
+      ref="textBox"
+      class="uni-noticebar__content-wrapper"
+      :class="{
+        'uni-noticebar__content-wrapper--scrollable': scrollable,
+        'uni-noticebar__content-wrapper--single': !scrollable && (single || moreText)
+      }"
+      :style="{ height: scrollable ? fontSize * 1.5 + 'px' : 'auto' }"
+    >
+      <view
+        :id="elIdBox"
+        class="uni-noticebar__content"
+        :class="{
+          'uni-noticebar__content--scrollable': scrollable,
+          'uni-noticebar__content--single': !scrollable && (single || moreText)
+        }"
+      >
+        <text
+          :id="elId"
+          ref="animationEle"
+          class="uni-noticebar__content-text"
+          :class="{
+            'uni-noticebar__content-text--scrollable': scrollable,
+            'uni-noticebar__content-text--single': !scrollable && (single || showGetMore)
+          }"
+          :style="{
+            color: color,
+            fontSize: fontSize + 'px',
+            lineHeight: fontSize * 1.5 + 'px',
+            width: wrapWidth + 'px',
+            'animationDuration': animationDuration,
+            '-webkit-animationDuration': animationDuration,
+            animationPlayState: webviewHide ? 'paused' : animationPlayState,
+            '-webkit-animationPlayState': webviewHide ? 'paused' : animationPlayState,
+            animationDelay: animationDelay,
+            '-webkit-animationDelay': animationDelay
+          }"
+        >
+          {{ text }}
+        </text>
+      </view>
+    </view>
+    <view
+      v-if="isShowGetMore"
+      class="uni-noticebar__more uni-cursor-point"
+      @click="clickMore"
+    >
+      <text
+        v-if="moreText.length > 0"
+        :style="{ color: moreColor, fontSize: fontSize + 'px' }"
+      >
+        {{ moreText }}
+      </text>
+      <uni-icons
+        v-else
+        type="right"
+        :color="moreColor"
+        :size="fontSize * 1.1"
+      />
+    </view>
+    <view
+      v-if="isShowClose"
+      class="uni-noticebar-close uni-cursor-point"
+    >
+      <uni-icons
+        type="closeempty"
+        :color="color"
+        :size="fontSize * 1.1"
+        @click="close"
+      />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -66,7 +118,6 @@
 
 	export default {
 		name: 'UniNoticeBar',
-		emits: ['click', 'getmore', 'close'],
 		props: {
 			text: {
 				type: String,
@@ -123,6 +174,7 @@
 				default: false
 			}
 		},
+		emits: ['click', 'getmore', 'close'],
 		data() {
 			const elId = `Uni_${Math.ceil(Math.random() * 10e5).toString(36)}`
 			const elIdBox = `Uni_${Math.ceil(Math.random() * 10e5).toString(36)}`
@@ -142,11 +194,6 @@
 				animationDelay: '0s'
 			}
 		},
-		watch: {
-			text(newValue, oldValue) {
-				this.initSize();
-			}
-		},
 		computed: {
 			isShowGetMore() {
 				return this.showGetMore === true || this.showGetMore === 'true'
@@ -154,6 +201,11 @@
 			isShowClose() {
 				return (this.showClose === true || this.showClose === 'true') &&
 					(this.showGetMore === false || this.showGetMore === 'false')
+			}
+		},
+		watch: {
+			text(newValue, oldValue) {
+				this.initSize();
 			}
 		},
 		mounted() {
@@ -173,7 +225,7 @@
 			})
 		},
 		// #ifdef APP-NVUE
-		beforeDestroy() {
+		beforeUnmount() {
 			this.stopAnimation = true
 		},
 		// #endif
@@ -181,10 +233,10 @@
 			initSize() {
 				if (this.scrollable) {
 					// #ifndef APP-NVUE
-					let query = [],
+					const query = [],
 						boxWidth = 0,
 						textWidth = 0;
-					let textQuery = new Promise((resolve, reject) => {
+					const textQuery = new Promise((resolve, reject) => {
 						uni.createSelectorQuery()
 							// #ifndef MP-ALIPAY
 							.in(this)
@@ -196,7 +248,7 @@
 								resolve()
 							})
 					})
-					let boxQuery = new Promise((resolve, reject) => {
+					const boxQuery = new Promise((resolve, reject) => {
 						uni.createSelectorQuery()
 							// #ifndef MP-ALIPAY
 							.in(this)
@@ -220,7 +272,7 @@
 					// #endif
 					// #ifdef APP-NVUE
 					dom.getComponentRect(this.$refs['animationEle'], (res) => {
-						let winWidth = uni.getSystemInfoSync().windowWidth
+						const winWidth = uni.getSystemInfoSync().windowWidth
 						this.textWidth = res.size.width
 						animation.transition(this.$refs['animationEle'], {
 							styles: {

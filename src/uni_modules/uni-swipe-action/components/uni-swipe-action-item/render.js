@@ -22,9 +22,9 @@ export default {
 	 * @param {Object} ins
 	 */
 	touchstart(e, ownerInstance, self) {
-		let instance = e.instance;
+		const instance = e.instance;
 		let disabled = instance.getDataset().disabled
-		let state = self.state || {};
+		const state = self.state || {};
 		this.getDom(instance, ownerInstance, self)
 		// fix by mehaotian, TODO 兼容 app-vue 获取dataset为字符串 , h5 获取 为 undefined 的问题,待框架修复
 		disabled = this.getDisabledType(disabled)
@@ -47,11 +47,11 @@ export default {
 	 * @param {Object} ownerInstance
 	 */
 	touchmove(e, ownerInstance, self) {
-		let instance = e.instance;
+		const instance = e.instance;
 		// 删除之后已经那不到实例了
 		if (!instance) return;
 		let disabled = instance.getDataset().disabled
-		let state = self.state || {}
+		const state = self.state || {}
 		// fix by mehaotian, TODO 兼容 app-vue 获取dataset为字符串 , h5 获取 为 undefined 的问题,待框架修复
 		disabled = this.getDisabledType(disabled)
 		if (disabled) return
@@ -64,7 +64,7 @@ export default {
 			// 阻止页面滚动
 			e.preventDefault()
 		}
-		let x = state.x + state.deltaX
+		const x = state.x + state.deltaX
 		this.move(x, instance, ownerInstance, self)
 	},
 
@@ -74,9 +74,9 @@ export default {
 	 * @param {Object} ownerInstance
 	 */
 	touchend(e, ownerInstance, self) {
-		let instance = e.instance;
+		const instance = e.instance;
 		let disabled = instance.getDataset().disabled
-		let state = self.state || {}
+		const state = self.state || {}
 		// fix by mehaotian, TODO 兼容 app-vue 获取dataset为字符串 , h5 获取 为 undefined 的问题,待框架修复
 		disabled = this.getDisabledType(disabled)
 
@@ -95,9 +95,9 @@ export default {
 	 */
 	move(value, instance, ownerInstance, self) {
 		value = value || 0
-		let state = self.state || {}
-		let leftWidth = state.leftWidth
-		let rightWidth = state.rightWidth
+		const state = self.state || {}
+		const leftWidth = state.leftWidth
+		const rightWidth = state.rightWidth
 		// 获取可滑动范围
 		state.left = this.range(value, -rightWidth, leftWidth);
 		instance.requestAnimationFrame(function() {
@@ -188,9 +188,9 @@ export default {
 	 * @param {Object} ownerInstance
 	 */
 	openState(type, ins, ownerInstance, self) {
-		let state = self.state || {}
-		let leftWidth = state.leftWidth
-		let rightWidth = state.rightWidth
+		const state = self.state || {}
+		const leftWidth = state.leftWidth
+		const rightWidth = state.rightWidth
 		let left = ''
 		state.isopen = state.isopen ? state.isopen : 'none'
 		switch (type) {
@@ -238,7 +238,7 @@ export default {
 	 * @param {Object} event
 	 */
 	resetTouchStatus(instance, self) {
-		let state = self.state || {};
+		const state = self.state || {};
 		state.direction = '';
 		state.deltaX = 0;
 		state.deltaY = 0;
@@ -251,8 +251,8 @@ export default {
 	 * @param {Object} event
 	 */
 	stopTouchStart(event, ownerInstance, self) {
-		let instance = event.instance;
-		let state = self.state || {}
+		const instance = event.instance;
+		const state = self.state || {}
 		this.resetTouchStatus(instance, self);
 		var touch = event.touches[0];
 		state.startX = touch.clientX;
@@ -264,9 +264,9 @@ export default {
 	 * @param {Object} event
 	 */
 	stopTouchMove(event, self) {
-		let instance = event.instance;
-		let state = self.state || {};
-		let touch = event.touches[0];
+		const instance = event.instance;
+		const state = self.state || {};
+		const touch = event.touches[0];
 
 		state.deltaX = touch.clientX - state.startX;
 		state.deltaY = touch.clientY - state.startY;

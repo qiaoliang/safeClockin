@@ -7,7 +7,9 @@
         :class="['tab-button', activeTab === tab.id ? 'active' : '']"
         @click="$emit('tab-change', tab.id)"
       >
-        <text class="tab-text">{{ tab.name }}</text>
+        <text class="tab-text">
+          {{ tab.name }}
+        </text>
       </button>
     </view>
   </view>

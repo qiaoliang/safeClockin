@@ -113,7 +113,7 @@ class Calendar {
 	 * 获取上月剩余天数
 	 */
 	_getLastMonthDays(firstDay, full) {
-		let dateArr = []
+		const dateArr = []
 		for (let i = firstDay; i > 0; i--) {
 			const beforeDate = new Date(full.year, full.month - 1, -i + 1).getDate()
 			dateArr.push({
@@ -129,16 +129,16 @@ class Calendar {
 	 * 获取本月天数
 	 */
 	_currentMonthDys(dateData, full) {
-		let dateArr = []
-		let fullDate = this.date.fullDate
+		const dateArr = []
+		const fullDate = this.date.fullDate
 		for (let i = 1; i <= dateData; i++) {
-			let nowDate = full.year + '-' + (full.month < 10 ?
+			const nowDate = full.year + '-' + (full.month < 10 ?
 				full.month : full.month) + '-' + (i < 10 ?
 				'0' + i : i)
 			// 是否今天
-			let isDay = fullDate === nowDate
+			const isDay = fullDate === nowDate
 			// 获取打点信息
-			let info = this.selected && this.selected.find((item) => {
+			const info = this.selected && this.selected.find((item) => {
 				if (this.dateEqual(nowDate, item.date)) {
 					return item
 				}
@@ -158,7 +158,7 @@ class Calendar {
 				// disableAfter = this.dateCompare(nowDate, dateCompAfter ? this.endDate : fullDate)
 				disableAfter = this.dateCompare(nowDate, this.endDate)
 			}
-			let multiples = this.multipleStatus.data
+			const multiples = this.multipleStatus.data
 			let checked = false
 			let multiplesStatus = -1
 			if (this.range) {
@@ -171,7 +171,7 @@ class Calendar {
 					checked = true
 				}
 			}
-			let data = {
+			const data = {
 				fullDate: nowDate,
 				year: full.year,
 				date: i,
@@ -195,7 +195,7 @@ class Calendar {
 	 * 获取下月天数
 	 */
 	_getNextMonthDays(surplus, full) {
-		let dateArr = []
+		const dateArr = []
 		for (let i = 1; i < surplus + 1; i++) {
 			dateArr.push({
 				date: i,
@@ -289,7 +289,7 @@ class Calendar {
 	 *  获取多选状态
 	 */
 	setMultiple(fullDate) {
-		let {
+		const {
 			before,
 			after
 		} = this.multipleStatus
@@ -323,9 +323,9 @@ class Calendar {
 			year,
 			month
 		} = this.getDate(dateData)
-		let firstDay = new Date(year, month - 1, 1).getDay()
-		let currentDay = new Date(year, month, 0).getDate()
-		let dates = {
+		const firstDay = new Date(year, month - 1, 1).getDay()
+		const currentDay = new Date(year, month, 0).getDate()
+		const dates = {
 			lastMonthDays: this._getLastMonthDays(firstDay, this.getDate(dateData)), // 上个月末尾几天
 			currentMonthDys: this._currentMonthDys(currentDay, this.getDate(dateData)), // 本月天数
 			nextMonthDays: [], // 下个月开始几天
@@ -335,7 +335,7 @@ class Calendar {
 		const surplus = 42 - (dates.lastMonthDays.length + dates.currentMonthDys.length)
 		dates.nextMonthDays = this._getNextMonthDays(surplus, this.getDate(dateData))
 		canlender = canlender.concat(dates.lastMonthDays, dates.currentMonthDys, dates.nextMonthDays)
-		let weeks = {}
+		const weeks = {}
 		// 拼接数组  上个月开始几天 + 本月天数+ 下个月开始几天
 		for (let i = 0; i < canlender.length; i++) {
 			if (i % 7 === 0) {

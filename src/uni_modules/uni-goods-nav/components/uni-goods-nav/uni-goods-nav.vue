@@ -1,28 +1,61 @@
 <template>
-	<view class="uni-goods-nav">
-		<!-- 底部占位 -->
-		<view class="uni-tab__seat" />
-		<view class="uni-tab__cart-box flex">
-			<view class="flex uni-tab__cart-sub-left">
-				<view v-for="(item,index) in options" :key="index" class="flex uni-tab__cart-button-left uni-tab__shop-cart" @click="onClick(index,item)">
-					<view class="uni-tab__icon">
-						<uni-icons :type="item.icon" size="20" color="#646566"></uni-icons>
-						<!-- <image class="image" :src="item.icon" mode="widthFix" /> -->
-					</view>
-					<text class="uni-tab__text">{{ item.text }}</text>
-					<view class="flex uni-tab__dot-box">
-						<text v-if="item.info" :class="{ 'uni-tab__dots': item.info > 9 }" class="uni-tab__dot " :style="{'backgroundColor':item.infoBackgroundColor?item.infoBackgroundColor:'#ff0000',
-						color:item.infoColor?item.infoColor:'#fff'
-						}">{{ item.info }}</text>
-					</view>
-				</view>
-			</view>
-			<view :class="{'uni-tab__right':fill}" class="flex uni-tab__cart-sub-right ">
-				<view v-for="(item,index) in buttonGroup" :key="index" :style="{background:item.backgroundColor,color:item.color}"
-				 class="flex uni-tab__cart-button-right" @click="buttonClick(index,item)"><text :style="{color:item.color}" class="uni-tab__cart-button-right-text">{{ item.text }}</text></view>
-			</view>
-		</view>
-	</view>
+  <view class="uni-goods-nav">
+    <!-- 底部占位 -->
+    <view class="uni-tab__seat" />
+    <view class="uni-tab__cart-box flex">
+      <view class="flex uni-tab__cart-sub-left">
+        <view
+          v-for="(item,index) in options"
+          :key="index"
+          class="flex uni-tab__cart-button-left uni-tab__shop-cart"
+          @click="onClick(index,item)"
+        >
+          <view class="uni-tab__icon">
+            <uni-icons
+              :type="item.icon"
+              size="20"
+              color="#646566"
+            />
+            <!-- <image class="image" :src="item.icon" mode="widthFix" /> -->
+          </view>
+          <text class="uni-tab__text">
+            {{ item.text }}
+          </text>
+          <view class="flex uni-tab__dot-box">
+            <text
+              v-if="item.info"
+              :class="{ 'uni-tab__dots': item.info > 9 }"
+              class="uni-tab__dot "
+              :style="{'backgroundColor':item.infoBackgroundColor?item.infoBackgroundColor:'#ff0000',
+                       color:item.infoColor?item.infoColor:'#fff'
+              }"
+            >
+              {{ item.info }}
+            </text>
+          </view>
+        </view>
+      </view>
+      <view
+        :class="{'uni-tab__right':fill}"
+        class="flex uni-tab__cart-sub-right "
+      >
+        <view
+          v-for="(item,index) in buttonGroup"
+          :key="index"
+          :style="{background:item.backgroundColor,color:item.color}"
+          class="flex uni-tab__cart-button-right"
+          @click="buttonClick(index,item)"
+        >
+          <text
+            :style="{color:item.color}"
+            class="uni-tab__cart-button-right-text"
+          >
+            {{ item.text }}
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -45,7 +78,6 @@
 	 */
 	export default {
 		name: 'UniGoodsNav',
-		emits:['click','buttonClick'],
 		props: {
 			options: {
 				type: Array,
@@ -84,6 +116,7 @@
 				default: false
 			}
 		},
+		emits:['click','buttonClick'],
 		methods: {
 			onClick(index, item) {
 				this.$emit('click', {
@@ -104,7 +137,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.flex {
 		/* #ifndef APP-NVUE */
 		display: flex;

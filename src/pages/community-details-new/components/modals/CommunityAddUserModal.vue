@@ -1,15 +1,28 @@
 <template>
-  <view v-if="visible" class="community-add-user-modal">
+  <view
+    v-if="visible"
+    class="community-add-user-modal"
+  >
     <!-- 遮罩层 -->
-    <view class="modal-mask" @click="handleClose" />
+    <view
+      class="modal-mask"
+      @click="handleClose"
+    />
 
     <!-- 模态框内容 -->
     <view class="modal-content">
       <!-- 标题和关闭按钮 -->
       <view class="modal-header">
-        <h3 class="modal-title">{{ isAnkaFamily ? "创建新用户" : "添加社区用户" }}</h3>
-        <button class="close-button" @click="handleClose">
-          <text class="close-icon">×</text>
+        <h3 class="modal-title">
+          {{ isAnkaFamily ? "创建新用户" : "添加社区用户" }}
+        </h3>
+        <button
+          class="close-button"
+          @click="handleClose"
+        >
+          <text class="close-icon">
+            ×
+          </text>
         </button>
       </view>
 
@@ -17,9 +30,14 @@
       <view class="modal-body">
         <!-- 安卡大家庭：创建表单 -->
         <template v-if="isAnkaFamily">
-          <form class="create-user-form" @submit.prevent="handleCreateUser">
+          <form
+            class="create-user-form"
+            @submit.prevent="handleCreateUser"
+          >
             <view class="form-field">
-              <text class="field-label">用户姓名</text>
+              <text class="field-label">
+                用户姓名
+              </text>
               <input
                 v-model="formData.nickname"
                 class="form-input"
@@ -27,14 +45,21 @@
                 placeholder="请输入用户姓名"
                 maxlength="20"
                 :disabled="submitting"
-              />
-              <text v-if="formErrors.nickname" class="error-text">{{
-                formErrors.nickname
-              }}</text>
+              >
+              <text
+                v-if="formErrors.nickname"
+                class="error-text"
+              >
+                {{
+                  formErrors.nickname
+                }}
+              </text>
             </view>
 
             <view class="form-field">
-              <text class="field-label">手机号码</text>
+              <text class="field-label">
+                手机号码
+              </text>
               <input
                 v-model="formData.phone"
                 class="form-input"
@@ -43,29 +68,46 @@
                 maxlength="11"
                 :disabled="submitting"
                 @input="handlePhoneInput"
-              />
-              <text v-if="formErrors.phone" class="error-text">{{
-                formErrors.phone
-              }}</text>
+              >
+              <text
+                v-if="formErrors.phone"
+                class="error-text"
+              >
+                {{
+                  formErrors.phone
+                }}
+              </text>
             </view>
 
             <view class="form-field">
-              <text class="field-label">用户角色</text>
+              <text class="field-label">
+                用户角色
+              </text>
               <view class="readonly-field">
-                <text class="readonly-text">独居者</text>
+                <text class="readonly-text">
+                  独居者
+                </text>
               </view>
             </view>
 
             <view class="form-field">
-              <text class="field-label">初始密码</text>
+              <text class="field-label">
+                初始密码
+              </text>
               <view class="readonly-field">
-                <text class="readonly-text">A123456</text>
-                <text class="password-hint">（默认密码）</text>
+                <text class="readonly-text">
+                  A123456
+                </text>
+                <text class="password-hint">
+                  （默认密码）
+                </text>
               </view>
             </view>
 
             <view class="form-field">
-              <text class="field-label">备注信息（可选）</text>
+              <text class="field-label">
+                备注信息（可选）
+              </text>
               <textarea
                 v-model="formData.remark"
                 class="form-textarea"
@@ -75,9 +117,16 @@
               />
             </view>
 
-            <view v-if="showSuperAdminHint" class="super-admin-hint">
-              <text class="hint-icon">🔑</text>
-              <text class="hint-text">超级管理员模式：免验证码创建</text>
+            <view
+              v-if="showSuperAdminHint"
+              class="super-admin-hint"
+            >
+              <text class="hint-icon">
+                🔑
+              </text>
+              <text class="hint-text">
+                超级管理员模式：免验证码创建
+              </text>
             </view>
           </form>
         </template>
@@ -86,7 +135,9 @@
         <template v-else>
           <view class="search-section">
             <view class="search-input-wrapper">
-              <text class="search-icon">🔍</text>
+              <text class="search-icon">
+                🔍
+              </text>
               <input
                 v-model="searchQuery"
                 class="search-input"
@@ -94,60 +145,106 @@
                 placeholder="搜索用户姓名或手机号"
                 :disabled="searching"
                 @input="handleSearchInput"
-              />
+              >
               <button
                 v-if="searchQuery"
                 class="clear-button"
-                @click="clearSearch"
                 :disabled="searching"
+                @click="clearSearch"
               >
-                <text class="clear-icon">×</text>
+                <text class="clear-icon">
+                  ×
+                </text>
               </button>
             </view>
           </view>
 
           <view class="search-results">
             <!-- 加载状态 -->
-            <view v-if="searching" class="loading-state">
-              <text class="loading-icon">⏳</text>
-              <text class="loading-text">搜索中...</text>
+            <view
+              v-if="searching"
+              class="loading-state"
+            >
+              <text class="loading-icon">
+                ⏳
+              </text>
+              <text class="loading-text">
+                搜索中...
+              </text>
             </view>
 
             <!-- 空状态 -->
-            <view v-else-if="searchResults.length === 0" class="empty-state">
-              <text v-if="searchQuery" class="empty-icon">🔍</text>
-              <text v-else class="empty-icon">👥</text>
+            <view
+              v-else-if="searchResults.length === 0"
+              class="empty-state"
+            >
+              <text
+                v-if="searchQuery"
+                class="empty-icon"
+              >
+                🔍
+              </text>
+              <text
+                v-else
+                class="empty-icon"
+              >
+                👥
+              </text>
               <text class="empty-text">
                 {{ searchQuery ? "未找到匹配的用户" : "请输入搜索关键词" }}
               </text>
-              <text v-if="!searchQuery" class="empty-hint">
+              <text
+                v-if="!searchQuery"
+                class="empty-hint"
+              >
                 请输入用户姓名或手机号进行搜索
               </text>
             </view>
 
             <!-- 搜索结果列表 -->
-            <view v-else class="result-list">
-              <view v-for="user in searchResults" :key="user.userId" class="result-item">
+            <view
+              v-else
+              class="result-list"
+            >
+              <view
+                v-for="user in searchResults"
+                :key="user.userId"
+                class="result-item"
+              >
                 <view class="user-info">
                   <view class="user-avatar">
-                    <text class="avatar-icon">👤</text>
+                    <text class="avatar-icon">
+                      👤
+                    </text>
                   </view>
                   <view class="user-details">
-                    <text class="user-name">{{ user.nickname || "未设置昵称" }}</text>
-                    <text class="user-phone">{{
-                      formatPhoneNumber(user.phoneNumber)
-                    }}</text>
+                    <text class="user-name">
+                      {{ user.nickname || "未设置昵称" }}
+                    </text>
+                    <text class="user-phone">
+                      {{
+                        formatPhoneNumber(user.phoneNumber)
+                      }}
+                    </text>
                   </view>
                 </view>
                 <button
                   class="add-button"
-                  @click="handleAddExistingUser(user.userId)"
                   :disabled="addingUser === user.userId"
+                  @click="handleAddExistingUser(user.userId)"
                 >
-                  <text v-if="addingUser === user.userId" class="button-text"
-                    >添加中...</text
+                  <text
+                    v-if="addingUser === user.userId"
+                    class="button-text"
                   >
-                  <text v-else class="button-text">添加</text>
+                    添加中...
+                  </text>
+                  <text
+                    v-else
+                    class="button-text"
+                  >
+                    添加
+                  </text>
                 </button>
               </view>
             </view>
@@ -157,19 +254,35 @@
 
       <!-- 底部按钮 -->
       <view class="modal-footer">
-        <button class="cancel-button" @click="handleClose" :disabled="submitting">
-          <text class="button-text">取消</text>
+        <button
+          class="cancel-button"
+          :disabled="submitting"
+          @click="handleClose"
+        >
+          <text class="button-text">
+            取消
+          </text>
         </button>
 
         <!-- 安卡大家庭：创建按钮 -->
         <button
           v-if="isAnkaFamily"
           class="submit-button"
-          @click="handleCreateUser"
           :disabled="!isFormValid || submitting"
+          @click="handleCreateUser"
         >
-          <text v-if="submitting" class="button-text">创建中...</text>
-          <text v-else class="button-text">确认创建</text>
+          <text
+            v-if="submitting"
+            class="button-text"
+          >
+            创建中...
+          </text>
+          <text
+            v-else
+            class="button-text"
+          >
+            确认创建
+          </text>
         </button>
       </view>
     </view>

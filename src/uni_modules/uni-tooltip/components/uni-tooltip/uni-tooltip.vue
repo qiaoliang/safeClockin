@@ -1,12 +1,16 @@
 <template>
-	<view class="uni-tooltip">
-		<slot></slot>
-		<view v-if="content || $slots.content" class="uni-tooltip-popup" :style="initPlacement">
-			<slot name="content">
-				{{content}}
-			</slot>
-		</view>
-	</view>
+  <view class="uni-tooltip">
+    <slot />
+    <view
+      v-if="content || $slots.content"
+      class="uni-tooltip-popup"
+      :style="initPlacement"
+    >
+      <slot name="content">
+        {{ content }}
+      </slot>
+    </view>
+  </view>
 </template>
 
 
@@ -19,13 +23,23 @@
 	 * @property {String}  placement出现位置, 目前支持：left right top bottom
 	 */
 	export default {
-		name: "uni-tooltip",
+		name: "UniTooltip",
+		props: {
+			content: {
+				type: String,
+				default: ''
+			},
+
+			placement: {
+				type: String,
+				default: 'bottom'
+			},
+		},
 		data() {
 			return {
 
 			};
 		},
-		methods: {},
 		computed: {
 			initPlacement() {
 				let style = {};
@@ -66,17 +80,7 @@
 				return style;
 			}
 		},
-		props: {
-			content: {
-				type: String,
-				default: ''
-			},
-
-			placement: {
-				type: String,
-				default: 'bottom'
-			},
-		}
+		methods: {}
 	}
 </script>
 

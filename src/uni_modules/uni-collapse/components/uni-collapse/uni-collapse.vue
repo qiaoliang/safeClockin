@@ -1,7 +1,7 @@
 <template>
-	<view class="uni-collapse">
-		<slot />
-	</view>
+  <view class="uni-collapse">
+    <slot />
+  </view>
 </template>
 <script>
 	/**
@@ -13,8 +13,7 @@
 	 * @event {Function} change 切换面板时触发，如果是手风琴模式，返回类型为string，否则为array
 	 */
 	export default {
-		name: 'uniCollapse',
-		emits:['change','activeItem','input','update:modelValue'],
+		name: 'UniCollapse',
 		props: {
 			value: {
 				type: [String, Array],
@@ -30,15 +29,16 @@
 				default: false
 			},
 		},
+		emits:['change','activeItem','input','update:modelValue'],
 		data() {
 			return {}
 		},
 		computed: {
 			// TODO 兼容 vue2 和 vue3
 			dataValue() {
-				let value = (typeof this.value === 'string' && this.value === '') ||
+				const value = (typeof this.value === 'string' && this.value === '') ||
 					(Array.isArray(this.value) && this.value.length === 0)
-				let modelValue = (typeof this.modelValue === 'string' && this.modelValue === '') ||
+				const modelValue = (typeof this.modelValue === 'string' && this.modelValue === '') ||
 					(Array.isArray(this.modelValue) && this.modelValue.length === 0)
 				if (value) {
 					return this.modelValue
@@ -132,7 +132,7 @@
 		}
 	}
 </script>
-<style lang="scss" >
+<style lang="scss">
 	.uni-collapse {
 		/* #ifndef APP-NVUE */
 		width: 100%;

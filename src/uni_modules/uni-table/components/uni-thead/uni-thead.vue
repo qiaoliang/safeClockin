@@ -1,26 +1,34 @@
 <template>
-	<!-- #ifdef H5 -->
-	<thead class="uni-table-thead">
-		<tr class="uni-table-tr">
-			<th :rowspan="rowspan" colspan="1" class="checkbox" :class="{ 'tr-table--border': border }">
-				<table-checkbox :indeterminate="indeterminate" :checked="checked"
-					@checkboxSelected="checkboxSelected"></table-checkbox>
-			</th>
-		</tr>
-		<slot></slot>
-	</thead>
-	<!-- #endif -->
-	<!-- #ifndef H5 -->
-	<view class="uni-table-thead">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
+  <!-- #ifdef H5 -->
+  <thead class="uni-table-thead">
+    <tr class="uni-table-tr">
+      <th
+        :rowspan="rowspan"
+        colspan="1"
+        class="checkbox"
+        :class="{ 'tr-table--border': border }"
+      >
+        <table-checkbox
+          :indeterminate="indeterminate"
+          :checked="checked"
+          @checkbox-selected="checkboxSelected"
+        />
+      </th>
+    </tr>
+    <slot />
+  </thead>
+  <!-- #endif -->
+  <!-- #ifndef H5 -->
+  <view class="uni-table-thead">
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>
 	import tableCheckbox from '../uni-tr/table-checkbox.vue'
 	export default {
-		name: 'uniThead',
+		name: 'UniThead',
 		components: {
 			tableCheckbox
 		},

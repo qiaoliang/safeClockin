@@ -1,35 +1,60 @@
 <template>
-	<view class="uni-steps">
-		<view :class="[direction==='column'?'uni-steps__column':'uni-steps__row']">
-			<view :class="[direction==='column'?'uni-steps__column-text-container':'uni-steps__row-text-container']">
-				<view v-for="(item,index) in options" :key="index"
-					:class="[direction==='column'?'uni-steps__column-text':'uni-steps__row-text']">
-					<text :style="{color:index === active?activeColor:deactiveColor}"
-						:class="[direction==='column'?'uni-steps__column-title':'uni-steps__row-title']">{{item.title}}</text>
-					<text :style="{color: deactiveColor}"
-						:class="[direction==='column'?'uni-steps__column-desc':'uni-steps__row-desc']">{{item.desc}}</text>
-				</view>
-			</view>
-			<view :class="[direction==='column'?'uni-steps__column-container':'uni-steps__row-container']">
-				<view :class="[direction==='column'?'uni-steps__column-line-item':'uni-steps__row-line-item']"
-					v-for="(item,index) in options" :key="index" :style="{height: direction === 'column'?heightArr[index]+'px':'14px'}">
-					<view
-						:class="[direction==='column'?'uni-steps__column-line':'uni-steps__row-line',direction==='column'?'uni-steps__column-line--before':'uni-steps__row-line--before']"
-						:style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}">
-					</view>
-					<view :class="[direction==='column'?'uni-steps__column-check':'uni-steps__row-check']"
-						v-if="index === active">
-						<uni-icons :color="activeColor" :type="activeIcon" size="14" />
-					</view>
-					<view v-else :class="[direction==='column'?'uni-steps__column-circle':'uni-steps__row-circle']"
-						:style="{backgroundColor:index<active?activeColor:deactiveColor}" />
-					<view
-						:class="[direction==='column'?'uni-steps__column-line':'uni-steps__row-line',direction==='column'?'uni-steps__column-line--after':'uni-steps__row-line--after']"
-						:style="{backgroundColor:index<active&&index!==options.length-1?activeColor:index===options.length-1?'transparent':deactiveColor}" />
-				</view>
-			</view>
-		</view>
-	</view>
+  <view class="uni-steps">
+    <view :class="[direction==='column'?'uni-steps__column':'uni-steps__row']">
+      <view :class="[direction==='column'?'uni-steps__column-text-container':'uni-steps__row-text-container']">
+        <view
+          v-for="(item,index) in options"
+          :key="index"
+          :class="[direction==='column'?'uni-steps__column-text':'uni-steps__row-text']"
+        >
+          <text
+            :style="{color:index === active?activeColor:deactiveColor}"
+            :class="[direction==='column'?'uni-steps__column-title':'uni-steps__row-title']"
+          >
+            {{ item.title }}
+          </text>
+          <text
+            :style="{color: deactiveColor}"
+            :class="[direction==='column'?'uni-steps__column-desc':'uni-steps__row-desc']"
+          >
+            {{ item.desc }}
+          </text>
+        </view>
+      </view>
+      <view :class="[direction==='column'?'uni-steps__column-container':'uni-steps__row-container']">
+        <view
+          v-for="(item,index) in options"
+          :key="index"
+          :class="[direction==='column'?'uni-steps__column-line-item':'uni-steps__row-line-item']"
+          :style="{height: direction === 'column'?heightArr[index]+'px':'14px'}"
+        >
+          <view
+            :class="[direction==='column'?'uni-steps__column-line':'uni-steps__row-line',direction==='column'?'uni-steps__column-line--before':'uni-steps__row-line--before']"
+            :style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}"
+          />
+          <view
+            v-if="index === active"
+            :class="[direction==='column'?'uni-steps__column-check':'uni-steps__row-check']"
+          >
+            <uni-icons
+              :color="activeColor"
+              :type="activeIcon"
+              size="14"
+            />
+          </view>
+          <view
+            v-else
+            :class="[direction==='column'?'uni-steps__column-circle':'uni-steps__row-circle']"
+            :style="{backgroundColor:index<active?activeColor:deactiveColor}"
+          />
+          <view
+            :class="[direction==='column'?'uni-steps__column-line':'uni-steps__row-line',direction==='column'?'uni-steps__column-line--after':'uni-steps__row-line--after']"
+            :style="{backgroundColor:index<active&&index!==options.length-1?activeColor:index===options.length-1?'transparent':deactiveColor}"
+          />
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -88,7 +113,7 @@
 		mounted() {
 			//根据内容设置步骤条的长度
 			if (this.direction === 'column') {
-				let that = this;
+				const that = this;
 				//只能用类选择器，用id选择器所获取的元素信息不准确
 				uni.createSelectorQuery().in(this).selectAll('.uni-steps__column-text').boundingClientRect(data => {
 					that.heightArr = data.map(item => item.height + 1);

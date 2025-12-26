@@ -1,13 +1,26 @@
 <template>
-	<view v-if="visibleSync" :class="{ 'uni-drawer--visible': showDrawer }" class="uni-drawer" @touchmove.stop.prevent="clear">
-		<view class="uni-drawer__mask" :class="{ 'uni-drawer__mask--visible': showDrawer && mask }" @tap="close('mask')" />
-		<view class="uni-drawer__content" :class="{'uni-drawer--right': rightMode,'uni-drawer--left': !rightMode, 'uni-drawer__content--visible': showDrawer}" :style="{width:drawerWidth+'px'}">
-			<slot />
-		</view>
-		<!-- #ifdef H5 -->
-		<keypress @esc="close('mask')" />
-		<!-- #endif -->
-	</view>
+  <view
+    v-if="visibleSync"
+    :class="{ 'uni-drawer--visible': showDrawer }"
+    class="uni-drawer"
+    @touchmove.stop.prevent="clear"
+  >
+    <view
+      class="uni-drawer__mask"
+      :class="{ 'uni-drawer__mask--visible': showDrawer && mask }"
+      @tap="close('mask')"
+    />
+    <view
+      class="uni-drawer__content"
+      :class="{'uni-drawer--right': rightMode,'uni-drawer--left': !rightMode, 'uni-drawer__content--visible': showDrawer}"
+      :style="{width:drawerWidth+'px'}"
+    >
+      <slot />
+    </view>
+    <!-- #ifdef H5 -->
+    <keypress @esc="close('mask')" />
+    <!-- #endif -->
+  </view>
 </template>
 
 <script>
@@ -33,7 +46,6 @@
 			keypress
 			// #endif
 		},
-		emits:['change'],
 		props: {
 			/**
 			 * 显示模式（左、右），只在初始化生效
@@ -64,6 +76,7 @@
 				default: 220
 			}
 		},
+		emits:['change'],
 		data() {
 			return {
 				visibleSync: false,

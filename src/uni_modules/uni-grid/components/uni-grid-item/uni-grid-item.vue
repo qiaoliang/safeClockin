@@ -1,11 +1,18 @@
 <template>
-	<view v-if="width" :style="'width:'+width+';'+(square?'height:'+width:'')" class="uni-grid-item">
-		<view :class="{ 'uni-grid-item--border': showBorder,  'uni-grid-item--border-top': showBorder && index < column, 'uni-highlight': highlight }"
-		 :style="{'border-right-color': borderColor ,'border-bottom-color': borderColor ,'border-top-color': borderColor }"
-		 class="uni-grid-item__box" @click="_onClick">
-			<slot />
-		</view>
-	</view>
+  <view
+    v-if="width"
+    :style="'width:'+width+';'+(square?'height:'+width:'')"
+    class="uni-grid-item"
+  >
+    <view
+      :class="{ 'uni-grid-item--border': showBorder, 'uni-grid-item--border-top': showBorder && index < column, 'uni-highlight': highlight }"
+      :style="{'border-right-color': borderColor ,'border-bottom-color': borderColor ,'border-top-color': borderColor }"
+      class="uni-grid-item__box"
+      @click="_onClick"
+    >
+      <slot />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -49,7 +56,7 @@
 			// this.grid.init()
 			this.width = this.grid.width
 		},
-		beforeDestroy() {
+		beforeUnmount() {
 			this.grid.children.forEach((item, index) => {
 				if (item === this) {
 					this.grid.children.splice(index, 1)

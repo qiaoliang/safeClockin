@@ -33,8 +33,8 @@ export default {
 		}
 	},
 	created() {
-		let db = null;
-		let dbCmd = null;
+		const db = null;
+		const dbCmd = null;
 
 		if(this.collection){
 			this.db = uniCloud.database();
@@ -44,7 +44,7 @@ export default {
 		this._isEnded = false
 
 		this.$watch(() => {
-			let al = []
+			const al = []
 			attrs.forEach(key => {
 				al.push(this[key])
 			})
@@ -86,9 +86,9 @@ export default {
 
 		// #ifdef MP-TOUTIAO
 		let changeName
-		let events = this.$scope.dataset.eventOpts
+		const events = this.$scope.dataset.eventOpts
 		for (let i = 0; i < events.length; i++) {
-			let event = events[i]
+			const event = events[i]
 			if (event[0].includes('^load')) {
 				changeName = event[1][0][0]
 			}
@@ -98,7 +98,7 @@ export default {
 			let maxDepth = 16
 			this._changeDataFunction = null
 			while (parent && maxDepth > 0) {
-				let fun = parent[changeName]
+				const fun = parent[changeName]
 				if (fun && typeof fun === 'function') {
 					this._changeDataFunction = fun
 					maxDepth = 0
@@ -117,8 +117,8 @@ export default {
 	// #ifdef H5
 	beforeDestroy() {
 		if (process.env.NODE_ENV === 'development' && window.unidev) {
-			let cd = this._debugDataList
-			let dl = unidev.clientDB.data
+			const cd = this._debugDataList
+			const dl = unidev.clientDB.data
 			for (let i = dl.length - 1; i >= 0; i--) {
 				if (dl[i] === cd) {
 					dl.splice(i, 1)
@@ -295,10 +295,10 @@ export default {
 			})
 		},
 		removeData(ids) {
-			let il = ids.slice(0)
-			let dl = this.listData
+			const il = ids.slice(0)
+			const dl = this.listData
 			for (let i = dl.length - 1; i >= 0; i--) {
-				let index = il.indexOf(dl[i]._id)
+				const index = il.indexOf(dl[i]._id)
 				if (index >= 0) {
 					dl.splice(i, 1)
 					il.splice(index, 1)

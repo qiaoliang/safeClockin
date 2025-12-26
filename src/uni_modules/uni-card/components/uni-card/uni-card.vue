@@ -1,38 +1,80 @@
 <template>
-	<view class="uni-card" :class="{ 'uni-card--full': isFull, 'uni-card--shadow': isShadow,'uni-card--border':border}"
-		:style="{'margin':isFull?0:margin,'padding':spacing,'box-shadow':isShadow?shadow:''}">
-		<!-- 封面 -->
-		<slot name="cover">
-			<view v-if="cover" class="uni-card__cover">
-				<image class="uni-card__cover-image" mode="widthFix" @click="onClick('cover')" :src="cover"></image>
-			</view>
-		</slot>
-		<slot name="title">
-			<view v-if="title || extra" class="uni-card__header">
-				<!-- 卡片标题 -->
-				<view class="uni-card__header-box" @click="onClick('title')">
-					<view v-if="thumbnail" class="uni-card__header-avatar">
-						<image class="uni-card__header-avatar-image" :src="thumbnail" mode="aspectFit" />
-					</view>
-					<view class="uni-card__header-content">
-						<text class="uni-card__header-content-title uni-ellipsis">{{ title }}</text>
-						<text v-if="title&&subTitle"
-							class="uni-card__header-content-subtitle uni-ellipsis">{{ subTitle }}</text>
-					</view>
-				</view>
-				<view class="uni-card__header-extra" @click="onClick('extra')">
-					<text class="uni-card__header-extra-text">{{ extra }}</text>
-				</view>
-			</view>
-		</slot>
-		<!-- 卡片内容 -->
-		<view class="uni-card__content" :style="{padding:padding}" @click="onClick('content')">
-			<slot></slot>
-		</view>
-		<view class="uni-card__actions" @click="onClick('actions')">
-			<slot name="actions"></slot>
-		</view>
-	</view>
+  <view
+    class="uni-card"
+    :class="{ 'uni-card--full': isFull, 'uni-card--shadow': isShadow,'uni-card--border':border}"
+    :style="{'margin':isFull?0:margin,'padding':spacing,'box-shadow':isShadow?shadow:''}"
+  >
+    <!-- 封面 -->
+    <slot name="cover">
+      <view
+        v-if="cover"
+        class="uni-card__cover"
+      >
+        <image
+          class="uni-card__cover-image"
+          mode="widthFix"
+          :src="cover"
+          @click="onClick('cover')"
+        />
+      </view>
+    </slot>
+    <slot name="title">
+      <view
+        v-if="title || extra"
+        class="uni-card__header"
+      >
+        <!-- 卡片标题 -->
+        <view
+          class="uni-card__header-box"
+          @click="onClick('title')"
+        >
+          <view
+            v-if="thumbnail"
+            class="uni-card__header-avatar"
+          >
+            <image
+              class="uni-card__header-avatar-image"
+              :src="thumbnail"
+              mode="aspectFit"
+            />
+          </view>
+          <view class="uni-card__header-content">
+            <text class="uni-card__header-content-title uni-ellipsis">
+              {{ title }}
+            </text>
+            <text
+              v-if="title&&subTitle"
+              class="uni-card__header-content-subtitle uni-ellipsis"
+            >
+              {{ subTitle }}
+            </text>
+          </view>
+        </view>
+        <view
+          class="uni-card__header-extra"
+          @click="onClick('extra')"
+        >
+          <text class="uni-card__header-extra-text">
+            {{ extra }}
+          </text>
+        </view>
+      </view>
+    </slot>
+    <!-- 卡片内容 -->
+    <view
+      class="uni-card__content"
+      :style="{padding:padding}"
+      @click="onClick('content')"
+    >
+      <slot />
+    </view>
+    <view
+      class="uni-card__actions"
+      @click="onClick('actions')"
+    >
+      <slot name="actions" />
+    </view>
+  </view>
 </template>
 
 <script>
@@ -56,7 +98,6 @@
 	 */
 	export default {
 		name: 'UniCard',
-		emits: ['click'],
 		props: {
 			title: {
 				type: String,
@@ -109,6 +150,7 @@
 				default: true
 			}
 		},
+		emits: ['click'],
 		methods: {
 			onClick(type) {
 				this.$emit('click', type)

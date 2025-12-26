@@ -1,21 +1,36 @@
 <template>
-	<a v-if="isShowA" class="uni-link" :href="href"
-		:class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
-		:style="{color,fontSize:fontSize+'px'}" :download="download">
-		<slot>{{text}}</slot>
-	</a>
-	<!-- #ifndef APP-NVUE -->
-	<text v-else class="uni-link" :class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
-		:style="{color,fontSize:fontSize+'px'}" @click="openURL">
-		<slot>{{text}}</slot>
-	</text>
-	<!-- #endif -->
-	<!-- #ifdef APP-NVUE -->
-	<text v-else class="uni-link" :class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
-		:style="{color,fontSize:fontSize+'px'}" @click="openURL">
-		{{text}}
-	</text>
-	<!-- #endif -->
+  <a
+    v-if="isShowA"
+    class="uni-link"
+    :href="href"
+    :class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
+    :style="{color,fontSize:fontSize+'px'}"
+    :download="download"
+  >
+    <slot>{{ text }}</slot>
+  </a>
+  <!-- #ifndef APP-NVUE -->
+  <text
+    v-else
+    class="uni-link"
+    :class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
+    :style="{color,fontSize:fontSize+'px'}"
+    @click="openURL"
+  >
+    <slot>{{ text }}</slot>
+  </text>
+  <!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <text
+    v-else
+    class="uni-link"
+    :class="{'uni-link--withline':showUnderLine===true||showUnderLine==='true'}"
+    :style="{color,fontSize:fontSize+'px'}"
+    @click="openURL"
+  >
+    {{ text }}
+  </text>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -33,7 +48,7 @@
 	 * @example * <uni-link href="https://ext.dcloud.net.cn" text="https://ext.dcloud.net.cn"></uni-link>
 	 */
 	export default {
-		name: 'uniLink',
+		name: 'UniLink',
 		props: {
 			href: {
 				type: String,

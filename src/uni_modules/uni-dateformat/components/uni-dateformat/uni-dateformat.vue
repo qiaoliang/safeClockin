@@ -1,5 +1,5 @@
 <template>
-	<text>{{dateShow}}</text>
+  <text>{{ dateShow }}</text>
 </template>
 
 <script>
@@ -16,7 +16,7 @@
 	 * @property {String} format 输出日期字符串时的格式
 	 */
 	export default {
-		name: 'uniDateformat',
+		name: 'UniDateformat',
 		props: {
 			date: {
 				type: [Object, String, Number],

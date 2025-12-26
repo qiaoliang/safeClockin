@@ -1,47 +1,107 @@
 <template>
-	<!-- #ifdef APP-NVUE -->
-	<cell :keep-scroll-position="keepScrollPosition">
-		<!-- #endif -->
-		<view :class="{ 'uni-list-item--disabled': disabled }" :style="{'background-color':customStyle.backgroundColor}"
-			:hover-class="(!clickable && !link) || disabled || showSwitch ? '' : 'uni-list-item--hover'"
-			class="uni-list-item" @click="onClick">
-			<view v-if="!isFirstChild" class="border--left" :class="{ 'uni-list--border': border }"></view>
-			<view class="uni-list-item__container"
-				:class="{ 'container--right': showArrow || link, 'flex--direction': direction === 'column'}"
-				:style="{paddingTop:padding.top,paddingLeft:padding.left,paddingRight:padding.right,paddingBottom:padding.bottom}">
-				<slot name="header">
-					<view class="uni-list-item__header">
-						<view v-if="thumb" class="uni-list-item__icon">
-							<image :src="thumb" class="uni-list-item__icon-img" :class="['uni-list--' + thumbSize]" />
-						</view>
-						<view v-else-if="showExtraIcon" class="uni-list-item__icon">
-							<uni-icons :customPrefix="extraIcon.customPrefix" :color="extraIcon.color" :size="extraIcon.size" :type="extraIcon.type" />
-						</view>
-					</view>
-				</slot>
-				<slot name="body">
-					<view class="uni-list-item__content"
-						:class="{ 'uni-list-item__content--center': thumb || showExtraIcon || showBadge || showSwitch }">
-						<text v-if="title" class="uni-list-item__content-title"
-							:class="[ellipsis !== 0 && ellipsis <= 2 ? 'uni-ellipsis-' + ellipsis : '']">{{ title }}</text>
-						<text v-if="note" class="uni-list-item__content-note">{{ note }}</text>
-					</view>
-				</slot>
-				<slot name="footer">
-					<view v-if="rightText || showBadge || showSwitch" class="uni-list-item__extra"
-						:class="{ 'flex--justify': direction === 'column' }">
-						<text v-if="rightText" class="uni-list-item__extra-text">{{ rightText }}</text>
-						<uni-badge v-if="showBadge" :type="badgeType" :text="badgeText" :custom-style="badgeStyle" />
-						<switch v-if="showSwitch" :disabled="disabled" :checked="switchChecked"
-							@change="onSwitchChange" />
-					</view>
-				</slot>
-			</view>
-			<uni-icons v-if="showArrow || link" :size="16" class="uni-icon-wrapper" color="#bbb" type="right" />
-		</view>
-		<!-- #ifdef APP-NVUE -->
-	</cell>
-	<!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <cell :keep-scroll-position="keepScrollPosition">
+    <!-- #endif -->
+    <view
+      :class="{ 'uni-list-item--disabled': disabled }"
+      :style="{'background-color':customStyle.backgroundColor}"
+      :hover-class="(!clickable && !link) || disabled || showSwitch ? '' : 'uni-list-item--hover'"
+      class="uni-list-item"
+      @click="onClick"
+    >
+      <view
+        v-if="!isFirstChild"
+        class="border--left"
+        :class="{ 'uni-list--border': border }"
+      />
+      <view
+        class="uni-list-item__container"
+        :class="{ 'container--right': showArrow || link, 'flex--direction': direction === 'column'}"
+        :style="{paddingTop:padding.top,paddingLeft:padding.left,paddingRight:padding.right,paddingBottom:padding.bottom}"
+      >
+        <slot name="header">
+          <view class="uni-list-item__header">
+            <view
+              v-if="thumb"
+              class="uni-list-item__icon"
+            >
+              <image
+                :src="thumb"
+                class="uni-list-item__icon-img"
+                :class="['uni-list--' + thumbSize]"
+              />
+            </view>
+            <view
+              v-else-if="showExtraIcon"
+              class="uni-list-item__icon"
+            >
+              <uni-icons
+                :custom-prefix="extraIcon.customPrefix"
+                :color="extraIcon.color"
+                :size="extraIcon.size"
+                :type="extraIcon.type"
+              />
+            </view>
+          </view>
+        </slot>
+        <slot name="body">
+          <view
+            class="uni-list-item__content"
+            :class="{ 'uni-list-item__content--center': thumb || showExtraIcon || showBadge || showSwitch }"
+          >
+            <text
+              v-if="title"
+              class="uni-list-item__content-title"
+              :class="[ellipsis !== 0 && ellipsis <= 2 ? 'uni-ellipsis-' + ellipsis : '']"
+            >
+              {{ title }}
+            </text>
+            <text
+              v-if="note"
+              class="uni-list-item__content-note"
+            >
+              {{ note }}
+            </text>
+          </view>
+        </slot>
+        <slot name="footer">
+          <view
+            v-if="rightText || showBadge || showSwitch"
+            class="uni-list-item__extra"
+            :class="{ 'flex--justify': direction === 'column' }"
+          >
+            <text
+              v-if="rightText"
+              class="uni-list-item__extra-text"
+            >
+              {{ rightText }}
+            </text>
+            <uni-badge
+              v-if="showBadge"
+              :type="badgeType"
+              :text="badgeText"
+              :custom-style="badgeStyle"
+            />
+            <switch
+              v-if="showSwitch"
+              :disabled="disabled"
+              :checked="switchChecked"
+              @change="onSwitchChange"
+            />
+          </view>
+        </slot>
+      </view>
+      <uni-icons
+        v-if="showArrow || link"
+        :size="16"
+        class="uni-icon-wrapper"
+        color="#bbb"
+        type="right"
+      />
+    </view>
+    <!-- #ifdef APP-NVUE -->
+  </cell>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -81,7 +141,6 @@
 	 */
 	export default {
 		name: 'UniListItem',
-		emits: ['click', 'switchChange'],
 		props: {
 			direction: {
 				type: String,
@@ -190,13 +249,26 @@
 				default: false
 			}
 		},
+		emits: ['click', 'switchChange'],
+		// inject: ['list'],
+		data() {
+			return {
+				isFirstChild: false,
+				padding: {
+					top: "",
+					right: "",
+					bottom: "",
+					left: ""
+				}
+			};
+		},
 		watch: {
 			'customStyle.padding': {
 				handler(padding) {
 					if(typeof padding == 'number'){
 						padding += ''
 					}
-					let paddingArr = padding.split(' ')
+					const paddingArr = padding.split(' ')
 					if (paddingArr.length === 1) {
 						const allPadding = paddingArr[0]
 						this.padding = {
@@ -233,18 +305,6 @@
 				},
 				immediate: true
 			}
-		},
-		// inject: ['list'],
-		data() {
-			return {
-				isFirstChild: false,
-				padding: {
-					top: "",
-					right: "",
-					bottom: "",
-					left: ""
-				}
-			};
 		},
 		mounted() {
 			this.list = this.getForm()
@@ -292,7 +352,7 @@
 				}
 			},
 			pageApi(api) {
-				let callback = {
+				const callback = {
 					url: this.to,
 					success: res => {
 						this.$emit('click', {

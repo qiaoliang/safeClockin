@@ -1,31 +1,55 @@
 <template>
-	<view class="uni-collapse-item">
-		<!-- onClick(!isOpen) -->
-		<view @click="onClick(!isOpen)" class="uni-collapse-item__title"
-			:class="{'is-open':isOpen &&titleBorder === 'auto' ,'uni-collapse-item-border':titleBorder !== 'none'}">
-			<view class="uni-collapse-item__title-wrap">
-				<slot name="title">
-					<view class="uni-collapse-item__title-box" :class="{'is-disabled':disabled}">
-						<image v-if="thumb" :src="thumb" class="uni-collapse-item__title-img" />
-						<text class="uni-collapse-item__title-text">{{ title }}</text>
-					</view>
-				</slot>
-			</view>
-			<view v-if="showArrow"
-				:class="{ 'uni-collapse-item__title-arrow-active': isOpen, 'uni-collapse-item--animation': showAnimation === true }"
-				class="uni-collapse-item__title-arrow">
-				<uni-icons :color="disabled?'#ddd':'#bbb'" size="14" type="bottom" />
-			</view>
-		</view>
-		<view class="uni-collapse-item__wrap" :class="{'is--transition':showAnimation}"
-			:style="{height: (isOpen?height:0) +'px'}">
-			<view :id="elId" ref="collapse--hook" class="uni-collapse-item__wrap-content"
-				:class="{open:isheight,'uni-collapse-item--border':border&&isOpen}">
-				<slot></slot>
-			</view>
-		</view>
-
-	</view>
+  <view class="uni-collapse-item">
+    <!-- onClick(!isOpen) -->
+    <view
+      class="uni-collapse-item__title"
+      :class="{'is-open':isOpen &&titleBorder === 'auto' ,'uni-collapse-item-border':titleBorder !== 'none'}"
+      @click="onClick(!isOpen)"
+    >
+      <view class="uni-collapse-item__title-wrap">
+        <slot name="title">
+          <view
+            class="uni-collapse-item__title-box"
+            :class="{'is-disabled':disabled}"
+          >
+            <image
+              v-if="thumb"
+              :src="thumb"
+              class="uni-collapse-item__title-img"
+            />
+            <text class="uni-collapse-item__title-text">
+              {{ title }}
+            </text>
+          </view>
+        </slot>
+      </view>
+      <view
+        v-if="showArrow"
+        :class="{ 'uni-collapse-item__title-arrow-active': isOpen, 'uni-collapse-item--animation': showAnimation === true }"
+        class="uni-collapse-item__title-arrow"
+      >
+        <uni-icons
+          :color="disabled?'#ddd':'#bbb'"
+          size="14"
+          type="bottom"
+        />
+      </view>
+    </view>
+    <view
+      class="uni-collapse-item__wrap"
+      :class="{'is--transition':showAnimation}"
+      :style="{height: (isOpen?height:0) +'px'}"
+    >
+      <view
+        :id="elId"
+        ref="collapse--hook"
+        class="uni-collapse-item__wrap-content"
+        :class="{open:isheight,'uni-collapse-item--border':border&&isOpen}"
+      >
+        <slot />
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -46,7 +70,7 @@
 	 * @property {Boolean} showArrow = [true|false] 是否显示右侧箭头
 	 */
 	export default {
-		name: 'uniCollapseItem',
+		name: 'UniCollapseItem',
 		props: {
 			// 列表标题
 			title: {
@@ -129,7 +153,7 @@
 		},
 		// #ifndef VUE3
 		// TODO vue2
-		destroyed() {
+		unmounted() {
 			if (this.__isUnmounted) return
 			this.uninstall()
 		},

@@ -109,7 +109,7 @@ export const useCheckinStore = defineStore("checkin", {
 
                 if (response.code === 1) {
                     // 适配新的数据结构格式
-                    const items = response.data?.items || response.data || []
+                    const items = response.data?.items || response.data || [];
                     this.todayCheckinItems = items.map((item) => ({
                         ...item,
                     }));
@@ -128,8 +128,6 @@ export const useCheckinStore = defineStore("checkin", {
                 }
             } catch (error) {
                 this.error = error.message;
-                console.error("获取今日打卡数据失败:", error);
-
                 // 如果网络请求失败但有缓存数据，仍然返回缓存
                 if (this.todayCheckinItems.length > 0) {
                     console.log("网络请求失败，使用缓存数据");

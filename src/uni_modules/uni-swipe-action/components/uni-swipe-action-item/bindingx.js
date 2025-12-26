@@ -80,9 +80,9 @@ bindIngXMixins = {
 
 			const leftWidth = this.button.left.width
 			const rightWidth = this.button.right.width
-			let expression = this.range(this.x, -rightWidth, leftWidth)
-			let leftExpression = this.range(this.x - leftWidth, -leftWidth, 0)
-			let rightExpression = this.range(this.x + rightWidth, 0, rightWidth)
+			const expression = this.range(this.x, -rightWidth, leftWidth)
+			const leftExpression = this.range(this.x - leftWidth, -leftWidth, 0)
+			const rightExpression = this.range(this.x + rightWidth, 0, rightWidth)
 
 			this.eventpan = BindingX.bind({
 				anchor: this.box,

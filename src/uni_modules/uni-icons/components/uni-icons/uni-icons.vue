@@ -1,12 +1,23 @@
 <template>
-	<!-- #ifdef APP-NVUE -->
-	<text :style="styleObj" class="uni-icons" @click="_onClick">{{unicode}}</text>
-	<!-- #endif -->
-	<!-- #ifndef APP-NVUE -->
-	<text :style="styleObj" class="uni-icons" :class="['uniui-'+type,customPrefix,customPrefix?type:'']" @click="_onClick">
-		<slot></slot>
-	</text>
-	<!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <text
+    :style="styleObj"
+    class="uni-icons"
+    @click="_onClick"
+  >
+    {{ unicode }}
+  </text>
+  <!-- #endif -->
+  <!-- #ifndef APP-NVUE -->
+  <text
+    :style="styleObj"
+    class="uni-icons"
+    :class="['uniui-'+type,customPrefix,customPrefix?type:'']"
+    @click="_onClick"
+  >
+    <slot />
+  </text>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -38,7 +49,6 @@
 	 */
 	export default {
 		name: 'UniIcons',
-		emits: ['click'],
 		props: {
 			type: {
 				type: String,
@@ -61,6 +71,7 @@
 				default: ''
 			}
 		},
+		emits: ['click'],
 		data() {
 			return {
 				icons: fontData
@@ -68,7 +79,7 @@
 		},
 		computed: {
 			unicode() {
-				let code = this.icons.find(v => v.font_class === this.type)
+				const code = this.icons.find(v => v.font_class === this.type)
 				if (code) {
 					return code.unicode
 				}

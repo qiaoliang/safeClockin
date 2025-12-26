@@ -3,11 +3,19 @@
     <!-- 状态栏 -->
     <view class="status-bar">
       <view class="status-bar-content">
-        <text class="status-time">9:41</text>
+        <text class="status-time">
+          9:41
+        </text>
         <view class="status-icons">
-          <text class="icon-signal">📶</text>
-          <text class="icon-wifi">📡</text>
-          <text class="icon-battery">🔋</text>
+          <text class="icon-signal">
+            📶
+          </text>
+          <text class="icon-wifi">
+            📡
+          </text>
+          <text class="icon-battery">
+            🔋
+          </text>
         </view>
       </view>
     </view>
@@ -16,54 +24,85 @@
     <view class="main-container">
       <!-- 顶部导航 -->
       <view class="form-header">
-        <button class="back-btn" @click="handleBack">
-          <text class="back-icon">‹</text>
+        <button
+          class="back-btn"
+          @click="handleBack"
+        >
+          <text class="back-icon">
+            ‹
+          </text>
         </button>
-        <text class="form-title">{{ formTitle }}</text>
-        <button class="submit-btn" @click="handleSubmit" :disabled="submitting">
+        <text class="form-title">
+          {{ formTitle }}
+        </text>
+        <button
+          class="submit-btn"
+          :disabled="submitting"
+          @click="handleSubmit"
+        >
           {{ submitting ? "保存中..." : "保存" }}
         </button>
       </view>
 
       <!-- 表单内容 -->
-      <scroll-view class="form-content" scroll-y>
+      <scroll-view
+        class="form-content"
+        scroll-y
+      >
         <!-- 基本信息 -->
         <view class="form-section">
-          <text class="section-title">基本信息</text>
+          <text class="section-title">
+            基本信息
+          </text>
 
           <!-- 规则名称 -->
           <view class="form-item">
-            <text class="item-label required">规则名称</text>
+            <text class="item-label required">
+              规则名称
+            </text>
             <input
-              class="item-input"
               v-model="formData.rule_name"
+              class="item-input"
               placeholder="请输入规则名称"
               maxlength="50"
               :disabled="submitting"
-            />
-            <text v-if="errors.rule_name" class="error-text">{{ errors.rule_name }}</text>
+            >
+            <text
+              v-if="errors.rule_name"
+              class="error-text"
+            >
+              {{ errors.rule_name }}
+            </text>
           </view>
 
           <!-- 图标URL -->
           <view class="form-item">
-            <text class="item-label">图标URL</text>
+            <text class="item-label">
+              图标URL
+            </text>
             <input
-              class="item-input"
               v-model="formData.icon_url"
+              class="item-input"
               placeholder="请输入图标URL（可选）"
               :disabled="submitting"
-            />
-            <text class="item-hint">建议使用正方形图标，尺寸建议 100x100px</text>
+            >
+            <text class="item-hint">
+              建议使用正方形图标，尺寸建议 100x100px
+            </text>
           </view>
         </view>
 
         <!-- 打卡频率 -->
         <view class="form-section">
-          <text class="section-title">打卡频率</text>
+          <text class="section-title">
+            打卡频率
+          </text>
 
           <!-- 频率类型选择 -->
           <view class="form-item">
-            <text class="item-label required">频率类型</text>
+            <text class="item-label required">
+              频率类型
+            </text>
             <view class="radio-group">
               <label
                 v-for="option in frequencyOptions"
@@ -81,8 +120,13 @@
           </view>
 
           <!-- 每周特定日期（当频率类型为每周时显示） -->
-          <view v-if="formData.frequency_type === 1" class="form-item">
-            <text class="item-label required">适用星期</text>
+          <view
+            v-if="formData.frequency_type === 1"
+            class="form-item"
+          >
+            <text class="item-label required">
+              适用星期
+            </text>
             <view class="weekday-group">
               <label
                 v-for="(day, index) in weekDays"
@@ -97,55 +141,81 @@
           </view>
 
           <!-- 自定义日期范围（当频率类型为自定义日期时显示） -->
-          <view v-if="formData.frequency_type === 3" class="form-item">
-            <text class="item-label required">适用日期范围</text>
+          <view
+            v-if="formData.frequency_type === 3"
+            class="form-item"
+          >
+            <text class="item-label required">
+              适用日期范围
+            </text>
             <view class="date-range-group">
               <view class="date-item">
-                <text class="date-label">开始日期</text>
+                <text class="date-label">
+                  开始日期
+                </text>
                 <picker
                   mode="date"
                   :value="formData.custom_start_date"
-                  @change="handleStartDateChange"
                   :disabled="submitting"
+                  @change="handleStartDateChange"
                 >
                   <view class="date-picker">
-                    <text class="date-value">{{
-                      formData.custom_start_date || "请选择开始日期"
-                    }}</text>
-                    <text class="date-icon">📅</text>
+                    <text class="date-value">
+                      {{
+                        formData.custom_start_date || "请选择开始日期"
+                      }}
+                    </text>
+                    <text class="date-icon">
+                      📅
+                    </text>
                   </view>
                 </picker>
               </view>
               <view class="date-item">
-                <text class="date-label">结束日期</text>
+                <text class="date-label">
+                  结束日期
+                </text>
                 <picker
                   mode="date"
                   :value="formData.custom_end_date"
-                  @change="handleEndDateChange"
                   :disabled="submitting"
+                  @change="handleEndDateChange"
                 >
                   <view class="date-picker">
-                    <text class="date-value">{{
-                      formData.custom_end_date || "请选择结束日期"
-                    }}</text>
-                    <text class="date-icon">📅</text>
+                    <text class="date-value">
+                      {{
+                        formData.custom_end_date || "请选择结束日期"
+                      }}
+                    </text>
+                    <text class="date-icon">
+                      📅
+                    </text>
                   </view>
                 </picker>
               </view>
             </view>
-            <text v-if="errors.date_range" class="error-text">{{
-              errors.date_range
-            }}</text>
+            <text
+              v-if="errors.date_range"
+              class="error-text"
+            >
+              {{
+                errors.date_range
+              }}
+            </text>
           </view>
         </view>
 
         <!-- 打卡时间 -->
         <view class="form-section">
-          <text class="section-title">打卡时间</text>
+          <text class="section-title">
+            打卡时间
+          </text>
 
           <!-- 时间段类型选择 -->
           <view class="form-item">
-            <text class="item-label required">时间段</text>
+            <text class="item-label required">
+              时间段
+            </text>
             <view class="radio-group">
               <label
                 v-for="option in timeSlotOptions"
@@ -163,50 +233,81 @@
           </view>
 
           <!-- 自定义时间（当时间段类型为自定义时间时显示） -->
-          <view v-if="formData.time_slot_type === 4" class="form-item">
-            <text class="item-label required">自定义时间</text>
+          <view
+            v-if="formData.time_slot_type === 4"
+            class="form-item"
+          >
+            <text class="item-label required">
+              自定义时间
+            </text>
             <picker
               mode="time"
               :value="formData.custom_time"
-              @change="handleCustomTimeChange"
               :disabled="submitting"
+              @change="handleCustomTimeChange"
             >
               <view class="time-picker">
-                <text class="time-value">{{ formData.custom_time || "请选择时间" }}</text>
-                <text class="time-icon">⏰</text>
+                <text class="time-value">
+                  {{ formData.custom_time || "请选择时间" }}
+                </text>
+                <text class="time-icon">
+                  ⏰
+                </text>
               </view>
             </picker>
           </view>
         </view>
 
         <!-- 规则状态（仅社区规则显示） -->
-        <view v-if="showEnableButton" class="form-section">
-          <text class="section-title">规则状态</text>
+        <view
+          v-if="showEnableButton"
+          class="form-section"
+        >
+          <text class="section-title">
+            规则状态
+          </text>
 
           <!-- 是否启用 -->
           <view class="form-item">
-            <text class="item-label">启用规则</text>
+            <text class="item-label">
+              启用规则
+            </text>
             <view class="switch-group">
-              <text class="switch-label">创建后立即启用</text>
+              <text class="switch-label">
+                创建后立即启用
+              </text>
               <switch
                 :checked="formData.is_enabled"
-                @change="handleEnableChange"
                 :disabled="submitting || isEditMode"
                 color="#f48224"
+                @change="handleEnableChange"
               />
             </view>
-            <text class="item-hint"
-              >启用后规则将立即对所有社区成员生效。编辑模式下请使用启用/停用按钮。</text
-            >
+            <text class="item-hint">
+              启用后规则将立即对所有社区成员生效。编辑模式下请使用启用/停用按钮。
+            </text>
           </view>
         </view>
 
         <!-- 表单验证错误 -->
-        <view v-if="Object.keys(errors).length > 0" class="error-section">
-          <text class="error-title">请修正以下错误：</text>
-          <view v-for="(error, field) in errors" :key="field" class="error-item">
-            <text class="error-field">{{ getFieldLabel(field) }}：</text>
-            <text class="error-message">{{ error }}</text>
+        <view
+          v-if="Object.keys(errors).length > 0"
+          class="error-section"
+        >
+          <text class="error-title">
+            请修正以下错误：
+          </text>
+          <view
+            v-for="(error, field) in errors"
+            :key="field"
+            class="error-item"
+          >
+            <text class="error-field">
+              {{ getFieldLabel(field) }}：
+            </text>
+            <text class="error-message">
+              {{ error }}
+            </text>
           </view>
         </view>
       </scroll-view>

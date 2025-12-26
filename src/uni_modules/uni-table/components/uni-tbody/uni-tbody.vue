@@ -1,17 +1,17 @@
 <template>
-	<!-- #ifdef H5 -->
-	<tbody>
-		<slot></slot>
-	</tbody>
-	<!-- #endif -->
-	<!-- #ifndef H5 -->
-	<view><slot></slot></view>
-	<!-- #endif -->
+  <!-- #ifdef H5 -->
+  <tbody>
+    <slot />
+  </tbody>
+  <!-- #endif -->
+  <!-- #ifndef H5 -->
+  <view><slot /></view>
+  <!-- #endif -->
 </template>
 
 <script>
 export default {
-	name: 'uniBody',
+	name: 'UniBody',
 	options: {
 		// #ifdef MP-TOUTIAO
 		virtualHost: false,

@@ -1,19 +1,38 @@
 <template>
-	<view class="uni-popup-share">
-		<view class="uni-share-title"><text class="uni-share-title-text">{{shareTitleText}}</text></view>
-		<view class="uni-share-content">
-			<view class="uni-share-content-box">
-				<view class="uni-share-content-item" v-for="(item,index) in bottomData" :key="index" @click.stop="select(item,index)">
-					<image class="uni-share-image" :src="item.icon" mode="aspectFill"></image>
-					<text class="uni-share-text">{{item.text}}</text>
-				</view>
-
-			</view>
-		</view>
-		<view class="uni-share-button-box">
-			<button class="uni-share-button" @click="close">{{cancelText}}</button>
-		</view>
-	</view>
+  <view class="uni-popup-share">
+    <view class="uni-share-title">
+      <text class="uni-share-title-text">
+        {{ shareTitleText }}
+      </text>
+    </view>
+    <view class="uni-share-content">
+      <view class="uni-share-content-box">
+        <view
+          v-for="(item,index) in bottomData"
+          :key="index"
+          class="uni-share-content-item"
+          @click.stop="select(item,index)"
+        >
+          <image
+            class="uni-share-image"
+            :src="item.icon"
+            mode="aspectFill"
+          />
+          <text class="uni-share-text">
+            {{ item.text }}
+          </text>
+        </view>
+      </view>
+    </view>
+    <view class="uni-share-button-box">
+      <button
+        class="uni-share-button"
+        @click="close"
+      >
+        {{ cancelText }}
+      </button>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -26,7 +45,6 @@
 	export default {
 		name: 'UniPopupShare',
 		mixins:[popup],
-		emits:['select'],
 		props: {
 			title: {
 				type: String,
@@ -37,6 +55,7 @@
 				default: false
 			}
 		},
+		emits:['select'],
 		data() {
 			return {
 				// TODO 替换为自己的图标
@@ -73,7 +92,6 @@
 				]
 			}
 		},
-		created() {},
 		computed: {
 			cancelText() {
 				return t("uni-popup.cancel")
@@ -82,6 +100,7 @@
 				return this.title || t("uni-popup.shareTitle")
 			}
 		},
+		created() {},
 		methods: {
 			/**
 			 * 选择内容
@@ -104,7 +123,7 @@
 		}
 	}
 </script>
-<style lang="scss" >
+<style lang="scss">
 	.uni-popup-share {
 		background-color: #fff;
 		border-top-left-radius: 11px;

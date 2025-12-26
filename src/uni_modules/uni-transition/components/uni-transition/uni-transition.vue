@@ -1,14 +1,28 @@
 <template>
-	<!-- #ifndef APP-NVUE -->
-	<view v-show="isShow" ref="ani" :animation="animationData" :class="customClass" :style="transformStyles" @click="onClick">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
-	<!-- #ifdef APP-NVUE -->
-	<view v-if="isShow" ref="ani" :animation="animationData" :class="customClass" :style="transformStyles" @click="onClick">
-		<slot></slot>
-	</view>
-	<!-- #endif -->
+  <!-- #ifndef APP-NVUE -->
+  <view
+    v-show="isShow"
+    ref="ani"
+    :animation="animationData"
+    :class="customClass"
+    :style="transformStyles"
+    @click="onClick"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
+  <!-- #ifdef APP-NVUE -->
+  <view
+    v-if="isShow"
+    ref="ani"
+    :animation="animationData"
+    :class="customClass"
+    :style="transformStyles"
+    @click="onClick"
+  >
+    <slot />
+  </view>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -31,8 +45,7 @@
 	 * @property {Object} styles 组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
 	 */
 	export default {
-		name: 'uniTransition',
-		emits: ['click', 'change'],
+		name: 'UniTransition',
 		props: {
 			show: {
 				type: Boolean,
@@ -63,6 +76,7 @@
 				default: false
 			},
 		},
+		emits: ['click', 'change'],
 		data() {
 			return {
 				isShow: false,
@@ -71,6 +85,25 @@
 				animationData: {},
 				durationTime: 300,
 				config: {}
+			}
+		},
+		computed: {
+			// 生成样式数据
+			stylesObject() {
+				const styles = {
+					...this.styles,
+					'transition-duration': this.duration / 1000 + 's'
+				}
+				let transform = ''
+				for (const i in styles) {
+					const line = this.toLine(i)
+					transform += line + ':' + styles[i] + ';'
+				}
+				return transform
+			},
+			// 初始化动画条件
+			transformStyles() {
+				return 'transform:' + this.transform + ';' + 'opacity:' + this.opacity + ';' + this.stylesObject
 			}
 		},
 		watch: {
@@ -86,25 +119,6 @@
 					}
 				},
 				immediate: true
-			}
-		},
-		computed: {
-			// 生成样式数据
-			stylesObject() {
-				let styles = {
-					...this.styles,
-					'transition-duration': this.duration / 1000 + 's'
-				}
-				let transform = ''
-				for (let i in styles) {
-					let line = this.toLine(i)
-					transform += line + ':' + styles[i] + ';'
-				}
-				return transform
-			},
-			// 初始化动画条件
-			transformStyles() {
-				return 'transform:' + this.transform + ';' + 'opacity:' + this.opacity + ';' + this.stylesObject
 			}
 		},
 		created() {
@@ -198,7 +212,7 @@
 						this.isShow = false
 						this.animationData = null
 						this.animation = null
-						let { opacity, transform } = this.styleInit(false)
+						const { opacity, transform } = this.styleInit(false)
 						this.opacity = opacity || 1
 						this.transform = transform
 						this.$emit('change', {
@@ -208,7 +222,7 @@
 			},
 			// 处理动画开始前的默认样式
 			styleInit(type) {
-				let styles = { transform: '', opacity: 1 }
+				const styles = { transform: '', opacity: 1 }
 				const buildStyle = (type, mode) => {
 					const value = this.animationType(type)[mode] // 直接使用 type 控制状态
 					if (mode.startsWith('fade')) {
@@ -227,7 +241,7 @@
 			},
 			// 处理内置组合动画
 			tranfromInit(type) {
-				let buildTranfrom = (type, mode) => {
+				const buildTranfrom = (type, mode) => {
 					let aniNum = null
 					if (mode === 'fade') {
 						aniNum = type ? 0 : 1

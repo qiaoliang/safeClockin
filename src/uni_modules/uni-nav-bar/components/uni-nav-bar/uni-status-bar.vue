@@ -1,7 +1,10 @@
 <template>
-	<view :style="{ height: statusBarHeight }" class="uni-status-bar">
-		<slot />
-	</view>
+  <view
+    :style="{ height: statusBarHeight }"
+    class="uni-status-bar"
+  >
+    <slot />
+  </view>
 </template>
 
 <script>
@@ -21,7 +24,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.uni-status-bar {
 		// width: 750rpx;
 		height: 20px;

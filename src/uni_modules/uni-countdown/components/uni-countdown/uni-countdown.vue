@@ -1,14 +1,61 @@
 <template>
-	<view class="uni-countdown">
-		<text v-if="showDay" :style="[timeStyle]" class="uni-countdown__number">{{ d }}</text>
-		<text v-if="showDay" :style="[splitorStyle]" class="uni-countdown__splitor">{{dayText}}</text>
-		<text v-if="showHour" :style="[timeStyle]" class="uni-countdown__number">{{ h }}</text>
-		<text v-if="showHour" :style="[splitorStyle]" class="uni-countdown__splitor">{{ showColon ? ':' : hourText }}</text>
-		<text v-if="showMinute" :style="[timeStyle]" class="uni-countdown__number">{{ i }}</text>
-		<text v-if="showMinute" :style="[splitorStyle]" class="uni-countdown__splitor">{{ showColon ? ':' : minuteText }}</text>
-		<text :style="[timeStyle]" class="uni-countdown__number">{{ s }}</text>
-		<text v-if="!showColon" :style="[splitorStyle]" class="uni-countdown__splitor">{{secondText}}</text>
-	</view>
+  <view class="uni-countdown">
+    <text
+      v-if="showDay"
+      :style="[timeStyle]"
+      class="uni-countdown__number"
+    >
+      {{ d }}
+    </text>
+    <text
+      v-if="showDay"
+      :style="[splitorStyle]"
+      class="uni-countdown__splitor"
+    >
+      {{ dayText }}
+    </text>
+    <text
+      v-if="showHour"
+      :style="[timeStyle]"
+      class="uni-countdown__number"
+    >
+      {{ h }}
+    </text>
+    <text
+      v-if="showHour"
+      :style="[splitorStyle]"
+      class="uni-countdown__splitor"
+    >
+      {{ showColon ? ':' : hourText }}
+    </text>
+    <text
+      v-if="showMinute"
+      :style="[timeStyle]"
+      class="uni-countdown__number"
+    >
+      {{ i }}
+    </text>
+    <text
+      v-if="showMinute"
+      :style="[splitorStyle]"
+      class="uni-countdown__splitor"
+    >
+      {{ showColon ? ':' : minuteText }}
+    </text>
+    <text
+      :style="[timeStyle]"
+      class="uni-countdown__number"
+    >
+      {{ s }}
+    </text>
+    <text
+      v-if="!showColon"
+      :style="[splitorStyle]"
+      class="uni-countdown__splitor"
+    >
+      {{ secondText }}
+    </text>
+  </view>
 </template>
 <script>
 	import {
@@ -39,7 +86,6 @@
 	 */
 	export default {
 		name: 'UniCountdown',
-		emits: ['timeup'],
 		props: {
 			showDay: {
 				type: Boolean,
@@ -104,6 +150,7 @@
 				}
 			}
 		},
+		emits: ['timeup'],
 		data() {
 			return {
 				timer: null,
@@ -184,7 +231,7 @@
 			this.countDown()
 		},
 		// #ifndef VUE3
-		destroyed() {
+		unmounted() {
 			clearInterval(this.timer)
 		},
 		// #endif
@@ -205,7 +252,7 @@
 				this.$emit('timeup')
 			},
 			countDown() {
-				let seconds = this.seconds
+				const seconds = this.seconds
 				let [day, hour, minute, second] = [0, 0, 0, 0]
 				if (seconds > 0) {
 					day = Math.floor(seconds / (60 * 60 * 24))

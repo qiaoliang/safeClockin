@@ -1,108 +1,210 @@
 <template>
-	<!-- 在微信小程序 app vue端 h5 使用wxs 实现-->
-	<!-- #ifdef APP-VUE || APP-HARMONY || MP-WEIXIN || H5 -->
-	<view class="uni-swipe">
-		<!--  #ifdef MP-WEIXIN || H5 -->
-		<view class="uni-swipe_box" :change:prop="wxsswipe.showWatch" :prop="is_show" :data-threshold="threshold"
-			:data-disabled="disabled" @touchstart="wxsswipe.touchstart" @touchmove="wxsswipe.touchmove"
-			@touchend="wxsswipe.touchend">
-			<!-- #endif -->
-			<!--  #ifndef MP-WEIXIN || H5 -->
-			<view class="uni-swipe_box" :change:prop="renderswipe.showWatch" :prop="is_show" :data-threshold="threshold"
-				:data-disabled="disabled+''" @touchstart="renderswipe.touchstart" @touchmove="renderswipe.touchmove"
-				@touchend="renderswipe.touchend">
-			<!-- #endif -->
-				<!-- 在微信小程序 app vue端 h5 使用wxs 实现-->
-				<view class="uni-swipe_button-group button-group--left">
-					<slot name="left">
-						<view v-for="(item,index) in leftOptions" :key="index" :style="{
-					  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
-					}" class="uni-swipe_button button-hock" @touchstart.stop="appTouchStart"
-							@touchend.stop="appTouchEnd($event,index,item,'left')" @click.stop="onClickForPC(index,item,'left')">
-							<text class="uni-swipe_button-text"
-								:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}">{{ item.text }}</text>
-						</view>
-					</slot>
-				</view>
-				<view class="uni-swipe_text--center">
-					<slot></slot>
-				</view>
-				<view class="uni-swipe_button-group button-group--right">
-					<slot name="right">
-						<view v-for="(item,index) in rightOptions" :key="index" :style="{
-					  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
-					}" class="uni-swipe_button button-hock" @touchstart.stop="appTouchStart"
-							@touchend.stop="appTouchEnd($event,index,item,'right')" @click.stop="onClickForPC(index,item,'right')"><text
-								class="uni-swipe_button-text"
-								:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}">{{ item.text }}</text>
-						</view>
-					</slot>
-				</view>
-			</view>
-		</view>
-		<!-- #endif -->
-		<!-- app nvue端 使用 bindingx -->
-		<!-- #ifdef APP-NVUE -->
-		<view ref="selector-box--hock" class="uni-swipe" @horizontalpan="touchstart" @touchend="touchend">
-			<view ref='selector-left-button--hock' class="uni-swipe_button-group button-group--left">
-				<slot name="left">
-					<view v-for="(item,index) in leftOptions" :key="index" :style="{
-				  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
-				}" class="uni-swipe_button button-hock" @click.stop="onClick(index,item,'left')">
-						<text class="uni-swipe_button-text"
-							:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF', fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}">
-							{{ item.text }}
-						</text>
-					</view>
-				</slot>
-			</view>
-			<view ref='selector-right-button--hock' class="uni-swipe_button-group button-group--right">
-				<slot name="right">
-					<view v-for="(item,index) in rightOptions" :key="index" :style="{
-				  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
-				}" class="uni-swipe_button button-hock" @click.stop="onClick(index,item,'right')"><text
-							class="uni-swipe_button-text"
-							:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}">{{ item.text }}</text>
-					</view>
-				</slot>
-			</view>
-			<view ref='selector-content--hock' class="uni-swipe_box">
-				<slot></slot>
-			</view>
-		</view>
-		<!-- #endif -->
-		<!-- 其他平台使用 js ，长列表性能可能会有影响-->
-		<!-- #ifdef MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ || MP-HARMONY -->
-		<view class="uni-swipe">
-			<view class="uni-swipe_box" @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend"
-				:style="{transform:moveLeft}" :class="{ani:ani}">
-				<view class="uni-swipe_button-group button-group--left" :class="[elClass]">
-					<slot name="left">
-						<view v-for="(item,index) in leftOptions" :key="index" :style="{
-					  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD',
-					  fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'
-					}" class="uni-swipe_button button-hock" @touchstart.stop="appTouchStart"
-							@touchend.stop="appTouchEnd($event,index,item,'left')"><text class="uni-swipe_button-text"
-								:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',}">{{ item.text }}</text>
-						</view>
-					</slot>
-				</view>
-				<slot></slot>
-				<view class="uni-swipe_button-group button-group--right" :class="[elClass]">
-					<slot name="right">
-						<view v-for="(item,index) in rightOptions" :key="index" :style="{
-					  backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD',
-					  fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'
-					}" @touchstart.stop="appTouchStart" @touchend.stop="appTouchEnd($event,index,item,'right')"
-							class="uni-swipe_button button-hock"><text class="uni-swipe_button-text"
-								:style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',}">{{ item.text }}</text>
-						</view>
-					</slot>
-				</view>
-			</view>
-		</view>
-		<!-- #endif -->
-
+  <!-- 在微信小程序 app vue端 h5 使用wxs 实现-->
+  <!-- #ifdef APP-VUE || APP-HARMONY || MP-WEIXIN || H5 -->
+  <view class="uni-swipe">
+    <!--  #ifdef MP-WEIXIN || H5 -->
+    <view
+      class="uni-swipe_box"
+      :change:prop="wxsswipe.showWatch"
+      :prop="is_show"
+      :data-threshold="threshold"
+      :data-disabled="disabled"
+      @touchstart="wxsswipe.touchstart"
+      @touchmove="wxsswipe.touchmove"
+      @touchend="wxsswipe.touchend"
+    >
+      <!-- #endif -->
+      <!--  #ifndef MP-WEIXIN || H5 -->
+      <view
+        class="uni-swipe_box"
+        :change:prop="renderswipe.showWatch"
+        :prop="is_show"
+        :data-threshold="threshold"
+        :data-disabled="disabled+''"
+        @touchstart="renderswipe.touchstart"
+        @touchmove="renderswipe.touchmove"
+        @touchend="renderswipe.touchend"
+      >
+        <!-- #endif -->
+        <!-- 在微信小程序 app vue端 h5 使用wxs 实现-->
+        <view class="uni-swipe_button-group button-group--left">
+          <slot name="left">
+            <view
+              v-for="(item,index) in leftOptions"
+              :key="index"
+              :style="{
+                backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
+              }"
+              class="uni-swipe_button button-hock"
+              @touchstart.stop="appTouchStart"
+              @touchend.stop="appTouchEnd($event,index,item,'left')"
+              @click.stop="onClickForPC(index,item,'left')"
+            >
+              <text
+                class="uni-swipe_button-text"
+                :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}"
+              >
+                {{ item.text }}
+              </text>
+            </view>
+          </slot>
+        </view>
+        <view class="uni-swipe_text--center">
+          <slot />
+        </view>
+        <view class="uni-swipe_button-group button-group--right">
+          <slot name="right">
+            <view
+              v-for="(item,index) in rightOptions"
+              :key="index"
+              :style="{
+                backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
+              }"
+              class="uni-swipe_button button-hock"
+              @touchstart.stop="appTouchStart"
+              @touchend.stop="appTouchEnd($event,index,item,'right')"
+              @click.stop="onClickForPC(index,item,'right')"
+            >
+              <text
+                class="uni-swipe_button-text"
+                :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}"
+              >
+                {{ item.text }}
+              </text>
+            </view>
+          </slot>
+        </view>
+      </view>
+    </view>
+    <!-- #endif -->
+    <!-- app nvue端 使用 bindingx -->
+    <!-- #ifdef APP-NVUE -->
+    <view
+      ref="selector-box--hock"
+      class="uni-swipe"
+      @horizontalpan="touchstart"
+      @touchend="touchend"
+    >
+      <view
+        ref="selector-left-button--hock"
+        class="uni-swipe_button-group button-group--left"
+      >
+        <slot name="left">
+          <view
+            v-for="(item,index) in leftOptions"
+            :key="index"
+            :style="{
+              backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
+            }"
+            class="uni-swipe_button button-hock"
+            @click.stop="onClick(index,item,'left')"
+          >
+            <text
+              class="uni-swipe_button-text"
+              :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF', fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}"
+            >
+              {{ item.text }}
+            </text>
+          </view>
+        </slot>
+      </view>
+      <view
+        ref="selector-right-button--hock"
+        class="uni-swipe_button-group button-group--right"
+      >
+        <slot name="right">
+          <view
+            v-for="(item,index) in rightOptions"
+            :key="index"
+            :style="{
+              backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD'
+            }"
+            class="uni-swipe_button button-hock"
+            @click.stop="onClick(index,item,'right')"
+          >
+            <text
+              class="uni-swipe_button-text"
+              :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'}"
+            >
+              {{ item.text }}
+            </text>
+          </view>
+        </slot>
+      </view>
+      <view
+        ref="selector-content--hock"
+        class="uni-swipe_box"
+      >
+        <slot />
+      </view>
+    </view>
+    <!-- #endif -->
+    <!-- 其他平台使用 js ，长列表性能可能会有影响-->
+    <!-- #ifdef MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ || MP-HARMONY -->
+    <view class="uni-swipe">
+      <view
+        class="uni-swipe_box"
+        :style="{transform:moveLeft}"
+        :class="{ani:ani}"
+        @touchstart="touchstart"
+        @touchmove="touchmove"
+        @touchend="touchend"
+      >
+        <view
+          class="uni-swipe_button-group button-group--left"
+          :class="[elClass]"
+        >
+          <slot name="left">
+            <view
+              v-for="(item,index) in leftOptions"
+              :key="index"
+              :style="{
+                backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD',
+                fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'
+              }"
+              class="uni-swipe_button button-hock"
+              @touchstart.stop="appTouchStart"
+              @touchend.stop="appTouchEnd($event,index,item,'left')"
+            >
+              <text
+                class="uni-swipe_button-text"
+                :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',}"
+              >
+                {{ item.text }}
+              </text>
+            </view>
+          </slot>
+        </view>
+        <slot />
+        <view
+          class="uni-swipe_button-group button-group--right"
+          :class="[elClass]"
+        >
+          <slot name="right">
+            <view
+              v-for="(item,index) in rightOptions"
+              :key="index"
+              :style="{
+                backgroundColor: item.style && item.style.backgroundColor ? item.style.backgroundColor : '#C7C6CD',
+                fontSize: item.style && item.style.fontSize ? item.style.fontSize : '16px'
+              }"
+              class="uni-swipe_button button-hock"
+              @touchstart.stop="appTouchStart"
+              @touchend.stop="appTouchEnd($event,index,item,'right')"
+            >
+              <text
+                class="uni-swipe_button-text"
+                :style="{color: item.style && item.style.color ? item.style.color : '#FFFFFF',}"
+              >
+                {{ item.text }}
+              </text>
+            </view>
+          </slot>
+        </view>
+      </view>
+    </view>
+    <!-- #endif -->
+  </view>
 </template>
 <script src="./wx.wxs" module="wxsswipe" lang="wxs"></script>
 

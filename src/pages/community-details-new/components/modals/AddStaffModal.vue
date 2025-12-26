@@ -1,49 +1,88 @@
 <template>
-  <view v-if="visible" class="add-staff-modal">
+  <view
+    v-if="visible"
+    class="add-staff-modal"
+  >
     <!-- 遮罩层 -->
-    <view class="modal-mask" @click="handleClose" />
+    <view
+      class="modal-mask"
+      @click="handleClose"
+    />
 
     <!-- 模态框内容 -->
     <view class="modal-content">
       <!-- 标题和关闭按钮 -->
       <view class="modal-header">
-        <h3 class="modal-title">添加专员</h3>
-        <button class="close-button" @click="handleClose">
-          <text class="close-icon">×</text>
+        <h3 class="modal-title">
+          添加专员
+        </h3>
+        <button
+          class="close-button"
+          @click="handleClose"
+        >
+          <text class="close-icon">
+            ×
+          </text>
         </button>
       </view>
 
       <!-- 搜索区域 -->
       <view class="search-section">
         <view class="search-input-wrapper">
-          <text class="search-icon">🔍</text>
+          <text class="search-icon">
+            🔍
+          </text>
           <input
             v-model="searchKeyword"
             class="search-input"
             type="text"
             placeholder="搜索用户姓名或手机号"
             @input="handleSearchInput"
-          />
-          <button v-if="searchKeyword" class="clear-button" @click="clearSearch">
-            <text class="clear-icon">×</text>
+          >
+          <button
+            v-if="searchKeyword"
+            class="clear-button"
+            @click="clearSearch"
+          >
+            <text class="clear-icon">
+              ×
+            </text>
           </button>
         </view>
-        <text class="search-hint">在所有用户中搜索</text>
+        <text class="search-hint">
+          在所有用户中搜索
+        </text>
       </view>
 
       <!-- 加载状态 -->
-      <view v-if="loading" class="loading-container">
+      <view
+        v-if="loading"
+        class="loading-container"
+      >
         <uni-load-more status="loading" />
       </view>
 
       <!-- 错误状态 -->
-      <view v-else-if="error" class="error-container">
-        <text class="error-text">{{ error }}</text>
-        <button class="retry-btn" @click="searchUsers(1, false)">重试</button>
+      <view
+        v-else-if="error"
+        class="error-container"
+      >
+        <text class="error-text">
+          {{ error }}
+        </text>
+        <button
+          class="retry-btn"
+          @click="searchUsers(1, false)"
+        >
+          重试
+        </button>
       </view>
 
       <!-- 用户列表 -->
-      <view v-else class="users-list">
+      <view
+        v-else
+        class="users-list"
+      >
         <view
           v-for="user in userList"
           :key="user.user_id"
@@ -60,14 +99,31 @@
                 class="user-avatar"
                 mode="aspectFit"
               />
-              <text v-else class="user-avatar-placeholder">👤</text>
+              <text
+                v-else
+                class="user-avatar-placeholder"
+              >
+                👤
+              </text>
             </view>
             <view class="user-details">
-              <text class="user-name">{{ user.nickname || "未设置昵称" }}</text>
-              <text class="user-phone">{{ user.phone_number || "未设置手机号" }}</text>
+              <text class="user-name">
+                {{ user.nickname || "未设置昵称" }}
+              </text>
+              <text class="user-phone">
+                {{ user.phone_number || "未设置手机号" }}
+              </text>
               <view class="user-tags">
-                <text v-if="user.is_staff" class="staff-tag">已是专员</text>
-                <text v-if="user.community_id" class="community-tag">
+                <text
+                  v-if="user.is_staff"
+                  class="staff-tag"
+                >
+                  已是专员
+                </text>
+                <text
+                  v-if="user.community_id"
+                  class="community-tag"
+                >
                   社区ID: {{ user.community_id }}
                 </text>
               </view>
@@ -76,15 +132,38 @@
 
           <!-- 选择状态指示器 -->
           <view class="selection-indicator">
-            <text v-if="isSelected(user.user_id)" class="selected-icon">✓</text>
-            <text v-else class="unselected-icon">○</text>
+            <text
+              v-if="isSelected(user.user_id)"
+              class="selected-icon"
+            >
+              ✓
+            </text>
+            <text
+              v-else
+              class="unselected-icon"
+            >
+              ○
+            </text>
           </view>
         </view>
 
         <!-- 空状态 -->
-        <view v-if="userList.length === 0" class="empty-container">
-          <text v-if="searchKeyword" class="empty-icon">🔍</text>
-          <text v-else class="empty-icon">👥</text>
+        <view
+          v-if="userList.length === 0"
+          class="empty-container"
+        >
+          <text
+            v-if="searchKeyword"
+            class="empty-icon"
+          >
+            🔍
+          </text>
+          <text
+            v-else
+            class="empty-icon"
+          >
+            👥
+          </text>
 
           <text class="empty-title">
             {{ searchKeyword ? "未找到匹配的用户" : "暂无用户数据" }}
@@ -96,30 +175,66 @@
         </view>
 
         <!-- 加载更多 -->
-        <view v-if="hasMore" class="load-more-container">
-          <button class="load-more-btn" @click="loadMore" :disabled="loadingMore">
-            <text v-if="loadingMore" class="loading-text">加载中...</text>
-            <text v-else class="load-more-text">加载更多</text>
+        <view
+          v-if="hasMore"
+          class="load-more-container"
+        >
+          <button
+            class="load-more-btn"
+            :disabled="loadingMore"
+            @click="loadMore"
+          >
+            <text
+              v-if="loadingMore"
+              class="loading-text"
+            >
+              加载中...
+            </text>
+            <text
+              v-else
+              class="load-more-text"
+            >
+              加载更多
+            </text>
           </button>
         </view>
       </view>
 
       <!-- 已选用户区域 -->
-      <view v-if="selectedUsers.length > 0" class="selected-section">
+      <view
+        v-if="selectedUsers.length > 0"
+        class="selected-section"
+      >
         <view class="selected-header">
-          <text class="selected-title">已选择 {{ selectedUsers.length }} 个用户</text>
-          <button class="clear-selection-btn" @click="clearSelection">
-            <text class="clear-text">清空</text>
+          <text class="selected-title">
+            已选择 {{ selectedUsers.length }} 个用户
+          </text>
+          <button
+            class="clear-selection-btn"
+            @click="clearSelection"
+          >
+            <text class="clear-text">
+              清空
+            </text>
           </button>
         </view>
 
         <view class="selected-users">
-          <view v-for="userId in selectedUsers" :key="userId" class="selected-user-tag">
+          <view
+            v-for="userId in selectedUsers"
+            :key="userId"
+            class="selected-user-tag"
+          >
             <text class="selected-user-name">
               {{ getUserName(userId) }}
             </text>
-            <button class="remove-user-btn" @click.stop="removeSelectedUser(userId)">
-              <text class="remove-icon">×</text>
+            <button
+              class="remove-user-btn"
+              @click.stop="removeSelectedUser(userId)"
+            >
+              <text class="remove-icon">
+                ×
+              </text>
             </button>
           </view>
         </view>
@@ -127,15 +242,22 @@
 
       <!-- 操作按钮 -->
       <view class="modal-footer">
-        <button class="cancel-button" @click="handleClose">
-          <text class="button-text">取消</text>
+        <button
+          class="cancel-button"
+          @click="handleClose"
+        >
+          <text class="button-text">
+            取消
+          </text>
         </button>
         <button
           class="confirm-button"
-          @click="handleConfirm"
           :disabled="selectedUsers.length === 0"
+          @click="handleConfirm"
         >
-          <text class="button-text">确认添加 ({{ selectedUsers.length }})</text>
+          <text class="button-text">
+            确认添加 ({{ selectedUsers.length }})
+          </text>
         </button>
       </view>
     </view>

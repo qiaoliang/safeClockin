@@ -1,63 +1,109 @@
 <template>
   <view class="community-settings-modal">
     <!-- 遮罩层 -->
-    <view class="modal-overlay" @click="$emit('close')" />
+    <view
+      class="modal-overlay"
+      @click="$emit('close')"
+    />
     
     <!-- 模态框内容 -->
     <view class="modal-content">
       <view class="modal-header">
-        <h3 class="modal-title">社区设置</h3>
-        <button class="close-button" @click="$emit('close')">
-          <text class="close-icon">×</text>
+        <h3 class="modal-title">
+          社区设置
+        </h3>
+        <button
+          class="close-button"
+          @click="$emit('close')"
+        >
+          <text class="close-icon">
+            ×
+          </text>
         </button>
       </view>
       
       <view class="modal-body">
         <!-- 社区信息 -->
         <view class="info-section">
-          <h4 class="section-title">社区信息</h4>
+          <h4 class="section-title">
+            社区信息
+          </h4>
           <view class="info-grid">
             <view class="info-item">
-              <text class="info-label">社区名称</text>
-              <text class="info-value">{{ community.name || '未命名' }}</text>
+              <text class="info-label">
+                社区名称
+              </text>
+              <text class="info-value">
+                {{ community.name || '未命名' }}
+              </text>
             </view>
             
             <view class="info-item">
-              <text class="info-label">所在位置</text>
-              <text class="info-value">{{ community.location || '未设置' }}</text>
+              <text class="info-label">
+                所在位置
+              </text>
+              <text class="info-value">
+                {{ community.location || '未设置' }}
+              </text>
             </view>
             
             <view class="info-item">
-              <text class="info-label">社区主管</text>
-              <text class="info-value">{{ community.manager?.nickname || '未设置' }}</text>
+              <text class="info-label">
+                社区主管
+              </text>
+              <text class="info-value">
+                {{ community.manager?.nickname || '未设置' }}
+              </text>
             </view>
             
             <view class="info-item">
-              <text class="info-label">创建时间</text>
-              <text class="info-value">{{ formatDate(community.created_at) }}</text>
+              <text class="info-label">
+                创建时间
+              </text>
+              <text class="info-value">
+                {{ formatDate(community.created_at) }}
+              </text>
             </view>
           </view>
         </view>
         
         <!-- 操作按钮 -->
         <view class="actions-section">
-          <h4 class="section-title">操作</h4>
+          <h4 class="section-title">
+            操作
+          </h4>
           <view class="action-buttons">
-            <button class="action-button edit-button" @click="$emit('edit')">
-              <text class="action-icon">✏️</text>
-              <text class="action-text">编辑社区</text>
+            <button
+              class="action-button edit-button"
+              @click="$emit('edit')"
+            >
+              <text class="action-icon">
+                ✏️
+              </text>
+              <text class="action-text">
+                编辑社区
+              </text>
             </button>
             
-            <button class="action-button delete-button" @click="$emit('delete')">
-              <text class="action-icon">🗑️</text>
-              <text class="action-text">删除社区</text>
+            <button
+              class="action-button delete-button"
+              @click="$emit('delete')"
+            >
+              <text class="action-icon">
+                🗑️
+              </text>
+              <text class="action-text">
+                删除社区
+              </text>
             </button>
           </view>
         </view>
         
         <!-- 危险操作 -->
         <view class="danger-section">
-          <h4 class="section-title danger-title">危险操作</h4>
+          <h4 class="section-title danger-title">
+            危险操作
+          </h4>
           <text class="danger-hint">
             删除社区将移除所有相关数据，包括专员、用户、规则和记录。此操作不可撤销。
           </text>

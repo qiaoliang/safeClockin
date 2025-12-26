@@ -1,16 +1,41 @@
 <template>
-	<view class="uni-numbox">
-		<view @click="_calcValue('minus')" class="uni-numbox__minus uni-numbox-btns" :style="{background}">
-			<text class="uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue <= min || disabled }"
-				:style="{color}">-</text>
-		</view>
-		<input :disabled="disabled" @focus="_onFocus" @blur="_onBlur" class="uni-numbox__value"
-			:type="step<1?'digit':'number'" v-model="inputValue" :style="{background, color, width:widthWithPx}" />
-		<view @click="_calcValue('plus')" class="uni-numbox__plus uni-numbox-btns" :style="{background}">
-			<text class="uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue >= max || disabled }"
-				:style="{color}">+</text>
-		</view>
-	</view>
+  <view class="uni-numbox">
+    <view
+      class="uni-numbox__minus uni-numbox-btns"
+      :style="{background}"
+      @click="_calcValue('minus')"
+    >
+      <text
+        class="uni-numbox--text"
+        :class="{ 'uni-numbox--disabled': inputValue <= min || disabled }"
+        :style="{color}"
+      >
+        -
+      </text>
+    </view>
+    <input
+      v-model="inputValue"
+      :disabled="disabled"
+      class="uni-numbox__value"
+      :type="step<1?'digit':'number'"
+      :style="{background, color, width:widthWithPx}"
+      @focus="_onFocus"
+      @blur="_onBlur"
+    >
+    <view
+      class="uni-numbox__plus uni-numbox-btns"
+      :style="{background}"
+      @click="_calcValue('plus')"
+    >
+      <text
+        class="uni-numbox--text"
+        :class="{ 'uni-numbox--disabled': inputValue >= max || disabled }"
+        :style="{color}"
+      >
+        +
+      </text>
+    </view>
+  </view>
 </template>
 <script>
 	/**
@@ -32,7 +57,6 @@
 
 	export default {
 		name: "UniNumberBox",
-		emits: ['change', 'input', 'update:modelValue', 'blur', 'focus'],
 		props: {
 			value: {
 				type: [Number, String],
@@ -71,10 +95,16 @@
 				default: 40,
 			}
 		},
+		emits: ['change', 'input', 'update:modelValue', 'blur', 'focus'],
 		data() {
 			return {
 				inputValue: 0
 			};
+		},
+		computed: {
+			widthWithPx() {
+				return this.width + 'px';
+			}
 		},
 		watch: {
 			value(val) {
@@ -82,11 +112,6 @@
 			},
 			modelValue(val) {
 				this.inputValue = +val;
-			}
-		},
-		computed: {
-			widthWithPx() {
-				return this.width + 'px';
 			}
 		},
 		created() {
@@ -104,7 +129,7 @@
 				}
 				const scale = this._getDecimalScale();
 				let value = this.inputValue * scale;
-				let step = this.step * scale;
+				const step = this.step * scale;
 				if (type === "minus") {
 					value -= step;
 					if (value < (this.min * scale)) {

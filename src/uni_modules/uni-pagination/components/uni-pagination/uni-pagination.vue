@@ -1,54 +1,100 @@
 <template>
-	<view class="uni-pagination">
-		<!-- #ifndef MP -->
-		<picker v-if="showPageSize === true || showPageSize === 'true'" class="select-picker" mode="selector"
-			:value="pageSizeIndex" :range="pageSizeRange" @change="pickerChange" @cancel="pickerClick"
-			@click.native="pickerClick">
-			<button type="default" size="mini" :plain="true">
-				<text>{{pageSizeRange[pageSizeIndex]}} {{piecePerPage}}</text>
-				<uni-icons class="select-picker-icon" type="arrowdown" size="12" color="#999"></uni-icons>
-			</button>
-		</picker>
-		<!-- #endif -->
-		<!-- #ifndef APP-NVUE -->
-		<view class="uni-pagination__total is-phone-hide">共 {{ total }} 条</view>
-		<!-- #endif -->
-		<view class="uni-pagination__btn"
-			:class="currentIndex === 1 ? 'uni-pagination--disabled' : 'uni-pagination--enabled'"
-			:hover-class="currentIndex === 1 ? '' : 'uni-pagination--hover'" :hover-start-time="20"
-			:hover-stay-time="70" @click="clickLeft">
-			<template v-if="showIcon === true || showIcon === 'true'">
-				<uni-icons color="#666" size="16" type="left" />
-			</template>
-			<template v-else>
-				<text class="uni-pagination__child-btn">{{ prevPageText }}</text>
-			</template>
-		</view>
-		<view class="uni-pagination__num uni-pagination__num-flex-none">
-			<view class="uni-pagination__num-current">
-				<text class="uni-pagination__num-current-text is-pc-hide current-index-text">{{ currentIndex }}</text>
-				<text class="uni-pagination__num-current-text is-pc-hide">/{{ maxPage || 0 }}</text>
-				<!-- #ifndef APP-NVUE -->
-				<view v-for="(item, index) in paper" :key="index" :class="{ 'page--active': item === currentIndex }"
-					class="uni-pagination__num-tag tag--active is-phone-hide" @click.top="selectPage(item, index)">
-					<text>{{ item }}</text>
-				</view>
-				<!-- #endif -->
-
-			</view>
-		</view>
-		<view class="uni-pagination__btn"
-			:class="currentIndex >= maxPage ? 'uni-pagination--disabled' : 'uni-pagination--enabled'"
-			:hover-class="currentIndex === maxPage ? '' : 'uni-pagination--hover'" :hover-start-time="20"
-			:hover-stay-time="70" @click="clickRight">
-			<template v-if="showIcon === true || showIcon === 'true'">
-				<uni-icons color="#666" size="16" type="right" />
-			</template>
-			<template v-else>
-				<text class="uni-pagination__child-btn">{{ nextPageText }}</text>
-			</template>
-		</view>
-	</view>
+  <view class="uni-pagination">
+    <!-- #ifndef MP -->
+    <picker
+      v-if="showPageSize === true || showPageSize === 'true'"
+      class="select-picker"
+      mode="selector"
+      :value="pageSizeIndex"
+      :range="pageSizeRange"
+      @change="pickerChange"
+      @cancel="pickerClick"
+      @click.native="pickerClick"
+    >
+      <button
+        type="default"
+        size="mini"
+        :plain="true"
+      >
+        <text>{{ pageSizeRange[pageSizeIndex] }} {{ piecePerPage }}</text>
+        <uni-icons
+          class="select-picker-icon"
+          type="arrowdown"
+          size="12"
+          color="#999"
+        />
+      </button>
+    </picker>
+    <!-- #endif -->
+    <!-- #ifndef APP-NVUE -->
+    <view class="uni-pagination__total is-phone-hide">
+      共 {{ total }} 条
+    </view>
+    <!-- #endif -->
+    <view
+      class="uni-pagination__btn"
+      :class="currentIndex === 1 ? 'uni-pagination--disabled' : 'uni-pagination--enabled'"
+      :hover-class="currentIndex === 1 ? '' : 'uni-pagination--hover'"
+      :hover-start-time="20"
+      :hover-stay-time="70"
+      @click="clickLeft"
+    >
+      <template v-if="showIcon === true || showIcon === 'true'">
+        <uni-icons
+          color="#666"
+          size="16"
+          type="left"
+        />
+      </template>
+      <template v-else>
+        <text class="uni-pagination__child-btn">
+          {{ prevPageText }}
+        </text>
+      </template>
+    </view>
+    <view class="uni-pagination__num uni-pagination__num-flex-none">
+      <view class="uni-pagination__num-current">
+        <text class="uni-pagination__num-current-text is-pc-hide current-index-text">
+          {{ currentIndex }}
+        </text>
+        <text class="uni-pagination__num-current-text is-pc-hide">
+          /{{ maxPage || 0 }}
+        </text>
+        <!-- #ifndef APP-NVUE -->
+        <view
+          v-for="(item, index) in paper"
+          :key="index"
+          :class="{ 'page--active': item === currentIndex }"
+          class="uni-pagination__num-tag tag--active is-phone-hide"
+          @click.top="selectPage(item, index)"
+        >
+          <text>{{ item }}</text>
+        </view>
+        <!-- #endif -->
+      </view>
+    </view>
+    <view
+      class="uni-pagination__btn"
+      :class="currentIndex >= maxPage ? 'uni-pagination--disabled' : 'uni-pagination--enabled'"
+      :hover-class="currentIndex === maxPage ? '' : 'uni-pagination--hover'"
+      :hover-start-time="20"
+      :hover-stay-time="70"
+      @click="clickRight"
+    >
+      <template v-if="showIcon === true || showIcon === 'true'">
+        <uni-icons
+          color="#666"
+          size="16"
+          type="right"
+        />
+      </template>
+      <template v-else>
+        <text class="uni-pagination__child-btn">
+          {{ nextPageText }}
+        </text>
+      </template>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -78,7 +124,6 @@
 	} = initVueI18n(messages)
 	export default {
 		name: 'UniPagination',
-		emits: ['update:modelValue', 'input', 'change', 'pageSizeChange'],
 		props: {
 			value: {
 				type: [Number, String],
@@ -130,6 +175,7 @@
 				default: () => [20, 50, 100, 500]
 			}
 		},
+		emits: ['update:modelValue', 'input', 'change', 'pageSizeChange'],
 		data() {
 			return {
 				pageSizeIndex: 0,
@@ -150,8 +196,8 @@
 			},
 			maxPage() {
 				let maxPage = 1
-				let total = Number(this.total)
-				let pageSize = Number(this.pageSize)
+				const total = Number(this.total)
+				const pageSize = Number(this.pageSize)
 				if (total && pageSize) {
 					maxPage = Math.ceil(total / pageSize)
 				}
@@ -164,9 +210,9 @@
 				// const total = 181
 				const total = this.total
 				const pageSize = this.pageSize
-				let totalArr = []
-				let showPagerArr = []
-				let pagerNum = Math.ceil(total / pageSize)
+				const totalArr = []
+				const showPagerArr = []
+				const pagerNum = Math.ceil(total / pageSize)
 				for (let i = 0; i < pagerNum; i++) {
 					totalArr.push(i + 1)
 				}
@@ -260,7 +306,7 @@
 					this.currentIndex = e
 					this.change('current')
 				} else {
-					let pagerNum = Math.ceil(this.total / this.pageSize)
+					const pagerNum = Math.ceil(this.total / this.pageSize)
 					// let pagerNum = Math.ceil(181 / this.pageSize)
 					// 上一页
 					if (index <= 1) {

@@ -138,9 +138,9 @@ export function friendlyDate(time, {
 		}
 	}
 	const text = localeText[locale] || localeText.zh
-	let date = getDate(time)
+	const date = getDate(time)
 	let ms = date.getTime() - Date.now()
-	let absMs = Math.abs(ms)
+	const absMs = Math.abs(ms)
 	if (absMs < threshold[0]) {
 		return ms < 0 ? text.justNow : text.soon
 	}

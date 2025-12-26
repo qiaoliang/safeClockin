@@ -1,7 +1,7 @@
 <template>
-	<view>
-		<slot></slot>
-	</view>
+  <view>
+    <slot />
+  </view>
 </template>
 
 <script>
@@ -11,7 +11,7 @@
 	 * @tutorial https://ext.dcloud.net.cn/plugin?id=181
 	 */
 	export default {
-		name:"uniSwipeAction",
+		name:"UniSwipeAction",
 		data() {
 			return {};
 		},

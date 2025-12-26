@@ -1,16 +1,26 @@
 <template>
-	<!-- #ifdef APP-NVUE -->
-	<cell>
-		<!-- #endif -->
-		<view class="uni-list-ad">
-			<view v-if="borderShow" :class="{'uni-list--border':border,'uni-list-item--first':isFirstChild}"></view>
-			<ad style="width: 200px;height: 300px;border-width: 1px;border-color: red;border-style: solid;" adpid="1111111111"
-			 unit-id="" appid="" apid="" type="feed" @error="aderror" @close="closeAd"></ad>
-		</view>
-		<!-- #ifdef APP-NVUE -->
-	</cell>
-	<!-- #endif -->
-
+  <!-- #ifdef APP-NVUE -->
+  <cell>
+    <!-- #endif -->
+    <view class="uni-list-ad">
+      <view
+        v-if="borderShow"
+        :class="{'uni-list--border':border,'uni-list-item--first':isFirstChild}"
+      />
+      <ad
+        style="width: 200px;height: 300px;border-width: 1px;border-color: red;border-style: solid;"
+        adpid="1111111111"
+        unit-id=""
+        appid=""
+        apid=""
+        type="feed"
+        @error="aderror"
+        @close="closeAd"
+      />
+    </view>
+    <!-- #ifdef APP-NVUE -->
+  </cell>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -69,7 +79,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.uni-list-ad {
 		position: relative;
 		border: 1px red solid;

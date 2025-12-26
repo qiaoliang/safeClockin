@@ -1,9 +1,16 @@
 <template>
-	<view class="uni-badge--x">
-		<slot />
-		<text v-if="text" :class="classNames" :style="[positionStyle, customStyle, dotStyle]"
-			class="uni-badge" @click="onClick()">{{displayValue}}</text>
-	</view>
+  <view class="uni-badge--x">
+    <slot />
+    <text
+      v-if="text"
+      :class="classNames"
+      :style="[positionStyle, customStyle, dotStyle]"
+      class="uni-badge"
+      @click="onClick()"
+    >
+      {{ displayValue }}
+    </text>
+  </view>
 </template>
 
 <script>
@@ -34,7 +41,6 @@
 
 	export default {
 		name: 'UniBadge',
-		emits: ['click'],
 		props: {
 			type: {
 				type: String,
@@ -77,6 +83,7 @@
 				}
 			}
 		},
+		emits: ['click'],
 		data() {
 			return {};
 		},
@@ -157,7 +164,7 @@
 	};
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	$uni-primary: #2979ff !default;
 	$uni-success: #4cd964 !default;
 	$uni-warning: #f0ad4e !default;

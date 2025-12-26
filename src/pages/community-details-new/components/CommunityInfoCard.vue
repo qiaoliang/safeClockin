@@ -3,17 +3,30 @@
     <view class="card-container">
       <!-- 社区名称和位置 -->
       <view class="info-header">
-        <h2 class="community-name">{{ community.name || '未命名社区' }}</h2>
+        <h2 class="community-name">
+          {{ community.name || '未命名社区' }}
+        </h2>
         
         <view class="info-details">
           <view class="detail-item">
-            <text class="detail-icon">📍</text>
-            <text class="detail-text">{{ community.location || '未设置位置' }}</text>
+            <text class="detail-icon">
+              📍
+            </text>
+            <text class="detail-text">
+              {{ community.location || '未设置位置' }}
+            </text>
           </view>
           
-          <view v-if="community.manager" class="detail-item">
-            <text class="detail-icon">👤</text>
-            <text class="detail-text">主管：{{ community.manager.nickname || '未知' }}</text>
+          <view
+            v-if="community.manager"
+            class="detail-item"
+          >
+            <text class="detail-icon">
+              👤
+            </text>
+            <text class="detail-text">
+              主管：{{ community.manager.nickname || '未知' }}
+            </text>
           </view>
         </view>
       </view>
@@ -24,29 +37,56 @@
       <!-- 统计信息 -->
       <view class="stats-grid">
         <view class="stat-item">
-          <text class="stat-number staff-count">{{ stats.staff_count || 0 }}</text>
-          <text class="stat-label">专员</text>
+          <text class="stat-number staff-count">
+            {{ stats.staff_count || 0 }}
+          </text>
+          <text class="stat-label">
+            专员
+          </text>
         </view>
         
         <view class="stat-item">
-          <text class="stat-number user-count">{{ stats.user_count || 0 }}</text>
-          <text class="stat-label">成员</text>
+          <text class="stat-number user-count">
+            {{ stats.user_count || 0 }}
+          </text>
+          <text class="stat-label">
+            成员
+          </text>
         </view>
         
-        <view class="stat-item" @click="handleEventCountClick">
-          <text class="stat-number support-count">{{ stats.support_count || 0 }}</text>
-          <text class="stat-label">应援</text>
+        <view
+          class="stat-item"
+          @click="handleEventCountClick"
+        >
+          <text class="stat-number support-count">
+            {{ stats.support_count || 0 }}
+          </text>
+          <text class="stat-label">
+            应援
+          </text>
         </view>
         
-        <view class="stat-item" @click="handleEventCountClick">
-          <text class="stat-number active-count clickable">{{ stats.active_events || 0 }}</text>
-          <text class="stat-label">事件</text>
+        <view
+          class="stat-item"
+          @click="handleEventCountClick"
+        >
+          <text class="stat-number active-count clickable">
+            {{ stats.active_events || 0 }}
+          </text>
+          <text class="stat-label">
+            事件
+          </text>
         </view>
       </view>
       
       <!-- 打卡率（单独一行） -->
-      <view v-if="stats.checkin_rate !== undefined" class="checkin-rate-row">
-        <text class="checkin-rate-label">打卡率</text>
+      <view
+        v-if="stats.checkin_rate !== undefined"
+        class="checkin-rate-row"
+      >
+        <text class="checkin-rate-label">
+          打卡率
+        </text>
         <view class="checkin-rate-progress">
           <view class="progress-bar">
             <view 
@@ -54,7 +94,9 @@
               :style="{ width: `${Math.min(stats.checkin_rate, 100)}%` }"
             />
           </view>
-          <text class="checkin-rate-value">{{ stats.checkin_rate }}%</text>
+          <text class="checkin-rate-value">
+            {{ stats.checkin_rate }}%
+          </text>
         </view>
       </view>
     </view>

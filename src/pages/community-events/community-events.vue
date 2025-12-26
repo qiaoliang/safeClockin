@@ -3,41 +3,77 @@
     <!-- 状态栏 -->
     <view class="status-bar">
       <view class="status-bar-content">
-        <text class="status-time">9:41</text>
+        <text class="status-time">
+          9:41
+        </text>
         <view class="status-icons">
-          <text class="icon-signal">📶</text>
-          <text class="icon-wifi">📡</text>
-          <text class="icon-battery">🔋</text>
+          <text class="icon-signal">
+            📶
+          </text>
+          <text class="icon-wifi">
+            📡
+          </text>
+          <text class="icon-battery">
+            🔋
+          </text>
         </view>
       </view>
     </view>
 
     <!-- 顶部导航 -->
     <view class="header">
-      <view class="nav-left" @click="handleBack">
-        <text class="back-icon">←</text>
+      <view
+        class="nav-left"
+        @click="handleBack"
+      >
+        <text class="back-icon">
+          ←
+        </text>
       </view>
       <view class="nav-center">
-        <text class="nav-title">社区事件</text>
+        <text class="nav-title">
+          社区事件
+        </text>
       </view>
       <view class="nav-right">
-        <text class="refresh-icon" @click="refreshEvents">🔄</text>
+        <text
+          class="refresh-icon"
+          @click="refreshEvents"
+        >
+          🔄
+        </text>
       </view>
     </view>
 
     <!-- 加载状态 -->
-    <view v-if="loading" class="loading-container">
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
       <uni-load-more status="loading" />
     </view>
 
     <!-- 错误状态 -->
-    <view v-else-if="error" class="error-container">
-      <text class="error-text">{{ error }}</text>
-      <button class="retry-btn" @click="loadEvents">重试</button>
+    <view
+      v-else-if="error"
+      class="error-container"
+    >
+      <text class="error-text">
+        {{ error }}
+      </text>
+      <button
+        class="retry-btn"
+        @click="loadEvents"
+      >
+        重试
+      </button>
     </view>
 
     <!-- 事件列表 -->
-    <view v-else class="events-content">
+    <view
+      v-else
+      class="events-content"
+    >
       <!-- 筛选器 -->
       <view class="filter-section">
         <view class="filter-tabs">
@@ -47,19 +83,36 @@
             :class="['filter-tab', { active: activeFilter === filter.value }]"
             @click="handleFilterChange(filter.value)"
           >
-            <text class="filter-text">{{ filter.label }}</text>
-            <text v-if="filter.count" class="filter-count">({{ filter.count }})</text>
+            <text class="filter-text">
+              {{ filter.label }}
+            </text>
+            <text
+              v-if="filter.count"
+              class="filter-count"
+            >
+              ({{ filter.count }})
+            </text>
           </view>
         </view>
       </view>
 
       <!-- 事件列表 -->
-      <view v-if="eventsList.length === 0" class="empty-state">
-        <text class="empty-icon">📋</text>
-        <text class="empty-text">暂无{{ getFilterLabel() }}事件</text>
+      <view
+        v-if="eventsList.length === 0"
+        class="empty-state"
+      >
+        <text class="empty-icon">
+          📋
+        </text>
+        <text class="empty-text">
+          暂无{{ getFilterLabel() }}事件
+        </text>
       </view>
 
-      <view v-else class="events-list">
+      <view
+        v-else
+        class="events-list"
+      >
         <view 
           v-for="event in eventsList" 
           :key="event.event_id"
@@ -69,9 +122,13 @@
           <!-- 事件头部 -->
           <view class="event-header">
             <view class="event-title-section">
-              <text class="event-title">{{ event.title }}</text>
+              <text class="event-title">
+                {{ event.title }}
+              </text>
               <view :class="['event-type', event.event_type]">
-                <text class="type-text">{{ event.event_type_label }}</text>
+                <text class="type-text">
+                  {{ event.event_type_label }}
+                </text>
               </view>
             </view>
             <view class="event-status">
@@ -83,22 +140,44 @@
 
           <!-- 事件内容 -->
           <view class="event-content">
-            <text v-if="event.description" class="description">{{ event.description }}</text>
-            <view v-if="event.location" class="location-info">
-              <text class="location-icon">📍</text>
-              <text class="location-text">{{ event.location }}</text>
+            <text
+              v-if="event.description"
+              class="description"
+            >
+              {{ event.description }}
+            </text>
+            <view
+              v-if="event.location"
+              class="location-info"
+            >
+              <text class="location-icon">
+                📍
+              </text>
+              <text class="location-text">
+                {{ event.location }}
+              </text>
             </view>
           </view>
 
           <!-- 事件底部 -->
           <view class="event-footer">
             <view class="event-meta">
-              <text class="creator-info">{{ event.creator_name }}</text>
-              <text class="time-info">{{ formatTime(event.created_at) }}</text>
+              <text class="creator-info">
+                {{ event.creator_name }}
+              </text>
+              <text class="time-info">
+                {{ formatTime(event.created_at) }}
+              </text>
             </view>
             <view class="event-actions">
-              <text class="support-count">{{ event.support_count }}个应援</text>
-              <text v-if="canSupport(event)" class="support-btn" @click.stop="handleSupport(event)">
+              <text class="support-count">
+                {{ event.support_count }}个应援
+              </text>
+              <text
+                v-if="canSupport(event)"
+                class="support-btn"
+                @click.stop="handleSupport(event)"
+              >
                 应援
               </text>
             </view>
@@ -108,16 +187,34 @@
     </view>
 
     <!-- 应援弹窗 -->
-    <view v-if="showSupportModal" class="modal-overlay" @click="closeSupportModal">
-      <view class="support-modal" @click.stop>
+    <view
+      v-if="showSupportModal"
+      class="modal-overlay"
+      @click="closeSupportModal"
+    >
+      <view
+        class="support-modal"
+        @click.stop
+      >
         <view class="modal-header">
-          <text class="modal-title">提供应援</text>
-          <text class="close-btn" @click="closeSupportModal">×</text>
+          <text class="modal-title">
+            提供应援
+          </text>
+          <text
+            class="close-btn"
+            @click="closeSupportModal"
+          >
+            ×
+          </text>
         </view>
         <view class="modal-content">
           <view class="event-info">
-            <text class="event-title">{{ selectedEvent?.title }}</text>
-            <text class="event-desc">{{ selectedEvent?.description }}</text>
+            <text class="event-title">
+              {{ selectedEvent?.title }}
+            </text>
+            <text class="event-desc">
+              {{ selectedEvent?.description }}
+            </text>
           </view>
           <view class="input-section">
             <textarea 
@@ -126,11 +223,18 @@
               placeholder="请输入您的支援信息..."
               maxlength="500"
             />
-            <text class="char-count">{{ supportContent.length }}/500</text>
+            <text class="char-count">
+              {{ supportContent.length }}/500
+            </text>
           </view>
         </view>
         <view class="modal-actions">
-          <button class="cancel-btn" @click="closeSupportModal">取消</button>
+          <button
+            class="cancel-btn"
+            @click="closeSupportModal"
+          >
+            取消
+          </button>
           <button 
             class="confirm-btn" 
             :disabled="!supportContent.trim() || submitting"

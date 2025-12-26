@@ -1,41 +1,71 @@
 <template>
-	<view class="uni-file-picker__files">
-		<view v-if="!readonly" class="files-button" @click="choose">
-			<slot></slot>
-		</view>
-		<!-- :class="{'is-text-box':showType === 'list'}" -->
-		<view v-if="list.length > 0" class="uni-file-picker__lists is-text-box" :style="borderStyle">
-			<!-- ,'is-list-card':showType === 'list-card' -->
+  <view class="uni-file-picker__files">
+    <view
+      v-if="!readonly"
+      class="files-button"
+      @click="choose"
+    >
+      <slot />
+    </view>
+    <!-- :class="{'is-text-box':showType === 'list'}" -->
+    <view
+      v-if="list.length > 0"
+      class="uni-file-picker__lists is-text-box"
+      :style="borderStyle"
+    >
+      <!-- ,'is-list-card':showType === 'list-card' -->
 
-			<view class="uni-file-picker__lists-box" v-for="(item ,index) in list" :key="index" :class="{
-				'files-border':index !== 0 && styles.dividline}" :style="index !== 0 && styles.dividline &&borderLineStyle">
-				<view class="uni-file-picker__item">
-					<!-- :class="{'is-text-image':showType === 'list'}" -->
-					<!-- 	<view class="files__image is-text-image">
+      <view
+        v-for="(item ,index) in list"
+        :key="index"
+        class="uni-file-picker__lists-box"
+        :class="{
+          'files-border':index !== 0 && styles.dividline}"
+        :style="index !== 0 && styles.dividline &&borderLineStyle"
+      >
+        <view class="uni-file-picker__item">
+          <!-- :class="{'is-text-image':showType === 'list'}" -->
+          <!-- 	<view class="files__image is-text-image">
 						<image class="header-image" :src="item.logo" mode="aspectFit"></image>
 					</view> -->
-					<view class="files__name">{{item.name}}</view>
-					<view v-if="delIcon&&!readonly" class="icon-del-box icon-files" @click="delFile(index)">
-						<view class="icon-del icon-files"></view>
-						<view class="icon-del rotate"></view>
-					</view>
-				</view>
-				<view v-if="(item.progress && item.progress !== 100) ||item.progress===0 " class="file-picker__progress">
-					<progress class="file-picker__progress-item" :percent="item.progress === -1?0:item.progress" stroke-width="4" :backgroundColor="item.errMsg?'#ff5a5f':'#EBEBEB'" />
-				</view>
-				<view v-if="item.status === 'error'" class="file-picker__mask" @click.stop="uploadFiles(item,index)">
-					点击重试
-				</view>
-			</view>
-
-		</view>
-	</view>
+          <view class="files__name">
+            {{ item.name }}
+          </view>
+          <view
+            v-if="delIcon&&!readonly"
+            class="icon-del-box icon-files"
+            @click="delFile(index)"
+          >
+            <view class="icon-del icon-files" />
+            <view class="icon-del rotate" />
+          </view>
+        </view>
+        <view
+          v-if="(item.progress && item.progress !== 100) ||item.progress===0 "
+          class="file-picker__progress"
+        >
+          <progress
+            class="file-picker__progress-item"
+            :percent="item.progress === -1?0:item.progress"
+            stroke-width="4"
+            :backgroundColor="item.errMsg?'#ff5a5f':'#EBEBEB'"
+          />
+        </view>
+        <view
+          v-if="item.status === 'error'"
+          class="file-picker__mask"
+          @click.stop="uploadFiles(item,index)"
+        >
+          点击重试
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
 	export default {
-		name: "uploadFile",
-		emits: ['uploadFiles', 'choose', 'delFile'],
+		name: "UploadFile",
 		props: {
 			filesList: {
 				type: Array,
@@ -73,16 +103,17 @@
 				default: false
 			}
 		},
+		emits: ['uploadFiles', 'choose', 'delFile'],
 		computed: {
 			list() {
-				let files = []
+				const files = []
 				this.filesList.forEach(v => {
 					files.push(v)
 				})
 				return files
 			},
 			styles() {
-				let styles = {
+				const styles = {
 					border: true,
 					dividline: true,
 					'border-style': {}
@@ -90,7 +121,7 @@
 				return Object.assign(styles, this.listStyles)
 			},
 			borderStyle() {
-				let {
+				const {
 					borderStyle,
 					border
 				} = this.styles
@@ -110,14 +141,14 @@
 					}
 				}
 				let classles = ''
-				for (let i in obj) {
+				for (const i in obj) {
 					classles += `${i}:${obj[i]};`
 				}
 				return classles
 			},
 			borderLineStyle() {
-				let obj = {}
-				let {
+				const obj = {}
+				const {
 					borderStyle
 				} = this.styles
 				if (borderStyle && borderStyle.color) {
@@ -141,7 +172,7 @@
 					obj['border-top-style'] = style
 				}
 				let classles = ''
-				for (let i in obj) {
+				for (const i in obj) {
 					classles += `${i}:${obj[i]};`
 				}
 				return classles

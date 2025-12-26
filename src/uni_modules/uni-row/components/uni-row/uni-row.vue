@@ -1,10 +1,13 @@
 <template>
-	<view :class="[ 'uni-row', typeClass , justifyClass, alignClass, ]" :style="{
-		marginLeft:`${Number(marginValue)}rpx`,
-		marginRight:`${Number(marginValue)}rpx`,
-	}">
-		<slot></slot>
-	</view>
+  <view
+    :class="[ 'uni-row', typeClass , justifyClass, alignClass, ]"
+    :style="{
+      marginLeft:`${Number(marginValue)}rpx`,
+      marginRight:`${Number(marginValue)}rpx`,
+    }"
+  >
+    <slot />
+  </view>
 </template>
 
 <script>
@@ -28,7 +31,7 @@
 
 
 	export default {
-		name: 'uniRow',
+		name: 'UniRow',
 		componentName: 'uniRow',
 		// #ifdef MP-WEIXIN
 		options: {
@@ -52,11 +55,6 @@
 				default: 750
 			}
 		},
-		created() {
-			// #ifdef APP-NVUE
-			this.type = 'flex';
-			// #endif
-		},
 		computed: {
 			marginValue() {
 				// #ifndef APP-NVUE
@@ -75,6 +73,11 @@
 			alignClass() {
 				return this.align !== 'top' ? `${ComponentClass + modifierSeparator}flex-align-${this.align}` : ''
 			}
+		},
+		created() {
+			// #ifdef APP-NVUE
+			this.type = 'flex';
+			// #endif
 		}
 	};
 </script>
