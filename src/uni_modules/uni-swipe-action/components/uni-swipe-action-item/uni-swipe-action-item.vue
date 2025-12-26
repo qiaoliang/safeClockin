@@ -204,7 +204,6 @@
       </view>
     </view>
     <!-- #endif -->
-  </view>
 </template>
 <script src="./wx.wxs" module="wxsswipe" lang="wxs"></script>
 
