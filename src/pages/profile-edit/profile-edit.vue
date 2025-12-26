@@ -334,7 +334,7 @@ const displayPhone = computed(() => {
   const phone = userStore.userInfo?.phoneNumber
   if (!phone) return '未关联'
   if (phone.length === 11) {
-    return `${phone.slice(0, 3)}****${phone.slice(-4)}}`
+    return `${phone.slice(0, 3)}****${phone.slice(-4)}`
   }
   return phone
 })
