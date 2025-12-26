@@ -280,7 +280,6 @@ onLoad((options) => {
   if (!checkPagePermission(PagePath.STAFF_ADD)) {
     return
   }
-  console.log('[添加工作人员] 权限检查通过')
   
   if (options.communityId) {
     currentCommunityId.value = options.communityId

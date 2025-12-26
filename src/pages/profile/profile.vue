@@ -378,7 +378,6 @@ const userInfo = computed(() => {
   const user = userStore.userInfo;
 
   if (!user) {
-    console.log("用户信息为空");
     return null;
   }
 
@@ -393,7 +392,6 @@ const userInfo = computed(() => {
     }
   }
 
-  console.log("用户信息验证通过:", user.nickName || user.nickname);
   return user;
 });
 
@@ -428,7 +426,6 @@ const getRoleText = (role) => {
 const getDisplayName = (user) => {
   // Layer 1: 入口点验证
   if (!user) {
-    console.log("用户对象为空，显示未登录用户");
     return "未登录用户";
   }
 
@@ -436,25 +433,21 @@ const getDisplayName = (user) => {
   let displayName = user.nickName || user.nickname || user.userName || user.name;
 
   if (displayName) {
-    console.log("找到用户昵称:", displayName);
     return displayName;
   }
 
   // Layer 3: 环境保护 - 生成临时显示名称
   if (user.wechat_openid) {
     displayName = `微信用户${user.wechat_openid.slice(-6)}`;
-    console.log("使用微信openid生成临时昵称:", displayName);
     return displayName;
   }
 
   if (user.phone_number) {
     displayName = `用户${user.phone_number.slice(-4)}`;
-    console.log("使用手机号生成临时昵称:", displayName);
     return displayName;
   }
 
   // Layer 4: 最终兜底
-  console.log("无法获取用户昵称，使用默认值");
   return "未设置昵称";
 };
 
@@ -574,14 +567,9 @@ const handleLogout = () => {
 // 页面显示时刷新用户数据
 onShow(() => {
   // Layer 1: 入口点验证 - 确保用户状态正确初始化
-  console.log("=== Layer 1: 个人中心onShow入口点验证 ===");
-  console.log("当前登录状态:", userStore.isLoggedIn);
-  console.log("用户信息:", userStore.userInfo);
-  console.log("用户角色:", userStore.role);
 
   // Layer 2: 业务逻辑验证 - 确保数据一致性
   if (!userStore.userInfo) {
-    console.log("用户信息为空，尝试初始化用户状态");
     userStore.initUserState();
   }
 
@@ -592,15 +580,6 @@ onShow(() => {
       console.error("重新获取用户信息失败:", error);
     });
   }
-
-  
-
-  // Layer 4: 调试日志 - 记录当前状态
-  console.log("=== Layer 4: 个人中心页面显示完成 ===");
-  console.log(
-    "最终用户昵称:",
-    userInfo.value?.nickName || userInfo.value?.nickname || "未设置昵称"
-  );
 });
 </script>
 

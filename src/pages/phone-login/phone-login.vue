@@ -139,10 +139,8 @@ async function onSendCode() {
   try {
     sending.value = true
     const purpose = activeTab.value==='register' ? 'register' : 'login'
-    console.log('🔍 发送验证码请求:', { phone: fullPhone.value, purpose })
     
     const res = await authApi.sendSmsCode({ phone: fullPhone.value, purpose })
-    console.log('🔍 发送验证码响应:', res)
     
     if (res.code === 1) {
       startCountdown()

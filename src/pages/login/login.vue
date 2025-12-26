@@ -189,7 +189,6 @@ const onWechatLogin = async () => {
       throw new Error('获取微信登录凭证失败')
     }
     
-    console.log('🔑 获取微信登录凭证成功')
     
     // Defense-in-depth: 直接使用code登录，后端会处理缺失的用户信息
     try {
@@ -199,7 +198,6 @@ const onWechatLogin = async () => {
       storage.remove('login_scenario')
       uni.removeStorageSync('login_scenario')
       
-      console.log('✅ 微信登录成功')
     } catch (loginError) {
       console.error('❌ 微信登录失败:', loginError)
       // 不再处理NEED_USER_INFO错误，因为后端支持仅code登录

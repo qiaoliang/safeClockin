@@ -139,18 +139,15 @@ onLoad((options) => {
   if (!checkPagePermission(PagePath.COMMUNITY_STAFF_MANAGE)) {
     return
   }
-  console.log('[工作人员管理] 权限检查通过')
   
   // 接收URL参数
   if (options.communityId) {
     currentCommunityId.value = options.communityId
     communityName.value = decodeURIComponent(options.communityName || '')
-    console.log('[工作人员管理] 使用传入的社区ID:', currentCommunityId.value)
   } else {
     // 使用当前用户的社区
     const userStore = useUserStore()
     currentCommunityId.value = userStore.userInfo?.communityId || ''
-    console.log('[工作人员管理] 使用用户当前社区ID:', currentCommunityId.value)
   }
   
   // 加载工作人员列表

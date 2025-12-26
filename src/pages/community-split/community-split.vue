@@ -115,7 +115,6 @@ onLoad(() => {
   if (!checkPagePermission(PagePath.COMMUNITY_SPLIT)) {
     return
   }
-  console.log('[社区拆分] 权限检查通过')
 })
 
 // 源社区ID

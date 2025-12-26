@@ -245,16 +245,7 @@ const loadStaffList = async (page = 1, isLoadMore = false) => {
       // Layer 3: 环境守卫 - 安全地访问响应字段
       const staff = response.data?.staff || []
       const pagination = response.data?.pagination || {}
-      
-      // Layer 4: 调试仪表 - 记录响应结构用于取证
-      console.log('专员列表API响应:', {
-        code: response.code,
-        has_staff: Array.isArray(staff),
-        staff_count: staff.length,
-        has_pagination: !!pagination,
-        pagination_fields: pagination
-      })
-      
+
       if (isLoadMore) {
         // 加载更多时追加数据
         staffList.value = [...staffList.value, ...staff]
@@ -313,9 +304,7 @@ const clearSearch = () => {
 
 // 显示添加专员模态框
 const showAddStaffModal = () => {
-  console.log('添加专员按钮被点击，设置showAddModal为true')
   showAddModal.value = true
-  console.log('showAddModal当前值:', showAddModal.value)
 }
 
 const hideAddStaffModal = () => {
@@ -329,14 +318,7 @@ const handleAddStaffConfirm = async (addedUsers) => {
     console.error('handleAddStaffConfirm: 缺少社区ID')
     return
   }
-  
-  // Layer 4: 调试仪表 - 记录添加操作
-  console.log('处理添加专员确认:', {
-    communityId: props.communityId,
-    addedUsersCount: addedUsers?.length || 0,
-    addedUsers: addedUsers || []
-  })
-  
+
   // Layer 2: 业务逻辑验证 - 重新加载专员列表
   try {
     // 保存当前列表长度作为基准
@@ -352,20 +334,10 @@ const handleAddStaffConfirm = async (addedUsers) => {
     const afterRefreshCount = staffList.value.length
     const expectedIncrease = addedUsers?.length || 0
     const actualIncrease = afterRefreshCount - beforeRefreshCount
-    
-    // Layer 4: 调试仪表 - 记录刷新结果
-    console.log('专员列表刷新验证:', {
-      beforeRefreshCount,
-      afterRefreshCount,
-      expectedIncrease,
-      actualIncrease,
-      match: actualIncrease === expectedIncrease
-    })
-    
+
     // 如果addedUsers有值，可以显示添加了多少个专员
     if (addedUsers && addedUsers.length > 0) {
-      console.log(`添加了${addedUsers.length}个专员:`, addedUsers.map(u => u.nickname || u.user_id))
-      
+
       // 可选：显示添加成功的提示
       if (actualIncrease > 0) {
         // 已经在子组件中显示过成功提示，这里不再重复显示
@@ -405,14 +377,7 @@ const handleDeleteStaff = (staff) => {
       if (res.confirm) {
         try {
           uni.showLoading({ title: '删除中...' })
-          
-          // Layer 4: 调试仪表 - 记录删除操作
-          console.log('开始删除专员:', {
-            userId: staff.user_id,
-            nickname: staff.nickname,
-            communityId: props.communityId
-          })
-          
+
           const response = await removeStaffMember(staff.user_id)
           
           // Layer 2: 业务逻辑验证 - 检查响应结构
@@ -427,15 +392,7 @@ const handleDeleteStaff = (staff) => {
             const originalLength = staffList.value.length
             staffList.value = staffList.value.filter(s => s.user_id !== staff.user_id)
             const newLength = staffList.value.length
-            
-            // Layer 4: 调试仪表 - 验证删除结果
-            console.log('删除结果验证:', {
-              originalLength,
-              newLength,
-              deleted: originalLength > newLength,
-              userId: staff.user_id
-            })
-            
+
             // 更新社区信息中的专员数量
             updateCommunityStaffCount()
           } else {
@@ -511,18 +468,12 @@ const fetchStaffList = async (page = 1) => {
     }
     
     // Layer 2: 业务逻辑验证 - 准备请求参数
-    const params = { 
-      page: page, 
+    const params = {
+      page: page,
       limit: pageSize.value,
       role: 'staff' // 只获取专员，不包括主管
     }
-    
-    // Layer 4: 调试仪表 - 记录请求详情
-    console.log('请求专员列表:', {
-      communityId: props.communityId,
-      params: params
-    })
-    
+
     const response = await getCommunityStaffList(props.communityId, params)
     
     // Layer 3: 环境守卫 - 验证响应结构
@@ -530,14 +481,7 @@ const fetchStaffList = async (page = 1) => {
       console.error('API返回无效响应类型:', typeof response)
       throw new Error('API返回无效响应')
     }
-    
-    // Layer 4: 调试仪表 - 记录响应摘要
-    console.log('API响应摘要:', {
-      code: response.code,
-      hasData: !!response.data,
-      dataKeys: response.data ? Object.keys(response.data) : []
-    })
-    
+
     return response
   } catch (error) {
     // Layer 3: 环境守卫 - 捕获并重新包装错误
@@ -561,19 +505,12 @@ const removeStaffMember = async (userId) => {
       console.error('removeStaffMember: 缺少社区ID')
       throw new Error('缺少社区ID')
     }
-    
+
     if (!userId) {
       console.error('removeStaffMember: 缺少用户ID')
       throw new Error('缺少用户ID')
     }
-    
-    // Layer 4: 调试仪表 - 记录API调用详情
-    console.log('调用removeCommunityStaff API:', {
-      communityId: props.communityId,
-      userId: userId,
-      timestamp: new Date().toISOString()
-    })
-    
+
     const response = await removeCommunityStaff(props.communityId, userId)
     
     // Layer 2: 业务逻辑验证 - 检查响应结构
@@ -581,14 +518,7 @@ const removeStaffMember = async (userId) => {
       console.error('removeStaffMember: API返回无效响应类型:', typeof response)
       throw new Error('API返回无效响应')
     }
-    
-    // Layer 4: 调试仪表 - 记录响应摘要
-    console.log('removeStaffMember API响应:', {
-      code: response.code,
-      msg: response.msg,
-      hasData: !!response.data
-    })
-    
+
     return response
   } catch (error) {
     // Layer 3: 环境守卫 - 捕获并重新包装错误
@@ -606,7 +536,6 @@ const removeStaffMember = async (userId) => {
 const updateCommunityStaffCount = () => {
   // 更新社区信息中的专员数量
   // 可以通过事件总线或props传递
-  console.log('更新社区专员数量')
 }
 
 // 组件挂载时加载数据

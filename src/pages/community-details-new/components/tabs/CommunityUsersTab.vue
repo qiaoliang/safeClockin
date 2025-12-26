@@ -151,7 +151,6 @@ const emit = defineEmits(['add-user', 'remove-user', 'refresh'])
 
 // 处理添加用户按钮点击
 const handleAddUserClick = () => {
-  console.log('CommunityUsersTab: 添加用户按钮被点击')
   emit('add-user')
 }
 

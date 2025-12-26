@@ -303,13 +303,10 @@ let searchTimer = null;
 watch(
   () => props.visible,
   (newVal) => {
-    console.log("AddStaffModal visible prop变化:", newVal);
     if (newVal) {
-      console.log("模态框显示，重置状态并搜索用户");
       resetState();
       // 延迟搜索，避免模态框动画期间搜索
       setTimeout(() => {
-        console.log("开始搜索用户...");
         searchUsers();
       }, 300);
     }
@@ -329,14 +326,6 @@ const resetState = () => {
 
 // 搜索用户
 const searchUsers = async (page = 1, isLoadMore = false) => {
-  console.log(
-    "searchUsers被调用，page:",
-    page,
-    "isLoadMore:",
-    isLoadMore,
-    "searchKeyword:",
-    searchKeyword.value
-  );
   if (isLoadMore) {
     loadingMore.value = true;
   } else {
@@ -345,13 +334,10 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   }
 
   try {
-    console.log("开始调用searchUsersExcludingBlackroom API...");
     // 调用后端API搜索用户（排除黑屋社区）
     const response = await searchUsersExcludingBlackroom(page);
-    console.log("searchUsersExcludingBlackroom API响应:", response);
 
     if (response.code === 1) {
-      console.log("API调用成功，数据:", response.data);
       
       // 适应后端返回的分页结构
       const users = response.data.users || [];
@@ -383,9 +369,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
       totalCount.value = pagination.total || 0;
       currentPage.value = pagination.page || 1;
       hasMore.value = pagination.has_more || false;
-      console.log("搜索完成，找到用户数:", filteredUsers.length, "分页信息:", pagination);
     } else {
-      console.log("API业务错误:", response.msg);
       error.value = response.msg || "搜索用户失败";
     }
   } catch (err) {
@@ -394,7 +378,6 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
   } finally {
     loading.value = false;
     loadingMore.value = false;
-    console.log("searchUsers完成");
   }
 };
 
@@ -464,16 +447,6 @@ const handleConfirm = async () => {
   if (selectedUsers.value.length === 0) return;
 
   try {
-    // Layer 1: 入口点验证 - 检查selectedUsers的数据类型和格式
-    console.log("🔍 Layer 1 - 入口点验证:");
-    console.log("  selectedUsers:", selectedUsers.value);
-    console.log("  selectedUsers类型:", typeof selectedUsers.value);
-    console.log(
-      "  第一个元素类型:",
-      selectedUsers.value.length > 0 ? typeof selectedUsers.value[0] : "空数组"
-    );
-    console.log("  communityId:", props.communityId, "类型:", typeof props.communityId);
-
     // 验证selectedUsers中的元素是否为有效ID
     const invalidIds = selectedUsers.value.filter((id) => {
       // 检查是否为有效数字或数字字符串
@@ -503,15 +476,6 @@ const handleConfirm = async () => {
         return parseInt(id, 10);
       }
       return id;
-    });
-
-    console.log("🔍 Layer 2 - 业务逻辑验证:");
-    console.log("  转换前的user_ids:", selectedUsers.value);
-    console.log("  转换后的user_ids:", user_ids_for_api);
-    console.log("  发送给API的数据结构:", {
-      community_id: props.communityId,
-      user_ids: user_ids_for_api,
-      role: "staff",
     });
 
     uni.showLoading({ title: "添加中...", mask: true });

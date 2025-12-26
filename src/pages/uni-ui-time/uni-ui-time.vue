@@ -131,13 +131,10 @@
 
 		watch: {
 			datetimesingle(newval) {
-				console.log("单选:", this.datetimesingle);
 			},
 			range(newval) {
-				console.log("范围选:", this.range);
 			},
 			datetimerange(newval) {
-				console.log("范围选:", this.datetimerange);
 			},
 		},
 		mounted() {
@@ -150,7 +147,6 @@
 		methods: {
 			change(e) {
 				this.single = e;
-				console.log("-change事件:", e);
 			},
 		},
 	};

@@ -298,21 +298,8 @@ export const useUserStore = defineStore("user", {
 
                 // 优先尝试从新的 userState 恢复
                 const savedState = storage.get("userState");
-                console.log("🔍 诊断: savedState =", savedState);
-                console.log("🔍 诊断: savedState 类型 =", typeof savedState);
 
                 if (savedState) {
-                    console.log("🔍 诊断: savedState.auth =", savedState.auth);
-                    console.log(
-                        "🔍 诊断: savedState.auth 类型 =",
-                        typeof savedState.auth
-                    );
-                    if (savedState.auth) {
-                        console.log(
-                            "🔍 诊断: savedState.auth.token =",
-                            savedState.auth.token
-                        );
-                    }
 
                     // 更宽松的验证逻辑 - 只要是对象就尝试恢复
                     if (savedState && typeof savedState === "object") {

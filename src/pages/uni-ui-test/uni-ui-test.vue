@@ -214,7 +214,6 @@ export default defineComponent({
     }
     
     const switchChange = (e: any) => {
-      console.log('开关状态变化:', e)
     }
     
     const change = (e: any) => {

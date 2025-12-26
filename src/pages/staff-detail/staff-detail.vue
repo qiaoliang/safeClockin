@@ -142,7 +142,6 @@ onLoad((options) => {
   if (!checkPagePermission(PagePath.STAFF_DETAIL)) {
     return
   }
-  console.log('[工作人员详情] 权限检查通过')
   
   if (options.userId) {
     currentCommunityId.value = options.communityId || ''

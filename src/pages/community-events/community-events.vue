@@ -383,7 +383,6 @@ const handleBack = () => {
 // 事件点击
 const handleEventClick = (event) => {
   // 可以跳转到事件详情页
-  console.log('查看事件详情:', event);
   // TODO: 实现事件详情页面
 };
 

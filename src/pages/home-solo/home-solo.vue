@@ -235,13 +235,11 @@ const tasksSubtitle = computed(() => {
 const userInfo = computed(() => {
   const user = userStore.userInfo;
   if (!user) {
-    console.log("用户信息为空");
     return null;
   }
 
   // 调试：检查社区信息
   if (user.community_id || user.community_name) {
-    console.log(`用户社区信息: ID=${user.community_id}, 名称=${user.community_name}`);
   }
 
   // 确保昵称字段存在
@@ -270,7 +268,6 @@ const getRoleText = (role) => {
 const getDisplayName = (user) => {
   // Layer 1: 入口点验证
   if (!user) {
-    console.log("用户对象为空，显示未登录用户");
     return "未登录用户";
   }
 
@@ -278,25 +275,21 @@ const getDisplayName = (user) => {
   let displayName = user.nickName || user.nickname || user.userName || user.name;
 
   if (displayName) {
-    console.log("找到用户昵称:", displayName);
     return displayName;
   }
 
   // Layer 3: 环境保护 - 生成临时显示名称
   if (user.wechat_openid) {
     displayName = `微信用户${user.wechat_openid.slice(-6)}`;
-    console.log("使用微信openid生成临时昵称:", displayName);
     return displayName;
   }
 
   if (user.phone_number) {
     displayName = `用户${user.phone_number.slice(-4)}`;
-    console.log("使用手机号生成临时昵称:", displayName);
     return displayName;
   }
 
   // Layer 4: 最终兜底
-  console.log("无法获取用户昵称，使用默认值");
   return "用户";
 };
 
@@ -315,7 +308,6 @@ const updateMainButton = () => {
   try {
     // 根据当前任务状态更新按钮显示
     const hasPendingTasks = pendingCheckinCount.value > 0;
-    console.log(`更新主按钮状态: ${hasPendingTasks ? '有待完成任务' : '无待完成任务'}`);
   } catch (error) {
     console.error("更新主按钮状态失败:", error);
   }
@@ -409,7 +401,6 @@ const createHelpEvent = async (userInfo) => {
       });
       
       // 可以在这里添加后续逻辑，比如跳转到求助详情页
-      console.log("求助事件创建成功:", response.data.data);
     } else {
       uni.showToast({
         title: response.data.msg || "求助失败",
@@ -468,10 +459,8 @@ const switchRole = (role) => {
   // 这里可以添加角色切换后的逻辑
   if (role === "supervisor") {
     // 切换到监护人视图的逻辑
-    console.log("切换到监护人视图");
   } else {
     // 切换到打卡视图的逻辑
-    console.log("切换到打卡视图");
   }
 };
 
@@ -526,13 +515,11 @@ const handleTaskAction = async (task) => {
 
 onMounted(() => {
   // 页面加载时的初始化逻辑
-  console.log("首页加载完成");
   initializePageData();
 });
 
 onShow(() => {
   // 页面显示时的逻辑
-  console.log("首页显示");
   
   // 确保用户信息存在
   if (!userStore.userInfo) {
@@ -574,7 +561,6 @@ const updateTaskData = () => {
     // 计算待打卡数量
     pendingCheckinCount.value = nearbyTasks.value.filter(task => task.status === 'pending').length;
     
-    console.log(`更新任务数据: ${nearbyTasks.value.length} 项任务，${pendingCheckinCount.value} 项待完成`);
   } catch (error) {
     console.error("更新任务数据失败:", error);
     nearbyTasks.value = [];

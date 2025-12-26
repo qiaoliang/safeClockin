@@ -177,7 +177,6 @@ onLoad(async (options) => {
   if (!checkPagePermission(PagePath.COMMUNITY_USER_MANAGE)) {
     return
   }
-  console.log('[社区用户管理] 权限检查通过')
   
   // 接收社区名称参数
   if (options.communityName) {

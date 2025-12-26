@@ -138,7 +138,6 @@ const handleEventCountClick = () => {
   
   if (!isStaffMember) {
     // 普通用户点击不做任何处理
-    console.log("普通用户点击事件数量，无响应");
     return;
   }
 

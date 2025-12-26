@@ -319,7 +319,6 @@ onLoad((options) => {
 onShow(() => {
   // 如果已经有社区ID，重新加载详情以确保数据是最新的
   if (communityId.value && !loading.value) {
-    console.log('页面重新显示，刷新社区详情数据')
     loadCommunityDetail()
   }
 })
@@ -395,12 +394,6 @@ const loadStaffList = async () => {
     if (response.code === 1) {
       // 根据API契约，后端返回的是staff字段
       staffList.value = response.data.staff || []
-      
-      // 调试日志
-      console.log('加载专员列表成功:', {
-        total: staffList.value.length,
-        data: staffList.value.slice(0, 3) // 只显示前3条用于调试
-      })
     } else {
       console.error('加载专员列表失败:', response.msg)
       staffList.value = []
@@ -520,10 +513,7 @@ const handleRemoveStaff = async (staffId) => {
 }
 
 const handleAddUser = () => {
-  console.log('community-details-new: handleAddUser被调用')
-  console.log('showAddUserModal当前值:', showAddUserModal.value)
   showAddUserModal.value = true
-  console.log('showAddUserModal设置后:', showAddUserModal.value)
 }
 
 const handleRemoveUser = async (userId) => {
@@ -651,7 +641,6 @@ const closeAddStaffModal = () => {
 
 const confirmAddStaff = async (staffData) => {
   try {
-    console.log('开始添加专员:', staffData)
     
     // 调用真实的API添加专员
     const response = await addCommunityStaff({
@@ -660,7 +649,6 @@ const confirmAddStaff = async (staffData) => {
       role: 'staff'
     })
     
-    console.log('添加专员API响应:', response)
     
     if (response.code === 1) {
       const addedCount = response.data?.added_count || 0
@@ -676,10 +664,8 @@ const confirmAddStaff = async (staffData) => {
         showAddStaffModal.value = false
         
         // 刷新专员列表 - 这是最关键的修复
-        console.log('开始刷新专员列表...')
         await refreshStaffList()
         
-        console.log('专员列表刷新完成')
       } else {
         uni.showToast({ 
           title: '添加失败', 

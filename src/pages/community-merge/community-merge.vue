@@ -111,7 +111,6 @@ onLoad(() => {
   if (!checkPagePermission(PagePath.COMMUNITY_MERGE)) {
     return
   }
-  console.log('[社区合并] 权限检查通过')
 })
 
 // 搜索关键词

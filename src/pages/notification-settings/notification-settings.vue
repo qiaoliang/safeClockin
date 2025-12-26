@@ -110,7 +110,6 @@ const toggleSetting = (key) => {
 const saveSettings = async () => {
   try {
     // 这里应调用保存通知设置的API
-    console.log('保存通知设置:', settings.value)
     // 模拟API调用
     // await request({
     //   url: '/api/notification/settings',
