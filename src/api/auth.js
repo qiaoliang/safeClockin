@@ -88,11 +88,40 @@ export const authApi = {
         transformedData[key] = value
       }
     }
-    console.log('🔍 updateUserProfile - 发送的数据:', transformedData)
+    console.log('updateUserProfile - 发送的数据:', transformedData)
     return request({
       url: '/api/user/profile',
       method: 'POST',
       data: transformedData
+    })
+  },
+  uploadAvatar:(file) => {
+    return new Promise((resolve, reject) => {
+      const userStore = useUserStore()
+      uni.uploadFile({
+        url: `${getAPIBaseURL()}/api/user/upload-avatar`,
+        filePath: file,
+        name: 'avatar',
+        header: {
+          'Authorization': `Bearer ${userStore.token}`
+        },
+        success: (res) => {
+          try {
+            const data = JSON.parse(res.data)
+            resolve(data)
+          } catch (e) {
+            reject(new Error('解析响应失败'))
+          }
+        },
+        fail: reject
+      })
+    })
+  },
+  changePassword:(data) => {
+    return request({
+      url: '/api/user/change-password',
+      method: 'POST',
+      data: data
     })
   },
   
