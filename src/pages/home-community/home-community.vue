@@ -133,6 +133,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 
 const userStore = useUserStore()
@@ -150,6 +151,30 @@ const userInfo = computed(() => userStore.userInfo)
 
 // 计算属性：是否是社区主管
 const isCommunityManager = computed(() => userStore.isCommunityManager)
+
+// 计算属性：是否是社区工作人员（role >= 2）
+const isCommunityStaff = computed(() => {
+  const role = userStore.userInfo?.role
+  return role !== undefined && role >= 2
+})
+
+// 权限检查
+const checkPermission = () => {
+  if (!isCommunityStaff.value) {
+    uni.showModal({
+      title: '权限提示',
+      content: '只有社区工作人员才能访问此页面',
+      showCancel: false,
+      confirmText: '知道了',
+      success: () => {
+        // 跳转到打卡首页
+        uni.switchTab({
+          url: '/pages/home-solo/home-solo'
+        })
+      }
+    })
+  }
+}
 
 // 显示快捷管理菜单
 const showQuickMenu = () => {
@@ -186,16 +211,35 @@ const showQuickMenu = () => {
 }
 
 // 跳转到未打卡详情
+
 const goToUncheckedDetail = () => {
+
   uni.navigateTo({
+
     url: '/pages/unchecked-detail/unchecked-detail'
+
   })
+
 }
 
 
 
+
+
 onMounted(() => {
+
   // 初始化数据，实际项目中应从API获取
+
+})
+
+
+
+onShow(() => {
+
+  // 页面显示时检查权限
+
+  checkPermission()
+
 })
 </script>
 
