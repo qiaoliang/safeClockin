@@ -88,6 +88,7 @@ export const authApi = {
         transformedData[key] = value
       }
     }
+    console.log('🔍 updateUserProfile - 发送的数据:', transformedData)
     return request({
       url: '/api/user/profile',
       method: 'POST',
