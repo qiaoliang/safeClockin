@@ -327,7 +327,7 @@ const handleToggleAddress = () => {
 }
 
 .info-label {
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   color: $uni-base-color;
   min-width: 80rpx;
   flex-shrink: 0;
@@ -335,7 +335,7 @@ const handleToggleAddress = () => {
 
 .info-value {
   flex: 1;
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   color: $uni-tabbar-color;
   text-align: right;
   overflow: hidden;
@@ -353,7 +353,7 @@ const handleToggleAddress = () => {
 .copy-hint,
 .expand-hint {
   color: $uni-primary;
-  font-size: 24rpx;
+  font-size: $uni-font-size-sm;
   margin-left: 12rpx;
 }
 
