@@ -43,7 +43,7 @@
             姓名
           </text>
           <text class="info-value">
-            {{ userInfo?.name || '未设置姓名' }}
+            {{ displayTruncatedName }}
           </text>
         </view>
 
@@ -133,6 +133,15 @@ const displayName = computed(() => {
   const user = props.userInfo
   if (!user) return '未登录用户'
   return user.nickName || user.nickname || user.userName || user.name || '用户'
+})
+
+// 计算属性：显示的姓名（截断到6个字符）
+const displayTruncatedName = computed(() => {
+  const name = props.userInfo?.name || '未设置姓名'
+  if (name.length > 6) {
+    return name.slice(0, 6) + '...'
+  }
+  return name
 })
 
 // 计算属性：用户角色文本
