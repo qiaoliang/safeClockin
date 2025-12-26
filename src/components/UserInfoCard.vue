@@ -32,77 +32,83 @@
 
     <!-- 详细信息列表 -->
     <view class="info-list">
-      <!-- 真实姓名 -->
-      <view class="info-item">
-        <text class="info-icon">
-          👤
-        </text>
-        <text class="info-label">
-          姓名
-        </text>
-        <text class="info-value">
-          {{ userInfo?.name || '未设置姓名' }}
-        </text>
+      <!-- 第一行：姓名和社区 -->
+      <view class="info-row">
+        <!-- 真实姓名 -->
+        <view class="info-item">
+          <text class="info-icon">
+            👤
+          </text>
+          <text class="info-label">
+            姓名
+          </text>
+          <text class="info-value">
+            {{ userInfo?.name || '未设置姓名' }}
+          </text>
+        </view>
+
+        <!-- 所在社区 -->
+        <view class="info-item">
+          <text class="info-icon">
+            🏠
+          </text>
+          <text class="info-label">
+            社区
+          </text>
+          <text class="info-value">
+            {{ userInfo?.community_name || '未加入社区' }}
+          </text>
+        </view>
       </view>
 
-      <!-- 所在社区 -->
-      <view class="info-item">
-        <text class="info-icon">
-          🏠
-        </text>
-        <text class="info-label">
-          社区
-        </text>
-        <text class="info-value">
-          {{ userInfo?.community_name || '未加入社区' }}
-        </text>
-      </view>
+      <!-- 第二行：电话和地址 -->
+      <view class="info-row">
+        <!-- 电话号码 -->
+        <view
+          class="info-item"
+          @click="handleCopyPhone"
+        >
+          <text class="info-icon">
+            📞
+          </text>
+          <text class="info-label">
+            电话
+          </text>
+          <text class="info-value">
+            {{ displayPhone }}
+          </text>
+          <text
+            v-if="userInfo?.phone_number"
+            class="copy-hint"
+          >
+            点击复制
+          </text>
+        </view>
 
-      <!-- 电话号码 -->
-      <view
-        class="info-item"
-        @click="handleCopyPhone"
-      >
-        <text class="info-icon">
-          📞
-        </text>
-        <text class="info-label">
-          电话
-        </text>
-        <text class="info-value">
-          {{ displayPhone }}
-        </text>
-        <text
-          v-if="userInfo?.phone_number"
-          class="copy-hint"
+        <!-- 个人地址 -->
+        <view
+          class="info-item address-item"
+          @click="handleToggleAddress"
         >
-          点击复制
-        </text>
-      </view>
-
-      <!-- 个人地址 -->
-      <view
-        class="info-item address-item"
-        @click="handleToggleAddress"
-      >
-        <text class="info-icon">
-          📍
-        </text>
-        <text class="info-label">
-          地址
-        </text>
-        <text
-          class="info-value"
-          :class="{ 'address-collapsed': !addressExpanded }"
-        >
-          {{ userInfo?.address || '未设置地址' }}
-        </text>
-        <text
-          v-if="shouldShowExpandHint"
-          class="expand-hint"
-        >
-          {{ addressExpanded ? '收起' : '展开' }}
-        </text>
+          <text class="info-icon">
+            📍
+          </text>
+          <text class="info-label">
+            地址
+          </text>
+          <text
+            class="info-value"
+            :class="{ 'address-collapsed': !addressExpanded }"
+          >
+            {{ userInfo?.address || '未设置地址' }}
+          </text>
+          <text
+            v-if="shouldShowExpandHint"
+            class="expand-hint"
+          >
+            {{ addressExpanded ? '收起' : '展开' }}
+          </text>
+        </view>
       </view>
     </view>
   </view>
@@ -284,15 +290,23 @@ const handleToggleAddress = () => {
   gap: 0;
 }
 
+.info-row {
+  display: flex;
+  gap: 0;
+}
+
+.info-row:not(:last-child) {
+  margin-bottom: 12rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
 .info-item {
   display: flex;
   align-items: center;
-  padding: 12rpx 0;
+  padding: 0;
   min-height: 64rpx;
-}
-
-.info-item:not(:last-child) {
-  border-bottom: 2rpx solid #f0f0f0;
+  flex: 1;
 }
 
 .info-icon {
@@ -300,12 +314,14 @@ const handleToggleAddress = () => {
   margin-right: 12rpx;
   width: 40rpx;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .info-label {
   font-size: 28rpx;
   color: $uni-base-color;
   min-width: 80rpx;
+  flex-shrink: 0;
 }
 
 .info-value {
@@ -313,6 +329,9 @@ const handleToggleAddress = () => {
   font-size: 28rpx;
   color: $uni-tabbar-color;
   text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .address-collapsed {
