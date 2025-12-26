@@ -584,6 +584,31 @@ function handleResponse(res, fullUrl, resolve, reject, options = {}) {
   if (res.statusCode === 200) {
     // 检查业务层面的错误 - 如果code为0表示错误
     if (res.data && res.data.code === 0) {
+      // 特殊处理：用户不存在 - 可能是 token 中的 user_id 与数据库不匹配
+      if (res.data.msg && res.data.msg.includes('用户不存在')) {
+        console.error('❌ 检测到用户不存在错误，可能是 token 无效或数据不一致')
+        const userStore = useUserStore()
+
+        // 自动清理无效的 token 和用户数据
+        console.log('🧹 自动清理无效的用户数据和 token')
+        userStore.logout()
+
+        // 提示用户重新登录
+        uni.showModal({
+          title: '提示',
+          content: '用户信息已过期，请重新登录',
+          showCancel: false,
+          success: () => {
+            uni.redirectTo({
+              url: '/pages/login/login'
+            })
+          }
+        })
+
+        reject(new Error(res.data.msg || '用户不存在'))
+        return
+      }
+      
       // 检查是否是token相关的错误（更精确的匹配）
       if (res.data.msg && 
           (res.data.msg.includes('token无效') || 
