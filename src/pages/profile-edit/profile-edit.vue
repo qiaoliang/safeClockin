@@ -330,7 +330,14 @@ const passwordForm = ref({
   confirm_password: ''
 })
 
-const displayPhone = computed(() => userStore.userInfo?.phone_number || '未关联')
+const displayPhone = computed(() => {
+  const phone = userStore.userInfo?.phone_number
+  if (!phone) return '未关联'
+  if (phone.length === 11) {
+    return `${phone.slice(0, 3)}****${phone.slice(-4)}`
+  }
+  return phone
+})
 const phoneBindText = computed(() => (userStore.userInfo?.phone_number ? '更换' : '关联'))
 
 // Phone bind modal
