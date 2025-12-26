@@ -1,105 +1,11 @@
 <!-- pages/profile/profile.vue -->
 <template>
   <view class="profile-container">
-    <!-- 用户信息区域 -->
-    <view class="user-info-section">
-      <view
-        class="user-avatar"
-        @click="editProfile"
-      >
-        <image
-          :src="userInfo?.avatarUrl || '/static/logo.png'"
-          class="avatar-image"
-          mode="aspectFill"
-        />
-        <view class="edit-btn">
-          <text class="edit-icon">
-            ✏️
-          </text>
-        </view>
-      </view>
-      <view class="user-details">
-        <text class="user-name">
-          {{ getDisplayName(userInfo) }}
-        </text>
-        <text class="user-role">
-          {{ getRoleText(userInfo?.role) }}
-        </text>
-      </view>
-    </view>
-
-    <!-- 扩展用户信息 -->
-    <view class="user-extended-info">
-      <!-- 真实姓名 -->
-      <view class="info-item">
-        <text class="info-icon">
-          👤
-        </text>
-        <text class="info-label">
-          姓名
-        </text>
-        <text class="info-value">
-          {{ userInfo?.name || '未设置姓名' }}
-        </text>
-      </view>
-
-      <!-- 所在社区 -->
-      <view class="info-item">
-        <text class="info-icon">
-          🏠
-        </text>
-        <text class="info-label">
-          社区
-        </text>
-        <text class="info-value">
-          {{ userInfo?.community_name || '未加入社区' }}
-        </text>
-      </view>
-
-      <!-- 电话号码 -->
-      <view
-        class="info-item"
-        @click="copyPhone"
-      >
-        <text class="info-icon">
-          📞
-        </text>
-        <text class="info-label">
-          电话
-        </text>
-        <text class="info-value">
-          {{ userInfo?.phone_number || '未绑定手机' }}
-        </text>
-        <text class="copy-hint">
-          点击复制
-        </text>
-      </view>
-
-      <!-- 个人地址 -->
-      <view
-        class="info-item address-item"
-        @click="toggleAddress"
-      >
-        <text class="info-icon">
-          📍
-        </text>
-        <text class="info-label">
-          地址
-        </text>
-        <text
-          class="info-value"
-          :class="{ 'address-collapsed': !addressExpanded }"
-        >
-          {{ userInfo?.address || '未设置地址' }}
-        </text>
-        <text
-          v-if="userInfo?.address && userInfo.address.length > 30"
-          class="expand-hint"
-        >
-          {{ addressExpanded ? '收起' : '展开' }}
-        </text>
-      </view>
-    </view>
+    <!-- 用户信息卡片 -->
+    <UserInfoCard
+      :user-info="userInfo"
+      @edit-profile="editProfile"
+    />
 
     <view
       v-if="needCompleteInfo"
@@ -307,11 +213,9 @@ import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 import { routeGuard } from "@/utils/router";
+import UserInfoCard from "@/components/UserInfoCard.vue";
 
 const userStore = useUserStore();
-
-// 地址展开状态
-const addressExpanded = ref(false);
 
 // 计算属性：社区管理菜单项 - 根据角色动态生成
 const communityManagementItems = computed(() => {
@@ -422,35 +326,6 @@ const getRoleText = (role) => {
   return roleMap[role] || "未知角色";
 };
 
-// 获取用户显示名称 - 添加多层防御
-const getDisplayName = (user) => {
-  // Layer 1: 入口点验证
-  if (!user) {
-    return "未登录用户";
-  }
-
-  // Layer 2: 业务逻辑验证 - 尝试多种昵称字段
-  let displayName = user.nickName || user.nickname || user.userName || user.name;
-
-  if (displayName) {
-    return displayName;
-  }
-
-  // Layer 3: 环境保护 - 生成临时显示名称
-  if (user.wechat_openid) {
-    displayName = `微信用户${user.wechat_openid.slice(-6)}`;
-    return displayName;
-  }
-
-  if (user.phone_number) {
-    displayName = `用户${user.phone_number.slice(-4)}`;
-    return displayName;
-  }
-
-  // Layer 4: 最终兜底
-  return "未设置昵称";
-};
-
 // 获取连续打卡天数（对于新用户显示0）
 const getConsecutiveCheckins = () => {
   // TODO: 从后端API获取实际的连续打卡天数
@@ -486,43 +361,6 @@ const navigateTo = (url) => {
 
 const editProfile = () => {
   routeGuard("/pages/profile-edit/profile-edit");
-};
-
-// 复制电话号码
-const copyPhone = () => {
-  const phone = userInfo.value?.phone_number;
-  if (!phone) {
-    uni.showToast({
-      title: '未绑定手机',
-      icon: 'none'
-    });
-    return;
-  }
-  uni.setClipboardData({
-    data: phone,
-    success: () => {
-      uni.showToast({
-        title: '已复制',
-        icon: 'success'
-      });
-    }
-  });
-};
-
-// 切换地址展开状态
-const toggleAddress = () => {
-  const address = userInfo.value?.address;
-  if (!address) {
-    uni.showToast({
-      title: '未设置地址',
-      icon: 'none'
-    });
-    return;
-  }
-  // 只有地址较长时才允许展开/收起
-  if (address.length > 30) {
-    addressExpanded.value = !addressExpanded.value;
-  }
 };
 
 const needCompleteInfo = computed(() => {
@@ -724,67 +562,6 @@ onShow(() => {
   width: fit-content;
 }
 
-.user-extended-info {
-  background: white;
-  border-radius: 24rpx;
-  margin-bottom: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-  padding: 24rpx 32rpx;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  padding: 16rpx 0;
-  border-bottom: 2rpx solid #f0f0f0;
-  transition: background-color 0.3s ease;
-}
-
-.info-item:last-child {
-  border-bottom: none;
-}
-
-.info-item:active {
-  background-color: #f8f8f8;
-}
-
-.info-icon {
-  font-size: 32rpx;
-  margin-right: 12rpx;
-  width: 32rpx;
-  text-align: center;
-}
-
-.info-label {
-  font-size: 24rpx;
-  color: #999;
-  width: 80rpx;
-}
-
-.info-value {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.address-collapsed {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.copy-hint,
-.expand-hint {
-  font-size: 24rpx;
-  color: #f48224;
-  margin-left: 16rpx;
-}
-
 .menu-section {
   background: white;
   border-radius: 24rpx;
@@ -801,8 +578,6 @@ onShow(() => {
   background: #fafafa;
   border-bottom: 2rpx solid #f0f0f0;
 }
-
-
 
 .menu-item {
   display: flex;
