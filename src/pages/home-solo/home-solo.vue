@@ -75,23 +75,30 @@
   <!-- 当前任务悬浮按钮 -->
   <button
     class="floating-tasks-btn"
-    @click="goToCheckinList"
+    :class="{
+      'btn-no-rules': hasNoRules,
+      'btn-all-completed': hasAllCompleted
+    }"
+    @click="handleTasksClick"
   >
     <view class="tasks-btn-content">
       <view class="tasks-icon-wrapper">
         <text class="tasks-icon">
-          📋
+          {{ tasksIcon }}
         </text>
-        <view class="tasks-badge">
+        <view
+          v-if="hasPendingTasks"
+          class="tasks-badge"
+        >
           {{ pendingCheckinCount }}
         </view>
       </view>
       <view class="tasks-text-content">
         <text class="tasks-title">
-          当前任务
+          {{ tasksTitle }}
         </text>
         <text class="tasks-subtitle">
-          还有 {{ pendingCheckinCount }} 项未完成
+          {{ tasksSubtitle }}
         </text>
       </view>
       <text class="tasks-arrow">
@@ -197,6 +204,32 @@ const checkinStore = useCheckinStore();
 const currentRole = ref('checkin');
 const pendingCheckinCount = ref(0);
 const nearbyTasks = ref([]);
+
+// 计算属性：任务状态
+const hasNoRules = computed(() => nearbyTasks.value.length === 0);
+const hasAllCompleted = computed(() => nearbyTasks.value.length > 0 && pendingCheckinCount.value === 0);
+const hasPendingTasks = computed(() => pendingCheckinCount.value > 0);
+
+// 计算属性：任务图标
+const tasksIcon = computed(() => {
+  if (hasNoRules.value) return '⏱️';
+  if (hasAllCompleted.value) return '✅';
+  return '📋';
+});
+
+// 计算属性：任务标题
+const tasksTitle = computed(() => {
+  if (hasNoRules.value) return '';
+  if (hasAllCompleted.value) return '';
+  return '当前任务';
+});
+
+// 计算属性：任务副标题
+const tasksSubtitle = computed(() => {
+  if (hasNoRules.value) return '开始行动，创建你的第一个打卡规则吧~';
+  if (hasAllCompleted.value) return '恭喜你，今日的打卡任务已全部完成。你是一个有超强行动力的人。';
+  return `还有 ${pendingCheckinCount.value} 项未完成`;
+});
 
 // 计算属性：用户信息
 const userInfo = computed(() => {
@@ -395,11 +428,19 @@ const createHelpEvent = async (userInfo) => {
   }
 };
 
-// 跳转到打卡事项列表
-const goToCheckinList = () => {
-  uni.navigateTo({
-    url: "/pages/checkin-list/checkin-list",
-  });
+// 处理任务按钮点击
+const handleTasksClick = () => {
+  if (hasNoRules.value) {
+    // 无规则时跳转到规则设置页面
+    uni.navigateTo({
+      url: "/pages/rule-setting/rule-setting",
+    });
+  } else {
+    // 有规则时跳转到打卡列表
+    uni.navigateTo({
+      url: "/pages/checkin-list/checkin-list",
+    });
+  }
 };
 
 // 获取问候语
@@ -761,6 +802,16 @@ const updateTaskData = () => {
   border: none;
   position: relative;
   overflow: hidden;
+}
+
+.floating-tasks-btn.btn-no-rules {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 16rpx 48rpx rgba(102, 126, 234, 0.4);
+}
+
+.floating-tasks-btn.btn-all-completed {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  box-shadow: 0 16rpx 48rpx rgba(17, 153, 142, 0.4);
 }
 
 .floating-tasks-btn::before {
