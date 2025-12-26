@@ -209,7 +209,7 @@ const handleToggleAddress = () => {
 .user-info-card {
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
+  padding: 24rpx;
   margin-bottom: $uni-font-size-base;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
@@ -217,16 +217,16 @@ const handleToggleAddress = () => {
 .user-header {
   display: flex;
   align-items: center;
-  margin-bottom: $uni-font-size-xl;
-  padding-bottom: $uni-font-size-xl;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
   border-bottom: 2rpx solid #f0f0f0;
 }
 
 .user-avatar {
   position: relative;
-  width: 104rpx;
-  height: 104rpx;
-  margin-right: $uni-font-size-base;
+  width: 96rpx;
+  height: 96rpx;
+  margin-right: 20rpx;
 }
 
 .avatar-image {
@@ -259,20 +259,20 @@ const handleToggleAddress = () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 6rpx;
 }
 
 .user-name {
-  font-size: $uni-font-size-xl;
+  font-size: 32rpx;
   font-weight: 600;
   color: $uni-tabbar-color;
 }
 
 .user-role {
   display: inline-block;
-  padding: 8rpx $uni-font-size-base;
-  border-radius: $uni-radius-base;
-  font-size: $uni-font-size-sm;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
   color: $uni-primary;
   background: rgba(244, 130, 36, 0.1);
   width: fit-content;
@@ -287,8 +287,8 @@ const handleToggleAddress = () => {
 .info-item {
   display: flex;
   align-items: center;
-  padding: $uni-font-size-base 0;
-  min-height: 72rpx;
+  padding: 12rpx 0;
+  min-height: 64rpx;
 }
 
 .info-item:not(:last-child) {
@@ -296,21 +296,21 @@ const handleToggleAddress = () => {
 }
 
 .info-icon {
-  font-size: $uni-font-size-lg;
-  margin-right: $uni-font-size-base;
-  width: 48rpx;
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  width: 40rpx;
   text-align: center;
 }
 
 .info-label {
-  font-size: $uni-font-size-sm;
+  font-size: 28rpx;
   color: $uni-base-color;
-  min-width: 96rpx;
+  min-width: 80rpx;
 }
 
 .info-value {
   flex: 1;
-  font-size: $uni-font-size-sm;
+  font-size: 28rpx;
   color: $uni-tabbar-color;
   text-align: right;
 }
@@ -325,8 +325,8 @@ const handleToggleAddress = () => {
 .copy-hint,
 .expand-hint {
   color: $uni-primary;
-  font-size: $uni-font-size-sm;
-  margin-left: 16rpx;
+  font-size: 24rpx;
+  margin-left: 12rpx;
 }
 
 .address-item:active {
