@@ -715,17 +715,31 @@ const confirmAddUser = async (data) => {
         uni.showToast({ title: response.msg || '创建用户失败', icon: 'none' })
       }
     } else if (data.type === 'add') {
-      // 普通社区：添加现有用户
+      // 普通社区：添加现有用户（支持批量添加）
+      const userIds = data.userIds || [data.userId]
       const response = await communityStore.addCommunityUsers(
         communityId.value,
-        [data.userId]
+        userIds
       )
       
       if (response.code === 1) {
-        uni.showToast({ 
-          title: response.data.added_count > 0 ? '添加成功' : '用户已在社区',
-          icon: 'success' 
-        })
+        const addedCount = response.data?.added_count || 0
+        const totalUsers = userIds.length
+        
+        if (addedCount > 0) {
+          uni.showToast({ 
+            title: totalUsers > 1 
+              ? `成功添加 ${addedCount} 名用户` 
+              : '添加成功',
+            icon: 'success' 
+          })
+        } else {
+          uni.showToast({ 
+            title: '用户已在社区',
+            icon: 'none' 
+          })
+        }
+        
         // 刷新用户列表
         await refreshUserList()
       } else {

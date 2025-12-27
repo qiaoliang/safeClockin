@@ -201,7 +201,7 @@
               </text>
             </view>
 
-            <!-- 搜索结果列表 -->
+            <!-- 搜索结果列表（支持多选） -->
             <view
               v-else
               class="result-list"
@@ -209,7 +209,8 @@
               <view
                 v-for="user in searchResults"
                 :key="user.userId"
-                class="result-item"
+                :class="['result-item', { selected: isSelected(user.userId) }]"
+                @click="toggleSelect(user)"
               >
                 <view class="user-info">
                   <view class="user-avatar">
@@ -228,24 +229,14 @@
                     </text>
                   </view>
                 </view>
-                <button
-                  class="add-button"
-                  :disabled="addingUser === user.userId"
-                  @click="handleAddExistingUser(user.userId)"
-                >
-                  <text
-                    v-if="addingUser === user.userId"
-                    class="button-text"
-                  >
-                    添加中...
-                  </text>
-                  <text
-                    v-else
-                    class="button-text"
-                  >
-                    添加
-                  </text>
-                </button>
+                
+                <!-- 选中状态图标 -->
+                <uni-icons
+                  v-if="isSelected(user.userId)"
+                  type="checkbox-filled"
+                  color="#F48224"
+                  size="24"
+                />
               </view>
             </view>
           </view>
@@ -282,6 +273,27 @@
             class="button-text"
           >
             确认创建
+          </text>
+        </button>
+
+        <!-- 普通社区：批量添加按钮 -->
+        <button
+          v-else
+          class="submit-button"
+          :disabled="selectedUsers.length === 0 || submitting"
+          @click="handleBatchAddUsers"
+        >
+          <text
+            v-if="submitting"
+            class="button-text"
+          >
+            添加中...
+          </text>
+          <text
+            v-else
+            class="button-text"
+          >
+            确认添加 ({{ selectedUsers.length }})
           </text>
         </button>
       </view>
@@ -361,6 +373,24 @@ const searchResults = ref([]);
 const searching = ref(false);
 const addingUser = ref(null);
 let searchTimer = null;
+
+// 多选相关状态
+const selectedUsers = ref([]);
+
+// 判断用户是否被选中
+const isSelected = (userId) => {
+  return selectedUsers.value.some(u => u.userId === userId);
+};
+
+// 切换用户选中状态
+const toggleSelect = (user) => {
+  const index = selectedUsers.value.findIndex(u => u.userId === user.userId);
+  if (index > -1) {
+    selectedUsers.value.splice(index, 1);
+  } else {
+    selectedUsers.value.push(user);
+  }
+};
 
 // 搜索防抖处理
 const handleSearchInput = () => {
@@ -529,15 +559,19 @@ const handleCreateUser = async () => {
   }
 };
 
-// 添加现有用户（普通社区）
-const handleAddExistingUser = async (userId) => {
-  try {
-    addingUser.value = userId;
+// 批量添加用户（普通社区）
+const handleBatchAddUsers = async () => {
+  if (selectedUsers.value.length === 0) {
+    return;
+  }
 
-    // 直接传递用户ID给父组件，由父组件调用社区添加API
+  try {
+    submitting.value = true;
+
+    // 传递选中的用户ID列表给父组件，由父组件调用社区添加API
     emit("confirm", {
       type: "add",
-      userId: userId,
+      userIds: selectedUsers.value.map(u => u.userId),
     });
 
     // 关闭模态框
@@ -549,7 +583,7 @@ const handleAddExistingUser = async (userId) => {
       icon: "none",
     });
   } finally {
-    addingUser.value = null;
+    submitting.value = false;
   }
 };
 
@@ -568,6 +602,7 @@ const resetForm = () => {
   searchResults.value = [];
   searching.value = false;
   addingUser.value = null;
+  selectedUsers.value = [];
   if (searchTimer) {
     clearTimeout(searchTimer);
     searchTimer = null;
@@ -891,6 +926,11 @@ onMounted(() => {
               box-shadow: $uni-shadow-card-hover;
             }
 
+            &.selected {
+              border: 2rpx solid $uni-primary;
+              background: rgba(244, 130, 36, 0.05);
+            }
+
             .user-info {
               display: flex;
               align-items: center;
@@ -925,23 +965,6 @@ onMounted(() => {
                   font-size: $uni-font-size-xs;
                   color: $uni-text-gray-600;
                 }
-              }
-            }
-
-            .add-button {
-              @include btn-primary;
-              padding: $uni-spacing-xs $uni-spacing-md;
-              font-size: $uni-font-size-xs;
-              border-radius: $uni-radius-sm;
-              min-width: 100rpx;
-
-              .button-text {
-                font-weight: $uni-font-weight-base;
-              }
-
-              &:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
               }
             }
           }
