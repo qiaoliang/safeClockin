@@ -42,7 +42,10 @@
           <text class="info-label">
             姓名
           </text>
-          <text class="info-value">
+          <text
+            class="info-value"
+            :class="{ 'empty-value': !userInfo?.name }"
+          >
             {{ displayTruncatedName }}
           </text>
         </view>
@@ -55,7 +58,10 @@
           <text class="info-label">
             社区
           </text>
-          <text class="info-value">
+          <text
+            class="info-value"
+            :class="{ 'empty-value': !userInfo?.community_name }"
+          >
             {{ userInfo?.community_name || '未加入社区' }}
           </text>
         </view>
@@ -74,7 +80,10 @@
           <text class="info-label">
             电话
           </text>
-          <text class="info-value">
+          <text
+            class="info-value"
+            :class="{ 'empty-value': !userInfo?.phone_number }"
+          >
             {{ displayPhone }}
           </text>
           <text
@@ -98,7 +107,7 @@
           </text>
           <text
             class="info-value"
-            :class="{ 'address-collapsed': !addressExpanded }"
+            :class="{ 'address-collapsed': !addressExpanded, 'empty-value': !userInfo?.address }"
           >
             {{ userInfo?.address || '未设置地址' }}
           </text>
@@ -337,7 +346,7 @@ const handleToggleAddress = () => {
   flex: 1;
   font-size: $uni-font-size-sm;
   color: $uni-tabbar-color;
-  text-align: right;
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -359,5 +368,9 @@ const handleToggleAddress = () => {
 
 .address-item:active {
   opacity: 0.7;
+}
+
+.empty-value {
+  color: $uni-text-light;
 }
 </style>
