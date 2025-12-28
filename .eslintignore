@@ -1,6 +1,8 @@
 # Ignore build outputs
+unpackage/
 unpackage/dist/
 unpackage/resources/
+src/unpackage/
 
 # Ignore third-party modules
 uni_modules/

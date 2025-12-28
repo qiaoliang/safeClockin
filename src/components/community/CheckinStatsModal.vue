@@ -7,47 +7,80 @@
     <view class="checkin-stats-modal">
       <!-- 标题栏 -->
       <view class="modal-header">
-        <text class="modal-title">逾期事项详情</text>
-        <view class="close-btn" @click="handleClose">
-          <text class="close-icon">×</text>
+        <text class="modal-title">
+          逾期事项详情
+        </text>
+        <view
+          class="close-btn"
+          @click="handleClose"
+        >
+          <text class="close-icon">
+            ×
+          </text>
         </view>
       </view>
 
       <!-- 规则列表 -->
-      <scroll-view class="modal-content" scroll-y>
+      <scroll-view
+        class="modal-content"
+        scroll-y
+      >
         <view
           v-for="(stat, index) in stats"
           :key="stat.rule_id"
           class="stat-item"
         >
           <!-- 规则简要信息 -->
-          <view class="stat-header" @click="toggleExpand(index)">
+          <view
+            class="stat-header"
+            @click="toggleExpand(index)"
+          >
             <view class="stat-left">
-              <text class="stat-icon">{{ stat.rule_icon }}</text>
-              <text class="stat-name">{{ stat.rule_name }}</text>
+              <text class="stat-icon">
+                {{ stat.rule_icon }}
+              </text>
+              <text class="stat-name">
+                {{ stat.rule_name }}
+              </text>
             </view>
             <view class="stat-right">
-              <text class="stat-total">{{ stat.total_missed }}人次</text>
-              <text class="expand-icon">{{ expandedIndex === index ? '▲' : '▼' }}</text>
+              <text class="stat-total">
+                {{ stat.total_missed }}人次
+              </text>
+              <text class="expand-icon">
+                {{ expandedIndex === index ? '▲' : '▼' }}
+              </text>
             </view>
           </view>
 
           <!-- 每日详情（可展开） -->
-          <view v-if="expandedIndex === index" class="stat-details">
+          <view
+            v-if="expandedIndex === index"
+            class="stat-details"
+          >
             <view
               v-for="(missed, dateIndex) in stat.daily_missed"
               :key="dateIndex"
               class="daily-item"
             >
-              <text class="daily-date">{{ stat.dates[dateIndex] }}</text>
-              <text class="daily-count">{{ missed }}人次</text>
+              <text class="daily-date">
+                {{ stat.dates[dateIndex] }}
+              </text>
+              <text class="daily-count">
+                {{ missed }}人次
+              </text>
             </view>
           </view>
         </view>
 
         <!-- 无数据提示 -->
-        <view v-if="stats.length === 0" class="empty-tip">
-          <text class="empty-text">暂无逾期事项</text>
+        <view
+          v-if="stats.length === 0"
+          class="empty-tip"
+        >
+          <text class="empty-text">
+            暂无逾期事项
+          </text>
         </view>
       </scroll-view>
     </view>

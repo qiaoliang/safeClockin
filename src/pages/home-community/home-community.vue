@@ -111,11 +111,20 @@
         </view>
         
         <!-- 无数据提示 -->
-        <view v-if="topIssues.length === 0" class="empty-tip">
-          <text v-if="totalRules === 0" class="empty-text">
+        <view
+          v-if="topIssues.length === 0"
+          class="empty-tip"
+        >
+          <text
+            v-if="totalRules === 0"
+            class="empty-text"
+          >
             无社区规则，请工作人员根据实际需要创建
           </text>
-          <text v-else class="empty-text">
+          <text
+            v-else
+            class="empty-text"
+          >
             社区真棒，所有人都能按时打卡
           </text>
         </view>

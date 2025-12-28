@@ -12,7 +12,10 @@
           class="community-avatar"
           mode="aspectFill"
         />
-        <view v-else class="community-avatar-placeholder">
+        <view
+          v-else
+          class="community-avatar-placeholder"
+        >
           <text class="placeholder-text">
             {{ currentCommunity?.name?.charAt(0) || '社' }}
           </text>
@@ -58,7 +61,10 @@
           class="item-avatar"
           mode="aspectFill"
         />
-        <view v-else class="item-avatar-placeholder">
+        <view
+          v-else
+          class="item-avatar-placeholder"
+        >
           <text class="item-placeholder-text">
             {{ community.name?.charAt(0) || '社' }}
           </text>

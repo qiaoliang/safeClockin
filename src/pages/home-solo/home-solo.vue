@@ -82,31 +82,31 @@
       }"
       @click="handleTasksClick"
     >
-    <view class="tasks-btn-content">
-      <view class="tasks-icon-wrapper">
-        <text class="tasks-icon">
-          {{ tasksIcon }}
-        </text>
-        <view
-          v-if="hasPendingTasks"
-          class="tasks-badge"
-        >
-          {{ pendingCheckinCount }}
+      <view class="tasks-btn-content">
+        <view class="tasks-icon-wrapper">
+          <text class="tasks-icon">
+            {{ tasksIcon }}
+          </text>
+          <view
+            v-if="hasPendingTasks"
+            class="tasks-badge"
+          >
+            {{ pendingCheckinCount }}
+          </view>
         </view>
-      </view>
-      <view class="tasks-text-content">
-        <text class="tasks-title">
-          {{ tasksTitle }}
+        <view class="tasks-text-content">
+          <text class="tasks-title">
+            {{ tasksTitle }}
+          </text>
+          <text class="tasks-subtitle">
+            {{ tasksSubtitle }}
+          </text>
+        </view>
+        <text class="tasks-arrow">
+          ›
         </text>
-        <text class="tasks-subtitle">
-          {{ tasksSubtitle }}
-        </text>
       </view>
-      <text class="tasks-arrow">
-        ›
-      </text>
-    </view>
-  </button>
+    </button>
   </view>
 
   <!-- 功能快捷入口 -->

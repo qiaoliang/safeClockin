@@ -72,11 +72,19 @@
         v-if="activeTab==='login-password'"
         class="row-options"
       >
-        <view class="remember-me" @click="rememberMe = !rememberMe">
+        <view
+          class="remember-me"
+          @click="rememberMe = !rememberMe"
+        >
           <checkbox :checked="rememberMe" />
           <text>记住手机号</text>
         </view>
-        <text class="forgot-password" @click="goToForgotPassword">忘记密码？</text>
+        <text
+          class="forgot-password"
+          @click="goToForgotPassword"
+        >
+          忘记密码？
+        </text>
       </view>
 
       <view
