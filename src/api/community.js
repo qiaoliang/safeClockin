@@ -169,3 +169,18 @@ export const checkCommunityAccess = (communityId) => {
     method: 'GET'
   })
 }
+
+/**
+ * 切换用户社区
+ * @param {string|number} communityId - 社区ID
+ * @returns {Promise} API响应
+ */
+export const switchCommunity = (communityId) => {
+  return request({
+    url: '/api/user/switch-community',
+    method: 'POST',
+    data: {
+      community_id: communityId
+    }
+  })
+}

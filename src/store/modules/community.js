@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { request } from '@/api/request'
 import { updateCommunity as updateCommunityAPI } from '@/api/community'
+import { useUserStore } from './user'
 
 export const useCommunityStore = defineStore('community', {
   state: () => ({
@@ -517,6 +518,61 @@ export const useCommunityStore = defineStore('community', {
     
     // ========== 辅助方法 ==========
     
+    /**
+     * 获取社区详情
+     * @param {string|number} communityId - 社区ID
+     */
+    async getCommunityDetail(communityId) {
+      try {
+        const response = await request({
+          url: `/api/communities/${communityId}`,
+          method: 'GET'
+        })
+
+        if (response.code === 1) {
+          // API 返回的数据结构是 { community: {...}, stats: {...} }
+          // 需要提取 community 字段，如果没有则使用 response.data 作为后备
+          this.currentCommunity = response.data.community || response.data
+        }
+
+        return response
+      } catch (error) {
+        console.error('获取社区详情失败:', error)
+        throw error
+      }
+    },
+
+    /**
+     * 切换社区
+     * @param {string|number} communityId - 社区ID
+     */
+    async switchCommunity(communityId) {
+      try {
+        const response = await request({
+          url: '/api/user/switch-community',
+          method: 'POST',
+          data: {
+            community_id: communityId
+          }
+        })
+        
+        if (response.code === 1) {
+          // 切换成功后，重新获取社区详情
+          await this.getCommunityDetail(communityId)
+          // 更新用户信息中的社区ID
+          const userStore = useUserStore()
+          if (userStore.userInfo) {
+            userStore.userInfo.community_id = communityId
+          }
+        }
+        
+        return response
+      } catch (error) {
+        console.error('切换社区失败:', error)
+        throw error
+      }
+    },
+
     /**
      * 设置当前社区
      * @param {Object} community - 社区对象

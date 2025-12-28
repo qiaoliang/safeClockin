@@ -15,23 +15,9 @@
       </view>
     </view>
 
-    <!-- 顶部用户信息 -->
-    <view class="user-info-section">
-      <view class="user-avatar">
-        <image 
-          :src="userInfo?.avatarUrl || '/static/logo.png'" 
-          class="avatar-image"
-          mode="aspectFill"
-        />
-      </view>
-      <view class="user-details">
-        <text class="user-name">
-          {{ userInfo?.nickName || '未登录用户' }}
-        </text>
-        <text class="user-role">
-          社区工作人员
-        </text>
-      </view>
+    <!-- 社区选择器 -->
+    <view class="community-selector-section">
+      <CommunitySelector @change="handleCommunityChange" />
     </view>
 
     <!-- 数据概览 -->
@@ -135,8 +121,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
+import { useCommunityStore } from '@/store/modules/community'
+import CommunitySelector from '@/components/community/CommunitySelector.vue'
 
 const userStore = useUserStore()
+const communityStore = useCommunityStore()
 const totalCount = ref(128)
 const checkinRate = ref(89.8)
 const uncheckedCount = ref(13)
@@ -145,9 +134,6 @@ const issuesList = ref([
   { id: 2, rank: '2.', name: '晚餐打卡', count: 6 },
   { id: 3, rank: '3.', name: '午餐打卡', count: 5 }
 ])
-
-// 计算属性：用户信息
-const userInfo = computed(() => userStore.userInfo)
 
 // 计算属性：是否是社区主管
 const isCommunityManager = computed(() => userStore.isCommunityManager)
@@ -158,12 +144,12 @@ const isCommunityStaff = computed(() => {
   return role !== undefined && role >= 2
 })
 
-// 权限检查
+// 权限检查：超级管理员和社区工作人员可以访问
 const checkPermission = () => {
-  if (!isCommunityStaff.value) {
+  if (!userStore.isSuperAdmin && !isCommunityStaff.value) {
     uni.showModal({
       title: '权限提示',
-      content: '只有社区工作人员才能访问此页面',
+      content: '只有超级管理员和社区工作人员才能访问此页面',
       showCancel: false,
       confirmText: '知道了',
       success: () => {
@@ -211,35 +197,70 @@ const showQuickMenu = () => {
 }
 
 // 跳转到未打卡详情
-
 const goToUncheckedDetail = () => {
-
   uni.navigateTo({
-
     url: '/pages/unchecked-detail/unchecked-detail'
-
   })
-
 }
 
+/**
+ * 处理社区切换
+ */
+const handleCommunityChange = async (community) => {
+  try {
+    uni.showLoading({
+      title: '切换中...'
+    })
 
+    // 调用 store 切换社区
+    await communityStore.switchCommunity(community.community_id)
 
+    // 重新加载页面数据
+    await loadPageData()
 
+    uni.hideLoading()
+    uni.showToast({
+      title: '切换成功',
+      icon: 'success'
+    })
+  } catch (error) {
+    uni.hideLoading()
+    console.error('切换社区失败:', error)
+    uni.showToast({
+      title: '切换失败',
+      icon: 'none'
+    })
+  }
+}
 
-onMounted(() => {
+/**
+ * 加载页面数据
+ */
+const loadPageData = async () => {
+  try {
+    // 获取社区列表
+    await communityStore.loadCommunities()
 
-  // 初始化数据，实际项目中应从API获取
+    // 获取当前社区详情
+    if (communityStore.currentCommunity?.community_id) {
+      await communityStore.getCommunityDetail(communityStore.currentCommunity.community_id)
+    }
 
+    // TODO: 加载社区统计数据（用户总数、打卡率等）
+    // 这里需要根据实际 API 调用
+  } catch (error) {
+    console.error('加载页面数据失败:', error)
+  }
+}
+
+onMounted(async () => {
+  // 初始化数据
+  await loadPageData()
 })
 
-
-
 onShow(() => {
-
   // 页面显示时检查权限
-
   checkPermission()
-
 })
 </script>
 
@@ -278,54 +299,12 @@ onShow(() => {
   }
 }
 
-.user-info-section {
-  margin-top: 24rpx;
-  margin-left: 32rpx;
-  margin-right: 32rpx;
-  display: flex;
-  align-items: center;
-  margin-bottom: $uni-radius-xxl;
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-}
-
-.user-avatar {
-  margin-right: $uni-font-size-base;
-}
-
-.avatar-image {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50rpx;
-  border: 4rpx solid $uni-primary;
-}
-
-.user-details {
-  flex: 1;
-}
-
-.user-name {
-  display: block;
-  font-size: $uni-font-size-xl;
-  font-weight: 600;
-  color: $uni-main-color;
-  margin-bottom: 8rpx;
-}
-
-.user-role {
-  display: block;
-  font-size: $uni-font-size-sm;
-  color: $uni-primary;
-  background: rgba(244, 130, 36, 0.1);
-  padding: 8rpx $uni-font-size-base;
-  border-radius: $uni-radius-base;
-  width: fit-content;
+.community-selector-section {
+  margin: 24rpx 32rpx;
 }
 
 .overview-section {
-  margin-bottom: $uni-radius-xxl;
+  margin: 0 32rpx $uni-radius-xxl;
 }
 
 .section-header {
@@ -394,7 +373,7 @@ onShow(() => {
 }
 
 .frequent-issues-section {
-  margin-bottom: $uni-radius-xxl;
+  margin: 0 32rpx $uni-radius-xxl;
 }
 
 .issues-list {
@@ -436,7 +415,7 @@ onShow(() => {
 }
 
 .unchecked-detail-section {
-  margin-bottom: $uni-radius-xxl;
+  margin: 0 32rpx $uni-radius-xxl;
 }
 
 .unchecked-detail-btn {
