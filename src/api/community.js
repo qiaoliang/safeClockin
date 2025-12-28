@@ -193,7 +193,7 @@ export const switchCommunity = (communityId) => {
  */
 export const getCommunityCheckinStats = (communityId, days = 7) => {
   return request({
-    url: `/api/communities/${communityId}/checkin-stats`,
+    url: `/api/community_checkin/stats/${communityId}/checkin-stats`,
     method: 'GET',
     data: { days }
   })
@@ -206,7 +206,7 @@ export const getCommunityCheckinStats = (communityId, days = 7) => {
  */
 export const getCommunityDailyStats = (communityId) => {
   return request({
-    url: `/api/communities/${communityId}/daily-stats`,
+    url: `/api/community_checkin/stats/${communityId}/daily-stats`,
     method: 'GET'
   })
 }
