@@ -171,13 +171,17 @@ function toBase64FromUint8(u8) {
     if (typeof uni !== 'undefined' && typeof uni.arrayBufferToBase64 === 'function') {
       base64 = uni.arrayBufferToBase64(u8.buffer)
     }
-  } catch(e) {}
+  } catch(e) {
+    // Ignore conversion errors
+  }
   if (!base64) {
     try {
       if (typeof Buffer !== 'undefined') {
         base64 = Buffer.from(u8).toString('base64')
       }
-    } catch(e) {}
+    } catch(e) {
+      // Ignore buffer conversion errors
+    }
   }
   if (!base64) {
     let bin = ''
@@ -202,6 +206,7 @@ function toBase64FromUint8(u8) {
     }
   }
   // 确保返回的 base64 只包含 ASCII 字符
+  // eslint-disable-next-line no-control-regex
   return base64.replace(/[^\x00-\x7F]/g, '')
 }
 
@@ -209,6 +214,7 @@ function fromBase64ToUint8(str) {
   function normalizeBase64(input) {
     if (!input || typeof input !== 'string') return null
     // 清理输入，确保只包含 ASCII 字符
+    // eslint-disable-next-line no-control-regex
     let s = input.trim().replace(/[^\x00-\x7F]/g, '').replace(/\s+/g, '')
     s = s.replace(/-/g, '+').replace(/_/g, '/')
     const pad = (4 - (s.length % 4)) % 4
@@ -226,12 +232,16 @@ function fromBase64ToUint8(str) {
       const ab = uni.base64ToArrayBuffer(normalized)
       return new Uint8Array(ab)
     }
-  } catch(e) {}
+  } catch(e) {
+    // Ignore conversion errors
+  }
   try {
     if (typeof Buffer !== 'undefined') {
       return new Uint8Array(Buffer.from(normalized, 'base64'))
     }
-  } catch(e) {}
+  } catch(e) {
+    // Ignore buffer conversion errors
+  }
   let bin = ''
   if (typeof atob === 'function') {
     try {
@@ -291,6 +301,7 @@ export function encodeObject(obj) {
   for (let i = 0; i < data.length; i++) out[i] = data[i] ^ mask[i]
   const base64 = toBase64FromUint8(out)
   // 确保返回的 base64 字符串只包含 ASCII 字符
+  // eslint-disable-next-line no-control-regex
   return base64.replace(/[^\x00-\x7F]/g, '')
 }
 
@@ -422,6 +433,7 @@ export function decodeObject(str) {
   if (!str || typeof str !== 'string') return null
   try {
     // 清理输入字符串，确保只包含有效的 base64 字符
+    // eslint-disable-next-line no-control-regex
     const cleanStr = str.replace(/[^\x00-\x7F]/g, '')
     const buf = fromBase64ToUint8(cleanStr)
     if (!buf || buf.length === 0) return null

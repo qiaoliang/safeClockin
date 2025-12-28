@@ -189,7 +189,7 @@
   </uni-section>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -213,10 +213,10 @@ export default defineComponent({
       })
     }
     
-    const switchChange = (e: any) => {
+    const switchChange = (e) => {
     }
     
-    const change = (e: any) => {
+    const change = (e) => {
       if (!e.show) {
         showPopup.value = false
       }

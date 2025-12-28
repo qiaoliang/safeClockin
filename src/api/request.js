@@ -463,6 +463,7 @@ export const request = (options) => {
             if (newToken && /[\u0080-\uFFFF]/.test(newToken)) {
               console.warn('新 Token 包含非 ASCII 字符，尝试清理...')
               // 尝试清理 token：移除非 ASCII 字符
+              // eslint-disable-next-line no-control-regex
               processedToken = newToken.replace(/[^\x00-\x7F]/g, '')
               console.warn('新 Token 已清理，移除了非 ASCII 字符')
             }
@@ -517,6 +518,7 @@ export const request = (options) => {
           console.warn('Token 包含非 ASCII 字符，尝试清理...')
           // 尝试清理 token：移除非 ASCII 字符
           const originalToken = token
+          // eslint-disable-next-line no-control-regex
           token = token.replace(/[^\x00-\x7F]/g, '')
           console.warn(`Token 已清理: 原始长度 ${originalToken.length} -> 清理后长度 ${token.length}`)
           console.warn('清理后的token前20字符:', token.substring(0, 20))

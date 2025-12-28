@@ -248,6 +248,7 @@
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { getHomePageByRole, routeGuard } from '@/utils/router'
+import { request } from '@/api/request'
 
 const isLoading = ref(false)
 const userStore = useUserStore()

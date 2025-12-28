@@ -202,7 +202,9 @@ async function mockLoginAPI(code, userInfo) {
   
   // 保存到本地存储
   // 保持与storage模块兼容：字符串则使用storage.set
-  try { uni.setStorageSync('token', mockResponse.token) } catch(e) {}
+  try { uni.setStorageSync('token', mockResponse.token) } catch(e) {
+    // Ignore storage errors
+  }
 }
 
 export function handleLoginError(error) {

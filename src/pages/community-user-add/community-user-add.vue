@@ -21,7 +21,7 @@
     <!-- 搜索结果列表 -->
     <view class="search-results">
       <view
-        v-for="(user, index) in searchResults"
+        v-for="user in searchResults"
         :key="user.user_id"
         :class="['add-user-item', {
           selected: isSelected(user.user_id),

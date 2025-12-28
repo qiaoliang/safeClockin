@@ -1,5 +1,7 @@
 // api/auth.js
 import { request } from './request'
+import { useUserStore } from '@/store/modules/user'
+import { getAPIBaseURL } from '@/config/index'
 
 export const authApi = {
   login:(loginData) => {
@@ -44,9 +46,9 @@ export const authApi = {
       return response
     });
   },
-  count:() => request({
-	  url: '/api/count',
-	  method:'GET'
+  count: () => request({
+    url: '/api/count',
+    method: 'GET'
   }),
   getUserProfile:() => {
     return request({
@@ -165,11 +167,6 @@ export const authApi = {
     data: data
   }),
   // 监督相关API
-  searchUsers:(params) => request({
-    url: '/api/user/search',
-    method: 'GET',
-    data: params
-  }),
   inviteSupervisor:(data) => request({
     url: '/api/supervision/invite',
     method: 'POST',

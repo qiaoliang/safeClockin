@@ -483,8 +483,6 @@ export const useUserStore = defineStore("user", {
 
                 // 使用统一的登录成功处理方法
                 return await this.processLoginSuccess(apiResponse, "微信");
-
-                return apiResponse.data;
             } catch (error) {
                 console.error("登录过程发生错误:", error);
                 throw error;
