@@ -123,6 +123,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import CommunitySelector from '@/components/community/CommunitySelector.vue'
+import { getCommunityDailyStats } from '@/api/community'
 
 const userStore = useUserStore()
 const communityStore = useCommunityStore()
@@ -246,10 +247,47 @@ const loadPageData = async () => {
       await communityStore.getCommunityDetail(communityStore.currentCommunity.community_id)
     }
 
-    // TODO: 加载社区统计数据（用户总数、打卡率等）
-    // 这里需要根据实际 API 调用
+    // 加载社区统计数据
+    await loadCommunityStats()
   } catch (error) {
     console.error('加载页面数据失败:', error)
+  }
+}
+
+/**
+ * 加载社区统计数据
+ */
+const loadCommunityStats = async () => {
+  try {
+    // Layer 3: 环境守卫 - 验证必要条件
+    if (!communityStore.currentCommunity?.community_id) {
+      console.warn('跳过加载统计数据：未选择社区')
+      return
+    }
+
+    if (typeof getCommunityDailyStats !== 'function') {
+      console.error('getCommunityDailyStats 不是函数，API 导入失败')
+      return
+    }
+
+    const response = await getCommunityDailyStats(communityStore.currentCommunity.community_id)
+
+    if (response.code === 1 && response.data) {
+      const stats = response.data
+
+      // Layer 2: 数据验证 - 确保数据类型正确
+      totalCount.value = typeof stats.user_count === 'number' ? stats.user_count : 0
+      checkinRate.value = typeof stats.checkin_rate === 'number' ? stats.checkin_rate : 0
+      uncheckedCount.value = typeof stats.unchecked_user_count === 'number' ? stats.unchecked_user_count : 0
+    }
+  } catch (error) {
+    console.error('加载社区统计数据失败:', error)
+    // Layer 4: 调试仪表 - 记录错误上下文
+    console.error('错误上下文:', {
+      communityId: communityStore.currentCommunity?.community_id,
+      apiFunctionExists: typeof getCommunityDailyStats === 'function',
+      timestamp: new Date().toISOString()
+    })
   }
 }
 

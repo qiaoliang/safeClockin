@@ -184,3 +184,15 @@ export const switchCommunity = (communityId) => {
     }
   })
 }
+
+/**
+ * 获取社区每日打卡统计
+ * @param {string|number} communityId - 社区ID
+ * @returns {Promise} API响应
+ */
+export const getCommunityDailyStats = (communityId) => {
+  return request({
+    url: `/api/communities/${communityId}/daily-stats`,
+    method: 'GET'
+  })
+}

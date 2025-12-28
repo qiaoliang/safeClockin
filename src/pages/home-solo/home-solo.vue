@@ -73,14 +73,15 @@
   </uni-card>
 
   <!-- 当前任务悬浮按钮 -->
-  <button
-    class="floating-tasks-btn"
-    :class="{
-      'btn-no-rules': hasNoRules,
-      'btn-all-completed': hasAllCompleted
-    }"
-    @click="handleTasksClick"
-  >
+  <view class="floating-tasks-section">
+    <button
+      class="floating-tasks-btn"
+      :class="{
+        'btn-no-rules': hasNoRules,
+        'btn-all-completed': hasAllCompleted
+      }"
+      @click="handleTasksClick"
+    >
     <view class="tasks-btn-content">
       <view class="tasks-icon-wrapper">
         <text class="tasks-icon">
@@ -106,6 +107,7 @@
       </text>
     </view>
   </button>
+  </view>
 
   <!-- 功能快捷入口 -->
   <uni-grid
@@ -777,6 +779,10 @@ const updateTaskData = () => {
   font-size: $uni-font-size-sm;
 }
 
+.floating-tasks-section {
+  margin: 0 32rpx 24rpx;
+}
+
 .floating-tasks-btn {
   width: 100%;
   background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
@@ -892,7 +898,7 @@ const updateTaskData = () => {
 }
 
 .today-tasks-section {
-  margin-bottom: 48rpx;
+  margin: 0 32rpx 48rpx;
 }
 
 .today-tasks-btn {
