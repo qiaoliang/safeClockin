@@ -98,7 +98,8 @@ const toggleExpand = (index) => {
 // 暴露方法给父组件
 defineExpose({
   open,
-  close: handleClose
+  close: handleClose,
+  toggleExpand
 })
 </script>
 
