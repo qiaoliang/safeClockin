@@ -180,6 +180,7 @@ const roleColor = computed(() => {
 // 计算属性：显示的电话号码（带掩码）
 const displayPhone = computed(() => {
   const phone = props.userInfo?.phone_number
+  console.log('[UserInfoCard] displayPhone - phone_number:', phone, 'userInfo:', props.userInfo)
   if (!phone) return '未绑定手机'
   if (phone.length === 11) {
     return `${phone.slice(0, 3)}****${phone.slice(-4)}`
