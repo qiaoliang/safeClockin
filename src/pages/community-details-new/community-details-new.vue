@@ -702,7 +702,7 @@ const confirmAddUser = async (data) => {
         communityId.value,
         {
           nickname: data.userData.nickname,
-          phone: data.userData.phoneNumber,
+          phone: data.userData.phone_number,
           remark: data.userData.remark || ''
         }
       )

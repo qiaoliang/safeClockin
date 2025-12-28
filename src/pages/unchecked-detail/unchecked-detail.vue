@@ -195,7 +195,7 @@ const callPerson = (person) => {
     success: (res) => {
       if (res.confirm) {
         uni.makePhoneCall({
-          phoneNumber: person.phone.replace(/\*/g, '8') // 替换*为实际号码
+          phone_number: person.phone.replace(/\*/g, '8') // 替换*为实际号码
         })
       }
     }

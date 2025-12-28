@@ -424,7 +424,6 @@ export const useUserStore = defineStore("user", {
                         apiResponse.data?.avatar_url,
                     role: apiResponse.data?.role || null,
                     phone:
-                        apiResponse.data?.phoneNumber ||
                         apiResponse.data?.phone_number,
                     wechatOpenid:
                         apiResponse.data?.wechatOpenid ||

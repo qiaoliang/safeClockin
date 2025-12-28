@@ -321,7 +321,7 @@ const passwordForm = ref({
 })
 
 const displayPhone = computed(() => {
-  const phone = userStore.userInfo?.phoneNumber
+  const phone = userStore.userInfo?.phone_number
   if (!phone) return '未关联'
   if (phone.length === 11) {
     return `${phone.slice(0, 3)}****${phone.slice(-4)}`

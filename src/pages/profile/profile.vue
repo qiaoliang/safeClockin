@@ -365,7 +365,7 @@ const editProfile = () => {
 
 const needCompleteInfo = computed(() => {
   const u = userInfo.value || {};
-  return !u.avatarUrl || !u.nickName || !u.phoneNumber;
+  return !u.avatarUrl || !u.nickName || !u.phone_number;
 });
 
 const needCommunityVerify = computed(() => {

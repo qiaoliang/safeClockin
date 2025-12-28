@@ -44,7 +44,7 @@ export function testLoginResponseTransformation() {
   console.log('转换后的登录响应:', transformedLogin)
   
   // 验证关键字段
-  const expectedFields = ['token', 'refreshToken', 'userId', 'wechatOpenid', 'phoneNumber', 'loginType', 'isNewUser']
+  const expectedFields = ['token', 'refreshToken', 'userId', 'wechatOpenid', 'phone_number', 'loginType', 'isNewUser']
   const hasAllFields = expectedFields.every(field => field in transformedLogin.data)
   
   console.log('是否包含所有预期字段:', hasAllFields)
@@ -62,7 +62,7 @@ export function testRegisterResponseTransformation() {
   console.log('转换后的注册响应:', transformedRegister)
   
   // 验证关键字段
-  const hasAllFields = ['token', 'refreshToken', 'userId', 'wechatOpenid', 'phoneNumber', 'loginType', 'isNewUser']
+  const hasAllFields = ['token', 'refreshToken', 'userId', 'wechatOpenid', 'phone_number', 'loginType', 'isNewUser']
     .every(field => field in transformedRegister.data)
   
   console.log('是否包含所有预期字段:', hasAllFields)
@@ -82,7 +82,7 @@ function transformResponse(response) {
       } else if (key === 'wechat_openid') {
         transformedData['wechatOpenid'] = value
       } else if (key === 'phone_number') {
-        transformedData['phoneNumber'] = value
+        transformedData['phone_number'] = value
       } else if (key === 'avatar_url') {
         transformedData['avatarUrl'] = value
       } else if (key === 'refresh_token') {

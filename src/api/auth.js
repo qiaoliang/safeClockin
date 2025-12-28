@@ -26,7 +26,7 @@ export const authApi = {
           } else if (key === 'wechat_openid') {
             transformedData['wechatOpenid'] = value
           } else if (key === 'phone_number') {
-            transformedData['phoneNumber'] = value
+            transformedData['phone_number'] = value
           } else if (key === 'avatar_url') {
             transformedData['avatarUrl'] = value
           } else if (key === 'refresh_token') {
@@ -64,7 +64,7 @@ export const authApi = {
           } else if (key === 'wechat_openid') {
             transformedData['wechatOpenid'] = value
           } else if (key === 'phone_number') {
-            transformedData['phoneNumber'] = value
+            transformedData['phone_number'] = value
           } else if (key === 'community_id') {
             transformedData['communityId'] = value
           } else {
@@ -238,7 +238,7 @@ export const authApi = {
         } else if (key === 'wechat_openid') {
           transformedData['wechatOpenid'] = value
         } else if (key === 'phone_number') {
-          transformedData['phoneNumber'] = value
+          transformedData['phone_number'] = value
         } else if (key === 'avatar_url') {
           transformedData['avatarUrl'] = value
         } else if (key === 'refresh_token') {
@@ -278,7 +278,7 @@ export const authApi = {
         } else if (key === 'wechat_openid') {
           transformedData['wechatOpenid'] = value
         } else if (key === 'phone_number') {
-          transformedData['phoneNumber'] = value
+          transformedData['phone_number'] = value
         } else if (key === 'avatar_url') {
           transformedData['avatarUrl'] = value
         } else if (key === 'refresh_token') {
@@ -316,7 +316,7 @@ export const authApi = {
       const transformedUsers = response.data.users.map(user => ({
         userId: user.user_id,
         nickname: user.nickname,
-        phoneNumber: user.phone_number,
+        phone_number: user.phone_number,
         avatarUrl: user.avatar_url,
         isSupervisor: user.is_supervisor
       }))
@@ -335,7 +335,7 @@ export const authApi = {
       const transformedUsers = response.data.users.map(user => ({
         userId: user.user_id,
         nickname: user.nickname,
-        phoneNumber: user.phone_number,
+        phone_number: user.phone_number,
         avatarUrl: user.avatar_url,
         isStaff: user.is_staff,
         communityId: user.community_id

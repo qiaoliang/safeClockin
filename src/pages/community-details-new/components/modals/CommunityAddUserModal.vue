@@ -224,7 +224,7 @@
                     </text>
                     <text class="user-phone">
                       {{
-                        formatPhoneNumber(user.phoneNumber)
+                        formatPhoneNumber(user.phone_number)
                       }}
                     </text>
                   </view>
@@ -534,7 +534,7 @@ const handleCreateUser = async () => {
         userData: {
           userId: response.data.userId,
           nickname: formData.value.nickname.trim(),
-          phoneNumber: formData.value.phone.trim(),
+          phone_number: formData.value.phone.trim(),
           remark: formData.value.remark.trim(),
         },
       });

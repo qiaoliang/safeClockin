@@ -82,12 +82,12 @@
           </text>
           <text
             class="info-value"
-            :class="{ 'empty-value': !userInfo?.phoneNumber }"
+            :class="{ 'empty-value': !userInfo?.phone_number }"
           >
             {{ displayPhone }}
           </text>
           <text
-            v-if="userInfo?.phoneNumber"
+            v-if="userInfo?.phone_number"
             class="copy-hint"
           >
             点击复制
@@ -179,8 +179,8 @@ const roleColor = computed(() => {
 
 // 计算属性：显示的电话号码（带掩码）
 const displayPhone = computed(() => {
-  const phone = props.userInfo?.phoneNumber
-  console.log('[UserInfoCard] displayPhone - phoneNumber:', phone, 'userInfo:', props.userInfo)
+  const phone = props.userInfo?.phone_number
+  console.log('[UserInfoCard] displayPhone - phone_number:', phone, 'userInfo:', props.userInfo)
   if (!phone) return '未绑定手机'
   if (phone.length === 11) {
     return `${phone.slice(0, 3)}****${phone.slice(-4)}`
@@ -201,7 +201,7 @@ const handleEditProfile = () => {
 
 // 处理复制电话号码
 const handleCopyPhone = () => {
-  const phone = props.userInfo?.phoneNumber
+  const phone = props.userInfo?.phone_number
   if (!phone) return
   
   uni.setClipboardData({

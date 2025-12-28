@@ -170,7 +170,7 @@ const callPerson = () => {
       if (res.confirm) {
         // 实际项目中应有电话号码
         uni.makePhoneCall({
-          phoneNumber: '13800138000'
+          phone_number: '13800138000'
         })
       }
     }
