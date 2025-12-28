@@ -1,0 +1,12 @@
+# Ignore build outputs
+unpackage/dist/
+unpackage/resources/
+
+# Ignore third-party modules
+uni_modules/
+
+# Ignore test files
+tests/
+
+# Ignore node_modules
+node_modules/

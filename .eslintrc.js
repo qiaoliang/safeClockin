@@ -28,7 +28,7 @@ module.exports = {
     'vue/no-unused-vars': 'error',
     
     // General rules
-    'no-console': 'warn',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-unused-vars': 'warn',
     'prefer-const': 'error'
   }
