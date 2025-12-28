@@ -186,6 +186,20 @@ export const switchCommunity = (communityId) => {
 }
 
 /**
+ * 获取社区打卡统计
+ * @param {string|number} communityId - 社区ID
+ * @param {number} days - 统计天数，默认7天
+ * @returns {Promise} API响应
+ */
+export const getCommunityCheckinStats = (communityId, days = 7) => {
+  return request({
+    url: `/api/communities/${communityId}/checkin-stats`,
+    method: 'GET',
+    data: { days }
+  })
+}
+
+/**
  * 获取社区每日打卡统计
  * @param {string|number} communityId - 社区ID
  * @returns {Promise} API响应

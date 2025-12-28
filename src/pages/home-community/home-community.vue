@@ -26,9 +26,6 @@
         <text class="section-title">
           数据概览
         </text>
-        <text class="section-subtitle">
-          辖区内用户情况
-        </text>
       </view>
       
       <view class="overview-cards">
@@ -73,32 +70,64 @@
     <!-- 高频逾期事项 -->
     <view class="frequent-issues-section">
       <view class="section-header">
-        <text class="section-title">
-          高频逾期事项
-        </text>
-        <text class="section-subtitle">
-          近期未完成打卡最多的事项
+        <view class="section-title-group">
+          <text class="section-title">
+            高频逾期事项
+          </text>
+          <text class="section-subtitle">
+            近期未完成打卡最多的事项
+          </text>
+        </view>
+        <text 
+          v-if="totalRules > 3"
+          class="more-link"
+          @click="showAllStats"
+        >
+          更多
         </text>
       </view>
       
       <view class="issues-list">
         <view
-          v-for="issue in issuesList"
-          :key="issue.id"
+          v-for="(stat, index) in topIssues"
+          :key="stat.rule_id"
           class="issue-item"
+          @click="showStatDetail(stat)"
         >
           <text class="issue-rank">
-            {{ issue.rank }}
+            {{ index + 1 }}.
+          </text>
+          <text class="issue-icon">
+            {{ stat.rule_icon }}
           </text>
           <text class="issue-name">
-            {{ issue.name }}
+            {{ stat.rule_name }}
           </text>
-          <text class="issue-count">
-            {{ issue.count }}人未完成
+          <text 
+            :class="['issue-count', stat.total_missed > 0 ? 'issue-count-error' : 'issue-count-success']"
+          >
+            {{ stat.total_missed }}人次
+          </text>
+        </view>
+        
+        <!-- 无数据提示 -->
+        <view v-if="topIssues.length === 0" class="empty-tip">
+          <text v-if="totalRules === 0" class="empty-text">
+            无社区规则，请工作人员根据实际需要创建
+          </text>
+          <text v-else class="empty-text">
+            社区真棒，所有人都能按时打卡
           </text>
         </view>
       </view>
     </view>
+
+    <!-- 打卡统计模态框 -->
+    <CheckinStatsModal
+      ref="checkinStatsModal"
+      :stats="allStats"
+      @close="handleModalClose"
+    />
 
     <!-- 未打卡详情按钮 -->
     <view class="unchecked-detail-section">
@@ -123,18 +152,22 @@ import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import CommunitySelector from '@/components/community/CommunitySelector.vue'
-import { getCommunityDailyStats } from '@/api/community'
+import CheckinStatsModal from '@/components/community/CheckinStatsModal.vue'
+import { getCommunityDailyStats, getCommunityCheckinStats } from '@/api/community'
 
 const userStore = useUserStore()
 const communityStore = useCommunityStore()
 const totalCount = ref(128)
 const checkinRate = ref(89.8)
 const uncheckedCount = ref(13)
-const issuesList = ref([
-  { id: 1, rank: '1.', name: '睡觉打卡', count: 8 },
-  { id: 2, rank: '2.', name: '晚餐打卡', count: 6 },
-  { id: 3, rank: '3.', name: '午餐打卡', count: 5 }
-])
+const checkinStatsModal = ref(null)
+const allStats = ref([])
+const totalRules = ref(0)
+
+// 计算属性：显示前3个逾期事项
+const topIssues = computed(() => {
+  return allStats.value.slice(0, 3)
+})
 
 // 计算属性：是否是社区主管
 const isCommunityManager = computed(() => userStore.isCommunityManager)
@@ -249,6 +282,9 @@ const loadPageData = async () => {
 
     // 加载社区统计数据
     await loadCommunityStats()
+    
+    // 加载打卡统计
+    await loadCheckinStats()
   } catch (error) {
     console.error('加载页面数据失败:', error)
   }
@@ -259,9 +295,7 @@ const loadPageData = async () => {
  */
 const loadCommunityStats = async () => {
   try {
-    // Layer 3: 环境守卫 - 验证必要条件
     if (!communityStore.currentCommunity?.community_id) {
-      console.warn('跳过加载统计数据：未选择社区')
       return
     }
 
@@ -272,33 +306,102 @@ const loadCommunityStats = async () => {
 
     const response = await getCommunityDailyStats(communityStore.currentCommunity.community_id)
 
-    if (response.code === 1 && response.data) {
+    if (response.code === 1) {
       const stats = response.data
-
-      // Layer 2: 数据验证 - 确保数据类型正确
       totalCount.value = typeof stats.user_count === 'number' ? stats.user_count : 0
       checkinRate.value = typeof stats.checkin_rate === 'number' ? stats.checkin_rate : 0
       uncheckedCount.value = typeof stats.unchecked_user_count === 'number' ? stats.unchecked_user_count : 0
     }
   } catch (error) {
     console.error('加载社区统计数据失败:', error)
-    // Layer 4: 调试仪表 - 记录错误上下文
-    console.error('错误上下文:', {
-      communityId: communityStore.currentCommunity?.community_id,
-      apiFunctionExists: typeof getCommunityDailyStats === 'function',
-      timestamp: new Date().toISOString()
-    })
   }
 }
 
+/**
+ * 加载打卡统计
+ */
+const loadCheckinStats = async () => {
+  try {
+    // Layer 1: 入口点验证 - 确保有当前社区
+    if (!communityStore.currentCommunity?.community_id) {
+      console.warn('没有当前社区，跳过加载打卡统计')
+      return
+    }
+
+    const response = await getCommunityCheckinStats(communityStore.currentCommunity.community_id, 7)
+
+    // Layer 1: 入口点验证 - 检查响应格式
+    if (response.code !== 1) {
+      console.error('API 返回失败:', response.msg)
+      return
+    }
+
+    // Layer 1: 入口点验证 - 验证数据结构
+    if (!response.data || !Array.isArray(response.data.stats)) {
+      console.error('API 返回数据格式错误:', response.data)
+      return
+    }
+
+    // Layer 2: 业务逻辑验证 - 确保数据类型正确
+    const stats = response.data.stats || []
+    const totalRulesFromApi = response.data.total_rules || 0
+
+    // Layer 3: 环境守卫 - 防止负数
+    const validatedTotalRules = Math.max(0, totalRulesFromApi)
+
+    // Layer 4: 调试仪表 - 记录数据状态
+    console.debug(`打卡统计加载成功: 规则数=${validatedTotalRules}, 统计项数=${stats.length}`)
+
+    allStats.value = stats
+    totalRules.value = validatedTotalRules
+  } catch (error) {
+    console.error('加载打卡统计失败:', error)
+    // Layer 4: 调试仪表 - 记录错误详情
+    console.error('错误堆栈:', error.stack)
+  }
+}
+
+/**
+ * 显示所有统计
+ */
+const showAllStats = () => {
+  checkinStatsModal.value?.open()
+}
+
+/**
+ * 显示单个规则详情
+ */
+const showStatDetail = (stat) => {
+  // 找到该规则在 allStats 中的索引
+  const index = allStats.value.findIndex(s => s.rule_id === stat.rule_id)
+  if (index !== -1) {
+    // 打开模态框并展开该项
+    checkinStatsModal.value?.open()
+    // 需要在模态框组件中添加方法来设置展开项
+    setTimeout(() => {
+      checkinStatsModal.value?.toggleExpand(index)
+    }, 100)
+  }
+}
+
+/**
+ * 模态框关闭回调
+ */
+const handleModalClose = () => {
+  // 可以在这里添加关闭后的处理逻辑
+}
+
 onMounted(async () => {
-  // 初始化数据
+  // 初始化数据 - 只在首次挂载时执行
   await loadPageData()
 })
 
 onShow(() => {
   // 页面显示时检查权限
   checkPermission()
+  
+  // 刷新页面数据 - 每次显示都执行
+  loadPageData()
 })
 </script>
 
@@ -347,6 +450,13 @@ onShow(() => {
 
 .section-header {
   margin-bottom: $uni-font-size-base;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title-group {
+  flex: 1;
 }
 
 .section-title {
@@ -361,6 +471,13 @@ onShow(() => {
   display: block;
   font-size: $uni-font-size-sm;
   color: $uni-base-color;
+}
+
+.more-link {
+  font-size: $uni-font-size-base;
+  color: $uni-info;
+  text-decoration: underline;
+  margin-left: $uni-spacing-base;
 }
 
 .overview-cards {
@@ -424,8 +541,8 @@ onShow(() => {
 .issue-item {
   display: flex;
   align-items: center;
-  padding: $uni-radius-base 0;
-  border-bottom: 2rpx solid #F8F8F8;
+  padding: $uni-spacing-base 0;
+  border-bottom: 2rpx solid $uni-bg-color-lighter;
 }
 
 .issue-item:last-child {
@@ -436,8 +553,13 @@ onShow(() => {
   font-size: $uni-font-size-base;
   font-weight: 600;
   color: $uni-tabbar-color;
-  margin-right: $uni-radius-base;
+  margin-right: $uni-spacing-base;
   width: 40rpx;
+}
+
+.issue-icon {
+  font-size: 48rpx;
+  margin-right: $uni-spacing-base;
 }
 
 .issue-name {
@@ -449,7 +571,26 @@ onShow(() => {
 
 .issue-count {
   font-size: $uni-font-size-sm;
+  font-weight: 500;
+}
+
+.issue-count-error {
+  color: $uni-error;
+}
+
+.issue-count-success {
+  color: $uni-success;
+}
+
+.empty-tip {
+  padding: $uni-spacing-xxl;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: $uni-font-size-base;
   color: $uni-base-color;
+  line-height: 1.5;
 }
 
 .unchecked-detail-section {
