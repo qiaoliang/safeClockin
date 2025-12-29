@@ -193,7 +193,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
@@ -514,6 +514,25 @@ const handleTaskAction = async (task) => {
 onMounted(() => {
   // 页面加载时的初始化逻辑
   initializePageData();
+
+  // 监听打卡规则更新事件
+  uni.$on('checkinRulesUpdated', async (data) => {
+    console.log('收到打卡规则更新事件:', data);
+    try {
+      // 强制刷新打卡数据
+      await checkinStore.refreshData();
+      // 更新任务显示
+      updateTaskData();
+      console.log('打卡数据已刷新');
+    } catch (error) {
+      console.error('刷新打卡数据失败:', error);
+    }
+  });
+});
+
+onUnmounted(() => {
+  // 清理事件监听
+  uni.$off('checkinRulesUpdated');
 });
 
 onShow(() => {
