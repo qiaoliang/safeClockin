@@ -265,17 +265,19 @@
     <uni-popup-dialog
       type="info"
       title="关闭事件"
-      content="请说明事件当前的现状和关闭原因："
       :show-close="true"
       @confirm="confirmCloseEvent"
       @close="showCloseModal = false"
     >
-      <textarea
-        v-model="closeReason"
-        class="close-reason-input"
-        placeholder="请输入关闭原因（至少5个字符）"
-        :maxlength="200"
-      />
+      <view class="close-event-content">
+        <text class="close-event-hint">请说明事件当前的现状和关闭原因：</text>
+        <textarea
+          v-model="closeReason"
+          class="close-reason-input"
+          placeholder="请输入关闭原因（至少5个字符）"
+          :maxlength="200"
+        />
+      </view>
     </uni-popup-dialog>
   </uni-popup>
 </template>
