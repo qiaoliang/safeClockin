@@ -82,5 +82,6 @@ const hasRequiredRole = (url, userRole) => {
 export const getHomePageByRole = (role) => {
     if (role === "solo") return "/pages/home-solo/home-solo";
     if (role === "community") return "/pages/home-community/home-community";
+    if (role === 4 || role === "超级系统管理员") return "/pages/profile/profile";
     return "/pages/home-solo/home-solo";
 };

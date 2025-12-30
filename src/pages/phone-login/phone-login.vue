@@ -118,6 +118,7 @@ import { ref, computed, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { authApi } from '@/api/auth'
 import { useUserStore } from '@/store/modules/user'
+import { getHomePageByRole } from '@/utils/router'
 
 const userStore = useUserStore()
 const activeTab = ref('login-code')
@@ -290,7 +291,10 @@ async function onSubmit() {
 async function afterLogin(res) {
   try {
     await userStore.processLoginSuccess(res, '手机')
-    uni.switchTab({ url: '/pages/home-solo/home-solo' })
+    // 根据用户角色跳转到对应页面
+    const userInfo = userStore.userInfo
+    const homePage = getHomePageByRole(userInfo?.role)
+    uni.switchTab({ url: homePage })
   } catch (error) {
     console.error('登录后处理失败:', error)
     uni.showToast({ title: '登录处理失败', icon: 'none' })
