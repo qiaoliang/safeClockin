@@ -80,8 +80,23 @@ const hasRequiredRole = (url, userRole) => {
 };
 
 export const getHomePageByRole = (role) => {
-    if (role === "solo") return "/pages/home-solo/home-solo";
-    if (role === "community") return "/pages/home-community/home-community";
-    if (role === 4 || role === "超级系统管理员") return "/pages/profile/profile";
+    // 普通用户 (solo)
+    if (role === 1 || role === "普通用户" || role === "solo") {
+        return "/pages/home-solo/home-solo";
+    }
+    
+    // 社区工作人员 (社区专员和社区主管)
+    if (role === 2 || role === "社区专员" || 
+        role === 3 || role === "社区主管" || 
+        role === "community") {
+        return "/pages/home-community/home-community";
+    }
+    
+    // 超级系统管理员
+    if (role === 4 || role === "超级系统管理员") {
+        return "/pages/profile/profile";
+    }
+    
+    // 默认返回 solo 首页
     return "/pages/home-solo/home-solo";
 };
