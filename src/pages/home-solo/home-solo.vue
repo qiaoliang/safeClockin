@@ -258,17 +258,13 @@
   <!-- 关闭事件模态对话框 -->
   <uni-popup
     ref="closePopup"
-    type="dialog"
-    :show="showCloseModal"
-    @close="showCloseModal = false"
+    type="center"
+    @change="onPopupChange"
   >
-    <uni-popup-dialog
-      type="info"
-      title="关闭事件"
-      :show-close="true"
-      @confirm="confirmCloseEvent"
-      @close="showCloseModal = false"
-    >
+    <view class="close-event-modal">
+      <view class="close-event-header">
+        <text class="close-event-title">关闭事件</text>
+      </view>
       <view class="close-event-content">
         <text class="close-event-hint">请说明事件当前的现状和关闭原因：</text>
         <textarea
@@ -278,7 +274,15 @@
           :maxlength="200"
         />
       </view>
-    </uni-popup-dialog>
+      <view class="close-event-footer">
+        <button class="close-event-btn cancel-btn" @click="handleCancelClose">
+          取消
+        </button>
+        <button class="close-event-btn confirm-btn" @click="confirmCloseEvent">
+          确认
+        </button>
+      </view>
+    </view>
   </uni-popup>
 </template>
 
@@ -300,6 +304,7 @@ const messageInput = ref('');
 const showCloseModal = ref(false);
 const closeReason = ref('');
 const showInputSection = ref(false); // 控制输入区域的显示
+const closePopup = ref(null); // 关闭事件模态框 ref
 
 // 响应式变量
 const currentRole = ref('checkin');
@@ -650,9 +655,32 @@ const handleContinueHelp = () => {
 // 关闭事件
 const handleCloseEvent = () => {
   console.log('🔍 DEBUG handleCloseEvent 被调用');
+  console.log('🔍 DEBUG closePopup value:', closePopup.value);
+  
+  if (closePopup.value) {
+    console.log('🔍 DEBUG 调用 closePopup.open()');
+    closePopup.value.open();
+    showCloseModal.value = true;
+    console.log('🔍 DEBUG showCloseModal.value 设置为 true');
+  } else {
+    console.error('🔍 DEBUG closePopup ref 为空');
+  }
+};
+
+// 模态框状态变化监听
+const onPopupChange = (e) => {
+  console.log('🔍 DEBUG onPopupChange 被调用, e:', e);
+  showCloseModal.value = e.show;
   console.log('🔍 DEBUG showCloseModal.value:', showCloseModal.value);
-  showCloseModal.value = true;
-  console.log('🔍 DEBUG showCloseModal.value 设置为 true');
+};
+
+// 取消关闭事件
+const handleCancelClose = () => {
+  console.log('🔍 DEBUG handleCancelClose 被调用');
+  if (closePopup.value) {
+    closePopup.value.close();
+  }
+  showCloseModal.value = false;
 };
 
 // 确认关闭事件
@@ -681,13 +709,22 @@ const confirmCloseEvent = async () => {
 
     uni.hideLoading();
     uni.showToast({
-      title: "事件已关闭",
+      title: "事件已解决",
       icon: "success",
     });
 
+    // 关闭模态框
+    if (closePopup.value) {
+      closePopup.value.close();
+    }
+    
     // 重置状态
     showCloseModal.value = false;
     closeReason.value = '';
+    
+    console.log('🔍 DEBUG 事件关闭成功，刷新数据');
+    // 刷新事件数据，确保界面更新
+    await eventStore.fetchActiveEvent(true);
   } catch (error) {
     uni.hideLoading();
     console.error("关闭事件失败:", error);
@@ -1412,5 +1449,77 @@ const updateTaskData = () => {
     border-color: $uni-error;
     animation: pulse 1s infinite;
   }
+}
+
+/* 自定义关闭事件模态框样式 */
+.close-event-modal {
+  width: 600rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  overflow: hidden;
+}
+
+.close-event-header {
+  padding: $uni-spacing-xl;
+  border-bottom: 2rpx solid $uni-border-light;
+  text-align: center;
+}
+
+.close-event-title {
+  font-size: $uni-font-size-lg;
+  font-weight: 700;
+  color: $uni-text-base;
+}
+
+.close-event-content {
+  padding: $uni-spacing-xl;
+}
+
+.close-event-hint {
+  display: block;
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
+  margin-bottom: $uni-spacing-base;
+}
+
+.close-reason-input {
+  width: 100%;
+  min-height: 200rpx;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  color: $uni-text-base;
+  box-sizing: border-box;
+}
+
+.close-event-footer {
+  display: flex;
+  gap: $uni-spacing-base;
+  padding: $uni-spacing-xl;
+  border-top: 2rpx solid $uni-border-light;
+}
+
+.close-event-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background: $uni-bg-color-lighter;
+  color: $uni-text-secondary;
+  border: 2rpx solid $uni-border-light;
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
 }
 </style>
