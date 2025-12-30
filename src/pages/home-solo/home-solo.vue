@@ -199,7 +199,7 @@
 
       <!-- 时间线区域 -->
       <view class="timeline-section">
-        <EventTimeline :messages="eventMessages" />
+        <EventTimeline :messages="eventMessages" :eventInfo="activeEvent" />
       </view>
 
       <!-- 底部输入区域 -->
@@ -1344,7 +1344,7 @@ const updateTaskData = () => {
 .timeline-section {
   max-height: 600rpx;
   overflow-y: auto;
-  padding: $uni-spacing-sm;
+  padding: $uni-spacing-sm $uni-spacing-base;
   background: $uni-bg-color-lighter;
   border-radius: $uni-radius-lg;
 }

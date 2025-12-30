@@ -1,5 +1,34 @@
 <template>
   <view class="event-timeline">
+    <!-- 事件起始信息 -->
+    <view
+      v-if="eventInfo"
+      class="timeline-item is-user"
+    >
+      <view class="timeline-time">
+        <text class="time-text">{{ formatTime(eventInfo.created_at) }}</text>
+      </view>
+
+      <view class="timeline-content">
+        <image
+          class="avatar"
+          :src="getUserAvatar({})"
+          mode="aspectFill"
+        />
+
+        <view class="message-body">
+          <text class="user-name">我</text>
+          <text class="message-text">
+            发起了求助：{{ eventInfo.title }}
+            <text v-if="eventInfo.description" class="event-description">
+              （{{ eventInfo.description }}）
+            </text>
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 消息列表 -->
     <view
       v-for="(message, index) in messages"
       :key="message.support_id"
@@ -71,7 +100,7 @@
 
     <!-- 空状态 -->
     <view
-      v-if="messages.length === 0"
+      v-if="messages.length === 0 && !eventInfo"
       class="empty-state"
     >
       <text class="empty-text">暂无消息</text>
@@ -86,6 +115,10 @@ const props = defineProps({
   messages: {
     type: Array,
     default: () => []
+  },
+  eventInfo: {
+    type: Object,
+    default: null
   }
 })
 
@@ -269,6 +302,11 @@ const playVoice = (message) => {
   font-size: $uni-font-size-base;
   line-height: 1.6;
   word-wrap: break-word;
+}
+
+.event-description {
+  font-size: $uni-font-size-sm;
+  color: $uni-text-secondary;
 }
 
 .message-image {
