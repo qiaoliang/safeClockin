@@ -78,7 +78,8 @@
       class="floating-tasks-btn"
       :class="{
         'btn-no-rules': hasNoRules,
-        'btn-all-completed': hasAllCompleted
+        'btn-all-completed': hasAllCompleted,
+        'btn-missed-only': hasMissedOnly
       }"
       @click="handleTasksClick"
     >
@@ -211,10 +212,13 @@ const nearbyTasks = ref([]);
 const hasNoRules = computed(() => nearbyTasks.value.length === 0);
 const hasAllCompleted = computed(() => nearbyTasks.value.length > 0 && pendingCheckinCount.value === 0);
 const hasPendingTasks = computed(() => pendingCheckinCount.value > 0);
+const hasMissedTasks = computed(() => checkinStore.missedCheckinCount > 0);
+const hasMissedOnly = computed(() => pendingCheckinCount.value === 0 && checkinStore.missedCheckinCount > 0 && nearbyTasks.value.length > 0);
 
 // 计算属性：任务图标
 const tasksIcon = computed(() => {
   if (hasNoRules.value) return '⏱️';
+  if (hasMissedOnly.value) return '⚠️';
   if (hasAllCompleted.value) return '✅';
   return '📋';
 });
@@ -222,6 +226,7 @@ const tasksIcon = computed(() => {
 // 计算属性：任务标题
 const tasksTitle = computed(() => {
   if (hasNoRules.value) return '';
+  if (hasMissedOnly.value) return '';
   if (hasAllCompleted.value) return '';
   return '当前任务';
 });
@@ -229,6 +234,7 @@ const tasksTitle = computed(() => {
 // 计算属性：任务副标题
 const tasksSubtitle = computed(() => {
   if (hasNoRules.value) return '开始行动，创建你的第一个打卡规则吧~';
+  if (hasMissedOnly.value) return '今天你有错过的打卡记录，记得明天早点儿来哦~';
   if (hasAllCompleted.value) return '恭喜你，今日的打卡任务已全部完成。你是一个有超强行动力的人。';
   return `还有 ${pendingCheckinCount.value} 项未完成`;
 });
@@ -819,6 +825,11 @@ const updateTaskData = () => {
 .floating-tasks-btn.btn-all-completed {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
   box-shadow: 0 16rpx 48rpx rgba(17, 153, 142, 0.4);
+}
+
+.floating-tasks-btn.btn-missed-only {
+  background: linear-gradient(135deg, $uni-warning 0%, $uni-warning-dark 100%);
+  box-shadow: 0 16rpx 48rpx rgba(245, 158, 11, 0.4);
 }
 
 .floating-tasks-btn::before {
