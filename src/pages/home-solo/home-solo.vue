@@ -499,17 +499,17 @@ const createHelpEvent = async (userInfo) => {
 
     uni.hideLoading();
 
-    if (response.data.code === 1) {
+    if (response.code === 1) {
       uni.showToast({
         title: "求助已发送，社区工作人员将尽快为您提供帮助",
         icon: "success",
         duration: 3000
       });
-      
+
       // 可以在这里添加后续逻辑，比如跳转到求助详情页
     } else {
       uni.showToast({
-        title: response.data.msg || "求助失败",
+        title: response.msg || "求助失败",
         icon: "none",
         duration: 3000
       });
