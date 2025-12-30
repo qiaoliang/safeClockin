@@ -1,0 +1,313 @@
+<template>
+  <view class="event-timeline">
+    <view
+      v-for="(message, index) in messages"
+      :key="message.support_id"
+      class="timeline-item"
+      :class="{ 'is-staff': isStaffMessage(message), 'is-user': isUserMessage(message) }"
+    >
+      <!-- 时间点 -->
+      <view class="timeline-time">
+        <text class="time-text">{{ formatTime(message.created_at) }}</text>
+      </view>
+
+      <!-- 消息内容 -->
+      <view class="timeline-content">
+        <!-- 头像 -->
+        <image
+          class="avatar"
+          :src="getUserAvatar(message)"
+          mode="aspectFill"
+        />
+
+        <!-- 消息主体 -->
+        <view class="message-body">
+          <!-- 姓名 -->
+          <text class="user-name">{{ getUserName(message) }}</text>
+
+          <!-- 回应标签（工作人员） -->
+          <view
+            v-if="message.support_tags && message.support_tags.length > 0"
+            class="tags-container"
+          >
+            <text
+              v-for="(tag, tagIndex) in message.support_tags"
+              :key="tagIndex"
+              class="tag"
+            >
+              {{ tag }}
+            </text>
+          </view>
+
+          <!-- 文字内容 -->
+          <text
+            v-if="message.support_content"
+            class="message-text"
+          >
+            {{ message.support_content }}
+          </text>
+
+          <!-- 图片消息 -->
+          <image
+            v-if="message.message_type === 'image' && message.media_url"
+            class="message-image"
+            :src="getMediaUrl(message.media_url)"
+            mode="aspectFill"
+            @click="previewImage(message.media_url)"
+          />
+
+          <!-- 语音消息 -->
+          <view
+            v-if="message.message_type === 'voice' && message.media_url"
+            class="voice-message"
+            @click="playVoice(message)"
+          >
+            <text class="voice-icon">🎤</text>
+            <text class="voice-duration">{{ message.media_duration }}"</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view
+      v-if="messages.length === 0"
+      class="empty-state"
+    >
+      <text class="empty-text">暂无消息</text>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  messages: {
+    type: Array,
+    default: () => []
+  }
+})
+
+// 判断是否为工作人员消息
+const isStaffMessage = (message) => {
+  // 这里需要根据实际业务逻辑判断
+  // 可以通过 message.supporter_id 或其他字段判断
+  return message.support_tags && message.support_tags.length > 0
+}
+
+// 判断是否为用户消息
+const isUserMessage = (message) => {
+  return !isStaffMessage(message)
+}
+
+// 获取用户头像
+const getUserAvatar = (message) => {
+  // 这里需要从用户信息中获取头像
+  return 'https://s.coze.cn/image/dhcVCXur50w/'
+}
+
+// 获取用户名称
+const getUserName = (message) => {
+  // 这里需要从用户信息中获取名称
+  return isStaffMessage(message) ? '工作人员' : '我'
+}
+
+// 格式化时间
+const formatTime = (timeStr) => {
+  if (!timeStr) return ''
+  const date = new Date(timeStr)
+  const now = new Date()
+  const diff = now - date
+
+  // 小于1分钟
+  if (diff < 60000) {
+    return '刚刚'
+  }
+
+  // 小于1小时
+  if (diff < 3600000) {
+    return `${Math.floor(diff / 60000)}分钟前`
+  }
+
+  // 小于24小时
+  if (diff < 86400000) {
+    return `${Math.floor(diff / 3600000)}小时前`
+  }
+
+  // 超过24小时，显示具体时间
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+// 获取媒体URL
+const getMediaUrl = (url) => {
+  // 这里需要根据实际情况处理URL
+  return url
+}
+
+// 预览图片
+const previewImage = (url) => {
+  uni.previewImage({
+    urls: [getMediaUrl(url)]
+  })
+}
+
+// 播放语音
+const playVoice = (message) => {
+  const innerAudioContext = uni.createInnerAudioContext()
+  innerAudioContext.src = getMediaUrl(message.media_url)
+  innerAudioContext.play()
+}
+</script>
+
+<style lang="scss" scoped>
+@import "@/uni.scss";
+
+.event-timeline {
+  padding: $uni-spacing-base;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: $uni-spacing-xl;
+
+  &.is-staff {
+    .timeline-content {
+      flex-direction: row;
+    }
+
+    .avatar {
+      margin-right: $uni-spacing-base;
+    }
+
+    .message-body {
+      background: $uni-bg-color-white;
+      border-radius: $uni-radius-lg;
+      padding: $uni-spacing-base;
+      box-shadow: $uni-shadow-sm;
+    }
+  }
+
+  &.is-user {
+    .timeline-content {
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      margin-left: $uni-spacing-base;
+    }
+
+    .message-body {
+      background: $uni-primary;
+      color: $uni-white;
+      border-radius: $uni-radius-lg;
+      padding: $uni-spacing-base;
+      box-shadow: $uni-shadow-primary-sm;
+    }
+  }
+}
+
+.timeline-time {
+  width: 120rpx;
+  display: flex;
+  align-items: flex-start;
+  padding-top: $uni-spacing-xs;
+}
+
+.time-text {
+  font-size: $uni-font-size-xs;
+  color: $uni-text-secondary;
+  text-align: center;
+}
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $uni-radius-full;
+  flex-shrink: 0;
+}
+
+.message-body {
+  flex: 1;
+  max-width: 70%;
+}
+
+.user-name {
+  display: block;
+  font-size: $uni-font-size-sm;
+  font-weight: 600;
+  margin-bottom: $uni-spacing-xs;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $uni-spacing-xs;
+  margin-bottom: $uni-spacing-xs;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  background: rgba(244, 130, 36, 0.1);
+  color: $uni-primary;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-xs;
+}
+
+.message-text {
+  display: block;
+  font-size: $uni-font-size-base;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.message-image {
+  width: 100%;
+  max-width: 400rpx;
+  max-height: 400rpx;
+  border-radius: $uni-radius-md;
+  margin-top: $uni-spacing-xs;
+}
+
+.voice-message {
+  display: flex;
+  align-items: center;
+  gap: $uni-spacing-sm;
+  padding: $uni-spacing-sm $uni-spacing-base;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: $uni-radius-lg;
+  margin-top: $uni-spacing-xs;
+
+  .is-user & {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.voice-icon {
+  font-size: $uni-font-size-xl;
+}
+
+.voice-duration {
+  font-size: $uni-font-size-sm;
+}
+
+.empty-state {
+  text-align: center;
+  padding: $uni-spacing-xxl;
+}
+
+.empty-text {
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
+}
+</style>

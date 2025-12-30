@@ -9,17 +9,22 @@ export const useCommunityStore = defineStore('community', {
     // 社区列表
     communities: [],
     currentCommunity: null,
-    
+
     // 工作人员列表
     staffMembers: [],
-    
+
     // 社区用户列表
     communityUsers: [],
-    
+
+    // 事件相关
+    pendingEvents: [],
+    currentEvent: null,
+    eventMessages: [],
+
     // 加载状态
     loading: false,
     hasMore: true,
-    
+
     // 分页信息
     currentPage: 1,
     pageSize: 20
@@ -582,7 +587,7 @@ export const useCommunityStore = defineStore('community', {
     setCurrentCommunity(community) {
       this.currentCommunity = community
     },
-    
+
     /**
      * 清空状态
      */
@@ -594,6 +599,80 @@ export const useCommunityStore = defineStore('community', {
       this.loading = false
       this.hasMore = true
       this.currentPage = 1
+    },
+
+    // ========== 事件管理 ==========
+
+    /**
+     * 获取未处理事件
+     */
+    async fetchPendingEvents() {
+      if (!this.currentCommunity) {
+        console.warn('没有当前社区')
+        return
+      }
+
+      try {
+        const response = await request({
+          url: `/api/events/communities/${this.currentCommunity.community_id}/pending-events`,
+          method: 'GET'
+        })
+
+        if (response.code === 1) {
+          this.pendingEvents = response.data.events || []
+          console.log('获取未处理事件成功:', this.pendingEvents.length)
+        }
+      } catch (error) {
+        console.error('获取未处理事件失败:', error)
+      }
+    },
+
+    /**
+     * 获取事件详情
+     */
+    async fetchEventDetail(eventId) {
+      try {
+        const response = await request({
+          url: `/api/events/${eventId}`,
+          method: 'GET'
+        })
+
+        if (response.code === 1) {
+          this.currentEvent = response.data.event
+          this.eventMessages = response.data.supports || []
+          console.log('获取事件详情成功')
+        }
+      } catch (error) {
+        console.error('获取事件详情失败:', error)
+        throw error
+      }
+    },
+
+    /**
+     * 添加工作人员回应
+     */
+    async addStaffResponse(eventId, content, mediaUrl, supportTags) {
+      try {
+        const response = await request({
+          url: `/api/events/${eventId}/respond`,
+          method: 'POST',
+          data: {
+            content,
+            media_url: mediaUrl,
+            support_tags: supportTags
+          }
+        })
+
+        if (response.code === 1) {
+          // 添加到消息列表
+          this.eventMessages.unshift(response.data.message_data)
+          console.log('添加回应成功')
+          return response.data.message_data
+        }
+      } catch (error) {
+        console.error('添加回应失败:', error)
+        throw error
+      }
     }
   }
 })

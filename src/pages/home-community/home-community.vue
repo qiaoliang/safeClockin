@@ -15,6 +15,24 @@
       </view>
     </view>
 
+    <!-- 滚动通知条 -->
+    <view
+      v-if="hasPendingEvents && latestPendingEvent"
+      class="notification-bar"
+      @click="handleNotificationClick"
+    >
+      <view class="notification-content">
+        <text class="notification-icon">🔔</text>
+        <text class="notification-text">
+          {{ latestPendingEvent.title || '用户发起了求助' }}
+        </text>
+        <text class="notification-time">
+          {{ formatEventTime(latestPendingEvent.created_at) }}
+        </text>
+      </view>
+      <text class="notification-arrow">›</text>
+    </view>
+
     <!-- 社区选择器 -->
     <view class="community-selector-section">
       <CommunitySelector @change="handleCommunityChange" />
@@ -138,6 +156,12 @@
       @close="handleModalClose"
     />
 
+    <!-- 事件详情模态弹窗 -->
+    <EventDetailModal
+      ref="eventDetailModal"
+      @close="showEventModal = false"
+    />
+
     <!-- 未打卡详情按钮 -->
     <view class="unchecked-detail-section">
       <button 
@@ -162,6 +186,7 @@ import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import CommunitySelector from '@/components/community/CommunitySelector.vue'
 import CheckinStatsModal from '@/components/community/CheckinStatsModal.vue'
+import EventDetailModal from '@/components/community/EventDetailModal.vue'
 import { getCommunityDailyStats, getCommunityCheckinStats } from '@/api/community'
 
 const userStore = useUserStore()
@@ -170,8 +195,10 @@ const totalCount = ref(128)
 const checkinRate = ref(89.8)
 const uncheckedCount = ref(13)
 const checkinStatsModal = ref(null)
+const eventDetailModal = ref(null)
 const allStats = ref([])
 const totalRules = ref(0)
+const showEventModal = ref(false)
 
 // 计算属性：显示前3个逾期事项
 const topIssues = computed(() => {
@@ -185,6 +212,16 @@ const isCommunityManager = computed(() => userStore.isCommunityManager)
 const isCommunityStaff = computed(() => {
   const role = userStore.userInfo?.role
   return role !== undefined && role >= 2
+})
+
+// 计算属性：是否有未处理事件
+const hasPendingEvents = computed(() => {
+  return communityStore.pendingEvents.length > 0
+})
+
+// 计算属性：最新未处理事件
+const latestPendingEvent = computed(() => {
+  return communityStore.pendingEvents[0] || null
 })
 
 // 权限检查：超级管理员和社区工作人员可以访问
@@ -291,9 +328,12 @@ const loadPageData = async () => {
 
     // 加载社区统计数据
     await loadCommunityStats()
-    
+
     // 加载打卡统计
     await loadCheckinStats()
+
+    // 加载未处理事件
+    await communityStore.fetchPendingEvents()
   } catch (error) {
     console.error('加载页面数据失败:', error)
   }
@@ -400,6 +440,36 @@ const handleModalClose = () => {
   // 可以在这里添加关闭后的处理逻辑
 }
 
+/**
+ * 处理通知条点击
+ */
+const handleNotificationClick = () => {
+  if (latestPendingEvent.value) {
+    showEventModal.value = true
+    // 加载事件详情
+    communityStore.fetchEventDetail(latestPendingEvent.value.event_id)
+    // 打开模态弹窗
+    setTimeout(() => {
+      eventDetailModal.value?.open()
+    }, 100)
+  }
+}
+
+/**
+ * 格式化事件时间
+ */
+const formatEventTime = (timeStr) => {
+  if (!timeStr) return ''
+  const date = new Date(timeStr)
+  const now = new Date()
+  const diff = now - date
+
+  if (diff < 60000) return '刚刚'
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
+  return `${Math.floor(diff / 86400000)}天前`
+}
+
 onMounted(async () => {
   // 初始化数据 - 只在首次挂载时执行
   await loadPageData()
@@ -451,6 +521,59 @@ onShow(() => {
 
 .community-selector-section {
   margin: 24rpx 32rpx;
+}
+
+.notification-bar {
+  margin: 0 32rpx 24rpx;
+  padding: 24rpx 32rpx;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.2);
+  transition: all 0.3s ease;
+}
+
+.notification-bar:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.15);
+}
+
+.notification-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.notification-icon {
+  font-size: 36rpx;
+  animation: shake 2s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.notification-text {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.notification-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.notification-arrow {
+  font-size: 36rpx;
+  color: #FF6B35;
+  font-weight: bold;
 }
 
 .overview-section {

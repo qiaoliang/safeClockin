@@ -174,9 +174,72 @@
     </uni-grid-item>
   </uni-grid>
 
-  <!-- 一键求助主按钮 -->
+  <!-- 一键求助主按钮 / 事件进展卡片 -->
   <view class="today-tasks-section">
+    <!-- 有进行中的事件时显示事件进展卡片 -->
+    <view
+      v-if="hasActiveEvent"
+      class="event-progress-card"
+    >
+      <!-- 顶部操作栏 -->
+      <view class="event-header">
+        <button
+          class="header-btn continue-btn"
+          @click="handleContinueHelp"
+        >
+          <text class="btn-text">继续求助</text>
+        </button>
+        <button
+          class="header-btn close-btn"
+          @click="handleCloseEvent"
+        >
+          <text class="btn-text">问题已解决</text>
+        </button>
+      </view>
+
+      <!-- 时间线区域 -->
+      <view class="timeline-section">
+        <EventTimeline :messages="eventMessages" />
+      </view>
+
+      <!-- 底部输入区域 -->
+      <view class="input-section">
+        <view class="input-row">
+          <input
+            v-model="messageInput"
+            class="message-input"
+            placeholder="输入消息..."
+            @confirm="handleSendMessage"
+          />
+          <button
+            class="send-btn"
+            @click="handleSendMessage"
+          >
+            <text>发送</text>
+          </button>
+        </view>
+        <view class="input-actions">
+          <button
+            class="action-btn"
+            :class="{ 'recording': isRecording }"
+            @touchstart="startRecording"
+            @touchend="stopRecording"
+          >
+            <text>{{ isRecording ? `${recordingDuration}"` : '🎤' }}</text>
+          </button>
+          <button
+            class="action-btn"
+            @click="handleChooseImage"
+          >
+            <text>📷</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 没有进行中的事件时显示一键求助按钮 -->
     <button
+      v-else
       class="help-btn"
       @click="handleOneClickHelp"
     >
@@ -191,6 +254,30 @@
       </text>
     </button>
   </view>
+
+  <!-- 关闭事件模态对话框 -->
+  <uni-popup
+    ref="closePopup"
+    type="dialog"
+    :show="showCloseModal"
+    @close="showCloseModal = false"
+  >
+    <uni-popup-dialog
+      type="info"
+      title="关闭事件"
+      content="请说明事件当前的现状和关闭原因："
+      :show-close="true"
+      @confirm="confirmCloseEvent"
+      @close="showCloseModal = false"
+    >
+      <textarea
+        v-model="closeReason"
+        class="close-reason-input"
+        placeholder="请输入关闭原因（至少5个字符）"
+        :maxlength="200"
+      />
+    </uni-popup-dialog>
+  </uni-popup>
 </template>
 
 <script setup>
@@ -199,9 +286,17 @@ import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
 import { useCheckinStore } from "@/store/modules/checkin";
+import { useEventStore } from "@/store/modules/event";
+import EventTimeline from "@/components/event/EventTimeline.vue";
 
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
+const eventStore = useEventStore();
+
+// 事件相关状态
+const messageInput = ref('');
+const showCloseModal = ref(false);
+const closeReason = ref('');
 
 // 响应式变量
 const currentRole = ref('checkin');
@@ -238,6 +333,12 @@ const tasksSubtitle = computed(() => {
   if (hasAllCompleted.value) return '恭喜你，今日的打卡任务已全部完成。你是一个有超强行动力的人。';
   return `还有 ${pendingCheckinCount.value} 项未完成`;
 });
+
+// 计算属性：事件相关
+const hasActiveEvent = computed(() => eventStore.hasActiveEvent);
+const eventMessages = computed(() => eventStore.eventMessages);
+const isRecording = computed(() => eventStore.isRecording);
+const recordingDuration = computed(() => eventStore.recordingDuration);
 
 // 计算属性：用户信息
 const userInfo = computed(() => {
@@ -517,6 +618,185 @@ const handleTaskAction = async (task) => {
   }
 };
 
+// ==================== 事件相关方法 ====================
+
+// 初始化事件数据
+const initEventData = async () => {
+  try {
+    // 先尝试从缓存恢复
+    if (eventStore.restoreFromCache()) {
+      if (!eventStore.isCacheExpired) {
+        console.log("使用缓存的事件数据");
+        return;
+      }
+    }
+
+    // 获取最新数据
+    await eventStore.fetchActiveEvent();
+  } catch (error) {
+    console.warn("初始化事件数据失败:", error);
+  }
+};
+
+// 继续求助
+const handleContinueHelp = () => {
+  uni.showToast({
+    title: "继续求助功能开发中",
+    icon: "none",
+  });
+};
+
+// 关闭事件
+const handleCloseEvent = () => {
+  showCloseModal.value = true;
+};
+
+// 确认关闭事件
+const confirmCloseEvent = async () => {
+  if (!closeReason.value || closeReason.value.trim().length < 5) {
+    uni.showToast({
+      title: "关闭原因至少需要5个字符",
+      icon: "none",
+    });
+    return;
+  }
+
+  try {
+    uni.showLoading({
+      title: "正在关闭事件...",
+      mask: true
+    });
+
+    await eventStore.closeEvent(closeReason.value.trim());
+
+    uni.hideLoading();
+    uni.showToast({
+      title: "事件已关闭",
+      icon: "success",
+    });
+
+    // 重置状态
+    showCloseModal.value = false;
+    closeReason.value = '';
+  } catch (error) {
+    uni.hideLoading();
+    console.error("关闭事件失败:", error);
+    uni.showToast({
+      title: error.message || "关闭失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 发送文字消息
+const handleSendMessage = async () => {
+  if (!messageInput.value.trim()) {
+    return;
+  }
+
+  try {
+    await eventStore.addMessage({
+      message_type: 'text',
+      content: messageInput.value.trim()
+    });
+
+    messageInput.value = '';
+    uni.showToast({
+      title: "发送成功",
+      icon: "success",
+    });
+  } catch (error) {
+    console.error("发送消息失败:", error);
+    uni.showToast({
+      title: error.message || "发送失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 开始录音
+const startRecording = () => {
+  eventStore.startRecording();
+};
+
+// 停止录音
+const stopRecording = async () => {
+  const result = eventStore.stopRecording();
+
+  if (!result) {
+    uni.showToast({
+      title: "录音时间太短",
+      icon: "none",
+    });
+    return;
+  }
+
+  try {
+    uni.showLoading({
+      title: "正在上传...",
+      mask: true
+    });
+
+    // 这里需要实现录音文件上传逻辑
+    // 暂时使用模拟数据
+    await eventStore.addMessage({
+      message_type: 'voice',
+      media_url: '/static/uploads/voice/sample.mp3',
+      media_duration: result.duration
+    });
+
+    uni.hideLoading();
+    uni.showToast({
+      title: "发送成功",
+      icon: "success",
+    });
+  } catch (error) {
+    uni.hideLoading();
+    console.error("上传语音失败:", error);
+    uni.showToast({
+      title: error.message || "上传失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 选择图片
+const handleChooseImage = () => {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    sourceType: ['album', 'camera'],
+    success: async (res) => {
+      try {
+        uni.showLoading({
+          title: "正在上传...",
+          mask: true
+        });
+
+        // 这里需要实现图片上传逻辑
+        // 暂时使用模拟数据
+        await eventStore.addMessage({
+          message_type: 'image',
+          media_url: res.tempFilePaths[0]
+        });
+
+        uni.hideLoading();
+        uni.showToast({
+          title: "发送成功",
+          icon: "success",
+        });
+      } catch (error) {
+        uni.hideLoading();
+        console.error("上传图片失败:", error);
+        uni.showToast({
+          title: error.message || "上传失败，请稍后重试",
+          icon: "none",
+        });
+      }
+    }
+  });
+};
+
 onMounted(() => {
   // 页面加载时的初始化逻辑
   initializePageData();
@@ -558,7 +838,10 @@ const initializePageData = async () => {
   try {
     // 初始化打卡数据
     await initCheckinData();
-    
+
+    // 初始化事件数据
+    await initEventData();
+
     // 更新任务数据
     updateTaskData();
   } catch (error) {
@@ -1012,5 +1295,112 @@ const updateTaskData = () => {
   display: block;
   font-size: $uni-font-size-sm;
   color: rgba(255, 255, 255, 0.8);
+}
+
+// ==================== 事件进展卡片样式 ====================
+
+.event-progress-card {
+  width: 100%;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-spacing-xl;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: $uni-spacing-lg;
+}
+
+.event-header {
+  display: flex;
+  gap: $uni-spacing-base;
+  padding-bottom: $uni-spacing-base;
+  border-bottom: 2rpx solid $uni-border-light;
+}
+
+.header-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+
+  .btn-text {
+    font-size: $uni-font-size-base;
+  }
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  box-shadow: $uni-shadow-primary-sm;
+}
+
+.close-btn {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+}
+
+.timeline-section {
+  max-height: 600rpx;
+  overflow-y: auto;
+  padding: $uni-spacing-sm;
+  background: $uni-bg-color-lighter;
+  border-radius: $uni-radius-lg;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: $uni-spacing-base;
+  padding-top: $uni-spacing-base;
+  border-top: 2rpx solid $uni-border-light;
+}
+
+.input-row {
+  display: flex;
+  gap: $uni-spacing-base;
+}
+
+.message-input {
+  flex: 1;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+}
+
+.send-btn {
+  padding: $uni-spacing-base $uni-spacing-lg;
+  background: $uni-primary;
+  color: $uni-white;
+  border-radius: $uni-radius-lg;
+  border: none;
+  font-size: $uni-font-size-base;
+}
+
+.input-actions {
+  display: flex;
+  gap: $uni-spacing-base;
+}
+
+.action-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-xl;
+  transition: all 0.3s ease;
+
+  &.recording {
+    background: $uni-error;
+    color: $uni-white;
+    border-color: $uni-error;
+    animation: pulse 1s infinite;
+  }
 }
 </style>
