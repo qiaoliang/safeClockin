@@ -1084,44 +1084,6 @@ const updateTaskData = () => {
   font-weight: bold;
 }
 
-.task-icon-wrapper {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 24rpx;
-}
-
-.task-icon-emoji {
-  font-size: 40rpx;
-}
-
-.task-action-btn {
-  padding: 12rpx 24rpx;
-  border-radius: $uni-radius-lg;
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  font-size: $uni-font-size-sm;
-  font-weight: 500;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-pending {
-  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
-  color: $uni-white;
-  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
-}
-
-.btn-makeup {
-  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
-  color: $uni-white;
-  box-shadow: 0 4rpx 16rpx rgba(244, 130, 36, 0.3);
-}
-
 .btn-icon {
   font-size: $uni-font-size-base;
 }
