@@ -614,7 +614,7 @@ export const useCommunityStore = defineStore('community', {
 
       try {
         const response = await request({
-          url: `/api/events/communities/${this.currentCommunity.community_id}/pending-events`,
+          url: `/api/communities/${this.currentCommunity.community_id}/pending-events`,
           method: 'GET'
         })
 
