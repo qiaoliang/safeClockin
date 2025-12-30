@@ -44,6 +44,7 @@
               </text>
               <view
                 :class="['status-tag', item.status === 'active' ? 'status-tag-active' : 'status-tag-inactive']"
+                @click.stop="handleStatusClick(item)"
               >
                 {{ item.status === 'active' ? '启用' : '停用' }}
               </view>
@@ -417,7 +418,7 @@ const editCommunity = (item) => {
 }
 
 // 切换社区状态
-const toggleCommunityStatus = (item, newStatus) => {
+const toggleCommunityStatus = (item, newStatus, onError = null) => {
   const confirmMsg = newStatus === CommunityStatus.ACTIVE
     ? CONFIRM_MESSAGES.TOGGLE_ACTIVE
     : CONFIRM_MESSAGES.TOGGLE_INACTIVE
@@ -430,13 +431,26 @@ const toggleCommunityStatus = (item, newStatus) => {
         try {
           uni.showLoading({ title: LOADING_MESSAGES.PROCESSING })
 
-          await communityStore.toggleCommunityStatus(item.community_id, newStatus)
+          const response = await communityStore.toggleCommunityStatus(item.community_id, newStatus)
 
           uni.hideLoading()
-          uni.showToast({
-            title: SUCCESS_MESSAGES.TOGGLE_SUCCESS,
-            icon: 'success'
-          })
+
+          if (response.code === 1) {
+            uni.showToast({
+              title: SUCCESS_MESSAGES.TOGGLE_SUCCESS,
+              icon: 'success'
+            })
+          } else {
+            // 调用错误回调
+            if (onError) {
+              onError(response)
+            } else {
+              uni.showToast({
+                title: response.msg || ERROR_MESSAGES.UPDATE_FAILED,
+                icon: 'none'
+              })
+            }
+          }
         } catch (error) {
           console.error('切换状态失败:', error)
           uni.hideLoading()
@@ -446,6 +460,34 @@ const toggleCommunityStatus = (item, newStatus) => {
           })
         }
       }
+    }
+  })
+}
+
+// 处理状态标签点击
+const handleStatusClick = (item) => {
+  // 检查权限
+  if (!hasFeaturePermission(FeaturePermission.TOGGLE_COMMUNITY_STATUS)) {
+    uni.showToast({
+      title: '无权限执行此操作',
+      icon: 'none'
+    })
+    return
+  }
+
+  // 切换到相反的状态
+  const newStatus = item.status === CommunityStatus.ACTIVE
+    ? CommunityStatus.INACTIVE
+    : CommunityStatus.ACTIVE
+
+  toggleCommunityStatus(item, newStatus, (error) => {
+    // 错误回调
+    if (error && error.msg) {
+      uni.showToast({
+        title: error.msg,
+        icon: 'none',
+        duration: 2000
+      })
     }
   })
 }
@@ -583,6 +625,13 @@ onMounted(() => {
   font-size: $uni-font-size-xs;
   flex-shrink: 0;
   margin-left: 12rpx;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-tag-active:active {
+  opacity: 0.7;
+  transform: scale(0.95);
 }
 
 .status-tag-inactive {
@@ -593,6 +642,13 @@ onMounted(() => {
   font-size: $uni-font-size-xs;
   flex-shrink: 0;
   margin-left: 12rpx;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-tag-inactive:active {
+  opacity: 0.7;
+  transform: scale(0.95);
 }
 
 .community-location {

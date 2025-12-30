@@ -122,7 +122,7 @@ export const useCommunityStore = defineStore('community', {
         
         if (response.code === 1) {
           // 更新本地数据
-          const index = this.communities.findIndex(c => c.id === communityId)
+          const index = this.communities.findIndex(c => c.community_id === communityId)
           if (index !== -1) {
             this.communities[index] = {
               ...this.communities[index],
@@ -158,6 +158,8 @@ export const useCommunityStore = defineStore('community', {
           // 更新本地数据
           const index = this.communities.findIndex(c => c.community_id === communityId)
           if (index !== -1) {
+            // 使用响应式方式更新
+            this.communities = [...this.communities]
             this.communities[index].status = status
           }
         }
