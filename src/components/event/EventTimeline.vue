@@ -6,7 +6,9 @@
       class="timeline-item is-user"
     >
       <view class="timeline-time">
-        <text class="time-text">{{ formatTime(eventInfo.created_at) }}</text>
+        <text class="time-text">
+          {{ formatTime(eventInfo.created_at) }}
+        </text>
       </view>
 
       <view class="timeline-content">
@@ -17,10 +19,15 @@
         />
 
         <view class="message-body">
-          <text class="user-name">我</text>
+          <text class="user-name">
+            我
+          </text>
           <text class="message-text">
             发起了求助：{{ eventInfo.title }}
-            <text v-if="eventInfo.description" class="event-description">
+            <text
+              v-if="eventInfo.description"
+              class="event-description"
+            >
               （{{ eventInfo.description }}）
             </text>
           </text>
@@ -30,14 +37,16 @@
 
     <!-- 消息列表 -->
     <view
-      v-for="(message, index) in messages"
+      v-for="message in messages"
       :key="message.support_id"
       class="timeline-item"
       :class="{ 'is-staff': isStaffMessage(message), 'is-user': isUserMessage(message) }"
     >
       <!-- 时间点 -->
       <view class="timeline-time">
-        <text class="time-text">{{ formatTime(message.created_at) }}</text>
+        <text class="time-text">
+          {{ formatTime(message.created_at) }}
+        </text>
       </view>
 
       <!-- 消息内容 -->
@@ -52,7 +61,9 @@
         <!-- 消息主体 -->
         <view class="message-body">
           <!-- 姓名 -->
-          <text class="user-name">{{ getUserName(message) }}</text>
+          <text class="user-name">
+            {{ getUserName(message) }}
+          </text>
 
           <!-- 回应标签（工作人员） -->
           <view
@@ -91,8 +102,12 @@
             class="voice-message"
             @click="playVoice(message)"
           >
-            <text class="voice-icon">🎤</text>
-            <text class="voice-duration">{{ message.media_duration }}"</text>
+            <text class="voice-icon">
+              🎤
+            </text>
+            <text class="voice-duration">
+              {{ message.media_duration }}"
+            </text>
           </view>
         </view>
       </view>
@@ -103,7 +118,9 @@
       v-if="messages.length === 0 && !eventInfo"
       class="empty-state"
     >
-      <text class="empty-text">暂无消息</text>
+      <text class="empty-text">
+        暂无消息
+      </text>
     </view>
   </view>
 </template>

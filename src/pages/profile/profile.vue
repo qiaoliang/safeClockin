@@ -299,33 +299,6 @@ const userInfo = computed(() => {
   return user;
 });
 
-const getRoleText = (role) => {
-  // 首先检查 role 是否为字符串
-  if (typeof role === "string") {
-    // 后端返回的是中文角色名称，直接返回
-    if (
-      role.includes("用户") ||
-      role.includes("管理员") ||
-      role.includes("主管") ||
-      role.includes("专员")
-    ) {
-      return role;
-    }
-  }
-
-  // 向后兼容：处理数字角色值或其他类型
-  const roleMap = {
-    1: "普通用户",
-    2: "社区专员",
-    3: "社区主管",
-    4: "超级系统管理员",
-    solo: "普通用户",
-    supervisor: "监护人",
-    community: "社区工作人员",
-  };
-  return roleMap[role] || "未知角色";
-};
-
 // 获取连续打卡天数（对于新用户显示0）
 const getConsecutiveCheckins = () => {
   // TODO: 从后端API获取实际的连续打卡天数

@@ -10,48 +10,81 @@
       <!-- 模态框头部 -->
       <view class="modal-header">
         <view class="header-left">
-          <text class="header-title">{{ currentEvent?.title || '求助事件' }}</text>
-          <text class="header-time">{{ formatEventTime(currentEvent?.created_at) }}</text>
+          <text class="header-title">
+            {{ currentEvent?.title || '求助事件' }}
+          </text>
+          <text class="header-time">
+            {{ formatEventTime(currentEvent?.created_at) }}
+          </text>
         </view>
         <view class="header-right">
-          <text class="close-btn" @click="close">✕</text>
+          <text
+            class="close-btn"
+            @click="close"
+          >
+            ✕
+          </text>
         </view>
       </view>
 
       <!-- 事件信息 -->
       <view class="event-info">
         <view class="info-row">
-          <text class="info-label">发起人：</text>
-          <text class="info-value">{{ currentEvent?.creator_name || '用户' }}</text>
+          <text class="info-label">
+            发起人：
+          </text>
+          <text class="info-value">
+            {{ currentEvent?.creator_name || '用户' }}
+          </text>
         </view>
-        <view class="info-row" v-if="currentEvent?.description">
-          <text class="info-label">描述：</text>
-          <text class="info-value">{{ currentEvent.description }}</text>
+        <view
+          v-if="currentEvent?.description"
+          class="info-row"
+        >
+          <text class="info-label">
+            描述：
+          </text>
+          <text class="info-value">
+            {{ currentEvent.description }}
+          </text>
         </view>
-        <view class="info-row" v-if="currentEvent?.location">
-          <text class="info-label">地点：</text>
-          <text class="info-value">{{ currentEvent.location }}</text>
+        <view
+          v-if="currentEvent?.location"
+          class="info-row"
+        >
+          <text class="info-label">
+            地点：
+          </text>
+          <text class="info-value">
+            {{ currentEvent.location }}
+          </text>
         </view>
       </view>
 
       <!-- 时间线 -->
       <view class="timeline-section">
-        <view class="section-title">事件进展</view>
+        <view class="section-title">
+          事件进展
+        </view>
         <scroll-view
           class="timeline-scroll"
           scroll-y
           :scroll-top="scrollTop"
         >
           <view
-            v-for="(message, index) in eventMessages"
+            v-for="message in eventMessages"
             :key="message.support_id"
             :class="['timeline-item', message.is_staff ? 'staff' : 'user']"
           >
             <view class="timeline-dot" />
             <view class="timeline-content">
               <view class="message-header">
-                <text class="message-name">{{ message.sender_name }}</text>
-                <text class="message-time">{{ formatMessageTime(message.created_at) }}</text>
+                <text class="message-name">
+                  {{ message.sender_name }}
+                </text>
+                <text class="message-time">
+                  {{ formatMessageTime(message.created_at) }}
+                </text>
               </view>
               
               <!-- 预设标签 -->
@@ -91,15 +124,24 @@
                 class="message-voice"
                 @click="playVoice(message)"
               >
-                <text class="voice-icon">🎤</text>
-                <text class="voice-duration">{{ message.media_duration || 0 }}"</text>
+                <text class="voice-icon">
+                  🎤
+                </text>
+                <text class="voice-duration">
+                  {{ message.media_duration || 0 }}"
+                </text>
               </view>
             </view>
           </view>
 
           <!-- 空状态 -->
-          <view v-if="eventMessages.length === 0" class="empty-state">
-            <text class="empty-text">暂无进展记录</text>
+          <view
+            v-if="eventMessages.length === 0"
+            class="empty-state"
+          >
+            <text class="empty-text">
+              暂无进展记录
+            </text>
           </view>
         </scroll-view>
       </view>
@@ -112,7 +154,7 @@
             class="response-input"
             placeholder="输入回应内容..."
             :maxlength="500"
-          />
+          >
           <view class="input-actions">
             <button
               class="action-btn"
@@ -122,8 +164,8 @@
             </button>
             <button
               class="action-btn"
-              @click="handleSendResponse"
               :disabled="!responseText.trim() && !selectedImage"
+              @click="handleSendResponse"
             >
               发送
             </button>
