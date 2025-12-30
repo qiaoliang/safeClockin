@@ -506,7 +506,8 @@ const createHelpEvent = async (userInfo) => {
         duration: 3000
       });
 
-      // 可以在这里添加后续逻辑，比如跳转到求助详情页
+      // 刷新事件数据，显示事件进展卡片
+      await eventStore.fetchActiveEvent(true);
     } else {
       uni.showToast({
         title: response.msg || "求助失败",
