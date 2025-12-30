@@ -117,32 +117,43 @@ export const useEventStore = defineStore("event", {
 
         // 关闭事件
         async closeEvent(closureReason) {
+            console.log('🔍 DEBUG eventStore.closeEvent 被调用');
+            console.log('🔍 DEBUG closureReason:', closureReason);
+            console.log('🔍 DEBUG this.activeEvent:', this.activeEvent);
+            
             try {
                 if (!this.activeEvent) {
+                    console.log('🔍 DEBUG 没有进行中的事件');
                     throw new Error("没有进行中的事件");
                 }
-
+        
                 if (!closureReason || closureReason.trim().length < 5) {
+                    console.log('🔍 DEBUG 关闭原因验证失败');
                     throw new Error("关闭原因至少需要5个字符");
                 }
-
+        
+                const url = `/api/user/events/${this.activeEvent.event_id}/close`;
+                console.log('🔍 DEBUG 请求URL:', url);
+                
                 const response = await request({
-                    url: `/api/user/events/${this.activeEvent.event_id}/close`,
+                    url: url,
                     method: "POST",
                     data: { closure_reason: closureReason.trim() },
                 });
-
+        
+                console.log('🔍 DEBUG 响应:', response);
+        
                 if (response.code === 1) {
                     console.log("关闭事件成功:", response.data.closure);
-
+        
                     // 清除事件数据
                     this.activeEvent = null;
                     this.eventMessages = [];
                     this.lastUpdateTime = null;
-
+        
                     // 清除本地缓存
                     this.clearCache();
-
+        
                     return response.data.closure;
                 } else {
                     throw new Error(response.msg || "关闭事件失败");
@@ -152,7 +163,6 @@ export const useEventStore = defineStore("event", {
                 throw error;
             }
         },
-
         // 开始录音
         startRecording() {
             if (this.isRecording) {

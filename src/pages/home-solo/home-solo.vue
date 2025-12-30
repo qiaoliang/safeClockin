@@ -649,12 +649,19 @@ const handleContinueHelp = () => {
 
 // 关闭事件
 const handleCloseEvent = () => {
+  console.log('🔍 DEBUG handleCloseEvent 被调用');
+  console.log('🔍 DEBUG showCloseModal.value:', showCloseModal.value);
   showCloseModal.value = true;
+  console.log('🔍 DEBUG showCloseModal.value 设置为 true');
 };
 
 // 确认关闭事件
 const confirmCloseEvent = async () => {
+  console.log('🔍 DEBUG confirmCloseEvent 被调用');
+  console.log('🔍 DEBUG closeReason.value:', closeReason.value);
+  
   if (!closeReason.value || closeReason.value.trim().length < 5) {
+    console.log('🔍 DEBUG 关闭原因验证失败');
     uni.showToast({
       title: "关闭原因至少需要5个字符",
       icon: "none",
@@ -662,12 +669,14 @@ const confirmCloseEvent = async () => {
     return;
   }
 
+  console.log('🔍 DEBUG 开始关闭事件');
   try {
     uni.showLoading({
       title: "正在关闭事件...",
       mask: true
     });
 
+    console.log('🔍 DEBUG 调用 eventStore.closeEvent');
     await eventStore.closeEvent(closeReason.value.trim());
 
     uni.hideLoading();
