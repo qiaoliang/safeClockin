@@ -203,7 +203,7 @@
       </view>
 
       <!-- 底部输入区域 -->
-      <view class="input-section">
+      <view v-if="showInputSection" class="input-section">
         <view class="input-row">
           <input
             v-model="messageInput"
@@ -297,6 +297,7 @@ const eventStore = useEventStore();
 const messageInput = ref('');
 const showCloseModal = ref(false);
 const closeReason = ref('');
+const showInputSection = ref(false); // 控制输入区域的显示
 
 // 响应式变量
 const currentRole = ref('checkin');
@@ -640,10 +641,7 @@ const initEventData = async () => {
 
 // 继续求助
 const handleContinueHelp = () => {
-  uni.showToast({
-    title: "继续求助功能开发中",
-    icon: "none",
-  });
+  showInputSection.value = true;
 };
 
 // 关闭事件
