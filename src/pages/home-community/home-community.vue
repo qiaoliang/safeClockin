@@ -22,7 +22,9 @@
       @click="handleNotificationClick"
     >
       <view class="notification-content">
-        <text class="notification-icon">🔔</text>
+        <text class="notification-icon">
+          🔔
+        </text>
         <text class="notification-text">
           {{ latestPendingEvent.title || '用户发起了求助' }}
         </text>
@@ -30,7 +32,9 @@
           {{ formatEventTime(latestPendingEvent.created_at) }}
         </text>
       </view>
-      <text class="notification-arrow">›</text>
+      <text class="notification-arrow">
+        ›
+      </text>
     </view>
 
     <!-- 社区选择器 -->

@@ -187,30 +187,40 @@
           class="header-btn continue-btn"
           @click="handleContinueHelp"
         >
-          <text class="btn-text">继续求助</text>
+          <text class="btn-text">
+            继续求助
+          </text>
         </button>
         <button
           class="header-btn close-btn"
           @click="handleCloseEvent"
         >
-          <text class="btn-text">问题已解决</text>
+          <text class="btn-text">
+            问题已解决
+          </text>
         </button>
       </view>
 
       <!-- 时间线区域 -->
       <view class="timeline-section">
-        <EventTimeline :messages="eventMessages" :eventInfo="activeEvent" />
+        <EventTimeline
+          :messages="eventMessages"
+          :event-info="activeEvent"
+        />
       </view>
 
       <!-- 底部输入区域 -->
-      <view v-if="showInputSection" class="input-section">
+      <view
+        v-if="showInputSection"
+        class="input-section"
+      >
         <view class="input-row">
           <input
             v-model="messageInput"
             class="message-input"
             placeholder="输入消息..."
             @confirm="handleSendMessage"
-          />
+          >
           <button
             class="send-btn"
             @click="handleSendMessage"
@@ -263,10 +273,14 @@
   >
     <view class="close-event-modal">
       <view class="close-event-header">
-        <text class="close-event-title">关闭事件</text>
+        <text class="close-event-title">
+          关闭事件
+        </text>
       </view>
       <view class="close-event-content">
-        <text class="close-event-hint">请说明事件当前的现状和关闭原因：</text>
+        <text class="close-event-hint">
+          请说明事件当前的现状和关闭原因：
+        </text>
         <textarea
           v-model="closeReason"
           class="close-reason-input"
@@ -275,10 +289,16 @@
         />
       </view>
       <view class="close-event-footer">
-        <button class="close-event-btn cancel-btn" @click="handleCancelClose">
+        <button
+          class="close-event-btn cancel-btn"
+          @click="handleCancelClose"
+        >
           取消
         </button>
-        <button class="close-event-btn confirm-btn" @click="confirmCloseEvent">
+        <button
+          class="close-event-btn confirm-btn"
+          @click="confirmCloseEvent"
+        >
           确认
         </button>
       </view>
