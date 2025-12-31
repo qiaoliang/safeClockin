@@ -181,3 +181,94 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
   
   console.log('✅ 超级管理员登录成功');
 }
+
+/**
+ * 生成 137 开头的随机 11 位电话号码
+ * 
+ * @returns {string} 随机生成的手机号
+ */
+function generate137PhoneNumber() {
+  // 137 开头，后 8 位随机
+  const suffix = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+  return `137${suffix}`;
+}
+
+/**
+ * 注册新用户并登录（快捷方法）
+ * 封装注册新用户并完成登录的完整流程
+ * 
+ * @param {Page} page - Playwright Page 对象
+ * @param {Object} options - 可选参数
+ * @param {string} options.phoneNumber - 手机号（如果不提供则生成 137 开头的随机手机号）
+ * @param {string} options.password - 密码（默认为 'F1234567'）
+ * @param {string} options.testCode - 验证码（默认为 '123456'）
+ * @returns {Promise<Object>} 返回用户信息 { phone, password }
+ */
+export async function registerAndLoginAsUser(page, options = {}) {
+  const phoneNumber = options.phoneNumber || generate137PhoneNumber();
+  const password = options.password || 'F1234567';
+  const testCode = options.testCode || '123456';
+
+  console.log(`注册并登录用户: ${phoneNumber}`);
+
+  // 步骤 1：导航到登录页面
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000);
+
+  // 步骤 2：点击"手机号登录"按钮
+  await page.locator('text=手机号登录').click({ force: true });
+  await page.waitForTimeout(2000);
+
+  // 步骤 3：切换到"注册"标签
+  await page.locator('.tab').filter({ hasText: '注册' }).click({ force: true });
+  await page.waitForTimeout(1000);
+
+  // 步骤 4：输入手机号
+  const phoneInput = page.locator('input[type="number"]').first();
+  await phoneInput.click({ force: true });
+  await phoneInput.clear();
+  await phoneInput.type(phoneNumber, { delay: 100 });
+  await page.waitForTimeout(500);
+
+  // 步骤 5：点击"获取验证码"按钮
+  const codeBtn = page.locator('.code-btn');
+  await codeBtn.click({ force: true });
+  await page.waitForTimeout(2000);
+
+  // 步骤 6：输入验证码
+  const codeInput = page.locator('input[type="number"]').nth(1);
+  await codeInput.click({ force: true });
+  await codeInput.clear();
+  await codeInput.type(testCode, { delay: 100 });
+  await page.waitForTimeout(500);
+
+  // 步骤 7：输入密码
+  const passwordInput = page.locator('input[type="password"]');
+  await passwordInput.click({ force: true });
+  await passwordInput.clear();
+  await passwordInput.type(password, { delay: 100 });
+  await page.waitForTimeout(500);
+
+  // 步骤 8：勾选用户协议
+  await page.locator('.agree-label').click({ force: true });
+  await page.waitForTimeout(500);
+
+  // 步骤 9：点击"注册"按钮
+  const submitBtn = page.locator('uni-button.submit');
+  await submitBtn.click({ force: true });
+
+  // 步骤 10：等待注册完成并跳转到首页
+  await page.waitForTimeout(5000);
+  await page.waitForLoadState('networkidle');
+
+  // 验证是否跳转到"打卡"首页
+  const homePageText = await page.locator('body').textContent();
+  if (!homePageText.includes('打卡')) {
+    throw new Error('注册失败，未跳转到打卡首页');
+  }
+
+  console.log('✅ 用户注册并登录成功');
+
+  return { phone: phoneNumber, password };
+}
