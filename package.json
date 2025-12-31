@@ -7,6 +7,10 @@
     "test:unit": "vitest --config vitest.config.js",
     "test:func": "vitest --config vitest.integration.config.js",
     "test:e2e": "vitest --config vitest.e2e.config.js",
+    "test:playwright": "./scripts/run-playwright-e2e.sh",
+    "test:playwright:ui": "./scripts/run-playwright-e2e.sh --ui",
+    "test:playwright:debug": "./scripts/run-playwright-e2e.sh --debug",
+    "test:playwright:headed": "./scripts/run-playwright-e2e.sh --headed",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:run": "vitest run",
@@ -28,6 +32,7 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
