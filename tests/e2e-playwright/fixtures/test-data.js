@@ -9,7 +9,7 @@
 export const TEST_USERS = {
   // 超级系统管理员
   SUPER_ADMIN: {
-    phone: '13900007997',
+    phone: '13141516171',
     password: 'F1234567',
     nickname: '超级管理员',
     role: 4,
