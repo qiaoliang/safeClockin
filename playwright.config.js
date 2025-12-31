@@ -47,6 +47,11 @@ export default defineConfig({
   // 测试超时
   timeout: 60000,
   
+  // 全局超时配置
+  expect: {
+    timeout: 10000
+  },
+  
   // 项目配置（多浏览器支持）
   projects: [
     {

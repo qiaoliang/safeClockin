@@ -7,9 +7,11 @@ import { expect } from '@playwright/test';
  * 导航到指定页面
  */
 export async function navigateTo(page, pageName) {
-  const pageUrl = `/pages/${pageName}/index.html`;
-  await page.goto(pageUrl);
+  // uni-app H5 是单页应用，所有路由通过 JavaScript 处理
+  // 只访问根路径，然后通过 JavaScript 触发路由
+  await page.goto('/');
   await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000); // 等待应用完全初始化
 }
 
 /**
@@ -17,6 +19,46 @@ export async function navigateTo(page, pageName) {
  */
 export async function navigateToLoginPage(page) {
   await navigateTo(page, 'LOGIN');
+  // 等待页面加载完成
+  await page.waitForLoadState('networkidle');
+  // 等待应用渲染
+  await page.waitForTimeout(1000);
+}
+
+/**
+ * 导航到手机号登录页面
+ */
+export async function navigateToPhoneLoginPage(page) {
+  // 使用 JavaScript 直接触发 uni-app 路由
+  await page.evaluate(() => {
+    return new Promise((resolve, reject) => {
+      if (typeof window.uni !== 'undefined') {
+        window.uni.navigateTo({
+          url: '/pages/phone-login/phone-login?mode=login',
+          success: () => resolve(true),
+          fail: (err) => {
+            console.error('导航失败:', err);
+            reject(err);
+          }
+        });
+      } else {
+        reject(new Error('uni 对象不存在'));
+      }
+    });
+  });
+  
+  // 等待页面内容更新
+  await page.waitForTimeout(3000);
+  await page.waitForLoadState('networkidle');
+  
+  // 验证页面内容包含手机号登录表单
+  const pageText = await page.locator('body').textContent();
+  const hasLoginForm = pageText.includes('请输入手机号') && pageText.includes('验证码登录');
+  
+  if (!hasLoginForm) {
+    console.log('当前页面内容:', pageText.substring(0, 200));
+    throw new Error('未找到手机号登录表单');
+  }
 }
 
 /**

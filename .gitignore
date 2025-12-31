@@ -9,3 +9,5 @@ unpa*/
 微信云托管*.*
 node_modules
 *.key
+playwright-report/
+test-results/
