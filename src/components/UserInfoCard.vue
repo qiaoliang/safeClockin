@@ -234,31 +234,31 @@ const handleToggleAddress = () => {
 .user-info-card {
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: 24rpx;
-  margin-bottom: $uni-font-size-base;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $uni-spacing-xl;
+  margin-bottom: $uni-spacing-base;
+  box-shadow: $uni-shadow-card;
 }
 
 .user-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20rpx;
-  padding-bottom: 20rpx;
-  border-bottom: 2rpx solid #f0f0f0;
+  margin-bottom: $uni-spacing-xl;
+  padding-bottom: $uni-spacing-xl;
+  border-bottom: 2rpx solid $uni-border-1;
 }
 
 .user-avatar {
   position: relative;
   width: 96rpx;
   height: 96rpx;
-  margin-right: 20rpx;
+  margin-right: $uni-spacing-xl;
 }
 
 .avatar-image {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 4rpx solid $uni-primary;
+  border: $uni-spacing-xs solid $uni-primary;
 }
 
 .edit-btn {
@@ -272,11 +272,11 @@ const handleToggleAddress = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  box-shadow: $uni-shadow-sm;
 }
 
 .edit-icon {
-  font-size: 20rpx;
+  font-size: $uni-font-size-xs;
   color: $uni-white;
 }
 
@@ -288,16 +288,16 @@ const handleToggleAddress = () => {
 }
 
 .user-name {
-  font-size: 32rpx;
+  font-size: $uni-font-size-lg;
   font-weight: 600;
   color: $uni-tabbar-color;
 }
 
 .user-role {
   display: inline-block;
-  padding: 6rpx 16rpx;
-  border-radius: 16rpx;
-  font-size: 24rpx;
+  padding: $uni-spacing-xs $uni-spacing-base;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-sm;
   color: $uni-primary;
   background: rgba(244, 130, 36, 0.1);
   width: fit-content;
@@ -315,9 +315,9 @@ const handleToggleAddress = () => {
 }
 
 .info-row:not(:last-child) {
-  margin-bottom: 12rpx;
-  padding-bottom: 12rpx;
-  border-bottom: 2rpx solid #f0f0f0;
+  margin-bottom: $uni-spacing-base;
+  padding-bottom: $uni-spacing-base;
+  border-bottom: 2rpx solid $uni-border-1;
 }
 
 .info-item {

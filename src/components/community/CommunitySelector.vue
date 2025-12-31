@@ -206,7 +206,7 @@ watch(communityList, (newList) => {
 }
 
 .placeholder-text {
-  color: #fff;
+  color: $uni-white;
   font-size: $uni-font-size-lg;
   font-weight: 600;
 }
@@ -221,7 +221,7 @@ watch(communityList, (newList) => {
 .more-button {
   display: flex;
   align-items: center;
-  padding: 8rpx 16rpx;
+  padding: $uni-spacing-sm $uni-spacing-base;
   background: rgba(244, 130, 36, 0.1);
   border-radius: $uni-radius-base;
   margin-left: $uni-spacing-base;
@@ -230,11 +230,11 @@ watch(communityList, (newList) => {
 .more-text {
   font-size: $uni-font-size-sm;
   color: $uni-primary;
-  margin-right: 8rpx;
+  margin-right: $uni-spacing-sm;
 }
 
 .arrow-icon {
-  font-size: 20rpx;
+  font-size: $uni-font-size-xs;
   color: $uni-primary;
   transition: transform 0.3s ease;
 }

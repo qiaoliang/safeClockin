@@ -1027,9 +1027,9 @@ const updateTaskData = () => {
 
 .role-tabs {
   display: flex;
-  background: #f3f4f6;
-  border-radius: 50rpx;
-  padding: 4rpx;
+  background: $uni-bg-color-lighter;
+  border-radius: $uni-radius-full;
+  padding: $uni-spacing-xs;
 }
 
 .role-tab {
@@ -1037,9 +1037,9 @@ const updateTaskData = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
-  padding: 16rpx 32rpx;
-  border-radius: 50rpx;
+  gap: $uni-spacing-sm;
+  padding: $uni-spacing-base $uni-spacing-xl;
+  border-radius: $uni-radius-full;
   transition: all 0.3s ease;
 }
 
@@ -1113,7 +1113,7 @@ const updateTaskData = () => {
 }
 
 .floating-tasks-section {
-  margin: 0 32rpx 24rpx;
+  margin: 0 $uni-spacing-xxl $uni-spacing-lg;
 }
 
 .floating-tasks-btn {
@@ -1122,7 +1122,7 @@ const updateTaskData = () => {
   box-shadow: $uni-shadow-primary;
   transition: all 0.3s ease;
   animation: float 3s ease-in-out infinite;
-  border-radius: 48rpx;
+  border-radius: $uni-radius-xxl;
   padding: 0;
   border: none;
   position: relative;
@@ -1152,7 +1152,7 @@ const updateTaskData = () => {
   right: -4rpx;
   bottom: -4rpx;
   background: linear-gradient(135deg, rgba(244, 130, 36, 0.6), rgba(232, 116, 26, 0.6));
-  border-radius: 48rpx;
+  border-radius: $uni-radius-xxl;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1176,7 +1176,7 @@ const updateTaskData = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 48rpx 40rpx;
+  padding: $uni-spacing-xxxl $uni-spacing-xl;
 }
 
 .tasks-icon-wrapper {
@@ -1236,7 +1236,7 @@ const updateTaskData = () => {
 }
 
 .today-tasks-section {
-  margin: 0 32rpx 48rpx;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .today-tasks-btn {
@@ -1244,11 +1244,11 @@ const updateTaskData = () => {
   background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
   border-radius: $uni-radius-lg;
-  padding: 48rpx;
+  padding: $uni-spacing-xxxl;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 16rpx 48rpx rgba(244, 130, 36, 0.4);
+  box-shadow: $uni-shadow-primary-xl;
 }
 
 .today-tasks-btn.disabled {
@@ -1278,20 +1278,20 @@ const updateTaskData = () => {
 // 一键求助按钮样式
 .help-btn {
   width: 100%;
-  background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+  background: linear-gradient(135deg, $uni-danger 0%, $uni-danger-dark 100%);
   border: none;
   border-radius: $uni-radius-lg;
-  padding: 48rpx;
+  padding: $uni-spacing-xxxl;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 16rpx 48rpx rgba(255, 71, 87, 0.4);
+  box-shadow: $uni-shadow-danger-xl;
   transition: all 0.3s ease;
 }
 
 .help-btn:active {
   transform: translateY(4rpx);
-  box-shadow: 0 8rpx 24rpx rgba(255, 71, 87, 0.3);
+  box-shadow: $uni-shadow-danger;
 }
 
 .help-btn .btn-icon {

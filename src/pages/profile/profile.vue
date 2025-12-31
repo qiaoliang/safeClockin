@@ -398,29 +398,29 @@ onShow(() => {
 @import "@/uni.scss";
 
 .hint-section {
-  background: #fef3c7;
-  border-left: 8rpx solid #f59e0b;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
+  background: $uni-bg-yellow-50;
+  border-left: $uni-spacing-sm solid $uni-warning;
+  border-radius: $uni-radius-lg;
+  padding: $uni-spacing-xl;
+  margin-bottom: $uni-spacing-xl;
 }
 .hint-text {
   display: block;
-  color: #78350f;
-  margin-bottom: 12rpx;
+  color: $uni-text-gray-800;
+  margin-bottom: $uni-spacing-base;
 }
 .hint-btn {
-  background: #f48224;
-  color: #fff;
+  background: $uni-primary;
+  color: $uni-white;
   border: none;
-  border-radius: 16rpx;
-  padding: 12rpx 16rpx;
+  border-radius: $uni-radius-lg;
+  padding: $uni-spacing-base $uni-spacing-lg;
 }
 
 .profile-container {
   min-height: 100vh;
   @include bg-gradient;
-  padding: 40rpx 24rpx;
+  padding: $uni-spacing-xxxl $uni-spacing-xl;
 }
 
 .user-info-section {
@@ -429,7 +429,7 @@ onShow(() => {
 }
 
 .user-avatar {
-  margin-right: 32rpx;
+  margin-right: $uni-spacing-xxl;
   position: relative;
 }
 
@@ -437,7 +437,7 @@ onShow(() => {
   width: 120rpx;
   height: 120rpx;
   border-radius: 60rpx;
-  border: 4rpx solid #f48224;
+  border: $uni-spacing-xs solid $uni-primary;
 }
 
 .edit-btn {
@@ -446,26 +446,26 @@ onShow(() => {
   right: 0;
   width: 40rpx;
   height: 40rpx;
-  background: #f48224;
+  background: $uni-primary;
   border-radius: 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3rpx solid #fff;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  border: 3rpx solid $uni-white;
+  box-shadow: $uni-shadow-sm;
 }
 
 .edit-icon {
-  font-size: 20rpx;
-  color: #fff;
+  font-size: $uni-font-size-xs;
+  color: $uni-white;
 }
 
 .user-stats-section {
   background: $uni-bg-color-white;
   border-radius: $uni-radius-lg;
-  padding: 32rpx;
-  margin-bottom: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $uni-spacing-xxl;
+  margin-bottom: $uni-spacing-xxl;
+  box-shadow: $uni-shadow-card;
 }
 
 .user-stats-card {
@@ -482,7 +482,7 @@ onShow(() => {
 .stat-value {
   font-size: $uni-font-size-xl;
   font-weight: bold;
-  margin-bottom: 8rpx;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .stat-label {
@@ -495,22 +495,22 @@ onShow(() => {
 }
 
 .warning-color {
-  color: #f59e0b;
+  color: $uni-warning;
 }
 
 .accent-color {
-  color: #624731;
+  color: $uni-accent;
 }
 
 .user-avatar {
-  margin-right: 32rpx;
+  margin-right: $uni-spacing-xxl;
 }
 
 .avatar-image {
   width: 120rpx;
   height: 120rpx;
   border-radius: 60rpx;
-  border: 4rpx solid #f48224;
+  border: $uni-spacing-xs solid $uni-primary;
 }
 
 .user-details {
@@ -519,44 +519,44 @@ onShow(() => {
 
 .user-name {
   display: block;
-  font-size: 36rpx;
+  font-size: $uni-font-size-xxl;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 8rpx;
+  color: $uni-text-primary;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .user-role {
   display: block;
-  font-size: 28rpx;
-  color: #f48224;
+  font-size: $uni-font-size-base;
+  color: $uni-primary;
   background: rgba(244, 130, 36, 0.1);
-  padding: 8rpx 16rpx;
-  border-radius: 16rpx;
+  padding: $uni-spacing-sm $uni-spacing-base;
+  border-radius: $uni-radius-lg;
   width: fit-content;
 }
 
 .menu-section {
-  background: white;
-  border-radius: 24rpx;
-  margin-bottom: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: $uni-white;
+  border-radius: $uni-radius-xl;
+  margin-bottom: $uni-spacing-xxl;
+  box-shadow: $uni-shadow-card;
   overflow: hidden;
 }
 
 .menu-group-title {
-  padding: 24rpx 48rpx 16rpx;
-  font-size: 28rpx;
-  color: #999;
+  padding: $uni-spacing-xl $uni-spacing-xxxl $uni-spacing-base;
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
   font-weight: 500;
-  background: #fafafa;
-  border-bottom: 2rpx solid #f0f0f0;
+  background: $uni-bg-color-lighter;
+  border-bottom: 2rpx solid $uni-border-1;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 32rpx 48rpx;
-  border-bottom: 2rpx solid #f8f8f8;
+  padding: $uni-spacing-xxl $uni-spacing-xxxl;
+  border-bottom: 2rpx solid $uni-bg-color-lighter;
   transition: background-color 0.3s ease;
 }
 
@@ -565,45 +565,45 @@ onShow(() => {
 }
 
 .menu-item:active {
-  background-color: #f8f8f8;
+  background-color: $uni-bg-color-lighter;
 }
 
 .menu-icon {
   font-size: 40rpx;
-  margin-right: 24rpx;
+  margin-right: $uni-spacing-xl;
   width: 40rpx;
   text-align: center;
 }
 
 .menu-text {
   flex: 1;
-  font-size: 32rpx;
-  color: #333;
+  font-size: $uni-font-size-lg;
+  color: $uni-text-primary;
 }
 
 .menu-arrow {
-  font-size: 28rpx;
-  color: #999;
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
 }
 
 .logout-section {
-  margin-top: 48rpx;
+  margin-top: $uni-spacing-xxxl;
 }
 
 .logout-btn {
   width: 100%;
   height: 96rpx;
-  background: white;
-  border: 2rpx solid #ff4757;
-  border-radius: 32rpx;
-  color: #ff4757;
-  font-size: 36rpx;
+  background: $uni-white;
+  border: 2rpx solid $uni-danger;
+  border-radius: $uni-radius-xl;
+  color: $uni-danger;
+  font-size: $uni-font-size-xxl;
   font-weight: 600;
   box-shadow: 0 4rpx 16rpx rgba(255, 71, 87, 0.2);
 }
 
 .logout-btn:active {
   transform: scale(0.98);
-  background-color: #fff5f5;
+  background-color: $uni-bg-red-50;
 }
 </style>

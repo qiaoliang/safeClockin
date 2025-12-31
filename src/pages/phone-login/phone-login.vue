@@ -316,19 +316,19 @@ onLoad((opts)=>{
 <style lang="scss" scoped>
 @import '@/uni.scss';
 
-.container { padding: $uni-font-size-xl }
-.tabs { display:flex; margin-bottom: $uni-font-size-base }
-.tab { flex:1; text-align:center; padding: $uni-font-size-base; border-bottom: 4rpx solid #eee }
+.container { padding: $uni-spacing-xxxl }
+.tabs { display:flex; margin-bottom: $uni-spacing-base }
+.tab { flex:1; text-align:center; padding: $uni-spacing-base; border-bottom: 4rpx solid $uni-border-2 }
 .tab.active { color:$uni-primary; border-color:$uni-primary }
-.form { background:$uni-bg-color-white; border-radius: $uni-radius-lg; padding: $uni-font-size-base }
-.row { display:flex; align-items:center; margin-bottom: $uni-radius-base }
-.input { flex:1; padding: $uni-radius-base; border: 2rpx solid #ddd; border-radius: 8rpx }
-.code-btn { margin-left: 12rpx; padding: $uni-radius-base; background:$uni-primary; color:$uni-bg-color-white; border-radius: 8rpx }
-.password-toggle { padding: 0 12rpx; font-size: 32rpx; cursor: pointer }
-.row-options { display:flex; justify-content:space-between; align-items:center; margin-bottom: $uni-radius-base }
-.remember-me { display:flex; align-items:center; gap: 8rpx; color:$uni-base-color }
+.form { background:$uni-bg-color-white; border-radius: $uni-radius-lg; padding: $uni-spacing-base }
+.row { display:flex; align-items:center; margin-bottom: $uni-spacing-base }
+.input { flex:1; padding: $uni-spacing-base; border: 2rpx solid $uni-border-3; border-radius: $uni-radius-sm }
+.code-btn { margin-left: $uni-spacing-base; padding: $uni-spacing-base; background:$uni-primary; color:$uni-bg-color-white; border-radius: $uni-radius-sm }
+.password-toggle { padding: 0 $uni-spacing-base; font-size: $uni-font-size-lg; cursor: pointer }
+.row-options { display:flex; justify-content:space-between; align-items:center; margin-bottom: $uni-spacing-base }
+.remember-me { display:flex; align-items:center; gap: $uni-spacing-sm; color:$uni-base-color }
 .forgot-password { color:$uni-primary; cursor: pointer }
-.agreement { display:flex; align-items:center; color:$uni-base-color; margin: $uni-radius-base 0 }
-.agree-label { display:flex; align-items:center; gap: $uni-radius-base }
-.submit { width:100%; padding: 20rpx; background:$uni-primary; color:$uni-bg-color-white; border-radius: 8rpx }
+.agreement { display:flex; align-items:center; color:$uni-base-color; margin: $uni-spacing-base 0 }
+.agree-label { display:flex; align-items:center; gap: $uni-spacing-base }
+.submit { width:100%; padding: $uni-spacing-xl; background:$uni-primary; color:$uni-bg-color-white; border-radius: $uni-radius-sm }
 </style>

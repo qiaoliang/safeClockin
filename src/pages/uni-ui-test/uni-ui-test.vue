@@ -393,32 +393,34 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/uni.scss";
+
 .test-container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+  padding: $uni-spacing-xl;
+  background-color: $uni-bg-color-grey;
   min-height: 100vh;
 }
 
 .simple-demo {
-  margin: 20rpx 0;
+  margin: $uni-spacing-xl 0;
   text-align: center;
 }
 
 .section-content {
-  margin: 20rpx 0;
+  margin: $uni-spacing-xl 0;
   display: flex;
-  gap: 20rpx;
+  gap: $uni-spacing-xl;
   flex-wrap: wrap;
 }
 
 .popup-content {
-  padding: 40rpx;
-  background-color: white;
-  border-radius: 12rpx;
+  padding: $uni-spacing-xxxl;
+  background-color: $uni-white;
+  border-radius: $uni-radius-base;
   text-align: center;
-  
+
   text {
-    margin-bottom: 20rpx;
+    margin-bottom: $uni-spacing-xl;
     display: block;
   }
 }

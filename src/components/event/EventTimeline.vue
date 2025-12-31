@@ -294,7 +294,7 @@ const playVoice = (message) => {
 .user-name {
   display: block;
   font-size: $uni-font-size-sm;
-  font-weight: 600;
+  font-weight: $uni-font-weight-bold;
   margin-bottom: $uni-spacing-xs;
 }
 
@@ -307,8 +307,8 @@ const playVoice = (message) => {
 
 .tag {
   display: inline-block;
-  padding: 4rpx 12rpx;
-  background: rgba(244, 130, 36, 0.1);
+  padding: $uni-spacing-xs $uni-spacing-base;
+  background: $uni-primary-light;
   color: $uni-primary;
   border-radius: $uni-radius-sm;
   font-size: $uni-font-size-xs;
@@ -339,7 +339,7 @@ const playVoice = (message) => {
   align-items: center;
   gap: $uni-spacing-sm;
   padding: $uni-spacing-sm $uni-spacing-base;
-  background: rgba(0, 0, 0, 0.05);
+  background: $uni-bg-overlay-light;
   border-radius: $uni-radius-lg;
   margin-top: $uni-spacing-xs;
 

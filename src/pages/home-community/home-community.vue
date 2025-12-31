@@ -501,37 +501,37 @@ onShow(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 32rpx;
-  background: #FAE9DB;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-  
+  padding: $uni-spacing-xxl;
+  background: $uni-bg-color;
+  box-shadow: $uni-shadow-xs;
+
   .page-title {
-    font-size: 36rpx;
+    font-size: $uni-font-size-xxl;
     font-weight: 600;
-    color: #333;
+    color: $uni-text-primary;
   }
-  
+
   .header-actions {
     .action-btn {
-      padding: 12rpx 24rpx;
-      background: #FF6B35;
-      color: #fff;
-      border-radius: 32rpx;
-      font-size: 28rpx;
+      padding: $uni-spacing-base $uni-spacing-xl;
+      background: $uni-primary;
+      color: $uni-white;
+      border-radius: $uni-radius-xl;
+      font-size: $uni-font-size-base;
       font-weight: 500;
     }
   }
 }
 
 .community-selector-section {
-  margin: 24rpx 32rpx;
+  margin: $uni-spacing-xl $uni-spacing-xxl;
 }
 
 .notification-bar {
-  margin: 0 32rpx 24rpx;
-  padding: 24rpx 32rpx;
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border-radius: 24rpx;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xl;
+  padding: $uni-spacing-xl $uni-spacing-xxl;
+  background: linear-gradient(135deg, $uni-bg-yellow-50 0%, $uni-bg-yellow-100 100%);
+  border-radius: $uni-radius-xl;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -548,11 +548,11 @@ onShow(() => {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: $uni-spacing-base;
 }
 
 .notification-icon {
-  font-size: 36rpx;
+  font-size: $uni-font-size-xxl;
   animation: shake 2s infinite;
 }
 
@@ -564,24 +564,24 @@ onShow(() => {
 
 .notification-text {
   flex: 1;
-  font-size: 28rpx;
+  font-size: $uni-font-size-base;
   font-weight: 500;
-  color: #333;
+  color: $uni-text-primary;
 }
 
 .notification-time {
-  font-size: 24rpx;
-  color: #999;
+  font-size: $uni-font-size-sm;
+  color: $uni-text-secondary;
 }
 
 .notification-arrow {
-  font-size: 36rpx;
-  color: #FF6B35;
+  font-size: $uni-font-size-xxl;
+  color: $uni-primary;
   font-weight: bold;
 }
 
 .overview-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .section-header {
@@ -600,7 +600,7 @@ onShow(() => {
   font-size: $uni-font-size-xl;
   font-weight: 600;
   color: $uni-tabbar-color;
-  margin-bottom: 8rpx;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .section-subtitle {
@@ -618,16 +618,16 @@ onShow(() => {
 
 .overview-cards {
   display: flex;
-  gap: $uni-font-size-base;
+  gap: $uni-spacing-base;
 }
 
 .overview-card {
   flex: 1;
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
+  padding: $uni-spacing-xxxl;
   text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: $uni-shadow-card;
 }
 
 .card-title {
@@ -639,39 +639,39 @@ onShow(() => {
 
 .card-number {
   display: block;
-  font-size: 48rpx;
+  font-size: $uni-font-size-xxxl;
   font-weight: bold;
   color: $uni-tabbar-color;
-  margin-bottom: 8rpx;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .card-desc {
   display: block;
-  font-size: 20rpx;
-  color: $uni-secondary-color;
+  font-size: $uni-font-size-xs;
+  color: $uni-text-secondary;
 }
 
 .total-count {
-  border-top: 8rpx solid $uni-primary;
+  border-top: $uni-spacing-sm solid $uni-primary;
 }
 
 .checkin-rate {
-  border-top: 8rpx solid $uni-success;
+  border-top: $uni-spacing-sm solid $uni-success;
 }
 
 .unchecked-count {
-  border-top: 8rpx solid $uni-error;
+  border-top: $uni-spacing-sm solid $uni-error;
 }
 
 .frequent-issues-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .issues-list {
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $uni-spacing-xxxl;
+  box-shadow: $uni-shadow-card;
 }
 
 .issue-item {
@@ -694,7 +694,7 @@ onShow(() => {
 }
 
 .issue-icon {
-  font-size: 48rpx;
+  font-size: $uni-font-size-xxxl;
   margin-right: $uni-spacing-base;
 }
 
@@ -730,7 +730,7 @@ onShow(() => {
 }
 
 .unchecked-detail-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .unchecked-detail-btn {
@@ -738,9 +738,9 @@ onShow(() => {
   background: $uni-bg-color-white;
   border: none;
   border-radius: $uni-radius-xl;
-  padding: $uni-radius-xxl;
+  padding: $uni-spacing-xxxl;
   text-align: left;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: $uni-shadow-card;
 }
 
 .btn-text {
