@@ -2,49 +2,15 @@
  * 社区管理 E2E 测试
  */
 import { test, expect } from '@playwright/test';
-import { 
-  waitForLoginPage, 
-  switchToPasswordLoginTab,
-  loginWithPhoneAndPassword,
-  verifyLoginSuccess
-} from '../helpers/auth.js';
-import { TEST_USERS } from '../fixtures/test-data.js';
+import { loginAsSuperAdmin } from '../helpers/auth.js';
 
 test.describe('超级管理员社区管理测试', () => {
-  const superAdmin = TEST_USERS.SUPER_ADMIN;
   const newCommunityName = '新创建的社区1';
   const newCommunityLocation = '新创建的社区1的位置';
 
-  test.beforeEach(async ({ page }) => {
-    // 导航到根路径（登录页面是默认页面）
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000); // 等待应用完全初始化
-    
-    // 等待登录页面加载
-    await waitForLoginPage(page);
-  });
-
   test('超级管理员登录后自动导航到我的页面', async ({ page }) => {
-    // 点击"手机号登录"按钮
-    await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
-    
-    // 切换到"密码登录"标签页
-    await switchToPasswordLoginTab(page);
-    
-    // 输入手机号和密码
-    await page.locator('input[type="number"]').fill(superAdmin.phone);
-    await page.waitForTimeout(500);
-    await page.locator('input[type="password"]').fill(superAdmin.password);
-    await page.waitForTimeout(500);
-    
-    // 点击登录按钮（使用 uni-button 选择器）
-    await page.locator('uni-button.submit').click({ force: true });
-    
-    // 等待登录完成（超级管理员应该自动导航到"我的"页面）
-    await page.waitForTimeout(5000);
-    await page.waitForLoadState('networkidle');
+    // 使用 helper 方法登录
+    await loginAsSuperAdmin(page);
     
     // 验证当前页面是"我的"页面
     const pageText = await page.locator('body').textContent();
@@ -54,20 +20,8 @@ test.describe('超级管理员社区管理测试', () => {
   });
 
   test('访问社区列表并验证默认社区', async ({ page }) => {
-    // 登录
-    await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
-    await switchToPasswordLoginTab(page);
-    await page.locator('input[type="number"]').fill(superAdmin.phone);
-    await page.waitForTimeout(500);
-    await page.locator('input[type="password"]').fill(superAdmin.password);
-    await page.waitForTimeout(500);
-    await page.locator('uni-button.submit').click({ force: true });
-    await page.waitForTimeout(5000);
-    
-    // 打印页面内容用于调试
-    const pageTextBefore = await page.locator('body').textContent();
-    console.log('登录后页面内容（前200字符）:', pageTextBefore.substring(0, 200));
+    // 使用 helper 方法登录
+    await loginAsSuperAdmin(page);
     
     // 点击"社区列表"菜单项
     await page.getByText('社区列表', { exact: true }).click({ force: true });
@@ -86,16 +40,8 @@ test.describe('超级管理员社区管理测试', () => {
   });
 
   test('验证默认社区保护机制', async ({ page }) => {
-    // 登录
-    await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
-    await switchToPasswordLoginTab(page);
-    await page.locator('input[type="number"]').fill(superAdmin.phone);
-    await page.waitForTimeout(500);
-    await page.locator('input[type="password"]').fill(superAdmin.password);
-    await page.waitForTimeout(500);
-    await page.locator('uni-button.submit').click({ force: true });
-    await page.waitForTimeout(5000);
+    // 使用 helper 方法登录
+    await loginAsSuperAdmin(page);
     
     // 导航到社区列表
     await page.getByText('社区列表', { exact: true }).click({ force: true });
@@ -123,16 +69,8 @@ test.describe('超级管理员社区管理测试', () => {
   });
 
   test('创建新社区', async ({ page }) => {
-    // 登录
-    await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
-    await switchToPasswordLoginTab(page);
-    await page.locator('input[type="number"]').fill(superAdmin.phone);
-    await page.waitForTimeout(500);
-    await page.locator('input[type="password"]').fill(superAdmin.password);
-    await page.waitForTimeout(500);
-    await page.locator('uni-button.submit').click({ force: true });
-    await page.waitForTimeout(5000);
+    // 使用 helper 方法登录
+    await loginAsSuperAdmin(page);
     
     // 导航到社区列表
     await page.getByText('社区列表', { exact: true }).click({ force: true });
@@ -198,15 +136,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test('完整的社区管理流程', async ({ page }) => {
     // 步骤 1：登录
-    await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
-    await switchToPasswordLoginTab(page);
-    await page.locator('input[type="number"]').fill(superAdmin.phone);
-    await page.waitForTimeout(500);
-    await page.locator('input[type="password"]').fill(superAdmin.password);
-    await page.waitForTimeout(500);
-    await page.locator('uni-button.submit').click({ force: true });
-    await page.waitForTimeout(5000);
+    await loginAsSuperAdmin(page);
     
     // 步骤 2：验证自动导航到"我的"页面
     let pageText = await page.locator('body').textContent();

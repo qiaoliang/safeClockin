@@ -131,3 +131,53 @@ export async function getCurrentUserInfo(page) {
   console.log('获取用户信息需要根据实际页面结构调整');
   return { nickname: '', role: '' };
 }
+/**
+ * 超级管理员登录（快捷方法）
+ * 封装超级管理员登录的完整流程
+ * 
+ * @param {Page} page - Playwright Page 对象
+ * @param {Object} superAdmin - 超级管理员凭据（可选，如果不提供则使用默认值）
+ * @returns {Promise<void>}
+ */
+export async function loginAsSuperAdmin(page, superAdmin = null) {
+  // 如果没有提供超级管理员凭据，使用默认值
+  if (!superAdmin) {
+    // 动态导入 TEST_USERS
+    const { TEST_USERS } = await import('../fixtures/test-data.js');
+    superAdmin = TEST_USERS.SUPER_ADMIN;
+  }
+  
+  // 导航到根路径（登录页面是默认页面）
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000); // 等待应用完全初始化
+  
+  // 等待登录页面加载
+  await waitForLoginPage(page);
+  
+  // 点击"手机号登录"按钮
+  await page.locator('text=手机号登录').click({ force: true });
+  await page.waitForTimeout(2000);
+  
+  // 切换到"密码登录"标签页
+  await switchToPasswordLoginTab(page);
+  
+  // 输入手机号和密码
+  await page.locator('input[type="number"]').fill(superAdmin.phone);
+  await page.waitForTimeout(500);
+  await page.locator('input[type="password"]').fill(superAdmin.password);
+  await page.waitForTimeout(500);
+  
+  // 点击登录按钮（使用 uni-button 选择器）
+  await page.locator('uni-button.submit').click({ force: true });
+  
+  // 等待登录完成（超级管理员应该自动导航到"我的"页面）
+  await page.waitForTimeout(5000);
+  await page.waitForLoadState('networkidle');
+  
+  // 验证登录成功
+  const pageText = await page.locator('body').textContent();
+  expect(pageText).toContain('我的');
+  
+  console.log('✅ 超级管理员登录成功');
+}
