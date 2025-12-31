@@ -189,8 +189,8 @@ export const useCommunityStore = defineStore('community', {
         })
         
         if (response.code === 1) {
-          // 从列表中移除
-          this.communities = this.communities.filter(c => c.community_id !== communityId)
+          // 刷新列表而不是从列表中移除，以便显示在已删除社区 section
+          await this.loadCommunities(true)
         }
         
         return response

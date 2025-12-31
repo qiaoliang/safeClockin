@@ -26,57 +26,117 @@
 
     <!-- 社区列表 -->
     <view class="community-list">
-      <uni-swipe-action>
-        <uni-swipe-action-item
-          v-for="item in displayCommunities"
-          :key="item.community_id"
-          :options="swipeOptions"
-          @click="handleSwipeClick($event, item)"
-        >
-          <view
-            class="community-item"
-            @click="viewCommunityDetail(item)"
-            @longpress="showActionMenu(item)"
+      <!-- 正常社区 Section -->
+      <view v-if="normalCommunities.length > 0" class="community-section">
+        <view class="section-title">
+          <text class="section-title-text">正常社区</text>
+        </view>
+        <uni-swipe-action>
+          <uni-swipe-action-item
+            v-for="item in normalCommunities"
+            :key="item.community_id"
+            :options="swipeOptions"
+            @click="handleSwipeClick($event, item)"
           >
-            <view class="community-header">
-              <text class="community-name">
-                {{ item.name }}
-              </text>
-              <view
-                :class="['status-tag', item.status === 'active' ? 'status-tag-active' : 'status-tag-inactive']"
-                @click.stop="handleStatusClick(item)"
-              >
-                {{ item.status === 'active' ? '启用' : '停用' }}
+            <view
+              class="community-item"
+              @click="viewCommunityDetail(item)"
+              @longpress="showActionMenu(item)"
+            >
+              <view class="community-header">
+                <text class="community-name">
+                  {{ item.name }}
+                </text>
+                <view class="button-group">
+                  <view
+                    :class="['status-tag', item.status === 'active' ? 'status-tag-active' : 'status-tag-inactive']"
+                    @click.stop="handleStatusClick(item)"
+                  >
+                    {{ item.status === 'active' ? '启用' : '停用' }}
+                  </view>
+                  <view
+                    v-if="canDeleteCommunity(item)"
+                    class="delete-btn"
+                    @click.stop="deleteCommunity(item)"
+                  >
+                    删除
+                  </view>
+                </view>
+              </view>
+
+              <view class="community-location">
+                <text class="location-icon">
+                  📍
+                </text>
+                <text class="location-text">
+                  {{ item.location || '未知地址' }}
+                </text>
+              </view>
+
+              <view class="community-meta">
+                <text class="meta-text">
+                  👤 {{ item.manager_name || '未分配' }}
+                </text>
+                <text class="meta-divider">
+                  |
+                </text>
+                <text class="meta-text">
+                  {{ formatDate(item.created_at) }}
+                </text>
               </view>
             </view>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
+      </view>
 
-            <view class="community-location">
-              <text class="location-icon">
-                📍
-              </text>
-              <text class="location-text">
-                {{ item.location || '未知地址' }}
-              </text>
-            </view>
+      <!-- 已删除社区 Section -->
+      <view v-if="deletedCommunities.length > 0" class="community-section deleted-section">
+        <view class="section-title">
+          <text class="section-title-text">已删除社区</text>
+        </view>
+        <uni-swipe-action>
+          <uni-swipe-action-item
+            v-for="item in deletedCommunities"
+            :key="item.community_id"
+          >
+            <view class="community-item deleted-item">
+              <view class="community-header">
+                <text class="community-name deleted-name">
+                  {{ item.name }}
+                </text>
+                <view class="status-tag status-tag-deleted">
+                  已删除
+                </view>
+              </view>
 
-            <view class="community-meta">
-              <text class="meta-text">
-                👤 {{ item.manager_name || '未分配' }}
-              </text>
-              <text class="meta-divider">
-                |
-              </text>
-              <text class="meta-text">
-                {{ formatDate(item.created_at) }}
-              </text>
+              <view class="community-location">
+                <text class="location-icon">
+                  📍
+                </text>
+                <text class="location-text deleted-text">
+                  {{ item.location || '未知地址' }}
+                </text>
+              </view>
+
+              <view class="community-meta">
+                <text class="meta-text deleted-text">
+                  👤 {{ item.manager_name || '未分配' }}
+                </text>
+                <text class="meta-divider">
+                  |
+                </text>
+                <text class="meta-text deleted-text">
+                  {{ formatDate(item.created_at) }}
+                </text>
+              </view>
             </view>
-          </view>
-        </uni-swipe-action-item>
-      </uni-swipe-action>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
+      </view>
 
       <!-- 空状态 -->
       <view
-        v-if="displayCommunities.length === 0 && !loading"
+        v-if="normalCommunities.length === 0 && deletedCommunities.length === 0 && !loading"
         class="empty-state"
       >
         <text class="empty-text">
@@ -242,6 +302,16 @@ const displayCommunities = computed(() => {
   return list
 })
 
+// 正常社区（未删除）
+const normalCommunities = computed(() => {
+  return displayCommunities.value.filter(item => item.status !== 'deleted')
+})
+
+// 已删除社区
+const deletedCommunities = computed(() => {
+  return displayCommunities.value.filter(item => item.status === 'deleted')
+})
+
 // 加载社区列表
 const loadCommunities = async (refresh = false) => {
   if (loading.value) return
@@ -398,6 +468,27 @@ const hasCommunityAccess = (communityId) => {
   return false
 }
 
+// 判断是否可以删除社区
+const canDeleteCommunity = (community) => {
+  // 只有超级管理员可以删除
+  if (!hasFeaturePermission(FeaturePermission.DELETE_COMMUNITY)) {
+    return false
+  }
+  
+  // 已删除的社区不能删除
+  if (community.status === 'deleted') {
+    return false
+  }
+  
+  // 默认社区不能删除
+  const DEFAULT_COMMUNITIES = ['安卡大家庭', '黑屋社区']
+  if (DEFAULT_COMMUNITIES.includes(community.name)) {
+    return false
+  }
+  
+  return true
+}
+
 // 处理滑动操作
 const handleSwipeClick = (e, item) => {
   showActionMenu(item)
@@ -511,20 +602,29 @@ const deleteCommunity = (item) => {
         try {
           uni.showLoading({ title: LOADING_MESSAGES.DELETING })
 
-          await communityStore.deleteCommunity(item.community_id)
+          const response = await communityStore.deleteCommunity(item.community_id)
 
           uni.hideLoading()
-          uni.showToast({
-            title: SUCCESS_MESSAGES.DELETE_SUCCESS,
-            icon: 'success'
-          })
+
+          if (response.code === 1) {
+            // 成功，使用 alert 提示
+            const data = response.data || {}
+            alert(`删除成功：${data.community_name || item.name}`)
+            
+            // 刷新列表
+            await loadCommunities(true)
+          } else {
+            // 失败，检查是否是因为还有用户
+            if (response.data && response.data.user_count) {
+              alert(`社区内还有 ${response.data.user_count} 个用户，无法删除`)
+            } else {
+              alert(response.msg || ERROR_MESSAGES.DELETE_FAILED)
+            }
+          }
         } catch (error) {
           console.error('删除社区失败:', error)
           uni.hideLoading()
-          uni.showToast({
-            title: ERROR_MESSAGES.DELETE_FAILED,
-            icon: 'none'
-          })
+          alert(ERROR_MESSAGES.DELETE_FAILED)
         }
       }
     }
@@ -595,6 +695,24 @@ onMounted(() => {
   padding: 24rpx 0;
 }
 
+.community-section {
+  margin-bottom: 32rpx;
+}
+
+.section-title {
+  padding: 0 32rpx 16rpx;
+}
+
+.section-title-text {
+  font-size: $uni-font-size-base;
+  font-weight: $uni-font-weight-base;
+  color: $uni-base-color;
+}
+
+.deleted-section .section-title-text {
+  color: $uni-secondary-color;
+}
+
 .community-item {
   @include card-default;
   margin: 0 32rpx 24rpx;
@@ -617,14 +735,23 @@ onMounted(() => {
   @include text-ellipsis;
 }
 
+.deleted-name {
+  color: $uni-secondary-color;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
 .status-tag-active {
   background: $uni-success-light;
   color: $uni-success;
   padding: 4rpx 12rpx;
   border-radius: $uni-radius-sm;
   font-size: $uni-font-size-xs;
-  flex-shrink: 0;
-  margin-left: 12rpx;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -640,13 +767,34 @@ onMounted(() => {
   padding: 4rpx 12rpx;
   border-radius: $uni-radius-sm;
   font-size: $uni-font-size-xs;
-  flex-shrink: 0;
-  margin-left: 12rpx;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .status-tag-inactive:active {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
+.status-tag-deleted {
+  background: $uni-error-light;
+  color: $uni-error;
+  padding: 4rpx 12rpx;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-xs;
+}
+
+.delete-btn {
+  background: $uni-error;
+  color: $uni-white;
+  padding: 4rpx 12rpx;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-xs;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:active {
   opacity: 0.7;
   transform: scale(0.95);
 }
@@ -669,6 +817,10 @@ onMounted(() => {
   @include text-ellipsis;
 }
 
+.deleted-text {
+  color: $uni-secondary-color;
+}
+
 .community-meta {
   display: flex;
   align-items: center;
@@ -682,6 +834,11 @@ onMounted(() => {
 
 .meta-divider {
   color: $uni-border-base;
+}
+
+.deleted-item {
+  background: $uni-bg-color-grey;
+  opacity: 0.8;
 }
 
 .empty-state {
