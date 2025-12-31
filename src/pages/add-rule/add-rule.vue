@@ -125,6 +125,14 @@
             </view>
           </picker>
         </view>
+        <view
+          v-if="timeIndex === 4"
+          class="all-day-hint"
+        >
+          <text class="hint-text">
+            全天规则可以在一天 24 小时内的任何时间打卡
+          </text>
+        </view>
       </view>
 
       <!-- 图标选择 -->
@@ -237,7 +245,7 @@ const submitCallback = ref(null) // 存储提交回调
 const isFormValid = ref(false)
 
 const freqValues = ['每天','每周','工作日','自定义']
-const timeValues = ['上午','下午','晚上','自定义时间']
+const timeValues = ['上午','下午','晚上','自定义时间','全天']
 const freqIndex = ref(0)
 const timeIndex = ref(3)
 
@@ -254,6 +262,7 @@ const onTimeClick = (e) => {
   if (timeIndex.value === 0) formData.value.custom_time = '08:00:00'
   else if (timeIndex.value === 1) formData.value.custom_time = '14:00:00'
   else if (timeIndex.value === 2) formData.value.custom_time = '20:00:00'
+  else if (timeIndex.value === 4) formData.value.custom_time = '00:00:00' // 全天规则设置为 00:00:00
 }
 
 // 处理时间选择变化
@@ -591,6 +600,20 @@ onMounted(() => {
 
 .custom-time-input {
   margin-top: $uni-font-size-base;
+}
+
+.all-day-hint {
+  margin-top: $uni-font-size-base;
+  padding: $uni-spacing-base;
+  background: #E0F2FE;
+  border-radius: $uni-radius-lg;
+  border-left: 8rpx solid $uni-primary;
+}
+
+.hint-text {
+  font-size: $uni-font-size-sm;
+  color: $uni-main-color;
+  line-height: 1.5;
 }
 
 .picker-input {
