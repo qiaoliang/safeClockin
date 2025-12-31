@@ -104,7 +104,7 @@
               {{ staff.phone_number || '未设置手机号' }}
             </text>
             <text class="staff-added-time">
-              成为专员时间：{{ formatDate(staff.added_time) }}
+              成为专员时间：{{ formatDate(staff.added_at) }}
             </text>
           </view>
         </view>
