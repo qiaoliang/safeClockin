@@ -212,11 +212,8 @@ const topIssues = computed(() => {
 // 计算属性：是否是社区主管
 const isCommunityManager = computed(() => userStore.isCommunityManager)
 
-// 计算属性：是否是社区工作人员（role >= 2）
-const isCommunityStaff = computed(() => {
-  const role = userStore.userInfo?.role
-  return role !== undefined && role >= 2
-})
+// 计算属性：是否是社区工作人员
+const isCommunityStaff = computed(() => userStore.isCommunityStaff)
 
 // 计算属性：是否有未处理事件
 const hasPendingEvents = computed(() => {
