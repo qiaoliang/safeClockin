@@ -932,7 +932,7 @@ const updateTaskData = () => {
     }));
     
     // 计算待打卡数量
-    pendingCheckinCount.value = nearbyTasks.value.filter(task => task.status === 'pending').length;
+    pendingCheckinCount.value = nearbyTasks.value.filter(task => task.status === 'pending' || task.status === 'unchecked').length;
     
   } catch (error) {
     console.error("更新任务数据失败:", error);
