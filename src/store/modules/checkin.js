@@ -228,6 +228,9 @@ export const useCheckinStore = defineStore("checkin", {
             this.todayCheckinItems.forEach((item) => {
                 if (item.status === "checked") return;
 
+                // 跳过全天规则（time_slot_type === 5），全天规则不应该自动标记为错过
+                if (item.time_slot_type === 5) return;
+
                 const planned = new Date();
                 const [hours, minutes, seconds] = (
                     item.planned_time || "00:00:00"
