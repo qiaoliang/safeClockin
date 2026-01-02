@@ -29,3 +29,7 @@ export function getAPITimeout() {
 export function isFeatureEnabled(feature) {
   return config.features[feature] || false
 }
+
+export function getMapKey() {
+  return config.map.key
+}

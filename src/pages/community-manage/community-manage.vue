@@ -27,9 +27,14 @@
     <!-- 社区列表 -->
     <view class="community-list">
       <!-- 正常社区 Section -->
-      <view v-if="normalCommunities.length > 0" class="community-section">
+      <view
+        v-if="normalCommunities.length > 0"
+        class="community-section"
+      >
         <view class="section-title">
-          <text class="section-title-text">正常社区</text>
+          <text class="section-title-text">
+            正常社区
+          </text>
         </view>
         <uni-swipe-action>
           <uni-swipe-action-item
@@ -90,9 +95,14 @@
       </view>
 
       <!-- 已删除社区 Section -->
-      <view v-if="deletedCommunities.length > 0" class="community-section deleted-section">
+      <view
+        v-if="deletedCommunities.length > 0"
+        class="community-section deleted-section"
+      >
         <view class="section-title">
-          <text class="section-title-text">已删除社区</text>
+          <text class="section-title-text">
+            已删除社区
+          </text>
         </view>
         <uni-swipe-action>
           <uni-swipe-action-item

@@ -140,6 +140,10 @@ const formData = ref({
   location: '',
   location_lat: null,
   location_lon: null,
+  province: '',
+  city: '',
+  district: '',
+  street: '',
   manager_id: '',
   manager_name: '',
   description: ''
@@ -189,15 +193,19 @@ const watchFormChanges = () => {
 
 // 选择位置
 const selectLocation = () => {
-  // TODO: 实现地图选择功能
-  // 暂时使用简单输入
-  uni.showModal({
-    title: '输入位置',
-    editable: true,
-    placeholderText: '请输入位置信息',
-    success: (res) => {
-      if (res.confirm && res.content) {
-        formData.value.location = res.content
+  // 跳转到地图选择页面
+  uni.navigateTo({
+    url: '/pages/map-location-picker/map-location-picker',
+    events: {
+      // 监听地图选择器返回的数据
+      onLocationSelected: (data) => {
+        formData.value.location = data.location
+        formData.value.location_lat = data.location_lat
+        formData.value.location_lon = data.location_lon
+        formData.value.province = data.province
+        formData.value.city = data.city
+        formData.value.district = data.district
+        formData.value.street = data.street
         watchFormChanges()
       }
     }
@@ -282,6 +290,10 @@ const loadCommunityDetail = async (id) => {
         location: community.location || '',
         location_lat: community.location_lat || null,
         location_lon: community.location_lon || null,
+        province: community.province || '',
+        city: community.city || '',
+        district: community.district || '',
+        street: community.street || '',
         manager_id: community.manager_id || '',
         manager_name: community.manager_name || community.manager?.nickname || '',
         description: community.description || ''

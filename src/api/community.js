@@ -85,6 +85,12 @@ export const getCommunityUsers = (communityId, params = {}) => {
  * @param {string} data.name - 社区名称
  * @param {string} data.description - 社区描述
  * @param {string} data.location - 地理位置
+ * @param {number} data.location_lat - 纬度
+ * @param {number} data.location_lon - 经度
+ * @param {string} data.province - 省份
+ * @param {string} data.city - 城市
+ * @param {string} data.district - 区县
+ * @param {string} data.street - 街道
  * @param {string} data.manager_id - 主管ID（可选）
  * @returns {Promise} API响应
  */

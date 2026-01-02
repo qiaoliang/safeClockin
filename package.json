@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@dcloudio/uni-ui": "^1.5.11",
+    "crypto-js": "^4.2.0",
     "pinia": "^2.0.0",
     "vue": "^3.0.0"
   },

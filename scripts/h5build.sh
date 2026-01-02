@@ -90,7 +90,7 @@ echo $ENV_TYPE
 echo "===== END ========="
 
 # 清理旧的构建结果
-BUILD_DIST_PATH="$FRONTEND_PATH/src/unpackage/dist/$BUILD_OUTPUT_DIR/mp-weixin"
+BUILD_DIST_PATH="$FRONTEND_PATH/src/unpackage/dist/$BUILD_OUTPUT_DIR/web"
 if [ -d "$BUILD_DIST_PATH" ]; then
     echo "清理旧的构建结果: $BUILD_DIST_PATH"
     rm -rf "$BUILD_DIST_PATH"
