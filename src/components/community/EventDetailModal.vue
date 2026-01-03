@@ -34,7 +34,7 @@
             发起人：
           </text>
           <text class="info-value">
-            {{ currentEvent?.creator_name || '用户' }}
+            {{ currentEvent?.creator_nickname || '用户' }}
           </text>
         </view>
         <view

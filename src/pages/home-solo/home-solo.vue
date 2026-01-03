@@ -314,6 +314,10 @@ import { request } from '@/api/request'
 import { useCheckinStore } from "@/store/modules/checkin";
 import { useEventStore } from "@/store/modules/event";
 import EventTimeline from "@/components/event/EventTimeline.vue";
+import config from '@/config'
+
+// 腾讯地图配置
+const TENCENT_MAP_KEY = config.map?.key || ''
 
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
@@ -511,6 +515,7 @@ const createHelpEvent = async (userInfo) => {
       mask: true
     });
 
+    // 阶段1：立即发送求助请求（不等待定位）
     const response = await request({
       url: "/api/events",
       method: "POST",
@@ -519,7 +524,7 @@ const createHelpEvent = async (userInfo) => {
         title: "紧急求助",
         description: "用户通过一键求助功能发起求助",
         event_type: "call_for_help",
-        location: "", // 可以后续扩展获取地理位置
+        location: "", // 暂时为空
         target_user_id: userInfo.user_id
       }
     });
@@ -535,6 +540,11 @@ const createHelpEvent = async (userInfo) => {
 
       // 刷新事件数据，显示事件进展卡片
       await eventStore.fetchActiveEvent(true);
+
+      // 阶段2：异步获取定位并更新
+      if (response.data && response.data.event_id) {
+        await updateEventLocation(response.data.event_id);
+      }
     } else {
       uni.showToast({
         title: response.msg || "求助失败",
@@ -550,6 +560,96 @@ const createHelpEvent = async (userInfo) => {
       icon: "none",
       duration: 3000
     });
+  }
+};
+
+// 获取定位并更新事件
+const updateEventLocation = async (eventId) => {
+  try {
+    uni.getLocation({
+      type: 'gcj02',
+      timeout: 10000, // 10秒超时
+      success: async (res) => {
+        const { latitude, longitude } = res;
+
+        // 获取详细地址
+        const address = await reverseGeocode(latitude, longitude);
+
+        // 格式化：地址 | 纬度,经度
+        const locationStr = `${address} | ${latitude},${longitude}`;
+
+        // 更新事件记录
+        await request({
+          url: `/api/events/${eventId}`,
+          method: "PUT",
+          data: {
+            location: locationStr,
+            location_lat: latitude,
+            location_lon: longitude
+          }
+        });
+
+        console.log("定位信息已更新:", locationStr);
+      },
+      fail: (err) => {
+        console.error("获取定位失败:", err);
+
+        // 显示权限申请说明
+        uni.showModal({
+          title: '定位权限说明',
+          content: '需要获取您的位置信息以便社区工作人员提供帮助。请在设置中允许应用访问您的位置信息。',
+          showCancel: false,
+          confirmText: '去设置',
+          success: (res) => {
+            if (res.confirm) {
+              uni.openSetting({
+                success: (settingRes) => {
+                  if (settingRes.authSetting['scope.userLocation']) {
+                    // 用户已授权，重新获取定位
+                    updateEventLocation(eventId);
+                  }
+                }
+              });
+            }
+          }
+        });
+
+        // 更新事件描述，标记位置信息缺失
+        request({
+          url: `/api/events/${eventId}`,
+          method: "PUT",
+          data: {
+            description: "用户通过一键求助功能发起求助（位置信息缺失）"
+          }
+        }).catch(err => console.error("更新事件描述失败:", err));
+      }
+    });
+  } catch (error) {
+    console.error("更新定位信息失败:", error);
+  }
+};
+
+// 逆地理编码获取地址
+const reverseGeocode = async (latitude, longitude) => {
+  try {
+    const response = await request({
+      url: "https://apis.map.qq.com/ws/geocoder/v1",
+      method: "GET",
+      data: {
+        location: `${latitude},${longitude}`,
+        key: TENCENT_MAP_KEY,
+        get_poi: 1,
+        output: "json"
+      }
+    });
+
+    if (response.data && response.data.status === 0) {
+      return response.data.result.address;
+    }
+    return "未知位置";
+  } catch (error) {
+    console.error("逆地理编码失败:", error);
+    return "未知位置";
   }
 };
 
