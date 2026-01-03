@@ -346,9 +346,9 @@ const removeUser = async (userId) => {
       let toastMessage = '已移除'
 
       if (targetCommunity === 'anka_family') {
-        toastMessage = '已移入安卡大家庭'
+        toastMessage = `已移入${SPECIAL_COMMUNITY_NAMES.ANKA_FAMILY}`
       } else if (targetCommunity === 'blackhouse') {
-        toastMessage = '已移入黑屋'
+        toastMessage = `已移入${SPECIAL_COMMUNITY_NAMES.BLACKHOUSE}`
       }
 
       // 添加滑出动画
