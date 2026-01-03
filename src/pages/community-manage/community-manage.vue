@@ -247,6 +247,7 @@ import {
 } from '@/constants/community'
 import { checkPagePermission } from '@/utils/permission'
 import { PagePath, FeaturePermission } from '@/constants/permissions'
+import { SPECIAL_COMMUNITY_NAMES } from '@/constants/community'
 import { hasFeaturePermission } from '@/utils/permission'
 import { useUserStore } from '@/store/modules/user'
 
@@ -495,18 +496,21 @@ const canDeleteCommunity = (community) => {
   if (!hasFeaturePermission(FeaturePermission.DELETE_COMMUNITY)) {
     return false
   }
-  
+
   // 已删除的社区不能删除
   if (community.status === 'deleted') {
     return false
   }
-  
-  // 默认社区不能删除
-  const DEFAULT_COMMUNITIES = ['安卡大家庭', '黑屋社区']
-  if (DEFAULT_COMMUNITIES.includes(community.name)) {
+
+  // 默认社区不能删除（使用常量定义）
+  const defaultCommunities = [
+    SPECIAL_COMMUNITY_NAMES.ANKA_FAMILY,
+    SPECIAL_COMMUNITY_NAMES.BLACKHOUSE
+  ]
+  if (defaultCommunities.includes(community.name)) {
     return false
   }
-  
+
   return true
 }
 
