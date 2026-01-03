@@ -122,10 +122,25 @@ const getCurrentLocation = () => {
       // 获取详细地址
       reverseGeocode(res.latitude, res.longitude)
     },
-    fail: () => {
-      uni.showToast({
-        title: '获取位置失败',
-        icon: 'none'
+    fail: (err) => {
+      console.error('获取位置失败:', err)
+      uni.showModal({
+        title: '定位权限说明',
+        content: '需要获取您的位置信息以便选择地址。请在设置中允许应用访问您的位置信息。',
+        showCancel: false,
+        confirmText: '去设置',
+        success: (res) => {
+          if (res.confirm) {
+            uni.openSetting({
+              success: (settingRes) => {
+                if (settingRes.authSetting['scope.userLocation']) {
+                  // 用户已授权，重新获取位置
+                  getCurrentLocation()
+                }
+              }
+            })
+          }
+        }
       })
     }
   })
