@@ -383,15 +383,24 @@ const applyFilter = () => {
 
 // 显示操作菜单
 const showActionMenu = (item) => {
-  const itemList = item.status === CommunityStatus.ACTIVE
-    ? ['查看工作人员', '查看用户', '修改', '停用']
-    : ['查看工作人员', '查看用户', '修改', '启用', '删除']
+  // 根据社区状态和是否可删除动态生成菜单项
+  let itemList = ['查看工作人员', '查看用户', '修改']
+
+  if (item.status === CommunityStatus.ACTIVE) {
+    itemList.push('停用')
+  } else {
+    itemList.push('启用')
+    // 只有可删除的社区才显示删除选项
+    if (canDeleteCommunity(item)) {
+      itemList.push('删除')
+    }
+  }
 
   uni.showActionSheet({
     itemList,
     success: (res) => {
       const index = res.tapIndex
-      
+
       // 前两个选项始终是查看工作人员和用户
       if (index === 0) {
         viewStaff(item)
@@ -401,7 +410,7 @@ const showActionMenu = (item) => {
         viewUsers(item)
         return
       }
-      
+
       // 后续选项根据状态不同而不同
       if (item.status === CommunityStatus.ACTIVE) {
         switch (index) {
@@ -420,8 +429,10 @@ const showActionMenu = (item) => {
           case 3: // 启用
             toggleCommunityStatus(item, CommunityStatus.ACTIVE)
             break
-          case 4: // 删除
-            deleteCommunity(item)
+          case 4: // 删除（只有可删除的社区才有此选项）
+            if (canDeleteCommunity(item)) {
+              deleteCommunity(item)
+            }
             break
         }
       }
