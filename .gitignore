@@ -1,7 +1,6 @@
 src/config/*.bak
 src/config/*.backup
 .trae/
-scripts/
 coverage/
 **/.DS_*
 unpa*/
