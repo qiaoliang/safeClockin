@@ -59,16 +59,31 @@ test.describe('一键求助功能测试', () => {
     const helpButton = page.locator('text=一键求助').first();
     await helpButton.click({ force: true });
     
-    // 等待对话框出现和自动接受
-    await page.waitForTimeout(3000);
+    // 等待确认对话框出现
+    await page.waitForTimeout(1000);
     
-    console.log('步骤4: 等待求助请求发送完成');
+    console.log('步骤4: 处理确认对话框');
+    
+    // 检查是否出现确认对话框
+    const pageTextAfterClick = await page.locator('body').textContent();
+    if (pageTextAfterClick.includes('确认要发起求助吗？')) {
+      console.log('检测到确认对话框，点击"确认求助"按钮');
+      
+      // 点击"确认求助"按钮
+      const confirmButton = page.locator('text=确认求助').first();
+      await confirmButton.click({ force: true });
+      
+      // 等待对话框关闭
+      await page.waitForTimeout(1000);
+    }
+    
+    console.log('步骤5: 等待求助请求发送完成');
     
     // 等待求助请求发送完成
     await page.waitForTimeout(5000);
     await page.waitForLoadState('networkidle');
     
-    console.log('步骤5: 检查是否出现定位权限弹窗');
+    console.log('步骤6: 检查是否出现定位权限弹窗');
     
     // 检查是否出现定位权限说明弹窗
     const pageTextAfterHelp = await page.locator('body').textContent();
@@ -91,7 +106,7 @@ test.describe('一键求助功能测试', () => {
       await page.waitForTimeout(3000);
     }
     
-    console.log('步骤6: 验证求助按钮显示');
+    console.log('步骤7: 验证求助按钮显示');
     
     // 等待页面内容更新
     await page.waitForTimeout(5000);
@@ -108,7 +123,7 @@ test.describe('一键求助功能测试', () => {
     expect(updatedPageText).toContain('问题已解决');
     console.log('✅ 显示"问题已解决"按钮');
     
-    console.log('步骤7: 验证事件信息框显示');
+    console.log('步骤8: 验证事件信息框显示');
     
     // 验证事件信息框内容
     expect(updatedPageText).toContain('我：');
