@@ -61,6 +61,11 @@ test.describe('一键求助功能测试', () => {
 
     console.log('用户信息检查结果:', JSON.stringify(userCheck, null, 2));
 
+    // 如果用户信息格式有问题，仍然继续测试（可能是因为H5环境限制）
+    if (!userCheck.hasUserInfo) {
+      console.log('⚠️ 用户信息格式有问题，但继续测试（可能是因为H5环境限制）');
+    }
+
     if (!userCheck.hasUserInfo) {
       console.error('❌ 未找到用户信息');
     } else if (!userCheck.communityId) {
