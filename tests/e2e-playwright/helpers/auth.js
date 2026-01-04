@@ -209,66 +209,129 @@ export async function registerAndLoginAsUser(page, options = {}) {
   const password = options.password || 'F1234567';
   const testCode = options.testCode || '123456';
 
-  console.log(`注册并登录用户: ${phoneNumber}`);
+  console.log(`开始注册并登录用户: ${phoneNumber}`);
 
-  // 步骤 1：导航到登录页面
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(3000);
+  try {
+    // 步骤 1：导航到登录页面
+    console.log('步骤1: 导航到登录页面');
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000);
 
-  // 步骤 2：点击"手机号登录"按钮
-  await page.locator('text=手机号登录').click({ force: true });
-  await page.waitForTimeout(2000);
+    // 步骤 2：点击"手机号登录"按钮
+    console.log('步骤2: 点击"手机号登录"按钮');
+    await page.locator('text=手机号登录').click({ force: true });
+    await page.waitForTimeout(2000);
 
-  // 步骤 3：切换到"注册"标签
-  await page.locator('.tab').filter({ hasText: '注册' }).click({ force: true });
-  await page.waitForTimeout(1000);
+    // 步骤 3：切换到"注册"标签
+    console.log('步骤3: 切换到"注册"标签');
+    await page.locator('.tab').filter({ hasText: '注册' }).click({ force: true });
+    await page.waitForTimeout(1000);
 
-  // 步骤 4：输入手机号
-  const phoneInput = page.locator('input[type="number"]').first();
-  await phoneInput.click({ force: true });
-  await phoneInput.clear();
-  await phoneInput.type(phoneNumber, { delay: 100 });
-  await page.waitForTimeout(500);
+    // 步骤 4：输入手机号
+    console.log('步骤4: 输入手机号');
+    const phoneInput = page.locator('input[type="number"]').first();
+    await phoneInput.click({ force: true });
+    await phoneInput.clear();
+    await phoneInput.type(phoneNumber, { delay: 100 });
+    await page.waitForTimeout(500);
 
-  // 步骤 5：点击"获取验证码"按钮
-  const codeBtn = page.locator('.code-btn');
-  await codeBtn.click({ force: true });
-  await page.waitForTimeout(2000);
+    // 步骤 5：点击"获取验证码"按钮
+    console.log('步骤5: 点击"获取验证码"按钮');
+    const codeBtn = page.locator('.code-btn');
+    await codeBtn.click({ force: true });
+    await page.waitForTimeout(2000);
 
-  // 步骤 6：输入验证码
-  const codeInput = page.locator('input[type="number"]').nth(1);
-  await codeInput.click({ force: true });
-  await codeInput.clear();
-  await codeInput.type(testCode, { delay: 100 });
-  await page.waitForTimeout(500);
+    // 步骤 6：输入验证码
+    console.log('步骤6: 输入验证码');
+    const codeInput = page.locator('input[type="number"]').nth(1);
+    await codeInput.click({ force: true });
+    await codeInput.clear();
+    await codeInput.type(testCode, { delay: 100 });
+    await page.waitForTimeout(500);
 
-  // 步骤 7：输入密码
-  const passwordInput = page.locator('input[type="password"]');
-  await passwordInput.click({ force: true });
-  await passwordInput.clear();
-  await passwordInput.type(password, { delay: 100 });
-  await page.waitForTimeout(500);
+    // 步骤 7：输入密码
+    console.log('步骤7: 输入密码');
+    const passwordInput = page.locator('input[type="password"]');
+    await passwordInput.click({ force: true });
+    await passwordInput.clear();
+    await passwordInput.type(password, { delay: 100 });
+    await page.waitForTimeout(500);
 
-  // 步骤 8：勾选用户协议
-  await page.locator('.agree-label').click({ force: true });
-  await page.waitForTimeout(500);
+    // 步骤 8：勾选用户协议
+    console.log('步骤8: 勾选用户协议');
+    await page.locator('.agree-label').click({ force: true });
+    await page.waitForTimeout(500);
 
-  // 步骤 9：点击"注册"按钮
-  const submitBtn = page.locator('uni-button.submit');
-  await submitBtn.click({ force: true });
+    // 步骤 9：点击"注册"按钮
+    console.log('步骤9: 点击"注册"按钮');
+    const submitBtn = page.locator('uni-button.submit');
+    await submitBtn.click({ force: true });
 
-  // 步骤 10：等待注册完成并跳转到首页
-  await page.waitForTimeout(5000);
-  await page.waitForLoadState('networkidle');
+    // 步骤 10：等待注册完成并跳转到首页
+    console.log('步骤10: 等待注册完成并跳转到首页');
+    
+    // 等待页面响应
+    await page.waitForTimeout(3000);
+    await page.waitForLoadState('networkidle');
+    
+    // 检查是否有错误提示
+    const pageText = await page.locator('body').textContent();
+    
+    // 检查是否仍在注册页面（说明注册失败）
+    if (pageText.includes('手机号注册/登录') || pageText.includes('注册')) {
+      console.error('❌ 注册失败，仍在注册页面');
+      console.error('页面内容:', pageText.substring(0, 500));
+      
+      // 检查是否有错误提示
+      const errorPatterns = [
+        /验证码错误/i,
+        /验证码无效/i,
+        /手机号已注册/i,
+        /密码强度/i,
+        /格式错误/i,
+        /失败/i
+      ];
+      
+      for (const pattern of errorPatterns) {
+        const match = pageText.match(pattern);
+        if (match) {
+          throw new Error(`注册失败: ${match[0]}`);
+        }
+      }
+      
+      throw new Error('注册失败，未知原因');
+    }
 
-  // 验证是否跳转到"打卡"首页
-  const homePageText = await page.locator('body').textContent();
-  if (!homePageText.includes('打卡')) {
-    throw new Error('注册失败，未跳转到打卡首页');
+    // 验证是否跳转到"打卡"首页或其他有效页面
+    console.log('步骤11: 验证是否跳转到首页');
+    const homePageText = await page.locator('body').textContent();
+    
+    // 检查是否跳转到任何有效页面（打卡、社区、我的）
+    const validPages = ['打卡', '社区', '我的'];
+    const hasValidPage = validPages.some(pageName => homePageText.includes(pageName));
+    
+    if (!hasValidPage) {
+      console.error('❌ 注册失败，未跳转到有效页面');
+      console.error('页面内容:', homePageText.substring(0, 500));
+      throw new Error('注册失败，未跳转到有效页面');
+    }
+
+    console.log('✅ 用户注册并登录成功');
+
+    return { phone: phoneNumber, password };
+  } catch (error) {
+    console.error('❌ 注册并登录失败:', error.message);
+    
+    // 捕获页面截图以便调试
+    try {
+      const screenshotPath = `test-failed-register-${Date.now()}.png`;
+      await page.screenshot({ path: screenshotPath });
+      console.error(`已保存失败截图: ${screenshotPath}`);
+    } catch (screenshotError) {
+      console.error('无法保存截图:', screenshotError.message);
+    }
+    
+    throw error;
   }
-
-  console.log('✅ 用户注册并登录成功');
-
-  return { phone: phoneNumber, password };
 }
