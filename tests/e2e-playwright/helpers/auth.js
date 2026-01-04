@@ -188,8 +188,16 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
  * @returns {string} 随机生成的手机号
  */
 function generate137PhoneNumber() {
-  // 137 开头，后 8 位随机
-  const suffix = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+  // 使用时间戳 + 随机数确保唯一性
+  // 时间戳（毫秒）确保不同时间生成的号码不同
+  // 随机数作为额外保护，避免同一毫秒内的冲突
+  const timestamp = Date.now(); // 毫秒级时间戳
+  const random = Math.floor(Math.random() * 1000); // 0-999
+  
+  // 组合时间戳和随机数，取后8位
+  const combined = (timestamp + random) % 100000000;
+  const suffix = combined.toString().padStart(8, '0');
+  
   return `137${suffix}`;
 }
 
