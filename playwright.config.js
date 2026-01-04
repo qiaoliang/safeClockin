@@ -75,5 +75,6 @@ export default defineConfig({
     url: 'https://localhost:8081',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
+    ignoreHTTPSErrors: true,
   },
 });
