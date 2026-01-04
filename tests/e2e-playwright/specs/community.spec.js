@@ -138,6 +138,13 @@ test.describe("超级管理员社区管理测试", () => {
             `测试数据: 社区名称="${newCommunityName}", 位置="${newCommunityLocation}"`
         );
 
+        // 设置对话框处理器，自动接受所有对话框
+        const dialogHandler = async (dialog) => {
+          console.log('检测到对话框:', dialog.message());
+          await dialog.accept();
+        };
+        page.on('dialog', dialogHandler);
+
         // 使用 helper 方法登录
         await loginAsSuperAdmin(page);
         await page.waitForLoadState("networkidle");
@@ -187,6 +194,36 @@ test.describe("超级管理员社区管理测试", () => {
             .click({ force: true });
         await page.waitForTimeout(1000);
 
+        console.log("步骤6: 检查是否出现定位权限弹窗");
+
+        // 检查是否出现定位权限说明弹窗
+        const pageTextAfterClick = await page.locator("body").textContent();
+        if (pageTextAfterClick.includes('定位权限说明')) {
+          console.log('检测到定位权限弹窗，点击"去设置"按钮');
+
+          // 点击"去设置"按钮
+          const goToSettingsButton = page.locator('text=去设置').first();
+          await goToSettingsButton.click({ force: true });
+
+          // 等待设置页面打开
+          await page.waitForTimeout(2000);
+
+          // 返回应用（模拟用户授权后返回）
+          await page.goBack();
+          await page.waitForTimeout(2000);
+
+          // 等待应用重新加载
+          await page.waitForLoadState('networkidle');
+          await page.waitForTimeout(3000);
+
+          // 重新点击"点击选择位置"按钮
+          console.log('重新点击"点击选择位置"按钮');
+          await page
+              .getByText("点击选择位置", { exact: true })
+              .click({ force: true });
+          await page.waitForTimeout(1000);
+        }
+
         console.log("步骤7: 在弹出的模态框中输入位置信息");
 
         // 在弹出的模态框中输入位置信息
@@ -229,6 +266,9 @@ test.describe("超级管理员社区管理测试", () => {
         expect(pageTextAfterCreate).toContain("删除");
 
         console.log("✅ 新社区创建成功，功能验证通过");
+
+        // 清理对话框处理器
+        page.off('dialog', dialogHandler);
     });
 
     test("完整的社区管理流程", async ({ page }) => {
