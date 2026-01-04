@@ -199,29 +199,26 @@ test.describe("超级管理员社区管理测试", () => {
         // 检查是否出现定位权限说明弹窗
         const pageTextAfterClick = await page.locator("body").textContent();
         if (pageTextAfterClick.includes('定位权限说明')) {
-          console.log('检测到定位权限弹窗，点击"去设置"按钮');
+          console.log('检测到定位权限弹窗，测试环境无法处理系统设置，使用替代方案');
 
-          // 点击"去设置"按钮
-          const goToSettingsButton = page.locator('text=去设置').first();
-          await goToSettingsButton.click({ force: true });
-
-          // 等待设置页面打开
+          // 在H5环境中，uni.openSetting无法真正打开系统设置
+          // 我们需要使用替代方案：直接在地图上选择位置
+          
+          // 方案：点击地图上的任意位置来选择位置
+          // 首先关闭弹窗（通过点击页面其他地方）
+          await page.locator('.map-container').click({ position: { x: 100, y: 100 } });
           await page.waitForTimeout(2000);
 
-          // 返回应用（模拟用户授权后返回）
+          // 点击"确认选择"按钮
+          const confirmBtn = page.locator('text=确认选择').first();
+          await confirmBtn.click({ force: true });
+          await page.waitForTimeout(2000);
+
+          // 返回社区表单页面
           await page.goBack();
           await page.waitForTimeout(2000);
-
-          // 等待应用重新加载
-          await page.waitForLoadState('networkidle');
-          await page.waitForTimeout(3000);
-
-          // 重新点击"点击选择位置"按钮
-          console.log('重新点击"点击选择位置"按钮');
-          await page
-              .getByText("点击选择位置", { exact: true })
-              .click({ force: true });
-          await page.waitForTimeout(1000);
+          
+          console.log('✅ 已使用替代方案完成位置选择');
         }
 
         console.log("步骤7: 在弹出的模态框中输入位置信息");
