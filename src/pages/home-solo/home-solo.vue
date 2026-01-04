@@ -367,6 +367,7 @@ const tasksSubtitle = computed(() => {
 });
 
 // 计算属性：事件相关
+const activeEvent = computed(() => eventStore.activeEvent);
 const hasActiveEvent = computed(() => eventStore.hasActiveEvent);
 const eventMessages = computed(() => eventStore.eventMessages);
 const isRecording = computed(() => eventStore.isRecording);

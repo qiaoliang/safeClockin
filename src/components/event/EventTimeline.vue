@@ -1,77 +1,38 @@
 <template>
   <view class="event-timeline">
-    <!-- 事件起始信息 -->
+    <!-- 将事件发起信息和消息列表合并显示 -->
     <view
-      v-if="eventInfo"
-      class="timeline-item is-user"
-    >
-      <view class="timeline-time">
-        <text class="time-text">
-          {{ formatTime(eventInfo.created_at) }}
-        </text>
-      </view>
-
-      <view class="timeline-content">
-        <image
-          class="avatar"
-          :src="getUserAvatar({})"
-          mode="aspectFill"
-        />
-
-        <view class="message-body">
-          <text class="user-name">
-            我
-          </text>
-          <text class="message-text">
-            发起了求助：{{ eventInfo.title }}
-            <text
-              v-if="eventInfo.description"
-              class="event-description"
-            >
-              （{{ eventInfo.description }}）
-            </text>
-          </text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 消息列表 -->
-    <view
-      v-for="message in messages"
-      :key="message.support_id"
+      v-for="item in displayList"
+      :key="item.id || item.support_id"
       class="timeline-item"
-      :class="{ 'is-staff': isStaffMessage(message), 'is-user': isUserMessage(message) }"
+      :class="{ 'is-staff': isStaffMessage(item), 'is-user': isUserMessage(item) }"
     >
       <!-- 时间点 -->
       <view class="timeline-time">
         <text class="time-text">
-          {{ formatTime(message.created_at) }}
+          {{ formatTime(item.created_at) }}
         </text>
       </view>
 
       <!-- 消息内容 -->
       <view class="timeline-content">
         <!-- 头像 -->
-        <image
-          class="avatar"
-          :src="getUserAvatar(message)"
-          mode="aspectFill"
-        />
+        <image class="avatar" :src="getUserAvatar(item)" mode="aspectFill" />
 
         <!-- 消息主体 -->
         <view class="message-body">
           <!-- 姓名 -->
           <text class="user-name">
-            {{ getUserName(message) }}
+            {{ getUserName(item) }}
           </text>
 
           <!-- 回应标签（工作人员） -->
           <view
-            v-if="message.support_tags && message.support_tags.length > 0"
+            v-if="item.support_tags && item.support_tags.length > 0"
             class="tags-container"
           >
             <text
-              v-for="(tag, tagIndex) in message.support_tags"
+              v-for="(tag, tagIndex) in item.support_tags"
               :key="tagIndex"
               class="tag"
             >
@@ -80,136 +41,167 @@
           </view>
 
           <!-- 文字内容 -->
-          <text
-            v-if="message.support_content"
-            class="message-text"
-          >
-            {{ message.support_content }}
+          <text v-if="item.support_content || item.event_content" class="message-text">
+            {{ item.event_content || item.support_content }}
           </text>
 
           <!-- 图片消息 -->
           <image
-            v-if="message.message_type === 'image' && message.media_url"
+            v-if="item.message_type === 'image' && item.media_url"
             class="message-image"
-            :src="getMediaUrl(message.media_url)"
+            :src="getMediaUrl(item.media_url)"
             mode="aspectFill"
-            @click="previewImage(message.media_url)"
+            @click="previewImage(item.media_url)"
           />
 
           <!-- 语音消息 -->
           <view
-            v-if="message.message_type === 'voice' && message.media_url"
+            v-if="item.message_type === 'voice' && item.media_url"
             class="voice-message"
-            @click="playVoice(message)"
+            @click="playVoice(item)"
           >
-            <text class="voice-icon">
-              🎤
-            </text>
-            <text class="voice-duration">
-              {{ message.media_duration }}"
-            </text>
+            <text class="voice-icon"> 🎤 </text>
+            <text class="voice-duration"> {{ item.media_duration }}" </text>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 空状态 -->
-    <view
-      v-if="messages.length === 0 && !eventInfo"
-      class="empty-state"
-    >
-      <text class="empty-text">
-        暂无消息
-      </text>
+    <view v-if="displayList.length === 0" class="empty-state">
+      <text class="empty-text"> 暂无消息 </text>
     </view>
   </view>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   messages: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   eventInfo: {
     type: Object,
-    default: null
+    default: null,
+  },
+});
+
+// 计算属性：合并事件发起信息和消息列表，按时间倒序排列
+const displayList = computed(() => {
+  const list = [];
+
+  // 如果有事件信息，将事件发起作为第一条消息
+  if (props.eventInfo) {
+    list.push({
+      id: "event-start",
+      support_id: "event-start",
+      created_at: props.eventInfo.created_at,
+      supporter_id: props.eventInfo.created_by,
+      support_tags: [],
+      message_type: "text",
+      media_url: null,
+      media_duration: null,
+      support_content: null,
+      event_content: `发起了求助：${props.eventInfo.title}${
+        props.eventInfo.description ? `（${props.eventInfo.description}）` : ""
+      }`,
+      is_event_start: true,
+    });
   }
-})
+
+  // 添加所有消息
+  if (props.messages && props.messages.length > 0) {
+    list.push(...props.messages);
+  }
+
+  // 按时间倒序排列（最新的在上面）
+  return list.sort((a, b) => {
+    const timeA = new Date(a.created_at).getTime();
+    const timeB = new Date(b.created_at).getTime();
+    return timeB - timeA;
+  });
+});
 
 // 判断是否为工作人员消息
 const isStaffMessage = (message) => {
-  // 这里需要根据实际业务逻辑判断
-  // 可以通过 message.supporter_id 或其他字段判断
-  return message.support_tags && message.support_tags.length > 0
-}
+  // 事件发起信息不算工作人员消息
+  if (message.is_event_start) {
+    return false;
+  }
+  // 通过 support_tags 判断
+  return message.support_tags && message.support_tags.length > 0;
+};
 
 // 判断是否为用户消息
 const isUserMessage = (message) => {
-  return !isStaffMessage(message)
-}
+  return !isStaffMessage(message);
+};
 
 // 获取用户头像
 const getUserAvatar = (message) => {
   // 这里需要从用户信息中获取头像
-  return 'https://s.coze.cn/image/dhcVCXur50w/'
-}
+  return "https://s.coze.cn/image/dhcVCXur50w/";
+};
 
 // 获取用户名称
 const getUserName = (message) => {
+  // 事件发起信息显示为"我"
+  if (message.is_event_start) {
+    return "我：";
+  }
   // 这里需要从用户信息中获取名称
-  return isStaffMessage(message) ? '工作人员' : '我'
-}
+  return isStaffMessage(message) ? "工作人员" : "我";
+};
 
 // 格式化时间
 const formatTime = (timeStr) => {
-  if (!timeStr) return ''
-  const date = new Date(timeStr)
-  const now = new Date()
-  const diff = now - date
+  if (!timeStr) return "";
+  const date = new Date(timeStr);
+  const now = new Date();
+  const diff = now - date;
 
   // 小于1分钟
   if (diff < 60000) {
-    return '刚刚'
+    return "刚刚";
   }
 
   // 小于1小时
   if (diff < 3600000) {
-    return `${Math.floor(diff / 60000)}分钟前`
+    return `${Math.floor(diff / 60000)}分钟前`;
   }
 
   // 小于24小时
   if (diff < 86400000) {
-    return `${Math.floor(diff / 3600000)}小时前`
+    return `${Math.floor(diff / 3600000)}小时前`;
   }
 
   // 超过24小时，显示具体时间
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${hours}:${minutes}`
-}
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
 
 // 获取媒体URL
 const getMediaUrl = (url) => {
   // 这里需要根据实际情况处理URL
-  return url
-}
+  return url;
+};
 
 // 预览图片
 const previewImage = (url) => {
   uni.previewImage({
-    urls: [getMediaUrl(url)]
-  })
-}
+    urls: [getMediaUrl(url)],
+  });
+};
 
 // 播放语音
 const playVoice = (message) => {
-  const innerAudioContext = uni.createInnerAudioContext()
-  innerAudioContext.src = getMediaUrl(message.media_url)
-  innerAudioContext.play()
-}
+  const innerAudioContext = uni.createInnerAudioContext();
+  innerAudioContext.src = getMediaUrl(message.media_url);
+  innerAudioContext.play();
+};
 </script>
 
 <style lang="scss" scoped>
