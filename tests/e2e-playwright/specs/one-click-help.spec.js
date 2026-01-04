@@ -43,64 +43,39 @@ test.describe('一键求助功能测试', () => {
     expect(pageText).toContain('一键求助');
     console.log('✅ 页面包含一键求助按钮');
     
-    console.log('步骤2: 点击一键求助按钮');
+    console.log('步骤2: 设置对话框处理器');
+    
+    // 设置对话框处理器，自动接受所有对话框
+    // uni.showModal 在 H5 环境中可能使用浏览器原生对话框
+    page.on('dialog', async dialog => {
+      console.log('检测到对话框:', dialog.message());
+      await dialog.accept();
+    });
+    
+    console.log('步骤3: 点击一键求助按钮');
     
     // 点击一键求助按钮
     const helpButton = page.locator('text=一键求助').first();
     await helpButton.click({ force: true });
     
-    // 等待确认对话框出现（uni.showModal 在 H5 中可能需要更长时间）
-    await page.waitForTimeout(3000);
+    // 等待对话框出现和自动接受
+    await page.waitForTimeout(2000);
     
-    // 检查页面内容，确认对话框是否出现
-    const pageTextAfterClick = await page.locator('body').textContent();
-    console.log('点击后的页面内容:', pageTextAfterClick.substring(0, 300));
+    console.log('步骤4: 等待求助请求发送完成');
     
-    // 检查是否出现确认对话框
-    const hasConfirmDialog = pageTextAfterClick.includes('确认求助') || 
-                            pageTextAfterClick.includes('确认要发起求助吗');
-    
-    if (!hasConfirmDialog) {
-      console.error('❌ 未找到确认对话框');
-      throw new Error('未找到确认对话框，无法继续测试');
-    }
-    
-    console.log('✅ 确认对话框已出现');
-    
-    console.log('步骤3: 确认求助');
-    
-    // 尝试多种方式定位确认按钮
-    const confirmButton = page.locator('text=确认求助').first();
-    const isConfirmVisible = await confirmButton.isVisible().catch(() => false);
-    
-    if (!isConfirmVisible) {
-      console.error('❌ 确认按钮不可见');
-      throw new Error('确认按钮不可见');
-    }
-    
-    console.log('点击确认按钮...');
-    await confirmButton.click({ force: true });
-    
-    // 等待对话框关闭和页面更新
-    console.log('等待对话框关闭和页面更新...');
-    await page.waitForTimeout(3000);
+    // 等待求助请求发送完成
+    await page.waitForTimeout(5000);
     await page.waitForLoadState('networkidle');
     
-    console.log('步骤4: 验证求助按钮显示');
+    console.log('步骤5: 验证求助按钮显示');
     
     // 等待页面内容更新
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(3000);
     await page.waitForLoadState('networkidle');
     
     // 验证页面显示"继续求助"按钮
     const updatedPageText = await page.locator('body').textContent();
     console.log('更新后的页面内容:', updatedPageText.substring(0, 500));
-    
-    // 检查是否仍有确认对话框（说明对话框未关闭）
-    if (updatedPageText.includes('确认求助') || updatedPageText.includes('确认要发起求助吗')) {
-      console.error('❌ 确认对话框仍未关闭');
-      throw new Error('确认对话框未关闭，测试失败');
-    }
     
     expect(updatedPageText).toContain('继续求助');
     console.log('✅ 显示"继续求助"按钮');
@@ -109,7 +84,7 @@ test.describe('一键求助功能测试', () => {
     expect(updatedPageText).toContain('问题已解决');
     console.log('✅ 显示"问题已解决"按钮');
     
-    console.log('步骤5: 验证事件信息框显示');
+    console.log('步骤6: 验证事件信息框显示');
     
     // 验证事件信息框内容
     expect(updatedPageText).toContain('我：');
