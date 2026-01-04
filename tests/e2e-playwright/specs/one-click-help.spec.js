@@ -39,17 +39,19 @@ test.describe('一键求助功能测试', () => {
     console.log('步骤1: 验证页面包含一键求助按钮');
     
     // 验证页面包含"一键求助"按钮
-    const pageText = await page.locator('body').textContent();
-    expect(pageText).toContain('一键求助');
+    const pageText = await page.context(); // 获取当前页面上下文
+    const bodyText = await page.locator('body').textContent();
+    expect(bodyText).toContain('一键求助');
     console.log('✅ 页面包含一键求助按钮');
     
     console.log('步骤2: 设置对话框处理器');
     
     // 设置对话框处理器，自动接受所有对话框
-    page.on('dialog', async dialog => {
+    const dialogHandler = async (dialog) => {
       console.log('检测到对话框:', dialog.message());
       await dialog.accept();
-    });
+    };
+    page.on('dialog', dialogHandler);
     
     console.log('步骤3: 点击一键求助按钮');
     
@@ -66,7 +68,30 @@ test.describe('一键求助功能测试', () => {
     await page.waitForTimeout(5000);
     await page.waitForLoadState('networkidle');
     
-    console.log('步骤5: 验证求助按钮显示');
+    console.log('步骤5: 检查是否出现定位权限弹窗');
+    
+    // 检查是否出现定位权限说明弹窗
+    const pageTextAfterHelp = await page.locator('body').textContent();
+    if (pageTextAfterHelp.includes('定位权限说明')) {
+      console.log('检测到定位权限弹窗，点击"去设置"按钮');
+      
+      // 点击"去设置"按钮
+      const goToSettingsButton = page.locator('text=去设置').first();
+      await goToSettingsButton.click({ force: true });
+      
+      // 等待设置页面打开
+      await page.waitForTimeout(2000);
+      
+      // 返回应用（模拟用户授权后返回）
+      await page.goBack();
+      await page.waitForTimeout(2000);
+      
+      // 等待应用重新加载
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+    }
+    
+    console.log('步骤6: 验证求助按钮显示');
     
     // 等待页面内容更新
     await page.waitForTimeout(5000);
@@ -83,7 +108,7 @@ test.describe('一键求助功能测试', () => {
     expect(updatedPageText).toContain('问题已解决');
     console.log('✅ 显示"问题已解决"按钮');
     
-    console.log('步骤6: 验证事件信息框显示');
+    console.log('步骤7: 验证事件信息框显示');
     
     // 验证事件信息框内容
     expect(updatedPageText).toContain('我：');
@@ -97,6 +122,9 @@ test.describe('一键求助功能测试', () => {
     console.log('✅ 显示"紧急求助"标题');
     
     console.log('✅ 所有测试断言通过');
+    
+    // 清理对话框处理器
+    page.off('dialog', dialogHandler);
   });
 
   test('用户点击一键求助后，事件信息框应该按时间倒序显示', async ({ page }) => {

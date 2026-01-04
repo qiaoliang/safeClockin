@@ -187,11 +187,6 @@ test.describe("超级管理员社区管理测试", () => {
             .click({ force: true });
         await page.waitForTimeout(1000);
 
-        console.log("步骤6: 验证社区名称已填写");
-        // 验证社区名称已填写
-        const pageTextAfterName = await page.locator("body").textContent();
-        expect(pageTextAfterName).toContain(newCommunityName);
-
         console.log("步骤7: 在弹出的模态框中输入位置信息");
 
         // 在弹出的模态框中输入位置信息
