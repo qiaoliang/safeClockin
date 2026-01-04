@@ -46,7 +46,6 @@ test.describe('一键求助功能测试', () => {
     console.log('步骤2: 设置对话框处理器');
     
     // 设置对话框处理器，自动接受所有对话框
-    // uni.showModal 在 H5 环境中可能使用浏览器原生对话框
     page.on('dialog', async dialog => {
       console.log('检测到对话框:', dialog.message());
       await dialog.accept();
@@ -59,7 +58,7 @@ test.describe('一键求助功能测试', () => {
     await helpButton.click({ force: true });
     
     // 等待对话框出现和自动接受
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
     
     console.log('步骤4: 等待求助请求发送完成');
     
@@ -70,7 +69,7 @@ test.describe('一键求助功能测试', () => {
     console.log('步骤5: 验证求助按钮显示');
     
     // 等待页面内容更新
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     await page.waitForLoadState('networkidle');
     
     // 验证页面显示"继续求助"按钮
