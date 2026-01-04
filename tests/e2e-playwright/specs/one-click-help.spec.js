@@ -38,31 +38,62 @@ test.describe('一键求助功能测试', () => {
 
     console.log('步骤1: 验证用户信息');
 
-    // 验证用户信息是否包含 community_id
+// 检查用户是否已加入社区
+    // 注意：userState 是加密存储的，需要通过 storage.get() 解密
     const userCheck = await page.evaluate(() => {
-      // 尝试从 localStorage 获取用户信息
-      const userInfoStr = localStorage.getItem('userState');
-      if (userInfoStr) {
-        try {
-          const userInfo = JSON.parse(userInfoStr);
-          return {
-            hasUserInfo: true,
-            communityId: userInfo.profile?.community_id,
-            communityName: userInfo.profile?.community_name,
-            userId: userInfo.profile?.userId,
-            phone: userInfo.profile?.phone
-          };
-        } catch (e) {
-          return { hasUserInfo: false, error: e.message };
+      try {
+        // 尝试从 window 对象获取 storage 模块（如果已暴露）
+        if (window.__storage_get) {
+          const userInfo = window.__storage_get('userState');
+          if (userInfo && userInfo.profile) {
+            return {
+              hasUserInfo: true,
+              communityId: userInfo.profile?.community_id,
+              communityName: userInfo.profile?.community_name,
+              userId: userInfo.profile?.userId,
+              phone: userInfo.profile?.phone
+            };
+          }
         }
+        
+        // 如果无法访问 storage.get()，尝试直接读取 localStorage
+        const userInfoStr = localStorage.getItem('userState');
+        if (userInfoStr) {
+          console.log('🔍 userState 原始值（加密）:', userInfoStr.substring(0, 100));
+          
+          // 尝试解析（如果未加密）
+          try {
+            const userInfo = JSON.parse(userInfoStr);
+            return {
+              hasUserInfo: true,
+              communityId: userInfo.profile?.community_id,
+              communityName: userInfo.profile?.community_name,
+              userId: userInfo.profile?.userId,
+              phone: userInfo.profile?.phone
+            };
+          } catch (parseError) {
+            // 如果解析失败，说明数据是加密的
+            console.log('⚠️ userState 是加密的，无法直接解析');
+            return { 
+              hasUserInfo: false, 
+              error: 'userState is encrypted',
+              encrypted: true 
+            };
+          }
+        }
+      } catch (e) {
+        return { hasUserInfo: false, error: e.message };
       }
       return { hasUserInfo: false };
     });
 
     console.log('用户信息检查结果:', JSON.stringify(userCheck, null, 2));
 
-    // 如果用户信息格式有问题，仍然继续测试（可能是因为H5环境限制）
-    if (!userCheck.hasUserInfo) {
+    // 如果用户信息是加密的，仍然继续测试（通过页面UI验证）
+    if (userCheck.encrypted) {
+      console.log('⚠️ userState 是加密的，无法直接读取 community_id');
+      console.log('ℹ️ 将通过页面UI来验证用户是否已加入社区');
+    } else if (!userCheck.hasUserInfo) {
       console.log('⚠️ 用户信息格式有问题，但继续测试（可能是因为H5环境限制）');
     }
 

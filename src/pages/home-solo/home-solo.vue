@@ -476,6 +476,12 @@ const handleOneClickHelp = async () => {
   try {
     // 获取用户信息
     const userInfo = userStore.userInfo;
+
+    // 诊断日志：打印 userInfo 的完整内容
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo:', JSON.stringify(userInfo, null, 2));
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo.userId:', userInfo?.userId);
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo.community_id:', userInfo?.community_id);
+
     if (!userInfo || !userInfo.community_id) {
       uni.showToast({
         title: "请先加入社区后再使用求助功能",
@@ -516,21 +522,28 @@ const createHelpEvent = async (userInfo) => {
       mask: true
     });
 
+    // 诊断日志：打印请求数据
+    const requestData = {
+      community_id: userInfo.community_id,
+      title: "紧急求助",
+      description: "用户通过一键求助功能发起求助",
+      event_type: "call_for_help",
+      location: "", // 暂时为空
+      target_user_id: userInfo.userId
+    };
+    console.log('🔍 [DEBUG] createHelpEvent - 请求数据:', JSON.stringify(requestData, null, 2));
+
     // 阶段1：立即发送求助请求（不等待定位）
     const response = await request({
       url: "/api/events",
       method: "POST",
-      data: {
-        community_id: userInfo.community_id,
-        title: "紧急求助",
-        description: "用户通过一键求助功能发起求助",
-        event_type: "call_for_help",
-        location: "", // 暂时为空
-        target_user_id: userInfo.user_id
-      }
+      data: requestData
     });
 
     uni.hideLoading();
+
+    // 诊断日志：打印API响应
+    console.log('🔍 [DEBUG] createHelpEvent - API响应:', JSON.stringify(response, null, 2));
 
     if (response.code === 1) {
       uni.showToast({
@@ -540,7 +553,10 @@ const createHelpEvent = async (userInfo) => {
       });
 
       // 刷新事件数据，显示事件进展卡片
+      console.log('🔍 [DEBUG] createHelpEvent - 开始刷新事件数据');
       await eventStore.fetchActiveEvent(true);
+      console.log('🔍 [DEBUG] createHelpEvent - 事件数据刷新完成');
+      console.log('🔍 [DEBUG] createHelpEvent - eventStore.activeEvent:', JSON.stringify(eventStore.activeEvent, null, 2));
 
       // 阶段2：异步获取定位并更新
       if (response.data && response.data.event_id) {

@@ -43,6 +43,8 @@ export const useEventStore = defineStore("event", {
     actions: {
         // 获取用户当前进行中的事件
         async fetchActiveEvent(forceRefresh = false) {
+            console.log('🔍 [DEBUG] fetchActiveEvent - 开始执行, forceRefresh:', forceRefresh);
+
             // 如果有有效缓存且不强制刷新，直接返回缓存数据
             if (!forceRefresh && this.hasValidCache) {
                 console.log("使用缓存的事件数据");
@@ -53,10 +55,13 @@ export const useEventStore = defineStore("event", {
             this.error = null;
 
             try {
+                console.log('🔍 [DEBUG] fetchActiveEvent - 发送API请求');
                 const response = await request({
                     url: "/api/user/my-active-event",
                     method: "GET",
                 });
+
+                console.log('🔍 [DEBUG] fetchActiveEvent - API响应:', JSON.stringify(response, null, 2));
 
                 if (response.code === 1) {
                     this.activeEvent = response.data.event;
@@ -67,12 +72,14 @@ export const useEventStore = defineStore("event", {
                     this.saveToCache();
 
                     console.log("获取事件数据成功:", this.activeEvent);
+                    console.log('🔍 [DEBUG] fetchActiveEvent - hasActiveEvent:', this.hasActiveEvent);
                     return this.activeEvent;
                 } else {
                     throw new Error(response.msg || "获取事件数据失败");
                 }
             } catch (error) {
                 this.error = error.message;
+                console.error('🔍 [DEBUG] fetchActiveEvent - API请求失败:', error);
                 // 如果网络请求失败但有缓存数据，仍然返回缓存
                 if (this.activeEvent !== null) {
                     console.log("网络请求失败，使用缓存数据");
