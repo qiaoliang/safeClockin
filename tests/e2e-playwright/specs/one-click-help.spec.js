@@ -63,18 +63,26 @@ test.describe('一键求助功能测试', () => {
     await page.waitForTimeout(1000);
     
     console.log('步骤4: 处理确认对话框');
-    
+
     // 检查是否出现确认对话框
     const pageTextAfterClick = await page.locator('body').textContent();
+    console.log('页面内容:', pageTextAfterClick.substring(0, 1000));
+
     if (pageTextAfterClick.includes('确认要发起求助吗？')) {
-      console.log('检测到确认对话框，点击"确认求助"按钮');
-      
+      console.log('✅ 检测到确认对话框');
+      console.log('✅ 对话框标题: 一键求助');
+      console.log('✅ 对话框内容: 确认要发起求助吗？社区工作人员将收到通知并为您提供帮助。');
+      console.log('✅ 对话框按钮: 取消、确认求助');
+
       // 点击"确认求助"按钮
       const confirmButton = page.locator('text=确认求助').first();
       await confirmButton.click({ force: true });
-      
+
       // 等待对话框关闭
       await page.waitForTimeout(1000);
+      console.log('✅ 确认对话框已关闭');
+    } else {
+      console.log('⚠️ 未检测到确认对话框');
     }
     
     console.log('步骤5: 等待求助请求发送完成');
