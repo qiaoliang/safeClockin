@@ -18,6 +18,15 @@
     </view>
 
     <!-- 地图组件 -->
+    <!-- #ifdef H5 -->
+    <view
+      id="communityMap"
+      class="map-container"
+      @tap="handleMapTap"
+    />
+    <!-- #endif -->
+
+    <!-- #ifndef H5 -->
     <map
       id="communityMap"
       class="map-container"
@@ -30,6 +39,7 @@
       @tap="handleMapTap"
       @markertap="handleMarkerTap"
     />
+    <!-- #endif -->
 
     <!-- 选点标记 -->
     <view class="marker-center">
@@ -115,7 +125,46 @@ onLoad((options) => {
     // 获取当前位置
     getCurrentLocation()
   }
+
+  // #ifdef H5
+  // H5环境下初始化腾讯地图
+  initH5Map()
+  // #endif
 })
+
+// #ifdef H5
+// H5环境下初始化腾讯地图
+const initH5Map = () => {
+  console.log('初始化H5地图')
+  // 等待腾讯地图SDK加载完成
+  const checkMapSDK = setInterval(() => {
+    if (window.TMap) {
+      clearInterval(checkMapSDK)
+      console.log('腾讯地图SDK已加载')
+
+      // 创建地图实例
+      const map = new TMap.Map('communityMap', {
+        center: new TMap.LatLng(mapCenter.value.latitude, mapCenter.value.longitude),
+        zoom: mapScale.value,
+        viewMode: '2D'
+      })
+
+      // 添加点击事件
+      map.on('click', (evt) => {
+        const { lat, lng } = evt.latLng
+        handleMapTap({
+          detail: {
+            latitude: lat,
+            longitude: lng
+          }
+        })
+      })
+
+      console.log('H5地图初始化完成')
+    }
+  }, 100)
+}
+// #endif
 
 // 获取当前位置
 const getCurrentLocation = () => {
@@ -151,6 +200,12 @@ const getCurrentLocation = () => {
       })
     }
   })
+}
+
+// 地图加载完成事件
+const handleMapReady = (e) => {
+  console.log('地图加载完成:', e)
+  console.log('地图实例:', e.detail)
 }
 
 // 地图点击事件
@@ -411,6 +466,8 @@ const handleConfirm = () => {
 .map-container {
   flex: 1;
   width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
 
 .marker-center {

@@ -65,6 +65,30 @@
     "mp-toutiao" : {
         "usingComponents" : true
     },
+    "h5" : {
+        "title" : "safeClockin",
+        "template" : "index.html",
+        "router" : {
+            "mode" : "hash",
+            "base" : "./"
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        },
+        "devServer" : {
+            "https" : false,
+            "port" : 8080
+        },
+        "sdkConfigs" : {
+            "maps" : {
+                "qqmap" : {
+                    "key" : "EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP"
+                }
+            }
+        }
+    },
     "uniStatistics" : {
         "enable" : false
     },
