@@ -45,14 +45,21 @@ test.describe('一键求助功能测试', () => {
     console.log('✅ 页面包含一键求助按钮');
     
     console.log('步骤2: 设置对话框处理器');
-    
-    // 设置对话框处理器，自动接受所有对话框
+
+    // 设置对话框处理器，用于捕获原生对话框
+    // 注意：uni.showModal 在 H5 环境中会触发浏览器的原生对话框
+    let dialogAccepted = false;
     const dialogHandler = async (dialog) => {
-      console.log('检测到对话框:', dialog.message());
+      console.log('检测到原生对话框');
+      console.log('对话框消息:', dialog.message());
+      console.log('对话框类型:', dialog.type());
+      console.log('对话框默认值:', dialog.defaultValue());
+      console.log('✅ 接受对话框（点击确认）');
       await dialog.accept();
+      dialogAccepted = true;
     };
     page.on('dialog', dialogHandler);
-    
+
     console.log('步骤3: 点击一键求助按钮');
     
     // 点击一键求助按钮
@@ -62,27 +69,34 @@ test.describe('一键求助功能测试', () => {
     // 等待确认对话框出现
     await page.waitForTimeout(1000);
     
-    console.log('步骤4: 处理确认对话框');
+    console.log('步骤4: 等待原生对话框出现并被处理');
 
-    // 检查是否出现确认对话框
-    const pageTextAfterClick = await page.locator('body').textContent();
-    console.log('页面内容:', pageTextAfterClick.substring(0, 1000));
+    // 等待原生对话框被 dialogHandler 处理
+    await page.waitForTimeout(2000);
 
-    if (pageTextAfterClick.includes('确认要发起求助吗？')) {
-      console.log('✅ 检测到确认对话框');
-      console.log('✅ 对话框标题: 一键求助');
-      console.log('✅ 对话框内容: 确认要发起求助吗？社区工作人员将收到通知并为您提供帮助。');
-      console.log('✅ 对话框按钮: 取消、确认求助');
-
-      // 点击"确认求助"按钮
-      const confirmButton = page.locator('text=确认求助').first();
-      await confirmButton.click({ force: true });
-
-      // 等待对话框关闭
-      await page.waitForTimeout(1000);
-      console.log('✅ 确认对话框已关闭');
+    if (dialogAccepted) {
+      console.log('✅ 原生对话框已被接受');
+      console.log('✅ 用户已点击"确认求助"按钮');
     } else {
-      console.log('⚠️ 未检测到确认对话框');
+      console.log('⚠️ 未检测到原生对话框');
+      // 如果没有检测到原生对话框，尝试查找自定义对话框（小程序环境）
+      const pageTextAfterClick = await page.locator('body').textContent();
+      console.log('页面内容:', pageTextAfterClick.substring(0, 1000));
+
+      if (pageTextAfterClick.includes('确认要发起求助吗？')) {
+        console.log('✅ 检测到自定义确认对话框');
+        console.log('✅ 对话框标题: 一键求助');
+        console.log('✅ 对话框内容: 确认要发起求助吗？社区工作人员将收到通知并为您提供帮助。');
+        console.log('✅ 对话框按钮: 取消、确认求助');
+
+        // 点击"确认求助"按钮
+        const confirmButton = page.locator('text=确认求助').first();
+        await confirmButton.click({ force: true });
+
+        // 等待对话框关闭
+        await page.waitForTimeout(1000);
+        console.log('✅ 自定义对话框已关闭');
+      }
     }
     
     console.log('步骤5: 等待求助请求发送完成');
