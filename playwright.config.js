@@ -7,14 +7,14 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/e2e-playwright',
   
-  // 并行运行测试
-  fullyParallel: true,
+  // 并行运行测试（禁用以避免SQLite数据库锁定）
+  fullyParallel: false,
   
   // 在 CI 环境中失败时重试
   retries: process.env.CI ? 2 : 0,
   
-  // 在 CI 环境中使用工作线程
-  workers: process.env.CI ? 1 : undefined,
+  // 使用单线程运行测试（避免SQLite数据库锁定）
+  workers: 1,
   
   // 测试报告
   reporter: [
