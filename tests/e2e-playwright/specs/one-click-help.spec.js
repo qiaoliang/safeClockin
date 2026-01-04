@@ -32,11 +32,44 @@ test.describe('一键求助功能测试', () => {
 
   test('用户点击一键求助后，应该显示求助按钮和事件信息框', async ({ page }) => {
     console.log('开始测试：一键求助功能');
-    
+
     // 等待页面完全加载
     await page.waitForTimeout(1000);
-    
-    console.log('步骤1: 验证页面包含一键求助按钮');
+
+    console.log('步骤1: 验证用户信息');
+
+    // 验证用户信息是否包含 community_id
+    const userCheck = await page.evaluate(() => {
+      // 尝试从 localStorage 获取用户信息
+      const userInfoStr = localStorage.getItem('userState');
+      if (userInfoStr) {
+        try {
+          const userInfo = JSON.parse(userInfoStr);
+          return {
+            hasUserInfo: true,
+            communityId: userInfo.profile?.community_id,
+            communityName: userInfo.profile?.community_name,
+            userId: userInfo.profile?.userId,
+            phone: userInfo.profile?.phone
+          };
+        } catch (e) {
+          return { hasUserInfo: false, error: e.message };
+        }
+      }
+      return { hasUserInfo: false };
+    });
+
+    console.log('用户信息检查结果:', JSON.stringify(userCheck, null, 2));
+
+    if (!userCheck.hasUserInfo) {
+      console.error('❌ 未找到用户信息');
+    } else if (!userCheck.communityId) {
+      console.error('❌ 用户没有 community_id');
+    } else {
+      console.log(`✅ 用户有 community_id: ${userCheck.communityId}, 社区名称: ${userCheck.communityName}`);
+    }
+
+    console.log('步骤2: 验证页面包含一键求助按钮');
     
     // 验证页面包含"一键求助"按钮
     const pageText = await page.context(); // 获取当前页面上下文
