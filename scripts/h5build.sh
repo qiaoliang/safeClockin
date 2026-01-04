@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# 微信小程序构建脚本
+# H5 小程序构建脚本
 # 动态获取当前脚本的绝对路径，并运行微信小程序构建命令
 
 set -e  # 遇到错误时退出
 
-echo "=== 开始微信小程序构建 ==="
+echo "=== 开始 H5 小程序构建 ==="
 
 # 获取脚本所在目录的绝对路径
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -46,34 +46,6 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# 设置微信小程序 AppID
-WX_APPID="wx55a59cbcd4156ce4"
-echo "微信小程序 AppID: $WX_APPID"
-
-# 清理微信开发者工具进程
-echo "清理微信开发者工具进程..."
-WECHAT_DEVTOOLS_PROCESS="/Applications/wechatwebdevtools.app/Contents/MacOS/wechatdevtools"
-if pgrep -f "$WECHAT_DEVTOOLS_PROCESS" > /dev/null; then
-    echo "发现微信开发者工具进程，正在终止..."
-#    pkill -f "$WECHAT_DEVTOOLS_PROCESS"
-    sleep 2  # 等待进程完全终止
-
-    # 再次检查是否成功终止
-    if pgrep -f "$WECHAT_DEVTOOLS_PROCESS" > /dev/null; then
-        echo "警告：微信开发者工具进程仍在运行，尝试强制终止..."
- #       pkill -9 -f "$WECHAT_DEVTOOLS_PROCESS"
-        sleep 1
-    fi
-
-    if ! pgrep -f "$WECHAT_DEVTOOLS_PROCESS" > /dev/null; then
-        echo "微信开发者工具进程已成功终止"
-    else
-        echo "警告：无法终止微信开发者工具进程，构建可能会受到影响"
-    fi
-else
-    echo "未发现运行中的微信开发者工具进程"
-fi
-
 # 根据环境类型设置输出路径
 if [ "$ENV_TYPE" = "func" ]; then
     BUILD_OUTPUT_DIR="build"
@@ -103,7 +75,6 @@ echo "构建输出目录: $BUILD_DIST_PATH"
 # 检查HBuilderX主应用程序是否运行
 echo "检查HBuilderX依赖..."
 HBuilderX_MAIN_PROCESS="/Applications/HBuilderX.app/Contents/MacOS/HBuilderX"
-#HBuilderX_NODE_PROCESS="/Applications/HBuilderX.app/Contents/HBuilderX/plugins/node/node"
 
 # 检查HBuilderX主进程
 if ! pgrep -f "$HBuilderX_MAIN_PROCESS" > /dev/null; then
@@ -281,7 +252,7 @@ fi
 PROJECT_PATH="$FRONTEND_PATH/src"
 # Use the correct output path based on environment
 BUILD_OUTPUT_PATH="$PROJECT_PATH/unpackage/dist/$BUILD_OUTPUT_DIR/web"
-# 运行微信小程序构建命令
+# 运行 H5 小程序构建命令
 echo "正在构建H5 网站..."
 echo "构建参数："
 echo "  平台: web"
@@ -295,7 +266,7 @@ echo "  源码映射: true"
 BUILD_EXIT_CODE=0
 
 echo "清理上次构建残留的文件....$BUILD_OUTPUT_PATH"
-rm -rf "$PROJECT_PATH/unpackage/dist"
+rm -rf "$BUILD_OUTPUT_PATH"
 
 /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
 
@@ -318,4 +289,4 @@ if [ -f "src/config/prod.js.bak" ]; then
     mv src/config/prod.js.bak src/config/prod.js
 fi
 
-echo "=== 微信小程序构建完成 ==="
+echo "=== H5 小程序构建完成 ==="
