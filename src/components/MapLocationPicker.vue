@@ -194,8 +194,23 @@ const reverseGeocode = (latitude, longitude) => {
     success: (res) => {
       if (res.data.status === 0) {
         const result = res.data.result
-        selectedAddress.value = result.address
-        administrativeInfo.value = `${result.address_component.province}${result.address_component.city}${result.address_component.district}`
+
+        // 兼容新旧两种API响应格式
+        if (typeof result.address === 'string') {
+          // 旧格式：result.address 是字符串
+          selectedAddress.value = result.address
+        } else if (result.formatted_addresses && result.formatted_addresses.recommend) {
+          // 新格式：result.address 是对象，地址在 formatted_addresses.recommend
+          selectedAddress.value = result.formatted_addresses.recommend
+        } else if (result.address_component) {
+          // 备用方案：组合地址组件
+          selectedAddress.value = `${result.address_component.province}${result.address_component.city}${result.address_component.district}${result.address_component.street || ''}${result.address_component.street_number || ''}`
+        }
+
+        // 提取行政区划信息
+        if (result.address_component) {
+          administrativeInfo.value = `${result.address_component.province}${result.address_component.city}${result.address_component.district}`
+        }
       }
     },
     fail: () => {

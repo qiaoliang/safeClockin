@@ -193,12 +193,15 @@ const watchFormChanges = () => {
 
 // 选择位置
 const selectLocation = () => {
+  console.log('selectLocation 被调用，准备跳转到地图选择页面')
+
   // 跳转到地图选择页面
   uni.navigateTo({
     url: '/pages/map-location-picker/map-location-picker',
     events: {
       // 监听地图选择器返回的数据
       onLocationSelected: (data) => {
+        console.log('收到 onLocationSelected 事件，数据:', data)
         formData.value.location = data.location
         formData.value.location_lat = data.location_lat
         formData.value.location_lon = data.location_lon
@@ -207,7 +210,14 @@ const selectLocation = () => {
         formData.value.district = data.district
         formData.value.street = data.street
         watchFormChanges()
+        console.log('表单数据已更新:', formData.value)
       }
+    },
+    success: () => {
+      console.log('跳转到地图选择页面成功')
+    },
+    fail: (err) => {
+      console.error('跳转到地图选择页面失败:', err)
     }
   })
 }
