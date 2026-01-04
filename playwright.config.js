@@ -71,7 +71,7 @@ export default defineConfig({
   
   // 测试前运行 Web 服务器
   webServer: {
-    command: './scripts/start-h5-https.sh',
+    command: 'npx http-server src/unpackage/dist/build/web --port 8081 --ssl --cert certs/server.crt --key certs/server.key -c-1',
     url: 'https://localhost:8081',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
