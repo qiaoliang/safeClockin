@@ -421,9 +421,18 @@ const jsonpRequest = (url, params, successCallback, errorCallback) => {
   console.log('🔍 [Layer 4] 请求URL:', url)
   console.log('🔍 [Layer 4] 请求参数:', JSON.stringify(params, null, 2))
 
+  // 从 URL 中提取 API 路径（用于签名计算）
+  // 小程序环境不支持 new URL()，使用字符串操作
+  const apiPath = url.replace('https://apis.map.qq.com', '')
+  console.log('🔍 [Layer 4] API 路径:', apiPath)
+
+  // 计算签名（小程序环境不需要 callback 参数）
+  const signedParams = generateTencentMapSignature(params, TENCENT_MAP_SECRET, apiPath)
+  console.log('🔍 [Layer 4] 签名后的参数:', signedParams)
+
   uni.request({
     url: url,
-    data: params,
+    data: signedParams,
     success: (res) => {
       console.log('🔍 [Layer 4] 请求响应:', res.data)
       console.log('🔍 [Layer 4] 响应类型:', typeof res.data)
@@ -432,11 +441,11 @@ const jsonpRequest = (url, params, successCallback, errorCallback) => {
       let data = res.data
       if (typeof res.data === 'string') {
         console.log('🔍 [Layer 4] 检测到JSONP格式响应，需要解析')
-        // JSONP格式: QQmap&&QQmap({...})
-        // 使用非贪婪匹配 (.+?) 来正确提取 JSON 数据
-        const match = res.data.match(/QQmap&&QQmap\((.+?)\)/)
+        // JSONP格式: QQmap&&QQmap({...});
+        // 使用贪婪匹配 (.+) 来匹配到最后一个 )
+        const match = res.data.match(/QQmap&&QQmap\((.+)\)/);
         if (match) {
-          console.log('🔍 [Layer 4] 提取JSON数据:', match[1])
+          console.log('🔍 [Layer 4] 提取JSON数据长度:', match[1].length)
           data = JSON.parse(match[1])
         } else {
           console.error('🔍 [Layer 4] JSONP响应格式不匹配:', res.data)
