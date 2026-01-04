@@ -88,7 +88,7 @@ export const ENV_CONFIG = {
   API_URL: process.env.BASE_URL_FOR_SAFEGUARD || 'http://localhost:9999',
   
   // Web 服务器地址
-  WEB_URL: process.env.BASE_URL || 'http://localhost:8081',
+  WEB_URL: process.env.BASE_URL || 'https://localhost:8081',
   
   // 超时配置
   TIMEOUTS: {

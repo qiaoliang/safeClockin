@@ -26,7 +26,7 @@ export default defineConfig({
   // 全局设置
   use: {
     // 基础 URL（Web 服务器地址）
-    baseURL: process.env.BASE_URL || 'http://localhost:8081',
+    baseURL: process.env.BASE_URL || 'https://localhost:8081',
     
     // 截图和视频配置
     trace: 'on-first-retry',
@@ -40,7 +40,7 @@ export default defineConfig({
     // 视口大小
     viewport: { width: 375, height: 667 }, // iPhone SE 尺寸
     
-    // 忽略 HTTPS 错误
+    // 忽略 HTTPS 错误（自签名证书）
     ignoreHTTPSErrors: true,
   },
   
@@ -71,8 +71,8 @@ export default defineConfig({
   
   // 测试前运行 Web 服务器
   webServer: {
-    command: 'node scripts/start-web-server.js',
-    url: 'http://localhost:8081',
+    command: './scripts/start-h5-https.sh',
+    url: 'https://localhost:8081',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

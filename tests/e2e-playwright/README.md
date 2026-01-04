@@ -53,8 +53,8 @@ npm run test:playwright:headed
 ### 环境变量
 
 ```bash
-# 设置 Web 服务器地址
-export BASE_URL="http://localhost:8081"
+# 设置 Web 服务器地址（HTTPS）
+export BASE_URL="https://localhost:8081"
 
 # 设置后端 API 地址
 export BASE_URL_FOR_SAFEGUARD="http://localhost:9999"
@@ -211,7 +211,7 @@ await page.locator('button').click();
   run: |
     npm run test:playwright
   env:
-    BASE_URL: http://localhost:8081
+    BASE_URL: https://localhost:8081
     BASE_URL_FOR_SAFEGUARD: http://localhost:9999
 ```
 
