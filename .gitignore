@@ -1,3 +1,4 @@
+*.log
 src/config/*.bak
 src/config/*.backup
 .trae/

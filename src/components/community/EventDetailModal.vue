@@ -74,7 +74,7 @@
           <EventTimeline
             :messages="eventMessages"
             :event-info="currentEvent"
-            :is-staff-view="true"
+            :is-staff-view="props.isStaffView"
           />
         </scroll-view>
       </view>
@@ -108,12 +108,12 @@
         <!-- 预设标签 -->
         <view class="preset-tags">
           <text
-            v-for="tag in presetTags"
-            :key="tag"
-            :class="['preset-tag', selectedTags.includes(tag) ? 'selected' : '']"
-            @click="toggleTag(tag)"
+            v-for="tag in quickTags"
+            :key="tag.text"
+            :class="['preset-tag', getTagClass(tag.text), selectedTags.includes(tag.text) ? 'selected' : '']"
+            @click="toggleTag(tag.text)"
           >
-            {{ tag }}
+            {{ tag.text }}
           </text>
         </view>
       </view>
@@ -125,8 +125,16 @@
 import { ref, computed, watch } from 'vue'
 import { useCommunityStore } from '@/store/modules/community'
 import EventTimeline from '@/components/event/EventTimeline.vue'
+import { getCurrentLocation, formatLocationMessage } from '@/utils/locationHelper.js'
+import { QUICK_TAGS_CONFIG, getTagClassByType } from '@/config/quickTags.js'
 
 const emit = defineEmits(['close'])
+const props = defineProps({
+  isStaffView: {
+    type: Boolean,
+    default: true
+  }
+})
 const communityStore = useCommunityStore()
 
 const popup = ref(null)
@@ -135,15 +143,14 @@ const selectedImage = ref(null)
 const selectedTags = ref([])
 const scrollTop = ref(0)
 
-const presetTags = [
-  '已电话联系',
-  '正在前往',
-  '已到达现场',
-  '问题已解决',
-  '需要进一步协助'
-]
+const quickTags = computed(() => {
+  return props.isStaffView ? QUICK_TAGS_CONFIG.staff : QUICK_TAGS_CONFIG.user
+})
 
-const currentEvent = computed(() => communityStore.currentEvent)
+const getTagClass = (tag) => {
+  const tagConfig = quickTags.value.find(t => t.text === tag)
+  return tagConfig ? getTagClassByType(tagConfig.type) : '' 
+}
 const eventMessages = computed(() => communityStore.eventMessages)
 
 const open = () => {
@@ -172,6 +179,14 @@ const formatEventTime = (timeStr) => {
 }
 
 const toggleTag = (tag) => {
+  const tagConfig = quickTags.value.find(t => t.text === tag)
+  
+  // 特殊处理：定位按钮
+  if (tagConfig?.action === 'getLocation') {
+    handleLocationTag()
+    return
+  }
+  
   const index = selectedTags.value.indexOf(tag)
   if (index > -1) {
     selectedTags.value.splice(index, 1)
@@ -180,6 +195,78 @@ const toggleTag = (tag) => {
   }
 }
 
+
+const handleLocationTag = async () => {
+  try {
+    uni.showLoading({ title: '获取位置中...' })
+    
+    // 获取当前位置
+    const location = await getCurrentLocation()
+    
+    // 格式化位置消息
+    const locationMessage = formatLocationMessage(location)
+    
+    // 发送消息
+    await sendMessage(locationMessage)
+    
+  } catch (error) {
+    console.error('获取位置失败:', error)
+    
+    // 检查是否是权限拒绝
+    if (error.errMsg && error.errMsg.includes('auth deny')) {
+      uni.showModal({
+        title: '位置权限',
+        content: '请授权获取您的位置信息以便发送定位',
+        confirmText: '去设置',
+        success: (modalRes) => {
+          if (modalRes.confirm) {
+            uni.openSetting()
+          }
+        }
+      })
+    } else {
+      uni.showToast({
+        title: '获取位置失败',
+        icon: 'none'
+      })
+    }
+  } finally {
+    uni.hideLoading()
+  }
+}
+
+const sendMessage = async (content) => {
+  try {
+    const messageData = {
+      message_type: 'text',
+      message_content: content,
+      message_tags: []
+    }
+    
+    // 根据角色调用不同的 API
+    if (props.isStaffView) {
+      await communityStore.addResponse(messageData)
+    } else {
+      await communityStore.addEventMessage(messageData)
+    }
+    
+    uni.showToast({
+      title: '发送成功',
+      icon: 'success'
+    })
+    
+    // 滚动到顶部
+    setTimeout(() => {
+      scrollTop.value = 0
+    }, 100)
+  } catch (error) {
+    console.error('发送消息失败:', error)
+    uni.showToast({
+      title: error.message || '发送失败',
+      icon: 'none'
+    })
+  }
+}
 const handleChooseImage = () => {
   uni.chooseImage({
     count: 1,
@@ -215,7 +302,12 @@ const handleSendResponse = async () => {
       messageData.media_url = uploadRes.url
     }
 
-    await communityStore.addResponse(messageData)
+    // 根据角色调用不同的 API
+    if (props.isStaffView) {
+      await communityStore.addResponse(messageData)
+    } else {
+      await communityStore.addEventMessage(messageData)
+    }
 
     // 清空输入
     responseText.value = ''
@@ -426,5 +518,25 @@ defineExpose({
 .preset-tag.selected {
   background: $uni-primary;
   color: $uni-white;
+}
+
+.preset-tag.urgent {
+  border: 2rpx solid $uni-danger;
+  color: $uni-danger;
+}
+
+.preset-tag.warning {
+  border: 2rpx solid $uni-warning;
+  color: $uni-warning;
+}
+
+.preset-tag.location {
+  border: 2rpx solid $uni-info;
+  color: $uni-info;
+}
+
+.preset-tag.success {
+  border: 2rpx solid $uni-success;
+  color: $uni-success;
 }
 </style>

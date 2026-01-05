@@ -695,6 +695,42 @@ export const useCommunityStore = defineStore('community', {
         messageData.message_tags || [],
         messageData.message_type || 'text'
       )
+    },
+
+    /**
+     * 添加用户消息
+     */
+    async addEventMessage(messageData) {
+      if (!this.currentEvent) {
+        throw new Error('没有当前事件')
+      }
+
+      try {
+        const response = await request({
+          url: `/api/events/${this.currentEvent.event_id}/messages`,
+          method: 'POST',
+          data: {
+            message_type: messageData.message_type,
+            message_content: messageData.message_content,
+            message_tags: messageData.message_tags,
+            media_url: messageData.media_url,
+            media_duration: messageData.media_duration
+          }
+        })
+
+        if (response.code === 1) {
+          const messageData = response.data.message_data
+          console.log('添加消息成功', messageData)
+          
+          // 添加到消息列表（最新的在最上面）
+          this.eventMessages.unshift(messageData)
+          
+          return messageData
+        }
+      } catch (error) {
+        console.error('添加消息失败:', error)
+        throw error
+      }
     }
   }
 })
