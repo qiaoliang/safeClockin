@@ -3,7 +3,7 @@
     <!-- 将事件发起信息和消息列表合并显示 -->
     <view
       v-for="item in displayList"
-      :key="item.id || item.support_id"
+      :key="item.id || item.message_id"
       class="timeline-item"
       :class="{ 'is-staff': isStaffMessage(item), 'is-user': isUserMessage(item) }"
     >
@@ -28,11 +28,11 @@
 
           <!-- 回应标签（工作人员） -->
           <view
-            v-if="item.support_tags && item.support_tags.length > 0"
+            v-if="item.message_tags && item.message_tags.length > 0"
             class="tags-container"
           >
             <text
-              v-for="(tag, tagIndex) in item.support_tags"
+              v-for="(tag, tagIndex) in item.message_tags"
               :key="tagIndex"
               class="tag"
             >
@@ -41,8 +41,8 @@
           </view>
 
           <!-- 文字内容 -->
-          <text v-if="item.support_content || item.event_content" class="message-text">
-            {{ item.event_content || item.support_content }}
+          <text v-if="item.message_content || item.event_content" class="message-text">
+            {{ item.event_content || item.message_content }}
           </text>
 
           <!-- 图片消息 -->
@@ -108,14 +108,14 @@ const displayList = computed(() => {
     console.log('🔍 [DEBUG] EventTimeline - 添加事件发起消息');
     list.push({
       id: "event-start",
-      support_id: "event-start",
+      message_id: "event-start",
       created_at: props.eventInfo.created_at,
-      supporter_id: props.eventInfo.created_by,
-      support_tags: [],
+      sender_id: props.eventInfo.created_by,
+      message_tags: [],
       message_type: "text",
       media_url: null,
       media_duration: null,
-      support_content: null,
+      message_content: null,
       event_content: `${props.eventInfo.creator_nickname || '用户'}发起了求助：${props.eventInfo.title}${
         props.eventInfo.description ? `（${props.eventInfo.description}）` : ""
       }`,
@@ -145,7 +145,7 @@ const displayList = computed(() => {
 const isMyMessage = (message) => {
   if (message.is_event_start) return false;
   const currentUserId = userStore.userInfo?.userId;
-  return message.supporter_id === currentUserId;
+  return message.sender_id === currentUserId;
 };
 
 // 判断是否为工作人员消息
@@ -159,7 +159,7 @@ const isStaffMessage = (message) => {
     return true;
   }
   // 用户视图：有快捷指令的认为是工作人员消息
-  return message.support_tags && message.support_tags.length > 0;
+  return message.message_tags && message.message_tags.length > 0;
 };
 
 // 判断是否为用户消息

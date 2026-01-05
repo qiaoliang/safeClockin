@@ -651,7 +651,7 @@ export const useCommunityStore = defineStore('community', {
     /**
       * 添加工作人员回应
       */
-    async addStaffResponse(eventId, content, mediaUrl, supportTags, messageType = 'text') {
+    async addStaffResponse(eventId, content, mediaUrl, messageTags, messageType = 'text') {
       try {
         const response = await request({
           url: `/api/events/${eventId}/respond`,
@@ -659,7 +659,7 @@ export const useCommunityStore = defineStore('community', {
           data: {
             content,
             media_url: mediaUrl,
-            support_tags: supportTags
+            message_tags: messageTags
           }
         })
 
@@ -690,9 +690,9 @@ export const useCommunityStore = defineStore('community', {
 
       return await this.addStaffResponse(
         this.currentEvent.event_id,
-        messageData.support_content || '',
+        messageData.message_content || '',
         messageData.media_url || '',
-        messageData.support_tags || [],
+        messageData.message_tags || [],
         messageData.message_type || 'text'
       )
     }

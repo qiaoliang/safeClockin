@@ -205,8 +205,8 @@ const handleSendResponse = async () => {
 
     const messageData = {
       message_type: selectedImage.value ? 'image' : 'text',
-      support_content: responseText.value,
-      support_tags: selectedTags.value
+      message_content: responseText.value,
+      message_tags: selectedTags.value
     }
 
     if (selectedImage.value) {

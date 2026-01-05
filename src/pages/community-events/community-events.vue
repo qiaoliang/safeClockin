@@ -429,7 +429,7 @@ const confirmSupport = async () => {
         'Content-Type': 'application/json'
       },
       data: {
-        support_content: supportContent.value.trim()
+        message_content: supportContent.value.trim()
       }
     });
 
