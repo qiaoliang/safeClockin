@@ -628,8 +628,8 @@ export const useCommunityStore = defineStore('community', {
     },
 
     /**
-     * 获取事件详情
-     */
+      * 获取事件详情
+      */
     async fetchEventDetail(eventId) {
       try {
         const response = await request({
@@ -639,8 +639,8 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.code === 1) {
           this.currentEvent = response.data.event
-          this.eventMessages = response.data.supports || []
-          console.log('获取事件详情成功')
+          this.eventMessages = response.data.messages || []
+          console.log('获取事件详情成功', this.currentEvent, this.eventMessages)
         }
       } catch (error) {
         console.error('获取事件详情失败:', error)
@@ -649,9 +649,9 @@ export const useCommunityStore = defineStore('community', {
     },
 
     /**
-     * 添加工作人员回应
-     */
-    async addStaffResponse(eventId, content, mediaUrl, supportTags) {
+      * 添加工作人员回应
+      */
+    async addStaffResponse(eventId, content, mediaUrl, supportTags, messageType = 'text') {
       try {
         const response = await request({
           url: `/api/events/${eventId}/respond`,
@@ -664,15 +664,37 @@ export const useCommunityStore = defineStore('community', {
         })
 
         if (response.code === 1) {
-          // 添加到消息列表
-          this.eventMessages.unshift(response.data.message_data)
-          console.log('添加回应成功')
-          return response.data.message_data
+          const messageData = response.data.message_data
+          console.log('添加回应成功', messageData)
+          console.log('当前消息列表:', this.eventMessages)
+
+          // 添加到消息列表（最新的在最上面）
+          this.eventMessages.unshift(messageData)
+
+          console.log('添加后的消息列表:', this.eventMessages)
+          return messageData
         }
       } catch (error) {
         console.error('添加回应失败:', error)
         throw error
       }
+    },
+
+    /**
+     * 添加工作人员回应（适配 EventDetailModal 调用）
+     */
+    async addResponse(messageData) {
+      if (!this.currentEvent) {
+        throw new Error('没有当前事件')
+      }
+
+      return await this.addStaffResponse(
+        this.currentEvent.event_id,
+        messageData.support_content || '',
+        messageData.media_url || '',
+        messageData.support_tags || [],
+        messageData.message_type || 'text'
+      )
     }
   }
 })

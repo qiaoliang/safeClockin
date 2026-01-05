@@ -71,78 +71,11 @@
           scroll-y
           :scroll-top="scrollTop"
         >
-          <view
-            v-for="message in eventMessages"
-            :key="message.support_id"
-            :class="['timeline-item', message.is_staff ? 'staff' : 'user']"
-          >
-            <view class="timeline-dot" />
-            <view class="timeline-content">
-              <view class="message-header">
-                <text class="message-name">
-                  {{ message.sender_name }}
-                </text>
-                <text class="message-time">
-                  {{ formatMessageTime(message.created_at) }}
-                </text>
-              </view>
-              
-              <!-- 预设标签 -->
-              <view
-                v-if="message.support_tags && message.support_tags.length > 0"
-                class="tags-container"
-              >
-                <text
-                  v-for="tag in message.support_tags"
-                  :key="tag"
-                  class="tag"
-                >
-                  {{ tag }}
-                </text>
-              </view>
-
-              <!-- 文字内容 -->
-              <text
-                v-if="message.message_type === 'text' && message.support_content"
-                class="message-text"
-              >
-                {{ message.support_content }}
-              </text>
-
-              <!-- 图片内容 -->
-              <image
-                v-if="message.message_type === 'image' && message.media_url"
-                class="message-image"
-                :src="message.media_url"
-                mode="aspectFill"
-                @click="previewImage(message.media_url)"
-              />
-
-              <!-- 语音内容 -->
-              <view
-                v-if="message.message_type === 'voice' && message.media_url"
-                class="message-voice"
-                @click="playVoice(message)"
-              >
-                <text class="voice-icon">
-                  🎤
-                </text>
-                <text class="voice-duration">
-                  {{ message.media_duration || 0 }}"
-                </text>
-              </view>
-            </view>
-          </view>
-
-          <!-- 空状态 -->
-          <view
-            v-if="eventMessages.length === 0"
-            class="empty-state"
-          >
-            <text class="empty-text">
-              暂无进展记录
-            </text>
-          </view>
+          <EventTimeline
+            :messages="eventMessages"
+            :event-info="currentEvent"
+            :is-staff-view="true"
+          />
         </scroll-view>
       </view>
 
@@ -164,7 +97,7 @@
             </button>
             <button
               class="action-btn"
-              :disabled="!responseText.trim() && !selectedImage"
+              :disabled="!responseText.trim() && !selectedImage && selectedTags.length === 0"
               @click="handleSendResponse"
             >
               发送
@@ -191,6 +124,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useCommunityStore } from '@/store/modules/community'
+import EventTimeline from '@/components/event/EventTimeline.vue'
 
 const emit = defineEmits(['close'])
 const communityStore = useCommunityStore()
@@ -237,14 +171,6 @@ const formatEventTime = (timeStr) => {
   return `${Math.floor(diff / 86400000)}天前`
 }
 
-const formatMessageTime = (timeStr) => {
-  if (!timeStr) return ''
-  const date = new Date(timeStr)
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${hours}:${minutes}`
-}
-
 const toggleTag = (tag) => {
   const index = selectedTags.value.indexOf(tag)
   if (index > -1) {
@@ -266,9 +192,9 @@ const handleChooseImage = () => {
 }
 
 const handleSendResponse = async () => {
-  if (!responseText.value.trim() && !selectedImage.value) {
+  if (!responseText.value.trim() && !selectedImage.value && selectedTags.value.length === 0) {
     uni.showToast({
-      title: '请输入回应内容或选择图片',
+      title: '请输入回应内容或选择图片或选择快捷指令',
       icon: 'none'
     })
     return
@@ -302,9 +228,9 @@ const handleSendResponse = async () => {
       icon: 'success'
     })
 
-    // 滚动到底部
+    // 滚动到顶部（因为消息是按时间倒序排列，最新的在最上面）
     setTimeout(() => {
-      scrollTop.value = 999999
+      scrollTop.value = 0
     }, 100)
   } catch (error) {
     uni.hideLoading()
@@ -334,19 +260,6 @@ const uploadMedia = async (filePath, type) => {
       },
       fail: reject
     })
-  })
-}
-
-const previewImage = (url) => {
-  uni.previewImage({
-    urls: [url]
-  })
-}
-
-const playVoice = (message) => {
-  uni.showToast({
-    title: '语音播放功能开发中',
-    icon: 'none'
   })
 }
 
@@ -453,127 +366,7 @@ defineExpose({
 .timeline-scroll {
   flex: 1;
   max-height: 400rpx;
-}
-
-.timeline-item {
-  display: flex;
-  margin-bottom: $uni-spacing-xxxl;
-  position: relative;
-}
-
-.timeline-item.user {
-  flex-direction: row-reverse;
-}
-
-.timeline-dot {
-  width: $uni-spacing-base;
-  height: $uni-spacing-base;
-  border-radius: 50%;
-  background: $uni-primary;
-  margin: $uni-spacing-xs $uni-spacing-base;
-  flex-shrink: 0;
-}
-
-.timeline-item.user .timeline-dot {
-  background: $uni-success;
-}
-
-.timeline-content {
-  flex: 1;
-  background: $uni-bg-color-lighter;
-  padding: $uni-spacing-base $uni-spacing-xl;
-  border-radius: $uni-radius-md;
-}
-
-.timeline-item.user .timeline-content {
-  background: $uni-primary;
-}
-
-.message-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: $uni-spacing-base;
-}
-
-.message-name {
-  font-size: $uni-font-size-base;
-  font-weight: $uni-font-weight-bold;
-  color: $uni-text-primary;
-}
-
-.timeline-item.user .message-name {
-  color: $uni-white;
-}
-
-.message-time {
-  font-size: $uni-font-size-sm;
-  color: $uni-text-base;
-}
-
-.timeline-item.user .message-time {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.tags-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $uni-spacing-xs;
-  margin-bottom: $uni-spacing-base;
-}
-
-.tag {
-  padding: $uni-spacing-xs $uni-spacing-base;
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-sm;
-  font-size: $uni-font-size-sm;
-  color: $uni-primary;
-}
-
-.message-text {
-  display: block;
-  font-size: $uni-font-size-base;
-  color: $uni-text-primary;
-  line-height: 1.6;
-}
-
-.timeline-item.user .message-text {
-  color: $uni-white;
-}
-
-.message-image {
-  width: 200rpx;
-  height: 200rpx;
-  border-radius: $uni-radius-md;
-}
-
-.message-voice {
-  display: flex;
-  align-items: center;
-  gap: $uni-spacing-base;
-  padding: $uni-spacing-base $uni-spacing-xl;
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-xl;
-  width: fit-content;
-}
-
-.voice-icon {
-  font-size: $uni-font-size-xxl;
-}
-
-.voice-duration {
-  font-size: $uni-font-size-base;
-  color: $uni-text-primary;
-}
-
-.empty-state {
-  text-align: center;
-  padding: $uni-spacing-xxxl 0;
-}
-
-.empty-text {
-  font-size: $uni-font-size-base;
-  color: $uni-text-base;
+  overflow-y: auto;
 }
 
 .response-section {
