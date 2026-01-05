@@ -75,7 +75,10 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
 
 const props = defineProps({
   messages: {
@@ -86,14 +89,23 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  // 是否为工作人员视图
+  isStaffView: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // 计算属性：合并事件发起信息和消息列表，按时间倒序排列
 const displayList = computed(() => {
   const list = [];
 
+  console.log('🔍 [DEBUG] EventTimeline - eventInfo:', props.eventInfo);
+  console.log('🔍 [DEBUG] EventTimeline - messages:', props.messages);
+
   // 如果有事件信息，将事件发起作为第一条消息
   if (props.eventInfo) {
+    console.log('🔍 [DEBUG] EventTimeline - 添加事件发起消息');
     list.push({
       id: "event-start",
       support_id: "event-start",
@@ -104,11 +116,13 @@ const displayList = computed(() => {
       media_url: null,
       media_duration: null,
       support_content: null,
-      event_content: `发起了求助：${props.eventInfo.title}${
+      event_content: `${props.eventInfo.creator_nickname || '用户'}发起了求助：${props.eventInfo.title}${
         props.eventInfo.description ? `（${props.eventInfo.description}）` : ""
       }`,
       is_event_start: true,
     });
+  } else {
+    console.log('🔍 [DEBUG] EventTimeline - eventInfo 为空，不添加事件发起消息');
   }
 
   // 添加所有消息
@@ -117,12 +131,22 @@ const displayList = computed(() => {
   }
 
   // 按时间倒序排列（最新的在上面）
-  return list.sort((a, b) => {
+  const sorted = list.sort((a, b) => {
     const timeA = new Date(a.created_at).getTime();
     const timeB = new Date(b.created_at).getTime();
     return timeB - timeA;
   });
+
+  console.log('EventTimeline displayList:', sorted);
+  return sorted;
 });
+
+// 判断消息是否由当前用户发送
+const isMyMessage = (message) => {
+  if (message.is_event_start) return false;
+  const currentUserId = userStore.userInfo?.userId;
+  return message.supporter_id === currentUserId;
+};
 
 // 判断是否为工作人员消息
 const isStaffMessage = (message) => {
@@ -130,7 +154,11 @@ const isStaffMessage = (message) => {
   if (message.is_event_start) {
     return false;
   }
-  // 通过 support_tags 判断
+  // 工作人员视图：所有非事件发起的消息都是工作人员消息（包括"我"和其他工作人员）
+  if (props.isStaffView) {
+    return true;
+  }
+  // 用户视图：有快捷指令的认为是工作人员消息
   return message.support_tags && message.support_tags.length > 0;
 };
 
@@ -147,12 +175,20 @@ const getUserAvatar = (message) => {
 
 // 获取用户名称
 const getUserName = (message) => {
-  // 事件发起信息显示为"我"
+  // 事件发起信息
   if (message.is_event_start) {
-    return "我：";
+    return props.isStaffView ? "用户" : "我";
   }
-  // 这里需要从用户信息中获取名称
-  return isStaffMessage(message) ? "工作人员" : "我";
+  // 如果是当前用户，显示"我"
+  if (isMyMessage(message)) {
+    return "我";
+  }
+  // 工作人员视图：显示发送人名称
+  if (props.isStaffView) {
+    return message.sender_name || "工作人员";
+  }
+  // 用户视图：显示"工作人员"
+  return "工作人员";
 };
 
 // 格式化时间
@@ -197,11 +233,17 @@ const previewImage = (url) => {
 };
 
 // 播放语音
-const playVoice = (message) => {
-  const innerAudioContext = uni.createInnerAudioContext();
-  innerAudioContext.src = getMediaUrl(message.media_url);
-  innerAudioContext.play();
+const playVoice = () => {
+  uni.showToast({
+    title: "语音播放功能开发中",
+    icon: "none",
+  });
 };
+
+// 监听 messages 变化
+watch(() => props.messages, (newVal) => {
+  console.log('EventTimeline messages changed:', newVal);
+}, { deep: true });
 </script>
 
 <style lang="scss" scoped>
