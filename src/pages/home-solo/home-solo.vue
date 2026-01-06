@@ -20,10 +20,7 @@
               <text class="greeting-text">
                 {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
               </text>
-              <text
-                v-if="userInfo?.community_name"
-                class="community-text"
-              >
+              <text class="community-text">
                 {{ userInfo.community_name }}
               </text>
               <text class="date-text">
@@ -387,6 +384,14 @@ const userInfo = computed(() => {
     } else {
       user.nickName = "用户";
     }
+  }
+
+  // 支持两种命名方式：communityId/communityName（驼峰）和 community_id/community_name（下划线）
+  if (!user.community_id && user.communityId) {
+    user.community_id = user.communityId;
+  }
+  if (!user.community_name && user.communityName) {
+    user.community_name = user.communityName;
   }
 
   return user;
