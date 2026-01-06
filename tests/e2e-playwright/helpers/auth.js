@@ -143,14 +143,39 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
   // 如果没有提供超级管理员凭据，使用默认值
   if (!superAdmin) {
     // 动态导入 TEST_USERS
-    const { TEST_USERS } = await import('../fixtures/test-data.js');
+    const { TEST_USERS } = await import('../fixtures/test-data.mjs');
     superAdmin = TEST_USERS.SUPER_ADMIN;
   }
   
-  // 导航到根路径（登录页面是默认页面）
+  // 先清除可能的登录状态，导航到根路径
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(3000); // 等待应用完全初始化
+  
+  // 检查当前页面是否在首页（已登录状态），如果是则尝试登出
+  const pageText = await page.locator('body').textContent();
+  if (pageText.includes('打卡') || pageText.includes('社区') || pageText.includes('我的')) {
+    console.log('检测到已登录状态，尝试登出...');
+    
+    // 点击"我的"标签进入个人中心
+    const profileTab = page.locator('.tabbar-item').filter({ hasText: '我的' }).first();
+    await profileTab.click({ force: true });
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
+    
+    // 查找并点击登出按钮
+    const profilePageText = await page.locator('body').textContent();
+    if (profilePageText.includes('登出') || profilePageText.includes('退出登录')) {
+      const logoutButton = page.locator('text=登出').or(page.locator('text=退出登录')).first();
+      await logoutButton.click({ force: true });
+      await page.waitForTimeout(2000);
+    }
+    
+    // 重新导航到根路径
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000);
+  }
   
   // 等待登录页面加载
   await waitForLoginPage(page);
@@ -176,8 +201,8 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
   await page.waitForLoadState('networkidle');
   
   // 验证登录成功
-  const pageText = await page.locator('body').textContent();
-  expect(pageText).toContain('我的');
+  const loginPageText = await page.locator('body').textContent();
+  expect(loginPageText).toContain('我的');
   
   console.log('✅ 超级管理员登录成功');
 }
