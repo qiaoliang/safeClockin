@@ -243,6 +243,10 @@ export const authApi = {
         } else if (key === 'login_type') {
           transformedData['loginType'] = value
           transformedData['isNewUser'] = value === 'new_user'
+        } else if (key === 'community_id') {
+          transformedData['communityId'] = value
+        } else if (key === 'community_name') {
+          transformedData['communityName'] = value
         } else {
           transformedData[key] = value
         }
@@ -255,6 +259,35 @@ export const authApi = {
     url: '/api/auth/login_phone_code',
     method: 'POST',
     data
+  }).then(response => {
+    // 处理新的统一响应格式
+    if (response && response.code === 1 && response.data) {
+      const transformedData = {}
+      for (const [key, value] of Object.entries(response.data)) {
+        if (key === 'user_id') {
+          transformedData['userId'] = value
+        } else if (key === 'wechat_openid') {
+          transformedData['wechatOpenid'] = value
+        } else if (key === 'phone_number') {
+          transformedData['phone_number'] = value
+        } else if (key === 'avatar_url') {
+          transformedData['avatarUrl'] = value
+        } else if (key === 'refresh_token') {
+          transformedData['refreshToken'] = value
+        } else if (key === 'login_type') {
+          transformedData['loginType'] = value
+          transformedData['isNewUser'] = value === 'new_user'
+        } else if (key === 'community_id') {
+          transformedData['communityId'] = value
+        } else if (key === 'community_name') {
+          transformedData['communityName'] = value
+        } else {
+          transformedData[key] = value
+        }
+      }
+      response.data = transformedData
+    }
+    return response
   }),
   loginPhonePassword: (data) => request({
     url: '/api/auth/login_phone_password',
