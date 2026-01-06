@@ -58,11 +58,8 @@
           <text class="info-label">
             社区
           </text>
-          <text
-            class="info-value"
-            :class="{ 'empty-value': !userInfo?.community_name }"
-          >
-            {{ userInfo?.community_name || '未加入社区' }}
+          <text class="info-value">
+            {{ userInfo?.community_name }}
           </text>
         </view>
       </view>
