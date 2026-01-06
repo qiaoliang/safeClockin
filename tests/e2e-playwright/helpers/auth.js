@@ -2,6 +2,7 @@
  * 认证相关的测试辅助函数
  */
 import { expect } from '@playwright/test';
+import { TEST_USERS } from '../fixtures/test-data.mjs';
 
 /**
  * 等待登录页面加载
@@ -142,8 +143,6 @@ export async function getCurrentUserInfo(page) {
 export async function loginAsSuperAdmin(page, superAdmin = null) {
   // 如果没有提供超级管理员凭据，使用默认值
   if (!superAdmin) {
-    // 动态导入 TEST_USERS
-    const { TEST_USERS } = await import('../fixtures/test-data.mjs');
     superAdmin = TEST_USERS.SUPER_ADMIN;
   }
   

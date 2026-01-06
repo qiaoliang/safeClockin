@@ -32,13 +32,7 @@ test-integration:
 # 运行端到端测试（Playwright E2E）
 e2e:
 	@echo "🌐 运行端到端测试（Playwright）..."
-	@echo "📦 步骤 1: 构建 H5 应用..."
-	./scripts/h5build.sh
-	@echo "✅ H5 构建完成"
-	@echo "🚀 步骤 2: 启动 HTTPS Web 服务器..."
-	@echo "注意: Playwright 会自动启动 HTTPS Web 服务器"
-	@echo "🧪 步骤 3: 运行 Playwright E2E 测试..."
-	npx playwright test tests/e2e-playwright/specs/
+	./scripts/run-playwright-e2e.sh
 	@echo "✅ Playwright E2E 测试完成"
 
 # 运行所有测试（按顺序执行）
