@@ -125,6 +125,14 @@
             </view>
           </picker>
         </view>
+        <view
+          v-if="timeIndex === 4"
+          class="all-day-hint"
+        >
+          <text class="hint-text">
+            全天规则可以在一天 24 小时内的任何时间打卡
+          </text>
+        </view>
       </view>
 
       <!-- 图标选择 -->
@@ -160,6 +168,7 @@
           class="submit-btn" 
           :disabled="!isFormValid || isSubmitting"
           form-type="submit"
+          @click="handleSubmitButtonClick"
         >
           {{ isSubmitting ? '提交中...' : (isEditing ? '更新规则' : '添加规则') }}
         </button>
@@ -236,7 +245,7 @@ const submitCallback = ref(null) // 存储提交回调
 const isFormValid = ref(false)
 
 const freqValues = ['每天','每周','工作日','自定义']
-const timeValues = ['上午','下午','晚上','自定义时间']
+const timeValues = ['上午','下午','晚上','自定义时间','全天']
 const freqIndex = ref(0)
 const timeIndex = ref(3)
 
@@ -253,6 +262,7 @@ const onTimeClick = (e) => {
   if (timeIndex.value === 0) formData.value.custom_time = '08:00:00'
   else if (timeIndex.value === 1) formData.value.custom_time = '14:00:00'
   else if (timeIndex.value === 2) formData.value.custom_time = '20:00:00'
+  else if (timeIndex.value === 4) formData.value.custom_time = '00:00:00' // 全天规则设置为 00:00:00
 }
 
 // 处理时间选择变化
@@ -348,7 +358,25 @@ const watchFormChanges = () => {
 
 // 提交表单
 const submitForm = (e) => {
+  console.log('🔍 submitForm 被调用', {
+    isFormValid: isFormValid.value,
+    isSubmitting: isSubmitting.value,
+    ruleName: formData.value.rule_name,
+    freqIndex: freqIndex.value
+  })
+  
   e.preventDefault()
+  
+  // 检查表单是否有效
+  if (!isFormValid.value) {
+    console.log('❌ 表单验证失败', {
+      ruleName: formData.value.rule_name,
+      ruleNameLength: formData.value.rule_name.trim().length
+    })
+    uni.showToast({ title: '请填写完整信息', icon: 'none' })
+    return
+  }
+  
   // 自定义频率必须设置起止日期
   if (freqIndex.value === 3) {
     if (!formData.value.custom_start_date || !formData.value.custom_end_date) {
@@ -360,7 +388,17 @@ const submitForm = (e) => {
       return
     }
   }
+  
+  console.log('✅ 表单验证通过，显示确认弹窗')
   showConfirmModal.value = true
+}
+
+// 备用：按钮点击事件处理器（用于 H5 环境）
+const handleSubmitButtonClick = (e) => {
+  console.log('🔍 handleSubmitButtonClick 被调用（H5 备用）')
+  // 在 H5 环境下，form-type="submit" 可能不生效
+  // 所以我们需要手动调用 submitForm
+  submitForm(e)
 }
 
 // 隐藏确认弹窗
@@ -562,6 +600,20 @@ onMounted(() => {
 
 .custom-time-input {
   margin-top: $uni-font-size-base;
+}
+
+.all-day-hint {
+  margin-top: $uni-font-size-base;
+  padding: $uni-spacing-base;
+  background: #E0F2FE;
+  border-radius: $uni-radius-lg;
+  border-left: 8rpx solid $uni-primary;
+}
+
+.hint-text {
+  font-size: $uni-font-size-sm;
+  color: $uni-main-color;
+  line-height: 1.5;
 }
 
 .picker-input {

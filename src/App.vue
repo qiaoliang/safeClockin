@@ -23,17 +23,17 @@ export default {
   methods: {
     checkLaunchScene() {
       const userStore = useUserStore()
-      
+
       if (userStore.isLoggedIn && userStore.userInfo.role) {
         const homePage = getHomePageByRole(userStore.userInfo.role)
-        
+
         // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
         const tabbarPages = [
           '/pages/home-solo/home-solo',
           '/pages/home-community/home-community',
           '/pages/profile/profile'
         ]
-        
+
         setTimeout(() => {
           if (tabbarPages.includes(homePage)) {
             uni.switchTab({
@@ -53,18 +53,20 @@ export default {
 
 <style lang='scss'>
 	@import '@/uni_modules/uni-scss/index.scss';
+	@import '@/uni.scss';
+
 page {
-  background-color: #FAE9DB;
+  background-color: $uni-bg-color;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #F48224 0%, #E8741A 100%);
-  color: white;
-  border-radius: 32rpx;
-  font-size: 36rpx;
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  border-radius: $uni-radius-xl;
+  font-size: $uni-font-size-xxl;
   font-weight: 600;
-  box-shadow: 0 8rpx 32rpx rgba(244, 130, 36, 0.4);
+  box-shadow: $uni-shadow-primary-xl;
 }
 
 .btn-primary:active {
@@ -72,14 +74,14 @@ page {
 }
 
 .input-default {
-  background: white;
-  border: 2rpx solid #E5E5E5;
-  border-radius: 16rpx;
-  padding: 24rpx 32rpx;
-  font-size: 32rpx;
+  background: $uni-white;
+  border: 2rpx solid $uni-border-input;
+  border-radius: $uni-radius-lg;
+  padding: $uni-spacing-xl $uni-spacing-xxl;
+  font-size: $uni-font-size-lg;
 }
 
 .input-default:focus {
-  border-color: #F48224;
+  border-color: $uni-primary;
 }
 </style>

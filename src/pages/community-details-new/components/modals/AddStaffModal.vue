@@ -444,7 +444,20 @@ const handleClose = () => {
 
 // 确认添加
 const handleConfirm = async () => {
-  if (selectedUsers.value.length === 0) return;
+  console.log('🔍 handleConfirm 被调用', {
+    selectedUsers: selectedUsers.value,
+    selectedUsersLength: selectedUsers.value.length
+  });
+
+  if (selectedUsers.value.length === 0) {
+    console.warn('⚠️ 没有选择任何用户，取消添加');
+    uni.showToast({
+      title: '请先选择要添加的用户',
+      icon: 'none',
+      duration: 2000
+    });
+    return;
+  }
 
   try {
     // 验证selectedUsers中的元素是否为有效ID

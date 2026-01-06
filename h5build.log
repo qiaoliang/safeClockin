@@ -1,0 +1,40 @@
+=== 开始微信小程序构建 ===
+脚本目录: /Users/qiaoliang/working/code/safeGuard/frontend/scripts
+前端项目路径: /Users/qiaoliang/working/code/safeGuard/frontend
+前端项目路径: /Users/qiaoliang/working/code/safeGuard/frontend
+当前工作目录: /Users/qiaoliang/working/code/safeGuard/frontend
+微信小程序 AppID: wx55a59cbcd4156ce4
+清理微信开发者工具进程...
+发现微信开发者工具进程，正在终止...
+警告：微信开发者工具进程仍在运行，尝试强制终止...
+警告：无法终止微信开发者工具进程，构建可能会受到影响
+===== ENV_TYPE =========
+
+===== END =========
+清理旧的构建结果: /Users/qiaoliang/working/code/safeGuard/frontend/src/unpackage/dist/build/web
+构建输出目录: /Users/qiaoliang/working/code/safeGuard/frontend/src/unpackage/dist/build/web
+检查HBuilderX依赖...
+✓ HBuilderX依赖检查通过
+API URL: http://localhost:9999
+Environment: func
+备份原始配置文件...
+临时修改配置文件...
+# func 环境，创建func的配置文件
+修改 func.js 中的 baseURL...
+正在构建H5 网站...
+构建参数：
+  平台: web
+  项目路径: /Users/qiaoliang/working/code/safeGuard/frontend/src
+  源码映射: true
+清理上次构建残留的文件..../Users/qiaoliang/working/code/safeGuard/frontend/src/unpackage/dist/build/web
+17:20:51.570 项目 src [__UNI__AA79EBE] 开始发布到Web...
+17:20:52.726 编译器版本：4.87（vue3）
+17:20:52.727 正在编译中...
+17:21:07.321 欢迎将web站点部署到uniCloud前端网页托管平台，高速、免费、安全、省心，详见：https://uniapp.dcloud.io/uniCloud/hosting
+17:21:07.322 项目 src 编译成功。
+17:21:07.461 [33m项目 src 导出Web成功，路径为：/Users/qiaoliang/working/code/safeGuard/frontend/src/unpackage/dist/build/web[39m
+17:21:07.462 [33m注意请部署到web服务器使用，不要使用资源管理器直接打开，除非进行相对路径配置，具体参考：https://ask.dcloud.net.cn/article/37432。[39m
+17:21:07.462 [31m欢迎开通 <a href='https://uniad.dcloud.net.cn'>uniAD</a> 广告进行变现，<a href='https://uniad.dcloud.net.cn/login'>申请入口</a> | <a href='https://uniapp.dcloud.net.cn/uni-ad/'>开发文档</a>[39m
+
+恢复原始配置文件...
+=== 微信小程序构建完成 ===

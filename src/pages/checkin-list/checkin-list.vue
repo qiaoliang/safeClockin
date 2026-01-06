@@ -203,9 +203,15 @@ const parseTodayTime = (hhmmss) => {
 const normalizeMissedStatuses = () => {
   const now = new Date()
   checkinItems.value.forEach(it => {
+    // 跳过全天规则（time_slot_type === 5），全天规则不应该自动标记为错过
+    if (it.time_slot_type === 5) return
+    
+    // 跳过已打卡的规则
+    if (it.status === 'checked') return
+    
     const planned = parseTodayTime(it.planned_time)
     const diffMin = (now - planned) / 60000
-    if (diffMin > 30 && it.status !== 'checked') {
+    if (diffMin > 30) {
       it.status = 'missed'
     }
   })

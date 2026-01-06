@@ -18,21 +18,21 @@ import { useUserStore } from '@/store/modules/user'
 export const getCurrentUserRole = () => {
   const userStore = useUserStore()
   const role = userStore.role
-  
-  // 将后端返回的角色值映射为标准的角色常量值
-  // 处理中文角色名称
-  if (role === 'community_admin' || role === 4 || role === '超级系统管理员') {
+
+  // 将后端返回的 role 数字ID 映射为标准的角色常量值
+  // role=1: 普通用户, role=2: 社区专员, role=3: 社区主管, role=4: 超级系统管理员
+  if (role === 4 || role === 'community_admin' || role === '超级系统管理员') {
     return UserRole.SUPER_ADMIN
-  } else if (role === 'community_manager' || role === 3 || role === '社区主管') {
+  } else if (role === 3 || role === 'community_manager' || role === '社区主管') {
     return UserRole.COMMUNITY_MANAGER
-  } else if (role === 'community' || role === 2 || role === '社区专员') {
+  } else if (role === 2 || role === 'community' || role === '社区专员') {
     return UserRole.COMMUNITY_STAFF
   } else if (role === 'supervisor') {
     return UserRole.SUPERVISOR
-  } else if (role === 'solo' || role === 1 || role === '普通用户') {
+  } else if (role === 1 || role === 'solo' || role === '普通用户') {
     return UserRole.SOLO
   }
-  
+
   return role || null
 }
 

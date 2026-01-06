@@ -81,7 +81,7 @@
           </text>
 
           <text class="staff-date">
-            📅 {{ formatDate(item.added_time) }}
+            📅 {{ formatDate(item.added_at) }}
           </text>
         </view>
       </view>
@@ -183,7 +183,7 @@ const displayStaffMembers = computed(() => {
       break
     case SortType.TIME:
     default:
-      list.sort((a, b) => new Date(b.added_time) - new Date(a.added_time))
+      list.sort((a, b) => new Date(b.added_at) - new Date(a.added_at))
       break
   }
 

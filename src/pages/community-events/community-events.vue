@@ -429,7 +429,7 @@ const confirmSupport = async () => {
         'Content-Type': 'application/json'
       },
       data: {
-        support_content: supportContent.value.trim()
+        message_content: supportContent.value.trim()
       }
     });
 
@@ -482,15 +482,17 @@ const formatTime = (timeStr) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .community-events-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: $uni-bg-color-grey;
 }
 
 .status-bar {
   height: 88rpx;
-  background: #000;
-  padding: 0 30rpx;
+  background: $uni-black;
+  padding: 0 $uni-spacing-xl;
   
   .status-bar-content {
     height: 100%;
@@ -499,17 +501,17 @@ const formatTime = (timeStr) => {
     align-items: center;
     
     .status-time {
-      color: #fff;
-      font-size: 32rpx;
+      color: $uni-white;
+      font-size: $uni-font-size-xl;
     }
     
     .status-icons {
       display: flex;
-      gap: 12rpx;
+      gap: $uni-spacing-sm;
       
       text {
-        color: #fff;
-        font-size: 28rpx;
+        color: $uni-white;
+        font-size: $uni-font-size-lg;
       }
     }
   }
@@ -517,11 +519,11 @@ const formatTime = (timeStr) => {
 
 .header {
   height: 88rpx;
-  background: #fff;
+  background: $uni-bg-color-white;
   display: flex;
   align-items: center;
-  padding: 0 30rpx;
-  border-bottom: 1px solid #eee;
+  padding: 0 $uni-spacing-xl;
+  border-bottom: 1px solid $uni-border-light;
   
   .nav-left, .nav-right {
     width: 80rpx;
@@ -534,15 +536,15 @@ const formatTime = (timeStr) => {
     text-align: center;
     
     .nav-title {
-      font-size: 36rpx;
-      font-weight: 600;
-      color: #333;
+      font-size: $uni-font-size-xxl;
+      font-weight: $uni-font-weight-bold;
+      color: $uni-text-primary;
     }
   }
   
   .back-icon, .refresh-icon {
-    font-size: 40rpx;
-    color: #666;
+    font-size: $uni-font-size-xxl;
+    color: $uni-text-base;
   }
 }
 
@@ -554,17 +556,17 @@ const formatTime = (timeStr) => {
   padding: 100rpx 0;
   
   .error-text {
-    color: #666;
-    margin-bottom: 30rpx;
+    color: $uni-text-base;
+    margin-bottom: $uni-spacing-lg;
   }
   
   .retry-btn {
-    padding: 20rpx 40rpx;
-    background: #007aff;
-    color: #fff;
+    padding: $uni-spacing-lg $uni-spacing-xl;
+    background: $uni-info;
+    color: $uni-white;
     border: none;
-    border-radius: 8rpx;
-    font-size: 28rpx;
+    border-radius: $uni-radius-sm;
+    font-size: $uni-font-size-base;
   }
 }
 
@@ -573,27 +575,27 @@ const formatTime = (timeStr) => {
 }
 
 .filter-section {
-  background: #fff;
-  padding: 20rpx 30rpx;
-  border-bottom: 1px solid #eee;
+  background: $uni-bg-color-white;
+  padding: $uni-spacing-lg $uni-spacing-xl;
+  border-bottom: 1px solid $uni-border-light;
   
   .filter-tabs {
     display: flex;
-    gap: 20rpx;
+    gap: $uni-spacing-lg;
     
     .filter-tab {
-      padding: 16rpx 24rpx;
-      background: #f5f5f5;
-      border-radius: 20rpx;
+      padding: $uni-spacing-base $uni-spacing-lg;
+      background: $uni-bg-color-grey;
+      border-radius: $uni-radius-lg;
       display: flex;
       align-items: center;
-      gap: 8rpx;
+      gap: $uni-spacing-xs;
       
       &.active {
-        background: #007aff;
+        background: $uni-info;
         
         .filter-text {
-          color: #fff;
+          color: $uni-white;
         }
         
         .filter-count {
@@ -602,13 +604,13 @@ const formatTime = (timeStr) => {
       }
       
       .filter-text {
-        font-size: 28rpx;
-        color: #666;
+        font-size: $uni-font-size-base;
+        color: $uni-text-base;
       }
       
       .filter-count {
-        font-size: 24rpx;
-        color: #999;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-secondary;
       }
     }
   }
@@ -623,110 +625,110 @@ const formatTime = (timeStr) => {
   
   .empty-icon {
     font-size: 120rpx;
-    margin-bottom: 30rpx;
+    margin-bottom: $uni-spacing-lg;
   }
   
   .empty-text {
-    color: #999;
-    font-size: 28rpx;
+    color: $uni-text-secondary;
+    font-size: $uni-font-size-base;
   }
 }
 
 .events-list {
-  padding: 0 30rpx;
+  padding: 0 $uni-spacing-xl;
 }
 
 .event-item {
-  background: #fff;
-  margin: 20rpx 0;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  background: $uni-bg-color-white;
+  margin: $uni-spacing-lg 0;
+  border-radius: $uni-radius-md;
+  padding: $uni-spacing-xl;
+  box-shadow: $uni-shadow-card;
   
   .event-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20rpx;
+    margin-bottom: $uni-spacing-lg;
     
     .event-title-section {
       flex: 1;
-      margin-right: 20rpx;
+      margin-right: $uni-spacing-lg;
       
       .event-title {
-        font-size: 32rpx;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12rpx;
+        font-size: $uni-font-size-xl;
+        font-weight: $uni-font-weight-bold;
+        color: $uni-text-primary;
+        margin-bottom: $uni-spacing-base;
       }
       
       .event-type {
         display: inline-block;
-        padding: 4rpx 12rpx;
-        border-radius: 12rpx;
+        padding: $uni-spacing-xs $uni-spacing-base;
+        border-radius: $uni-radius-base;
         
         &.call_for_help {
-          background: #ff4757;
+          background: $uni-error;
         }
         
         &.supporting {
-          background: #2ed573;
+          background: $uni-success;
         }
         
         .type-text {
-          font-size: 24rpx;
-          color: #fff;
+          font-size: $uni-font-size-sm;
+          color: $uni-white;
         }
       }
     }
     
     .event-status {
       .status-text {
-        font-size: 24rpx;
-        padding: 6rpx 12rpx;
-        border-radius: 12rpx;
+        font-size: $uni-font-size-sm;
+        padding: $uni-spacing-xs $uni-spacing-base;
+        border-radius: $uni-radius-base;
         
         &.status-1 {
-          background: #ffa502;
-          color: #fff;
+          background: $uni-warning;
+          color: $uni-white;
         }
         
         &.status-2 {
-          background: #2ed573;
-          color: #fff;
+          background: $uni-success;
+          color: $uni-white;
         }
         
         &.status-3 {
-          background: #747d8c;
-          color: #fff;
+          background: $uni-secondary;
+          color: $uni-white;
         }
       }
     }
   }
   
   .event-content {
-    margin-bottom: 20rpx;
+    margin-bottom: $uni-spacing-lg;
     
     .description {
-      font-size: 28rpx;
-      color: #666;
+      font-size: $uni-font-size-base;
+      color: $uni-text-base;
       line-height: 1.5;
-      margin-bottom: 16rpx;
+      margin-bottom: $uni-spacing-base;
     }
     
     .location-info {
       display: flex;
       align-items: center;
-      gap: 8rpx;
+      gap: $uni-spacing-xs;
       
       .location-icon {
-        font-size: 24rpx;
-        color: #999;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-secondary;
       }
       
       .location-text {
-        font-size: 26rpx;
-        color: #666;
+        font-size: $uni-font-size-md;
+        color: $uni-text-base;
       }
     }
   }
@@ -738,34 +740,34 @@ const formatTime = (timeStr) => {
     
     .event-meta {
       .creator-info {
-        font-size: 24rpx;
-        color: #999;
-        margin-right: 20rpx;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-secondary;
+        margin-right: $uni-spacing-lg;
       }
       
       .time-info {
-        font-size: 24rpx;
-        color: #999;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-secondary;
       }
     }
     
     .event-actions {
       display: flex;
       align-items: center;
-      gap: 20rpx;
+      gap: $uni-spacing-lg;
       
       .support-count {
-        font-size: 24rpx;
-        color: #2ed573;
+        font-size: $uni-font-size-sm;
+        color: $uni-success;
       }
       
       .support-btn {
-        padding: 8rpx 20rpx;
-        background: #007aff;
-        color: #fff;
+        padding: $uni-spacing-xs $uni-spacing-lg;
+        background: $uni-info;
+        color: $uni-white;
         border: none;
-        border-radius: 16rpx;
-        font-size: 24rpx;
+        border-radius: $uni-radius-md;
+        font-size: $uni-font-size-sm;
       }
     }
   }
@@ -777,7 +779,7 @@ const formatTime = (timeStr) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: $uni-bg-overlay;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -785,9 +787,9 @@ const formatTime = (timeStr) => {
 }
 
 .support-modal {
-  background: #fff;
-  border-radius: 20rpx;
-  margin: 60rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  margin: $uni-spacing-xxxl;
   max-height: 80vh;
   width: calc(100vw - 120rpx);
   
@@ -795,20 +797,20 @@ const formatTime = (timeStr) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30rpx;
-    border-bottom: 1px solid #eee;
+    padding: $uni-spacing-xl;
+    border-bottom: 1px solid $uni-border-light;
     
     .modal-title {
-      font-size: 36rpx;
-      font-weight: 600;
-      color: #333;
+      font-size: $uni-font-size-xxl;
+      font-weight: $uni-font-weight-bold;
+      color: $uni-text-primary;
     }
     
     .close-btn {
-      font-size: 48rpx;
-      color: #999;
-      width: 60rpx;
-      height: 60rpx;
+      font-size: $uni-font-size-xxxl;
+      color: $uni-text-secondary;
+      width: $uni-spacing-xxxl;
+      height: $uni-spacing-xxxl;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -816,21 +818,21 @@ const formatTime = (timeStr) => {
   }
   
   .modal-content {
-    padding: 30rpx;
+    padding: $uni-spacing-xl;
     
     .event-info {
-      margin-bottom: 30rpx;
+      margin-bottom: $uni-spacing-xl;
       
       .event-title {
-        font-size: 32rpx;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 16rpx;
+        font-size: $uni-font-size-xl;
+        font-weight: $uni-font-weight-bold;
+        color: $uni-text-primary;
+        margin-bottom: $uni-spacing-base;
       }
       
       .event-desc {
-        font-size: 28rpx;
-        color: #666;
+        font-size: $uni-font-size-base;
+        color: $uni-text-base;
         line-height: 1.5;
       }
     }
@@ -839,16 +841,16 @@ const formatTime = (timeStr) => {
       .support-input {
         width: 100%;
         min-height: 200rpx;
-        padding: 20rpx;
-        border: 1px solid #ddd;
-        border-radius: 12rpx;
-        font-size: 28rpx;
-        margin-bottom: 16rpx;
+        padding: $uni-spacing-lg;
+        border: 1px solid $uni-border-base;
+        border-radius: $uni-radius-base;
+        font-size: $uni-font-size-base;
+        margin-bottom: $uni-spacing-base;
       }
       
       .char-count {
-        font-size: 24rpx;
-        color: #999;
+        font-size: $uni-font-size-sm;
+        color: $uni-text-secondary;
         text-align: right;
       }
     }
@@ -856,28 +858,28 @@ const formatTime = (timeStr) => {
   
   .modal-actions {
     display: flex;
-    gap: 20rpx;
-    padding: 30rpx;
-    border-top: 1px solid #eee;
+    gap: $uni-spacing-lg;
+    padding: $uni-spacing-xl;
+    border-top: 1px solid $uni-border-light;
     
     .cancel-btn, .confirm-btn {
       flex: 1;
-      padding: 24rpx;
+      padding: $uni-spacing-xl;
       border: none;
-      border-radius: 12rpx;
-      font-size: 32rpx;
+      border-radius: $uni-radius-base;
+      font-size: $uni-font-size-xxl;
       
       &.cancel-btn {
-        background: #f5f5f5;
-        color: #666;
+        background: $uni-bg-color-grey;
+        color: $uni-text-base;
       }
       
       &.confirm-btn {
-        background: #007aff;
-        color: #fff;
+        background: $uni-info;
+        color: $uni-white;
         
         &:disabled {
-          background: #ccc;
+          background: $uni-border-dark;
         }
       }
     }

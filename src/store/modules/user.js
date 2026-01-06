@@ -90,19 +90,21 @@ export const useUserStore = defineStore("user", {
         role: (state) => state.userState.profile.role,
 
         // 角色判断
-        isSoloUser: (state) => state.userState.profile.role === "solo",
+        isSoloUser: (state) => state.userState.profile.role === 1 || state.userState.profile.role === "solo",
         isSupervisor: (state) => state.userState.profile.role === "supervisor",
-        isCommunityWorker: (state) =>
-            state.userState.profile.role === "community",
+        isCommunityWorker: (state) => {
+            const role = state.userState.profile.role;
+            return role === 2 || role === 3 || role === "community";
+        },
 
         // 社区管理权限判断
         isSuperAdmin: (state) => {
-            // 后端返回的是中文角色名称，如"超级系统管理员"、"社区主管"、"社区专员"、"普通用户"
+            // 后端返回 role 数字ID：1-普通用户，2-社区专员，3-社区主管，4-超级系统管理员
             const role = state.userState.profile.role;
             return (
-                role === 4 || // 数字类型（向后兼容）
+                role === 4 || // 数字类型（优先）
                 role === "community_admin" || // 字符串类型（向后兼容）
-                role === "超级系统管理员" // 后端实际返回的中文角色名称
+                role === "超级系统管理员" // 中文名称（向后兼容）
             );
         },
 
@@ -119,7 +121,7 @@ export const useUserStore = defineStore("user", {
             if (state.userState.profile.communityRole === "manager") {
                 return true;
             }
-            // 检查全局角色：后端返回的是中文角色名称"社区主管"
+            // 检查全局角色：后端返回 role 数字ID
             const role = state.userState.profile.role;
             return role === 3 || role === "社区主管";
         },
@@ -136,7 +138,7 @@ export const useUserStore = defineStore("user", {
             if (state.userState.profile.communityRole === "staff") {
                 return true;
             }
-            // 检查全局角色：后端返回的是中文角色名称"社区专员"
+            // 检查全局角色：后端返回 role 数字ID
             const role = state.userState.profile.role;
             return role === 2 || role === "社区专员";
         },
@@ -435,11 +437,6 @@ export const useUserStore = defineStore("user", {
                     // 保存所有返回的用户信息字段
                     ...apiResponse.data,
                 };
-
-                // 调试：记录社区信息
-                if (target.profile.community_id || target.profile.community_name) {
-                    console.log(`用户社区信息已保存: ID=${target.profile.community_id}, 名称=${target.profile.community_name}`);
-                }
 
                 this.isLoggedIn = true;
 

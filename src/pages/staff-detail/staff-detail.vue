@@ -26,7 +26,7 @@
         />
         <uni-list-item
           title="添加时间"
-          :right-text="formatDate(staffInfo.added_time)"
+          :right-text="formatDate(staffInfo.added_at)"
         />
       </uni-list>
     </uni-section>
@@ -83,7 +83,7 @@ const staffInfo = ref({
   role: 'staff',
   communities: [],
   scope: '',
-  added_time: ''
+  added_at: ''
 })
 
 // 当前社区ID

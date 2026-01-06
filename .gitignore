@@ -1,7 +1,7 @@
+*.log
 src/config/*.bak
 src/config/*.backup
 .trae/
-scripts/
 coverage/
 **/.DS_*
 unpa*/
@@ -9,3 +9,6 @@ unpa*/
 微信云托管*.*
 node_modules
 *.key
+playwright-report/
+test-results/
+logs/

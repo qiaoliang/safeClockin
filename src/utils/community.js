@@ -3,6 +3,8 @@
  * 社区管理相关工具函数
  */
 
+import { SPECIAL_COMMUNITY_NAMES } from '@/constants/community'
+
 /**
  * 格式化手机号 - 隐藏中间4位
  * @param {string} phone - 手机号
@@ -173,7 +175,7 @@ export const getRoleColorType = (role) => {
  * @returns {boolean} 是否为特殊社区
  */
 export const isSpecialCommunity = (communityName) => {
-    return communityName === "安上大家庭" || communityName === "黑屋";
+    return communityName === SPECIAL_COMMUNITY_NAMES.ANKA_FAMILY || communityName === SPECIAL_COMMUNITY_NAMES.BLACKHOUSE;
 };
 
 /**
@@ -186,15 +188,15 @@ export const getRemoveUserTip = (
     currentCommunityName,
     otherCommunitiesCount
 ) => {
-    if (currentCommunityName === "安卡大家庭") {
-        return '将该用户移入"黑屋"社区，确认？';
+    if (currentCommunityName === SPECIAL_COMMUNITY_NAMES.ANKA_FAMILY) {
+        return `将该用户移入"${SPECIAL_COMMUNITY_NAMES.BLACKHOUSE}"社区，确认？`;
     }
 
     if (otherCommunitiesCount > 0) {
         return `将该用户从"${currentCommunityName}"移除，确认？`;
     }
 
-    return '移除后该用户将移入"安卡大家庭"，确认？';
+    return `移除后该用户将移入"${SPECIAL_COMMUNITY_NAMES.ANKA_FAMILY}"，确认？`;
 };
 
 /**

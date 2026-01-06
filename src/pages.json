@@ -255,6 +255,14 @@
         "navigationBarBackgroundColor": "#FAE9DB",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/map-location-picker/map-location-picker",
+      "style": {
+        "navigationBarTitleText": "选择位置",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "easycom": {

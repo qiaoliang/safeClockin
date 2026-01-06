@@ -15,6 +15,28 @@
       </view>
     </view>
 
+    <!-- 滚动通知条 -->
+    <view
+      v-if="hasPendingEvents && latestPendingEvent"
+      class="notification-bar"
+      @click="handleNotificationClick"
+    >
+      <view class="notification-content">
+        <text class="notification-icon">
+          🔔
+        </text>
+        <text class="notification-text">
+          {{ latestPendingEvent.title || '用户发起了求助' }}
+        </text>
+        <text class="notification-time">
+          {{ formatEventTime(latestPendingEvent.created_at) }}
+        </text>
+      </view>
+      <text class="notification-arrow">
+        ›
+      </text>
+    </view>
+
     <!-- 社区选择器 -->
     <view class="community-selector-section">
       <CommunitySelector @change="handleCommunityChange" />
@@ -138,6 +160,12 @@
       @close="handleModalClose"
     />
 
+    <!-- 事件详情模态弹窗 -->
+    <EventDetailModal
+      ref="eventDetailModal"
+      @close="showEventModal = false"
+    />
+
     <!-- 未打卡详情按钮 -->
     <view class="unchecked-detail-section">
       <button 
@@ -162,6 +190,7 @@ import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
 import CommunitySelector from '@/components/community/CommunitySelector.vue'
 import CheckinStatsModal from '@/components/community/CheckinStatsModal.vue'
+import EventDetailModal from '@/components/community/EventDetailModal.vue'
 import { getCommunityDailyStats, getCommunityCheckinStats } from '@/api/community'
 
 const userStore = useUserStore()
@@ -170,8 +199,10 @@ const totalCount = ref(128)
 const checkinRate = ref(89.8)
 const uncheckedCount = ref(13)
 const checkinStatsModal = ref(null)
+const eventDetailModal = ref(null)
 const allStats = ref([])
 const totalRules = ref(0)
+const showEventModal = ref(false)
 
 // 计算属性：显示前3个逾期事项
 const topIssues = computed(() => {
@@ -181,10 +212,17 @@ const topIssues = computed(() => {
 // 计算属性：是否是社区主管
 const isCommunityManager = computed(() => userStore.isCommunityManager)
 
-// 计算属性：是否是社区工作人员（role >= 2）
-const isCommunityStaff = computed(() => {
-  const role = userStore.userInfo?.role
-  return role !== undefined && role >= 2
+// 计算属性：是否是社区工作人员
+const isCommunityStaff = computed(() => userStore.isCommunityStaff)
+
+// 计算属性：是否有未处理事件
+const hasPendingEvents = computed(() => {
+  return communityStore.pendingEvents.length > 0
+})
+
+// 计算属性：最新未处理事件
+const latestPendingEvent = computed(() => {
+  return communityStore.pendingEvents[0] || null
 })
 
 // 权限检查：超级管理员和社区工作人员可以访问
@@ -291,9 +329,12 @@ const loadPageData = async () => {
 
     // 加载社区统计数据
     await loadCommunityStats()
-    
+
     // 加载打卡统计
     await loadCheckinStats()
+
+    // 加载未处理事件
+    await communityStore.fetchPendingEvents()
   } catch (error) {
     console.error('加载页面数据失败:', error)
   }
@@ -400,6 +441,36 @@ const handleModalClose = () => {
   // 可以在这里添加关闭后的处理逻辑
 }
 
+/**
+ * 处理通知条点击
+ */
+const handleNotificationClick = () => {
+  if (latestPendingEvent.value) {
+    showEventModal.value = true
+    // 加载事件详情
+    communityStore.fetchEventDetail(latestPendingEvent.value.event_id)
+    // 打开模态弹窗
+    setTimeout(() => {
+      eventDetailModal.value?.open()
+    }, 100)
+  }
+}
+
+/**
+ * 格式化事件时间
+ */
+const formatEventTime = (timeStr) => {
+  if (!timeStr) return ''
+  const date = new Date(timeStr)
+  const now = new Date()
+  const diff = now - date
+
+  if (diff < 60000) return '刚刚'
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
+  return `${Math.floor(diff / 86400000)}天前`
+}
+
 onMounted(async () => {
   // 初始化数据 - 只在首次挂载时执行
   await loadPageData()
@@ -427,34 +498,87 @@ onShow(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 32rpx;
-  background: #FAE9DB;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-  
+  padding: $uni-spacing-xxl;
+  background: $uni-bg-color;
+  box-shadow: $uni-shadow-xs;
+
   .page-title {
-    font-size: 36rpx;
+    font-size: $uni-font-size-xxl;
     font-weight: 600;
-    color: #333;
+    color: $uni-text-primary;
   }
-  
+
   .header-actions {
     .action-btn {
-      padding: 12rpx 24rpx;
-      background: #FF6B35;
-      color: #fff;
-      border-radius: 32rpx;
-      font-size: 28rpx;
+      padding: $uni-spacing-base $uni-spacing-xl;
+      background: $uni-primary;
+      color: $uni-white;
+      border-radius: $uni-radius-xl;
+      font-size: $uni-font-size-base;
       font-weight: 500;
     }
   }
 }
 
 .community-selector-section {
-  margin: 24rpx 32rpx;
+  margin: $uni-spacing-xl $uni-spacing-xxl;
+}
+
+.notification-bar {
+  margin: 0 $uni-spacing-xxl $uni-spacing-xl;
+  padding: $uni-spacing-xl $uni-spacing-xxl;
+  background: linear-gradient(135deg, $uni-bg-yellow-50 0%, $uni-bg-yellow-100 100%);
+  border-radius: $uni-radius-xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.2);
+  transition: all 0.3s ease;
+}
+
+.notification-bar:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.15);
+}
+
+.notification-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $uni-spacing-base;
+}
+
+.notification-icon {
+  font-size: $uni-font-size-xxl;
+  animation: shake 2s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.notification-text {
+  flex: 1;
+  font-size: $uni-font-size-base;
+  font-weight: 500;
+  color: $uni-text-primary;
+}
+
+.notification-time {
+  font-size: $uni-font-size-sm;
+  color: $uni-text-secondary;
+}
+
+.notification-arrow {
+  font-size: $uni-font-size-xxl;
+  color: $uni-primary;
+  font-weight: bold;
 }
 
 .overview-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .section-header {
@@ -473,7 +597,7 @@ onShow(() => {
   font-size: $uni-font-size-xl;
   font-weight: 600;
   color: $uni-tabbar-color;
-  margin-bottom: 8rpx;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .section-subtitle {
@@ -491,16 +615,16 @@ onShow(() => {
 
 .overview-cards {
   display: flex;
-  gap: $uni-font-size-base;
+  gap: $uni-spacing-base;
 }
 
 .overview-card {
   flex: 1;
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
+  padding: $uni-spacing-xxxl;
   text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: $uni-shadow-card;
 }
 
 .card-title {
@@ -512,39 +636,39 @@ onShow(() => {
 
 .card-number {
   display: block;
-  font-size: 48rpx;
+  font-size: $uni-font-size-xxxl;
   font-weight: bold;
   color: $uni-tabbar-color;
-  margin-bottom: 8rpx;
+  margin-bottom: $uni-spacing-sm;
 }
 
 .card-desc {
   display: block;
-  font-size: 20rpx;
-  color: $uni-secondary-color;
+  font-size: $uni-font-size-xs;
+  color: $uni-text-secondary;
 }
 
 .total-count {
-  border-top: 8rpx solid $uni-primary;
+  border-top: $uni-spacing-sm solid $uni-primary;
 }
 
 .checkin-rate {
-  border-top: 8rpx solid $uni-success;
+  border-top: $uni-spacing-sm solid $uni-success;
 }
 
 .unchecked-count {
-  border-top: 8rpx solid $uni-error;
+  border-top: $uni-spacing-sm solid $uni-error;
 }
 
 .frequent-issues-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .issues-list {
   background: $uni-bg-color-white;
   border-radius: $uni-radius-xl;
-  padding: $uni-font-size-xl;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $uni-spacing-xxxl;
+  box-shadow: $uni-shadow-card;
 }
 
 .issue-item {
@@ -567,7 +691,7 @@ onShow(() => {
 }
 
 .issue-icon {
-  font-size: 48rpx;
+  font-size: $uni-font-size-xxxl;
   margin-right: $uni-spacing-base;
 }
 
@@ -603,7 +727,7 @@ onShow(() => {
 }
 
 .unchecked-detail-section {
-  margin: 0 32rpx $uni-radius-xxl;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .unchecked-detail-btn {
@@ -611,9 +735,9 @@ onShow(() => {
   background: $uni-bg-color-white;
   border: none;
   border-radius: $uni-radius-xl;
-  padding: $uni-radius-xxl;
+  padding: $uni-spacing-xxxl;
   text-align: left;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: $uni-shadow-card;
 }
 
 .btn-text {

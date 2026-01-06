@@ -78,7 +78,8 @@
       class="floating-tasks-btn"
       :class="{
         'btn-no-rules': hasNoRules,
-        'btn-all-completed': hasAllCompleted
+        'btn-all-completed': hasAllCompleted,
+        'btn-missed-only': hasMissedOnly
       }"
       @click="handleTasksClick"
     >
@@ -173,9 +174,82 @@
     </uni-grid-item>
   </uni-grid>
 
-  <!-- 一键求助主按钮 -->
+  <!-- 一键求助主按钮 / 事件进展卡片 -->
   <view class="today-tasks-section">
+    <!-- 有进行中的事件时显示事件进展卡片 -->
+    <view
+      v-if="hasActiveEvent"
+      class="event-progress-card"
+    >
+      <!-- 顶部操作栏 -->
+      <view class="event-header">
+        <button
+          class="header-btn continue-btn"
+          @click="handleContinueHelp"
+        >
+          <text class="btn-text">
+            继续求助
+          </text>
+        </button>
+        <button
+          class="header-btn close-btn"
+          @click="handleCloseEvent"
+        >
+          <text class="btn-text">
+            问题已解决
+          </text>
+        </button>
+      </view>
+
+      <!-- 时间线区域 -->
+      <view class="timeline-section">
+        <EventTimeline
+          :messages="eventMessages"
+          :event-info="activeEvent"
+        />
+      </view>
+
+      <!-- 底部输入区域 -->
+      <view
+        v-if="showInputSection"
+        class="input-section"
+      >
+        <view class="input-row">
+          <input
+            v-model="messageInput"
+            class="message-input"
+            placeholder="输入消息..."
+            @confirm="handleSendMessage"
+          >
+          <button
+            class="send-btn"
+            @click="handleSendMessage"
+          >
+            <text>发送</text>
+          </button>
+        </view>
+        <view class="input-actions">
+          <button
+            class="action-btn"
+            :class="{ 'recording': isRecording }"
+            @touchstart="startRecording"
+            @touchend="stopRecording"
+          >
+            <text>{{ isRecording ? `${recordingDuration}"` : '🎤' }}</text>
+          </button>
+          <button
+            class="action-btn"
+            @click="handleChooseImage"
+          >
+            <text>📷</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 没有进行中的事件时显示一键求助按钮 -->
     <button
+      v-else
       class="help-btn"
       @click="handleOneClickHelp"
     >
@@ -190,17 +264,71 @@
       </text>
     </button>
   </view>
+
+  <!-- 关闭事件模态对话框 -->
+  <uni-popup
+    ref="closePopup"
+    type="center"
+    @change="onPopupChange"
+  >
+    <view class="close-event-modal">
+      <view class="close-event-header">
+        <text class="close-event-title">
+          关闭事件
+        </text>
+      </view>
+      <view class="close-event-content">
+        <text class="close-event-hint">
+          请说明事件当前的现状和关闭原因：
+        </text>
+        <textarea
+          v-model="closeReason"
+          class="close-reason-input"
+          placeholder="请输入关闭原因（10-500字符）"
+          :maxlength="500"
+        />
+      </view>
+      <view class="close-event-footer">
+        <button
+          class="close-event-btn cancel-btn"
+          @click="handleCancelClose"
+        >
+          取消
+        </button>
+        <button
+          class="close-event-btn confirm-btn"
+          @click="confirmCloseEvent"
+        >
+          确认
+        </button>
+      </view>
+    </view>
+  </uni-popup>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
 import { useCheckinStore } from "@/store/modules/checkin";
+import { useEventStore } from "@/store/modules/event";
+import EventTimeline from "@/components/event/EventTimeline.vue";
+import config from '@/config'
+
+// 腾讯地图配置
+const TENCENT_MAP_KEY = config.map?.key || ''
 
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
+const eventStore = useEventStore();
+
+// 事件相关状态
+const messageInput = ref('');
+const showCloseModal = ref(false);
+const closeReason = ref('');
+const showInputSection = ref(false); // 控制输入区域的显示
+const closePopup = ref(null); // 关闭事件模态框 ref
 
 // 响应式变量
 const currentRole = ref('checkin');
@@ -211,10 +339,13 @@ const nearbyTasks = ref([]);
 const hasNoRules = computed(() => nearbyTasks.value.length === 0);
 const hasAllCompleted = computed(() => nearbyTasks.value.length > 0 && pendingCheckinCount.value === 0);
 const hasPendingTasks = computed(() => pendingCheckinCount.value > 0);
+const hasMissedTasks = computed(() => checkinStore.missedCheckinCount > 0);
+const hasMissedOnly = computed(() => pendingCheckinCount.value === 0 && checkinStore.missedCheckinCount > 0 && nearbyTasks.value.length > 0);
 
 // 计算属性：任务图标
 const tasksIcon = computed(() => {
   if (hasNoRules.value) return '⏱️';
+  if (hasMissedOnly.value) return '⚠️';
   if (hasAllCompleted.value) return '✅';
   return '📋';
 });
@@ -222,6 +353,7 @@ const tasksIcon = computed(() => {
 // 计算属性：任务标题
 const tasksTitle = computed(() => {
   if (hasNoRules.value) return '';
+  if (hasMissedOnly.value) return '';
   if (hasAllCompleted.value) return '';
   return '当前任务';
 });
@@ -229,9 +361,17 @@ const tasksTitle = computed(() => {
 // 计算属性：任务副标题
 const tasksSubtitle = computed(() => {
   if (hasNoRules.value) return '开始行动，创建你的第一个打卡规则吧~';
+  if (hasMissedOnly.value) return '今天你有错过的打卡记录，记得明天早点儿来哦~';
   if (hasAllCompleted.value) return '恭喜你，今日的打卡任务已全部完成。你是一个有超强行动力的人。';
   return `还有 ${pendingCheckinCount.value} 项未完成`;
 });
+
+// 计算属性：事件相关
+const activeEvent = computed(() => eventStore.activeEvent);
+const hasActiveEvent = computed(() => eventStore.hasActiveEvent);
+const eventMessages = computed(() => eventStore.eventMessages);
+const isRecording = computed(() => eventStore.isRecording);
+const recordingDuration = computed(() => eventStore.recordingDuration);
 
 // 计算属性：用户信息
 const userInfo = computed(() => {
@@ -336,6 +476,12 @@ const handleOneClickHelp = async () => {
   try {
     // 获取用户信息
     const userInfo = userStore.userInfo;
+
+    // 诊断日志：打印 userInfo 的完整内容
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo:', JSON.stringify(userInfo, null, 2));
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo.userId:', userInfo?.userId);
+    console.log('🔍 [DEBUG] handleOneClickHelp - userInfo.community_id:', userInfo?.community_id);
+
     if (!userInfo || !userInfo.community_id) {
       uni.showToast({
         title: "请先加入社区后再使用求助功能",
@@ -376,32 +522,49 @@ const createHelpEvent = async (userInfo) => {
       mask: true
     });
 
+    // 诊断日志：打印请求数据
+    const requestData = {
+      community_id: userInfo.community_id,
+      title: "紧急求助",
+      description: "用户通过一键求助功能发起求助",
+      event_type: "call_for_help",
+      location: "", // 暂时为空
+      target_user_id: userInfo.userId
+    };
+    console.log('🔍 [DEBUG] createHelpEvent - 请求数据:', JSON.stringify(requestData, null, 2));
+
+    // 阶段1：立即发送求助请求（不等待定位）
     const response = await request({
       url: "/api/events",
       method: "POST",
-      data: {
-        community_id: userInfo.community_id,
-        title: "紧急求助",
-        description: "用户通过一键求助功能发起求助",
-        event_type: "call_for_help",
-        location: "", // 可以后续扩展获取地理位置
-        target_user_id: userInfo.user_id
-      }
+      data: requestData
     });
 
     uni.hideLoading();
 
-    if (response.data.code === 1) {
+    // 诊断日志：打印API响应
+    console.log('🔍 [DEBUG] createHelpEvent - API响应:', JSON.stringify(response, null, 2));
+
+    if (response.code === 1) {
       uni.showToast({
         title: "求助已发送，社区工作人员将尽快为您提供帮助",
         icon: "success",
         duration: 3000
       });
-      
-      // 可以在这里添加后续逻辑，比如跳转到求助详情页
+
+      // 刷新事件数据，显示事件进展卡片
+      console.log('🔍 [DEBUG] createHelpEvent - 开始刷新事件数据');
+      await eventStore.fetchActiveEvent(true);
+      console.log('🔍 [DEBUG] createHelpEvent - 事件数据刷新完成');
+      console.log('🔍 [DEBUG] createHelpEvent - eventStore.activeEvent:', JSON.stringify(eventStore.activeEvent, null, 2));
+
+      // 阶段2：异步获取定位并更新
+      if (response.data && response.data.event_id) {
+        await updateEventLocation(response.data.event_id);
+      }
     } else {
       uni.showToast({
-        title: response.data.msg || "求助失败",
+        title: response.msg || "求助失败",
         icon: "none",
         duration: 3000
       });
@@ -414,6 +577,96 @@ const createHelpEvent = async (userInfo) => {
       icon: "none",
       duration: 3000
     });
+  }
+};
+
+// 获取定位并更新事件
+const updateEventLocation = async (eventId) => {
+  try {
+    uni.getLocation({
+      type: 'gcj02',
+      timeout: 10000, // 10秒超时
+      success: async (res) => {
+        const { latitude, longitude } = res;
+
+        // 获取详细地址
+        const address = await reverseGeocode(latitude, longitude);
+
+        // 格式化：地址 | 纬度,经度
+        const locationStr = `${address} | ${latitude},${longitude}`;
+
+        // 更新事件记录
+        await request({
+          url: `/api/events/${eventId}`,
+          method: "PUT",
+          data: {
+            location: locationStr,
+            location_lat: latitude,
+            location_lon: longitude
+          }
+        });
+
+        console.log("定位信息已更新:", locationStr);
+      },
+      fail: (err) => {
+        console.error("获取定位失败:", err);
+
+        // 显示权限申请说明
+        uni.showModal({
+          title: '定位权限说明',
+          content: '需要获取您的位置信息以便社区工作人员提供帮助。请在设置中允许应用访问您的位置信息。',
+          showCancel: false,
+          confirmText: '去设置',
+          success: (res) => {
+            if (res.confirm) {
+              uni.openSetting({
+                success: (settingRes) => {
+                  if (settingRes.authSetting['scope.userLocation']) {
+                    // 用户已授权，重新获取定位
+                    updateEventLocation(eventId);
+                  }
+                }
+              });
+            }
+          }
+        });
+
+        // 更新事件描述，标记位置信息缺失
+        request({
+          url: `/api/events/${eventId}`,
+          method: "PUT",
+          data: {
+            description: "用户通过一键求助功能发起求助（位置信息缺失）"
+          }
+        }).catch(err => console.error("更新事件描述失败:", err));
+      }
+    });
+  } catch (error) {
+    console.error("更新定位信息失败:", error);
+  }
+};
+
+// 逆地理编码获取地址
+const reverseGeocode = async (latitude, longitude) => {
+  try {
+    const response = await request({
+      url: "https://apis.map.qq.com/ws/geocoder/v1",
+      method: "GET",
+      data: {
+        location: `${latitude},${longitude}`,
+        key: TENCENT_MAP_KEY,
+        get_poi: 1,
+        output: "json"
+      }
+    });
+
+    if (response.data && response.data.status === 0) {
+      return response.data.result.address;
+    }
+    return "未知位置";
+  } catch (error) {
+    console.error("逆地理编码失败:", error);
+    return "未知位置";
   }
 };
 
@@ -511,9 +764,245 @@ const handleTaskAction = async (task) => {
   }
 };
 
+// ==================== 事件相关方法 ====================
+
+// 初始化事件数据
+const initEventData = async () => {
+  try {
+    // 先尝试从缓存恢复
+    if (eventStore.restoreFromCache()) {
+      if (!eventStore.isCacheExpired) {
+        console.log("使用缓存的事件数据");
+        return;
+      }
+    }
+
+    // 获取最新数据
+    await eventStore.fetchActiveEvent();
+  } catch (error) {
+    console.warn("初始化事件数据失败:", error);
+  }
+};
+
+// 继续求助
+const handleContinueHelp = () => {
+  showInputSection.value = true;
+};
+
+// 关闭事件
+const handleCloseEvent = () => {
+  console.log('🔍 DEBUG handleCloseEvent 被调用');
+  console.log('🔍 DEBUG closePopup value:', closePopup.value);
+  
+  if (closePopup.value) {
+    console.log('🔍 DEBUG 调用 closePopup.open()');
+    closePopup.value.open();
+    showCloseModal.value = true;
+    console.log('🔍 DEBUG showCloseModal.value 设置为 true');
+  } else {
+    console.error('🔍 DEBUG closePopup ref 为空');
+  }
+};
+
+// 模态框状态变化监听
+const onPopupChange = (e) => {
+  console.log('🔍 DEBUG onPopupChange 被调用, e:', e);
+  showCloseModal.value = e.show;
+  console.log('🔍 DEBUG showCloseModal.value:', showCloseModal.value);
+};
+
+// 取消关闭事件
+const handleCancelClose = () => {
+  console.log('🔍 DEBUG handleCancelClose 被调用');
+  if (closePopup.value) {
+    closePopup.value.close();
+  }
+  showCloseModal.value = false;
+};
+
+// 确认关闭事件
+const confirmCloseEvent = async () => {
+  console.log('🔍 DEBUG confirmCloseEvent 被调用');
+  console.log('🔍 DEBUG closeReason.value:', closeReason.value);
+  
+  if (!closeReason.value || closeReason.value.trim().length < 10 || closeReason.value.trim().length > 500) {
+    console.log('🔍 DEBUG 关闭原因验证失败');
+    uni.showToast({
+      title: "关闭原因长度必须在10-500字符之间",
+      icon: "none",
+    });
+    return;
+  }
+
+  console.log('🔍 DEBUG 开始关闭事件');
+  try {
+    uni.showLoading({
+      title: "正在关闭事件...",
+      mask: true
+    });
+
+    console.log('🔍 DEBUG 调用 eventStore.closeEvent');
+    await eventStore.closeEvent(closeReason.value.trim());
+
+    uni.hideLoading();
+    uni.showToast({
+      title: "事件已解决",
+      icon: "success",
+    });
+
+    // 关闭模态框
+    if (closePopup.value) {
+      closePopup.value.close();
+    }
+    
+    // 重置状态
+    showCloseModal.value = false;
+    closeReason.value = '';
+    
+    console.log('🔍 DEBUG 事件关闭成功，刷新数据');
+    // 刷新事件数据，确保界面更新
+    await eventStore.fetchActiveEvent(true);
+  } catch (error) {
+    uni.hideLoading();
+    console.error("关闭事件失败:", error);
+    uni.showToast({
+      title: error.message || "关闭失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 发送文字消息
+const handleSendMessage = async () => {
+  if (!messageInput.value.trim()) {
+    return;
+  }
+
+  try {
+    await eventStore.addMessage({
+      message_type: 'text',
+      content: messageInput.value.trim()
+    });
+
+    messageInput.value = '';
+    uni.showToast({
+      title: "发送成功",
+      icon: "success",
+    });
+  } catch (error) {
+    console.error("发送消息失败:", error);
+    uni.showToast({
+      title: error.message || "发送失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 开始录音
+const startRecording = () => {
+  eventStore.startRecording();
+};
+
+// 停止录音
+const stopRecording = async () => {
+  const result = eventStore.stopRecording();
+
+  if (!result) {
+    uni.showToast({
+      title: "录音时间太短",
+      icon: "none",
+    });
+    return;
+  }
+
+  try {
+    uni.showLoading({
+      title: "正在上传...",
+      mask: true
+    });
+
+    // 这里需要实现录音文件上传逻辑
+    // 暂时使用模拟数据
+    await eventStore.addMessage({
+      message_type: 'voice',
+      media_url: '/static/uploads/voice/sample.mp3',
+      media_duration: result.duration
+    });
+
+    uni.hideLoading();
+    uni.showToast({
+      title: "发送成功",
+      icon: "success",
+    });
+  } catch (error) {
+    uni.hideLoading();
+    console.error("上传语音失败:", error);
+    uni.showToast({
+      title: error.message || "上传失败，请稍后重试",
+      icon: "none",
+    });
+  }
+};
+
+// 选择图片
+const handleChooseImage = () => {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    sourceType: ['album', 'camera'],
+    success: async (res) => {
+      try {
+        uni.showLoading({
+          title: "正在上传...",
+          mask: true
+        });
+
+        // 这里需要实现图片上传逻辑
+        // 暂时使用模拟数据
+        await eventStore.addMessage({
+          message_type: 'image',
+          media_url: res.tempFilePaths[0]
+        });
+
+        uni.hideLoading();
+        uni.showToast({
+          title: "发送成功",
+          icon: "success",
+        });
+      } catch (error) {
+        uni.hideLoading();
+        console.error("上传图片失败:", error);
+        uni.showToast({
+          title: error.message || "上传失败，请稍后重试",
+          icon: "none",
+        });
+      }
+    }
+  });
+};
+
 onMounted(() => {
   // 页面加载时的初始化逻辑
   initializePageData();
+
+  // 监听打卡规则更新事件
+  uni.$on('checkinRulesUpdated', async (data) => {
+    console.log('收到打卡规则更新事件:', data);
+    try {
+      // 强制刷新打卡数据
+      await checkinStore.refreshData();
+      // 更新任务显示
+      updateTaskData();
+      console.log('打卡数据已刷新');
+    } catch (error) {
+      console.error('刷新打卡数据失败:', error);
+    }
+  });
+});
+
+onUnmounted(() => {
+  // 清理事件监听
+  uni.$off('checkinRulesUpdated');
 });
 
 onShow(() => {
@@ -533,7 +1022,10 @@ const initializePageData = async () => {
   try {
     // 初始化打卡数据
     await initCheckinData();
-    
+
+    // 初始化事件数据
+    await initEventData();
+
     // 更新任务数据
     updateTaskData();
   } catch (error) {
@@ -652,9 +1144,9 @@ const updateTaskData = () => {
 
 .role-tabs {
   display: flex;
-  background: #f3f4f6;
-  border-radius: 50rpx;
-  padding: 4rpx;
+  background: $uni-bg-color-lighter;
+  border-radius: $uni-radius-full;
+  padding: $uni-spacing-xs;
 }
 
 .role-tab {
@@ -662,9 +1154,9 @@ const updateTaskData = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
-  padding: 16rpx 32rpx;
-  border-radius: 50rpx;
+  gap: $uni-spacing-sm;
+  padding: $uni-spacing-base $uni-spacing-xl;
+  border-radius: $uni-radius-full;
   transition: all 0.3s ease;
 }
 
@@ -729,44 +1221,6 @@ const updateTaskData = () => {
   font-weight: bold;
 }
 
-.task-icon-wrapper {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 24rpx;
-}
-
-.task-icon-emoji {
-  font-size: 40rpx;
-}
-
-.task-action-btn {
-  padding: 12rpx 24rpx;
-  border-radius: $uni-radius-lg;
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  font-size: $uni-font-size-sm;
-  font-weight: 500;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-pending {
-  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
-  color: $uni-white;
-  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
-}
-
-.btn-makeup {
-  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
-  color: $uni-white;
-  box-shadow: 0 4rpx 16rpx rgba(244, 130, 36, 0.3);
-}
-
 .btn-icon {
   font-size: $uni-font-size-base;
 }
@@ -776,7 +1230,7 @@ const updateTaskData = () => {
 }
 
 .floating-tasks-section {
-  margin: 0 32rpx 24rpx;
+  margin: 0 $uni-spacing-xxl $uni-spacing-lg;
 }
 
 .floating-tasks-btn {
@@ -785,7 +1239,7 @@ const updateTaskData = () => {
   box-shadow: $uni-shadow-primary;
   transition: all 0.3s ease;
   animation: float 3s ease-in-out infinite;
-  border-radius: 48rpx;
+  border-radius: $uni-radius-xxl;
   padding: 0;
   border: none;
   position: relative;
@@ -802,6 +1256,11 @@ const updateTaskData = () => {
   box-shadow: 0 16rpx 48rpx rgba(17, 153, 142, 0.4);
 }
 
+.floating-tasks-btn.btn-missed-only {
+  background: linear-gradient(135deg, $uni-warning 0%, $uni-warning-dark 100%);
+  box-shadow: 0 16rpx 48rpx rgba(245, 158, 11, 0.4);
+}
+
 .floating-tasks-btn::before {
   content: "";
   position: absolute;
@@ -810,7 +1269,7 @@ const updateTaskData = () => {
   right: -4rpx;
   bottom: -4rpx;
   background: linear-gradient(135deg, rgba(244, 130, 36, 0.6), rgba(232, 116, 26, 0.6));
-  border-radius: 48rpx;
+  border-radius: $uni-radius-xxl;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -834,7 +1293,7 @@ const updateTaskData = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 48rpx 40rpx;
+  padding: $uni-spacing-xxxl $uni-spacing-xl;
 }
 
 .tasks-icon-wrapper {
@@ -894,7 +1353,7 @@ const updateTaskData = () => {
 }
 
 .today-tasks-section {
-  margin: 0 32rpx 48rpx;
+  margin: 0 $uni-spacing-xxl $uni-spacing-xxxl;
 }
 
 .today-tasks-btn {
@@ -902,11 +1361,11 @@ const updateTaskData = () => {
   background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
   border: none;
   border-radius: $uni-radius-lg;
-  padding: 48rpx;
+  padding: $uni-spacing-xxxl;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 16rpx 48rpx rgba(244, 130, 36, 0.4);
+  box-shadow: $uni-shadow-primary-xl;
 }
 
 .today-tasks-btn.disabled {
@@ -936,20 +1395,20 @@ const updateTaskData = () => {
 // 一键求助按钮样式
 .help-btn {
   width: 100%;
-  background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+  background: linear-gradient(135deg, $uni-danger 0%, $uni-danger-dark 100%);
   border: none;
   border-radius: $uni-radius-lg;
-  padding: 48rpx;
+  padding: $uni-spacing-xxxl;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 16rpx 48rpx rgba(255, 71, 87, 0.4);
+  box-shadow: $uni-shadow-danger-xl;
   transition: all 0.3s ease;
 }
 
 .help-btn:active {
   transform: translateY(4rpx);
-  box-shadow: 0 8rpx 24rpx rgba(255, 71, 87, 0.3);
+  box-shadow: $uni-shadow-danger;
 }
 
 .help-btn .btn-icon {
@@ -982,5 +1441,184 @@ const updateTaskData = () => {
   display: block;
   font-size: $uni-font-size-sm;
   color: rgba(255, 255, 255, 0.8);
+}
+
+// ==================== 事件进展卡片样式 ====================
+
+.event-progress-card {
+  width: 100%;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-spacing-xl;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: $uni-spacing-lg;
+}
+
+.event-header {
+  display: flex;
+  gap: $uni-spacing-base;
+  padding-bottom: $uni-spacing-base;
+  border-bottom: 2rpx solid $uni-border-light;
+}
+
+.header-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+
+  .btn-text {
+    font-size: $uni-font-size-base;
+  }
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, $uni-primary 0%, $uni-primary-dark 100%);
+  color: $uni-white;
+  box-shadow: $uni-shadow-primary-sm;
+}
+
+.close-btn {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+}
+
+.timeline-section {
+  max-height: 600rpx;
+  overflow-y: auto;
+  padding: $uni-spacing-sm $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border-radius: $uni-radius-lg;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: $uni-spacing-base;
+  padding-top: $uni-spacing-base;
+  border-top: 2rpx solid $uni-border-light;
+}
+
+.input-row {
+  display: flex;
+  gap: $uni-spacing-base;
+}
+
+.message-input {
+  flex: 1;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+}
+
+.send-btn {
+  padding: $uni-spacing-base $uni-spacing-lg;
+  background: $uni-primary;
+  color: $uni-white;
+  border-radius: $uni-radius-lg;
+  border: none;
+  font-size: $uni-font-size-base;
+}
+
+.input-actions {
+  display: flex;
+  gap: $uni-spacing-base;
+}
+
+.action-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-xl;
+  transition: all 0.3s ease;
+
+  &.recording {
+    background: $uni-error;
+    color: $uni-white;
+    border-color: $uni-error;
+    animation: pulse 1s infinite;
+  }
+}
+
+/* 自定义关闭事件模态框样式 */
+.close-event-modal {
+  width: 600rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  overflow: hidden;
+}
+
+.close-event-header {
+  padding: $uni-spacing-xl;
+  border-bottom: 2rpx solid $uni-border-light;
+  text-align: center;
+}
+
+.close-event-title {
+  font-size: $uni-font-size-lg;
+  font-weight: 700;
+  color: $uni-text-base;
+}
+
+.close-event-content {
+  padding: $uni-spacing-xl;
+}
+
+.close-event-hint {
+  display: block;
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
+  margin-bottom: $uni-spacing-base;
+}
+
+.close-reason-input {
+  width: 100%;
+  min-height: 200rpx;
+  padding: $uni-spacing-base;
+  background: $uni-bg-color-lighter;
+  border: 2rpx solid $uni-border-light;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  color: $uni-text-base;
+  box-sizing: border-box;
+}
+
+.close-event-footer {
+  display: flex;
+  gap: $uni-spacing-base;
+  padding: $uni-spacing-xl;
+  border-top: 2rpx solid $uni-border-light;
+}
+
+.close-event-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  border-radius: $uni-radius-lg;
+  font-size: $uni-font-size-base;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background: $uni-bg-color-lighter;
+  color: $uni-text-secondary;
+  border: 2rpx solid $uni-border-light;
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, $uni-success 0%, $uni-success-dark 100%);
+  color: $uni-white;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
 }
 </style>

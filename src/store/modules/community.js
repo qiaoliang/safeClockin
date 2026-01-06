@@ -9,17 +9,22 @@ export const useCommunityStore = defineStore('community', {
     // 社区列表
     communities: [],
     currentCommunity: null,
-    
+
     // 工作人员列表
     staffMembers: [],
-    
+
     // 社区用户列表
     communityUsers: [],
-    
+
+    // 事件相关
+    pendingEvents: [],
+    currentEvent: null,
+    eventMessages: [],
+
     // 加载状态
     loading: false,
     hasMore: true,
-    
+
     // 分页信息
     currentPage: 1,
     pageSize: 20
@@ -122,7 +127,7 @@ export const useCommunityStore = defineStore('community', {
         
         if (response.code === 1) {
           // 更新本地数据
-          const index = this.communities.findIndex(c => c.id === communityId)
+          const index = this.communities.findIndex(c => c.community_id === communityId)
           if (index !== -1) {
             this.communities[index] = {
               ...this.communities[index],
@@ -158,6 +163,8 @@ export const useCommunityStore = defineStore('community', {
           // 更新本地数据
           const index = this.communities.findIndex(c => c.community_id === communityId)
           if (index !== -1) {
+            // 使用响应式方式更新
+            this.communities = [...this.communities]
             this.communities[index].status = status
           }
         }
@@ -182,8 +189,8 @@ export const useCommunityStore = defineStore('community', {
         })
         
         if (response.code === 1) {
-          // 从列表中移除
-          this.communities = this.communities.filter(c => c.community_id !== communityId)
+          // 刷新列表而不是从列表中移除，以便显示在已删除社区 section
+          await this.loadCommunities(true)
         }
         
         return response
@@ -580,7 +587,7 @@ export const useCommunityStore = defineStore('community', {
     setCurrentCommunity(community) {
       this.currentCommunity = community
     },
-    
+
     /**
      * 清空状态
      */
@@ -592,6 +599,138 @@ export const useCommunityStore = defineStore('community', {
       this.loading = false
       this.hasMore = true
       this.currentPage = 1
+    },
+
+    // ========== 事件管理 ==========
+
+    /**
+     * 获取未处理事件
+     */
+    async fetchPendingEvents() {
+      if (!this.currentCommunity) {
+        console.warn('没有当前社区')
+        return
+      }
+
+      try {
+        const response = await request({
+          url: `/api/communities/${this.currentCommunity.community_id}/pending-events`,
+          method: 'GET'
+        })
+
+        if (response.code === 1) {
+          this.pendingEvents = response.data.events || []
+          console.log('获取未处理事件成功:', this.pendingEvents.length)
+        }
+      } catch (error) {
+        console.error('获取未处理事件失败:', error)
+      }
+    },
+
+    /**
+      * 获取事件详情
+      */
+    async fetchEventDetail(eventId) {
+      try {
+        const response = await request({
+          url: `/api/events/${eventId}`,
+          method: 'GET'
+        })
+
+        if (response.code === 1) {
+          this.currentEvent = response.data.event
+          this.eventMessages = response.data.messages || []
+          console.log('获取事件详情成功', this.currentEvent, this.eventMessages)
+        }
+      } catch (error) {
+        console.error('获取事件详情失败:', error)
+        throw error
+      }
+    },
+
+    /**
+      * 添加工作人员回应
+      */
+    async addStaffResponse(eventId, content, mediaUrl, messageTags, messageType = 'text') {
+      try {
+        const response = await request({
+          url: `/api/events/${eventId}/respond`,
+          method: 'POST',
+          data: {
+            content,
+            media_url: mediaUrl,
+            message_tags: messageTags
+          }
+        })
+
+        if (response.code === 1) {
+          const messageData = response.data.message_data
+          console.log('添加回应成功', messageData)
+          console.log('当前消息列表:', this.eventMessages)
+
+          // 添加到消息列表（最新的在最上面）
+          this.eventMessages.unshift(messageData)
+
+          console.log('添加后的消息列表:', this.eventMessages)
+          return messageData
+        }
+      } catch (error) {
+        console.error('添加回应失败:', error)
+        throw error
+      }
+    },
+
+    /**
+     * 添加工作人员回应（适配 EventDetailModal 调用）
+     */
+    async addResponse(messageData) {
+      if (!this.currentEvent) {
+        throw new Error('没有当前事件')
+      }
+
+      return await this.addStaffResponse(
+        this.currentEvent.event_id,
+        messageData.message_content || '',
+        messageData.media_url || '',
+        messageData.message_tags || [],
+        messageData.message_type || 'text'
+      )
+    },
+
+    /**
+     * 添加用户消息
+     */
+    async addEventMessage(messageData) {
+      if (!this.currentEvent) {
+        throw new Error('没有当前事件')
+      }
+
+      try {
+        const response = await request({
+          url: `/api/events/${this.currentEvent.event_id}/messages`,
+          method: 'POST',
+          data: {
+            message_type: messageData.message_type,
+            message_content: messageData.message_content,
+            message_tags: messageData.message_tags,
+            media_url: messageData.media_url,
+            media_duration: messageData.media_duration
+          }
+        })
+
+        if (response.code === 1) {
+          const messageData = response.data.message_data
+          console.log('添加消息成功', messageData)
+          
+          // 添加到消息列表（最新的在最上面）
+          this.eventMessages.unshift(messageData)
+          
+          return messageData
+        }
+      } catch (error) {
+        console.error('添加消息失败:', error)
+        throw error
+      }
     }
   }
 })
