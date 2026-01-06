@@ -130,9 +130,15 @@ test.describe('一键求助功能测试', () => {
     page.on('dialog', dialogHandler);
 
     console.log('步骤3: 点击一键求助按钮');
-    
+
+    // 使用文本选择器来定位"一键求助"按钮
+    const helpButton = page.locator('.help-btn').or(page.locator('text=一键求助')).first();
+
+    // 先滚动页面，确保"一键求助"按钮完全可见，避免误触 tabbar
+    await helpButton.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+
     // 点击一键求助按钮
-    const helpButton = page.locator('text=一键求助').first();
     await helpButton.click({ force: true });
     
     // 等待确认对话框出现
@@ -216,13 +222,16 @@ test.describe('一键求助功能测试', () => {
     
     console.log('步骤8: 验证事件信息框显示');
     
-    // 验证事件信息框内容
-    expect(updatedPageText).toContain('我：');
-    console.log('✅ 显示"我："');
-    
+    // 验证事件信息框内容（重构后的格式）
+    // EventTimeline 组件显示格式为："我{nickname}发起了求助：紧急求助"
+    // 检查是否包含"我"（用户名前缀）
+    expect(updatedPageText).toContain('我');
+    console.log('✅ 显示"我"');
+
+    // 检查是否包含"发起了求助"
     expect(updatedPageText).toContain('发起了求助');
     console.log('✅ 显示"发起了求助"');
-    
+
     // 验证事件标题显示
     expect(updatedPageText).toContain('紧急求助');
     console.log('✅ 显示"紧急求助"标题');

@@ -26,7 +26,7 @@ export default defineConfig({
   // 全局设置
   use: {
     // 基础 URL（Web 服务器地址）
-    baseURL: process.env.BASE_URL || 'https://localhost:8081',
+    baseURL: process.env.BASE_URL || 'http://localhost:8081',
     
     // 截图和视频配置
     trace: 'on-first-retry',
@@ -71,10 +71,9 @@ export default defineConfig({
   
   // 测试前运行 Web 服务器
   webServer: {
-    command: 'npx http-server src/unpackage/dist/build/web --port 8081 --ssl --cert certs/server.crt --key certs/server.key -c-1',
-    url: 'https://localhost:8081',
+    command: 'npx http-server src/unpackage/dist/build/web --port 8081 -c-1',
+    url: 'http://localhost:8081',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
-    ignoreHTTPSErrors: true,
   },
 });

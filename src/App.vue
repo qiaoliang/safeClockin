@@ -23,17 +23,17 @@ export default {
   methods: {
     checkLaunchScene() {
       const userStore = useUserStore()
-      
+
       if (userStore.isLoggedIn && userStore.userInfo.role) {
         const homePage = getHomePageByRole(userStore.userInfo.role)
-        
+
         // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
         const tabbarPages = [
           '/pages/home-solo/home-solo',
           '/pages/home-community/home-community',
           '/pages/profile/profile'
         ]
-        
+
         setTimeout(() => {
           if (tabbarPages.includes(homePage)) {
             uni.switchTab({
