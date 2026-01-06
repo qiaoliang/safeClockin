@@ -134,34 +134,30 @@ export const useEventStore = defineStore("event", {
                     throw new Error("没有进行中的事件");
                 }
         
-                if (!closureReason || closureReason.trim().length < 5) {
+                // 验证关闭原因长度（10-500字符）
+                if (!closureReason || closureReason.trim().length < 10 || closureReason.trim().length > 500) {
                     console.log('🔍 DEBUG 关闭原因验证失败');
-                    throw new Error("关闭原因至少需要5个字符");
+                    throw new Error("关闭原因长度必须在10-500字符之间");
                 }
         
-                const url = `/api/user/events/${this.activeEvent.event_id}/close`;
+                const url = `/api/events/${this.activeEvent.event_id}/close`;
                 console.log('🔍 DEBUG 请求URL:', url);
                 
                 const response = await request({
                     url: url,
-                    method: "POST",
+                    method: "PUT",
                     data: { closure_reason: closureReason.trim() },
                 });
         
                 console.log('🔍 DEBUG 响应:', response);
         
                 if (response.code === 1) {
-                    console.log("关闭事件成功:", response.data.closure);
+                    console.log("关闭事件成功:", response.data);
         
-                    // 清除事件数据
-                    this.activeEvent = null;
-                    this.eventMessages = [];
-                    this.lastUpdateTime = null;
+                    // 刷新事件数据
+                    await this.fetchActiveEvent(true);
         
-                    // 清除本地缓存
-                    this.clearCache();
-        
-                    return response.data.closure;
+                    return response.data;
                 } else {
                     throw new Error(response.msg || "关闭事件失败");
                 }
