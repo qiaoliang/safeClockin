@@ -76,23 +76,23 @@ log_info "✅ 后端服务已运行"
 
 # 检查 Web 服务器是否运行
 log_info "检查 Web 服务器..."
-if ! curl -s -f "$BASE_URL" > /dev/null 2>&1; then
+if ! curl -s -k -f "$BASE_URL" > /dev/null 2>&1; then
     log_warn "Web 服务器未运行，正在启动..."
-    
-    # 启动 Web 服务器
-    ./scripts/start-web-server.sh &
+
+    # 启动 HTTPS Web 服务器
+    ./scripts/start-h5-https.sh 8081 > /dev/null 2>&1 &
     WEB_SERVER_PID=$!
-    
+
     # 等待 Web 服务器启动
     log_info "等待 Web 服务器启动..."
     sleep 5
-    
-    # 再次检查
-    if ! curl -s -f "$BASE_URL" > /dev/null 2>&1; then
+
+    # 再次检查（使用 -k 忽略自签名证书警告）
+    if ! curl -s -k -f "$BASE_URL" > /dev/null 2>&1; then
         log_error "Web 服务器启动失败"
         exit 1
     fi
-    
+
     log_info "✅ Web 服务器已启动 (PID: $WEB_SERVER_PID)"
 else
     log_info "✅ Web 服务器已运行"
