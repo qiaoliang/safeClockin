@@ -7,7 +7,7 @@ import {
   switchToPasswordLoginTab
 } from '../helpers/auth.js';
 import { navigateToPhoneLoginPage } from '../helpers/navigation.js';
-import { TEST_USERS, ENV_CONFIG } from '../fixtures/test-data.js';
+import { TEST_USERS, ENV_CONFIG } from '../fixtures/test-data.mjs';
 
 test.describe('超级管理员登录测试', () => {
   const superAdmin = TEST_USERS.SUPER_ADMIN;

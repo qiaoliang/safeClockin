@@ -14,7 +14,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { registerAndLoginAsUser } from '../helpers/auth.js';
-import { generateRandomTestData } from '../fixtures/test-data.js';
+import { generateRandomTestData } from '../fixtures/test-data.mjs';
 
 test.describe('一键求助功能测试', () => {
   test.beforeEach(async ({ page }) => {

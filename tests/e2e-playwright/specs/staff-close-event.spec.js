@@ -58,15 +58,38 @@ test.describe('社区工作人员关闭事件测试', () => {
     await createHelpEvent(page);
     console.log('✅ 普通用户已发起求助事件');
 
+    // 加入默认社区（如果尚未加入）
+    await joinDefaultCommunity(page);
+
+    // 获取用户的 community_id
+    console.log('获取用户的社区ID');
+    const userCheck = await page.evaluate(() => {
+      if (window.__storage_get) {
+        const userState = window.__storage_get('userState');
+        if (userState && userState.profile) {
+          return {
+            communityId: userState.profile?.community_id,
+            communityName: userState.profile?.community_name
+          };
+        }
+      }
+      return { communityId: null, communityName: null };
+    });
+
+    // 如果 userState 中没有 community_id，使用默认社区ID（1）
+    // 因为后端注册时会自动分配用户到默认社区
+    const community_id = userCheck.communityId || 1;
+    console.log(`用户社区ID: ${community_id}, 社区名称: ${userCheck.communityName || '默认社区'}`);
+
     // 步骤2: 登出并切换到社区工作人员账户
     console.log('步骤2: 切换到社区工作人员账户');
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
 
-    // 使用超级管理员登录（拥有社区工作人员权限）
+    // 使用超级管理员登录
     await loginAsSuperAdmin(page);
-    console.log('✅ 社区工作人员已登录');
+    console.log('✅ 超级管理员已登录');
 
     // 步骤3: 导航到社区管理页面
     console.log('步骤3: 导航到社区管理页面');
@@ -105,6 +128,28 @@ test.describe('社区工作人员关闭事件测试', () => {
     await page.waitForTimeout(2000);
     await createHelpEvent(page);
 
+    // 加入默认社区（如果尚未加入）
+    await joinDefaultCommunity(page);
+
+    // 获取用户的 community_id
+    console.log('获取用户的社区ID');
+    const userCheck2 = await page.evaluate(() => {
+      if (window.__storage_get) {
+        const userState = window.__storage_get('userState');
+        if (userState && userState.profile) {
+          return {
+            communityId: userState.profile?.community_id,
+            communityName: userState.profile?.community_name
+          };
+        }
+      }
+      return { communityId: null, communityName: null };
+    });
+
+    // 如果 userState 中没有 community_id，使用默认社区ID（1）
+    const community_id2 = userCheck2.communityId || 1;
+    console.log(`用户社区ID: ${community_id2}, 社区名称: ${userCheck2.communityName || '默认社区'}`);
+
     // 切换到社区工作人员
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -133,6 +178,31 @@ test.describe('社区工作人员关闭事件测试', () => {
     await page.waitForTimeout(2000);
     await createHelpEvent(page);
 
+    // 加入默认社区（如果尚未加入）
+    await joinDefaultCommunity(page);
+
+    // 获取用户的 community_id
+    console.log('获取用户的社区ID');
+    const userCheck3 = await page.evaluate(() => {
+      if (window.__storage_get) {
+        const userState = window.__storage_get('userState');
+        if (userState && userState.profile) {
+          return {
+            communityId: userState.profile?.community_id,
+            communityName: userState.profile?.community_name
+          };
+        }
+      }
+      return { communityId: null, communityName: null };
+    });
+
+    const community_id3 = userCheck3.communityId;
+    console.log(`用户社区ID: ${community_id3}, 社区名称: ${userCheck3.communityName}`);
+
+    if (!community_id3) {
+      throw new Error('用户未加入社区，无法继续测试');
+    }
+
     // 切换到社区工作人员
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -160,6 +230,31 @@ test.describe('社区工作人员关闭事件测试', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     await createHelpEvent(page);
+
+    // 加入默认社区（如果尚未加入）
+    await joinDefaultCommunity(page);
+
+    // 获取用户的 community_id
+    console.log('获取用户的社区ID');
+    const userCheck4 = await page.evaluate(() => {
+      if (window.__storage_get) {
+        const userState = window.__storage_get('userState');
+        if (userState && userState.profile) {
+          return {
+            communityId: userState.profile?.community_id,
+            communityName: userState.profile?.community_name
+          };
+        }
+      }
+      return { communityId: null, communityName: null };
+    });
+
+    const community_id4 = userCheck4.communityId;
+    console.log(`用户社区ID: ${community_id4}, 社区名称: ${userCheck4.communityName}`);
+
+    if (!community_id4) {
+      throw new Error('用户未加入社区，无法继续测试');
+    }
 
     // 切换到社区工作人员
     await page.goto('/');
@@ -466,4 +561,81 @@ async function cancelCloseEvent(page) {
   await page.waitForTimeout(2000);
 
   console.log('✅ 取消关闭事件完成');
+}
+
+/**
+ * 辅助函数：加入默认社区
+ * 
+ * @param {Page} page - Playwright Page 对象
+ */
+async function joinDefaultCommunity(page) {
+  console.log('辅助函数：加入默认社区');
+
+  try {
+    // 检查当前页面文本，看是否已经在社区中
+    const pageText = await page.locator('body').textContent();
+    
+    if (pageText.includes('安卡大家庭')) {
+      console.log('✅ 用户已在默认社区中');
+      return;
+    }
+
+    // 尝试通过 API 直接加入默认社区
+    const userInfo = await page.evaluate(() => {
+      if (window.__storage_get) {
+        const userState = window.__storage_get('userState');
+        if (userState && userState.profile) {
+          return {
+            user_id: userState.profile.userId,
+            token: userState.token
+          };
+        }
+      }
+      return null;
+    });
+
+    if (!userInfo) {
+      console.error('❌ 无法获取用户信息');
+      return;
+    }
+
+    console.log(`用户信息: user_id=${userInfo.user_id}`);
+
+    // 调用后端 API 加入默认社区
+    const response = await page.evaluate(async ({ user_id, token }) => {
+      try {
+        const response = await fetch('http://localhost:9999/api/community/join', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            community_id: 1  // 默认社区ID
+          })
+        });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        return {
+          code: 0,
+          msg: error.message
+        };
+      }
+    }, { user_id: userInfo.user_id, token: userInfo.token });
+
+    if (response.code === 1) {
+      console.log('✅ 已成功加入默认社区');
+    } else {
+      console.log(`⚠️ 加入社区失败: ${response.msg}，可能已在社区中`);
+    }
+
+    // 刷新页面以更新用户信息
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
+  } catch (error) {
+    console.error(`❌ 加入社区异常: ${error.message}`);
+    // 不抛出异常，继续测试
+  }
 }

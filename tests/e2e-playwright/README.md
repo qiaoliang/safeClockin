@@ -71,7 +71,7 @@ tests/e2e-playwright/
 │   ├── auth.js       # 认证相关辅助函数
 │   └── navigation.js # 导航相关辅助函数
 ├── fixtures/         # 测试夹具
-│   └── test-data.js  # 测试数据
+│   └── test-data.mjs  # 测试数据
 └── specs/            # 测试用例
     └── login.spec.js # 登录测试
 ```
@@ -103,7 +103,7 @@ test('示例测试', async ({ page }) => {
 import { test } from '@playwright/test';
 import { loginWithPhoneAndPassword } from '../helpers/auth.js';
 import { navigateToLoginPage } from '../helpers/navigation.js';
-import { TEST_USERS } from '../fixtures/test-data.js';
+import { TEST_USERS } from '../fixtures/test-data.mjs';
 
 test('使用辅助函数登录', async ({ page }) => {
   await navigateToLoginPage(page);
