@@ -45,12 +45,16 @@ if [ ! -d "node_modules/.playwright" ]; then
     npx playwright install chromium
 fi
 
-# 构建 H5 应用（如果需要）
-WEB_DIST_PATH="$FRONTEND_PATH/src/unpackage/dist/build/web"
-if [ ! -d "$WEB_DIST_PATH" ]; then
-    log_info "Web 构建目录不存在，开始构建..."
-    ./scripts/h5build.sh
+# 构建 H5 应用（确保构建就绪）
+log_info "开始构建 H5 应用..."
+./scripts/h5build.sh
+
+# 验证构建结果
+if [ ! -d "$FRONTEND_PATH/src/unpackage/dist/build/web" ]; then
+    log_error "H5 构建失败：构建目录不存在"
+    exit 1
 fi
+log_info "✅ H5 应用构建完成"
 
 # 设置环境变量
 export BASE_URL=${BASE_URL:-"https://localhost:8081"}

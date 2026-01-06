@@ -16,7 +16,7 @@
     "test:run": "vitest run",
     "test:unit:run": "vitest run --config vitest.config.js",
     "test:func:run": "vitest run --config vitest.integration.config.js",
-    "test:e2e:run": "./scripts/run-e2e-tests.sh",
+    "test:e2e:run": "./scripts/run-playwright-e2e.sh",
     "test:e2e:direct": "vitest run --config vitest.e2e.config.js",
     "lint": "eslint src --ext .vue,.js,.ts",
     "lint:fix": "eslint src --ext .vue,.js,.ts --fix",
