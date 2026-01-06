@@ -10,7 +10,6 @@ test.describe('应用基础测试', () => {
     // 访问根路径
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000); // 等待应用完全初始化
     
     // 检查页面标题
     const title = await page.title();
@@ -26,7 +25,6 @@ test.describe('应用基础测试', () => {
   test('应该能够检查页面内容', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
     
     // 获取页面 HTML
     const html = await page.content();
@@ -41,7 +39,6 @@ test.describe('应用基础测试', () => {
   test('应该能够执行 JavaScript', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
     
     // 检查 uni 对象是否存在
     const hasUni = await page.evaluate(() => {

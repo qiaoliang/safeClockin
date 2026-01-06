@@ -16,7 +16,6 @@ test.describe('超级管理员登录测试', () => {
     // 导航到根路径（登录页面是默认页面）
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000); // 等待应用完全初始化
     
     // 等待登录页面加载
     await waitForLoginPage(page);
@@ -45,8 +44,8 @@ test.describe('超级管理员登录测试', () => {
     // 点击"手机号登录"按钮（使用 force: true 强制点击）
     await page.locator('text=手机号登录').click({ force: true });
     
-    // 等待页面内容更新（SPA 路由可能不会改变 URL）
-    await page.waitForTimeout(2000);
+    // 等待手机号输入框出现（使用文本内容验证）
+    await page.waitForTimeout(1000); // 短暂等待让页面更新
     
     // 验证页面内容包含手机号登录表单
     const pageText = await page.locator('body').textContent();
@@ -56,7 +55,9 @@ test.describe('超级管理员登录测试', () => {
   test('应该能够在标签页之间切换', async ({ page }) => {
     // 点击手机号登录按钮（使用 force: true 强制点击）
     await page.locator('text=手机号登录').click({ force: true });
-    await page.waitForTimeout(2000);
+    
+    // 等待页面更新
+    await page.waitForTimeout(1000);
     
     // 验证默认标签页
     const pageText = await page.locator('body').textContent();
@@ -83,7 +84,6 @@ test.describe('登录页面响应式测试', () => {
     // 导航到根路径
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
     
     // 等待登录页面加载
     await waitForLoginPage(page);
@@ -97,6 +97,7 @@ test.describe('登录页面响应式测试', () => {
     
     for (const viewport of viewports) {
       await page.setViewportSize(viewport);
+      // 短暂等待让布局稳定
       await page.waitForTimeout(500);
       
       // 验证关键元素仍然可见（使用文本内容）
