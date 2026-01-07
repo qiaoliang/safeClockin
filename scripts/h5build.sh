@@ -7,6 +7,34 @@ set -e  # 遇到错误时退出
 
 echo "=== 开始 H5 小程序构建 ==="
 
+# 解析命令行参数
+# 支持格式: ./h5build.sh ENV_TYPE=func
+for arg in "$@"; do
+    if [[ $arg =~ ^ENV_TYPE=(.+)$ ]]; then
+        ENV_TYPE="${BASH_REMATCH[1]}"
+    fi
+done
+
+# 验证并设置默认环境类型
+VALID_ENVS=("unit" "func" "uat" "prod")
+
+if [ -z "$ENV_TYPE" ]; then
+    echo "未指定环境类型，使用默认值: func"
+    ENV_TYPE="func"
+else
+    # 验证环境类型是否有效
+    if [[ ! " ${VALID_ENVS[@]} " =~ " ${ENV_TYPE} " ]]; then
+        echo "错误: 无效的环境类型 '$ENV_TYPE'"
+        echo "支持的环境类型: ${VALID_ENVS[*]}"
+        echo "使用方法: $0 ENV_TYPE=<unit|func|uat|prod>"
+        exit 1
+    fi
+    echo "使用环境类型: $ENV_TYPE"
+fi
+
+# 导出环境变量供脚本使用
+export ENV_TYPE
+
 # 获取脚本所在目录的绝对路径
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "脚本目录: $SCRIPT_DIR"
@@ -47,7 +75,9 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # 根据环境类型设置输出路径
-if [ "$ENV_TYPE" = "func" ]; then
+if [ "$ENV_TYPE" = "unit" ]; then
+    BUILD_OUTPUT_DIR="build"
+elif [ "$ENV_TYPE" = "func" ]; then
     BUILD_OUTPUT_DIR="build"
 elif [ "$ENV_TYPE" = "uat" ]; then
     BUILD_OUTPUT_DIR="uat"
@@ -98,13 +128,11 @@ echo "✓ HBuilderX依赖检查通过"
 # 根据环境变量设置 API URL
 API_URL="http://localhost:8080"
 
-# 默认使用 func 环境
-if [ -z "$ENV_TYPE" ]; then
-    ENV_TYPE="func"
-fi
-
-# 优先使用 ENV_TYPE，然后是 UNI_ENV
-if [ "$ENV_TYPE" = "uat" ]; then
+# 根据 ENV_TYPE 设置 API URL
+if [ "$ENV_TYPE" = "unit" ]; then
+    ENV_TYPE="unit"
+    API_URL="http://localhost:9999"
+elif [ "$ENV_TYPE" = "uat" ]; then
     ENV_TYPE="uat"
     API_URL="https://localhost:8080"
 elif [ "$ENV_TYPE" = "prod" ]; then
@@ -126,7 +154,43 @@ cp src/config/index.js src/config/index.js.backup
 echo "临时修改配置文件..."
 
 
-if [ "$ENV_TYPE" = "func" ]; then
+if [ "$ENV_TYPE" = "unit" ]; then
+    echo "# unit 环境，创建unit的配置文件"
+    cat > src/config/index.js.tmp << 'EOF'
+// 配置文件入口 - unit 环境
+// 导入各环境配置
+import unitConfig from './unit.js'
+import funcConfig from './func.js'
+import uatConfig from './uat.js'
+import prodConfig from './prod.js'
+
+// 直接返回 unit 配置
+const config = unitConfig
+
+// 导出环境信息
+export const currentEnv = config.env
+export const isProduction = config.env === 'prod'
+export const isDevelopment = config.env === 'func'
+export const isTesting = config.env === 'unit'
+
+// 导出配置对象
+export default config
+
+// 便捷的配置获取函数
+export function getAPIBaseURL() {
+  return config.api.baseURL
+}
+
+export function getAPITimeout() {
+  return config.api.timeout
+}
+
+export function isFeatureEnabled(feature) {
+  return config.features[feature] || false
+}
+EOF
+
+elif [ "$ENV_TYPE" = "func" ]; then
     echo "# func 环境，创建func的配置文件"
     cat > src/config/index.js.tmp << 'EOF'
 // 配置文件入口 - func 环境
@@ -237,7 +301,10 @@ fi
 mv src/config/index.js.tmp src/config/index.js
 
 # 根据环境类型修改对应配置文件中的 baseURL
-if [ "$ENV_TYPE" = "func" ]; then
+if [ "$ENV_TYPE" = "unit" ]; then
+    echo "修改 unit.js 中的 baseURL..."
+    sed -i.bak "s|baseURL: 'http://localhost:9999'|baseURL: '$API_URL'|g" src/config/unit.js
+elif [ "$ENV_TYPE" = "func" ]; then
     echo "修改 func.js 中的 baseURL..."
     sed -i.bak "s|baseURL: 'http://localhost:8080'|baseURL: '$API_URL'|g" src/config/func.js
 elif [ "$ENV_TYPE" = "uat" ]; then
@@ -279,6 +346,9 @@ echo "恢复原始配置文件..."
 mv src/config/index.js.backup src/config/index.js
 
 # 根据环境类型恢复对应的配置文件备份
+if [ -f "src/config/unit.js.bak" ]; then
+    mv src/config/unit.js.bak src/config/unit.js
+fi
 if [ -f "src/config/func.js.bak" ]; then
     mv src/config/func.js.bak src/config/func.js
 fi

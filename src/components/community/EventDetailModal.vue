@@ -675,8 +675,8 @@ defineExpose({
 }
 
 .dialog-title {
-  font-size: $uni-font-size-xl;
-  font-weight: bold;
+  font-size: $uni-font-size-lg;
+  font-weight: $uni-font-weight-bold;
   color: $uni-text-primary;
 }
 
