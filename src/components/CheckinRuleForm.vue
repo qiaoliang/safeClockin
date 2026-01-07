@@ -540,6 +540,33 @@ const handleSubmit = async () => {
     return;
   }
 
+  // 如果是创建模式且选择了立即启用，弹出确认对话框
+  if (props.ruleType === "community" &&
+      props.showEnableButton &&
+      !isEditMode.value &&
+      formData.value.is_enabled) {
+
+    uni.showModal({
+      title: '确认启用',
+      content: '此操作将要求所有社区成员执行此规则，确认启用？',
+      confirmText: '确认',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          // 用户点击确认，继续提交
+          doSubmit();
+        }
+        // 用户点击取消，什么都不做，返回表单继续编辑
+      }
+    });
+  } else {
+    // 编辑模式或未选择启用，直接提交
+    doSubmit();
+  }
+};
+
+// 实际执行提交的方法
+const doSubmit = async () => {
   submitting.value = true;
 
   try {
