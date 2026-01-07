@@ -68,6 +68,28 @@ echo ""
 # 使用 http-server 包启动 HTTPS 服务器
 BUILD_DIR="src/unpackage/dist/build/web"
 
+# 检查端口是否已被占用
+if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+    echo "警告: 端口 $PORT 已被占用"
+    echo "尝试终止占用端口的进程..."
+
+    # 查找并终止占用端口的进程
+    PID=$(lsof -ti :$PORT)
+    if [ -n "$PID" ]; then
+        echo "终止进程 PID: $PID"
+        kill -9 $PID 2>/dev/null || true
+        sleep 1
+    fi
+
+    # 再次检查
+    if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+        echo "错误: 无法释放端口 $PORT"
+        echo "请手动终止占用端口的进程或使用其他端口："
+        echo "  ./scripts/start-h5-https.sh 8082"
+        exit 1
+    fi
+fi
+
 echo "启动 HTTPS 服务器..."
 echo "构建目录: $BUILD_DIR"
 echo ""
