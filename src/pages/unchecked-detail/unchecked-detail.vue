@@ -18,7 +18,7 @@
 
     <!-- 未打卡概览 -->
     <view class="overview-section">
-      <view class="overview-card unchecked-count">
+      <view v-if="uncheckedCount > 0" class="overview-card unchecked-count">
         <text class="card-title">
           未打卡人数
         </text>
@@ -29,10 +29,28 @@
           人
         </text>
       </view>
-      
-      <view class="overview-card warning-desc">
+
+      <view v-else class="overview-card success-count">
+        <text class="card-title">
+          打卡情况
+        </text>
+        <text class="card-icon">
+          ✅
+        </text>
+        <text class="card-desc">
+          全部完成
+        </text>
+      </view>
+
+      <view v-if="uncheckedCount > 0" class="overview-card warning-desc">
         <text class="card-desc">
           当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系。
+        </text>
+      </view>
+
+      <view v-else class="overview-card success-desc">
+        <text class="card-desc">
+          所有用户均已完成今日打卡，表现良好！
         </text>
       </view>
     </view>
@@ -295,6 +313,20 @@ const goBack = () => {
   border-top: 8rpx solid #EF4444;
 }
 
+.success-count {
+  border-top: 8rpx solid #10B981;
+}
+
+.success-count .card-icon {
+  display: block;
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.success-count .card-number {
+  color: #10B981;
+}
+
 .card-title {
   display: block;
   font-size: 24rpx;
@@ -325,6 +357,12 @@ const goBack = () => {
 .warning-desc .card-desc {
   font-size: 24rpx;
   color: #EF4444;
+  text-align: center;
+}
+
+.success-desc .card-desc {
+  font-size: 24rpx;
+  color: #10B981;
   text-align: center;
 }
 
