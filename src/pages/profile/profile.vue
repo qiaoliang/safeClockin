@@ -338,7 +338,7 @@ const needCompleteInfo = computed(() => {
 
 const showAbout = () => {
   uni.navigateTo({
-    url: "/pages/uni-ui-time/uni-ui-time",
+    url: "/pages/about/about",
   });
 };
 

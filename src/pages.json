@@ -208,17 +208,9 @@
       }
     },
     {
-      "path": "pages/uni-ui-test/uni-ui-test",
+      "path": "pages/about/about",
       "style": {
-        "navigationBarTitleText": "uni-ui 组件测试",
-        "navigationBarBackgroundColor": "#FAE9DB",
-        "navigationBarTextStyle": "black"
-      }
-    },
-    {
-      "path": "pages/uni-ui-time/uni-ui-time",
-      "style": {
-        "navigationBarTitleText": "uni-ui time测试",
+        "navigationBarTitleText": "关于我们",
         "navigationBarBackgroundColor": "#FAE9DB",
         "navigationBarTextStyle": "black"
       }
