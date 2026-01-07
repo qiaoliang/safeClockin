@@ -502,7 +502,7 @@ onMounted(async () => {
   await userStore.fetchUserInfo()
 
   // 2. Load community list
-  await communityStore.fetchCommunities()
+  await communityStore.loadCommunities()
 
   // 3. Check if user has any community access
   if (communityStore.communities.length === 0) {

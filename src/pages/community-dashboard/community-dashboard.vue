@@ -58,7 +58,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import CommunitySelector from '@/components/CommunitySelector.vue'
+import CommunitySelector from '@/components/community/CommunitySelector.vue'
 import EventNotificationBar from './components/EventNotificationBar.vue'
 import DataOverviewCards from './components/DataOverviewCards.vue'
 import TrendTable from './components/TrendTable.vue'
