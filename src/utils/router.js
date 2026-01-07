@@ -1,5 +1,6 @@
 // utils/router.js
 import { useUserStore } from "@/store/modules/user";
+import { RoleId } from "@/constants/roles.js";
 
 export function routeGuard(url, options = {}) {
     const userStore = useUserStore();
@@ -81,17 +82,17 @@ const hasRequiredRole = (url, userRole) => {
 
 export const getHomePageByRole = (role) => {
     // 普通用户 (solo) - role=1
-    if (role === 1 || role === "普通用户" || role === "solo") {
+    if (role === RoleId.SOLO) {
         return "/pages/home-solo/home-solo";
     }
 
-    // 监护人 - role=0 (未设置角色时默认为监护人)
-    if (role === 0 || role === "supervisor") {
+    // 未设置角色 - role=0 (向后兼容)
+    if (role === RoleId.UNSET) {
         return "/pages/home-solo/home-solo";
     }
 
     // 超级系统管理员 - role=4
-    if (role === 4 || role === "超级系统管理员") {
+    if (role === RoleId.SUPER_ADMIN) {
         return "/pages/profile/profile";
     }
 

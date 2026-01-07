@@ -268,6 +268,7 @@
 import { ref, computed, watch } from "vue";
 import { request } from "@/api/request";
 import { addCommunityStaff } from "@/api/community";
+import { RoleId } from "@/constants/roles.js";
 
 const props = defineProps({
   visible: {
@@ -351,7 +352,7 @@ const searchUsers = async (page = 1, isLoadMore = false) => {
         }
         
         // 排除超级管理员（role=4）
-        if (user.role === 4) {
+        if (user.role === RoleId.SUPER_ADMIN) {
           return false;
         }
         

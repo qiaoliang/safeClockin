@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { storage } from "./storage";
 import { authApi } from "@/api/auth";
 import { diagnoseSeedStatus } from "@/utils/secure";
+import { RoleId } from "@/constants/roles.js";
 
 export const useUserStore = defineStore("user", {
     state: () => {
@@ -90,18 +91,15 @@ export const useUserStore = defineStore("user", {
         role: (state) => state.userState.profile.role,
 
         // 角色判断
-        isSoloUser: (state) => state.userState.profile.role === 1 || state.userState.profile.role === "solo",
-        isSupervisor: (state) => state.userState.profile.role === "supervisor",
+        isSoloUser: (state) => state.userState.profile.role === RoleId.SOLO,
+        isSupervisor: (state) => state.userState.profile.role === "supervisor", // 保留向后兼容
 
         // 社区管理权限判断
         isSuperAdmin: (state) => {
             // 后端返回 role 数字ID：1-普通用户，2-社区专员，3-社区主管，4-超级系统管理员
             const role = state.userState.profile.role;
-            return (
-                role === 4 || // 数字类型（优先）
-                role === "community_admin" || // 字符串类型（向后兼容）
-                role === "超级系统管理员" // 中文名称（向后兼容）
-            );
+            // 使用 RoleId 常量进行判断，保留字符串兼容性
+            return role === RoleId.SUPER_ADMIN;
         },
 
         // 社区主管：需要检查用户在当前社区的角色
@@ -119,7 +117,7 @@ export const useUserStore = defineStore("user", {
             }
             // 检查全局角色：后端返回 role 数字ID
             const role = state.userState.profile.role;
-            return role === 3 || role === "社区主管";
+            return role === RoleId.MANAGER;
         },
 
         isCommunityStaff: (state) => {
@@ -136,7 +134,7 @@ export const useUserStore = defineStore("user", {
             }
             // 检查全局角色：后端返回 role 数字ID
             const role = state.userState.profile.role;
-            return role === 2 || role === "社区专员";
+            return role === RoleId.STAFF;
         },
 
         hasCommunityPermission: (state) => {
@@ -146,9 +144,7 @@ export const useUserStore = defineStore("user", {
                 const roleInCurrentCommunity =
                     state.userState.profile.communityRoles[currentCommunityId];
                 return (
-                    state.userState.profile.role === 4 ||
-                    state.userState.profile.role === "community_admin" ||
-                    state.userState.profile.role === "超级系统管理员" ||
+                    state.userState.profile.role === RoleId.SUPER_ADMIN ||
                     roleInCurrentCommunity === "manager" ||
                     roleInCurrentCommunity === "staff"
                 );
@@ -156,13 +152,9 @@ export const useUserStore = defineStore("user", {
             // 向后兼容
             const role = state.userState.profile.role;
             return (
-                role === 4 ||
-                role === "community_admin" ||
-                role === "超级系统管理员" ||
-                role === 3 ||
-                role === "社区主管" ||
-                role === 2 ||
-                role === "社区专员" ||
+                role === RoleId.SUPER_ADMIN ||
+                role === RoleId.MANAGER ||
+                role === RoleId.STAFF ||
                 state.userState.profile.communityRole === "manager" ||
                 state.userState.profile.communityRole === "staff"
             );

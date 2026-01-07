@@ -3,7 +3,10 @@
  * 用于控制页面访问和功能可见性
  */
 
-// 用户角色定义
+import { RoleId } from './roles.js'
+
+// 用户角色定义（废弃，使用 RoleId 替代）
+// @deprecated 请使用 import { RoleId } from '@/constants/roles.js'
 export const UserRole = {
   SUPER_ADMIN: 'super_admin',      // 超级管理员
   COMMUNITY_MANAGER: 'community_manager',  // 社区主管
@@ -59,7 +62,7 @@ export const FeaturePermission = {
 
 // 角色-页面权限映射
 export const RolePagePermissions = {
-  [UserRole.SUPER_ADMIN]: [
+  [RoleId.SUPER_ADMIN]: [
     PagePath.COMMUNITY_MANAGE,
     PagePath.COMMUNITY_FORM,
     PagePath.COMMUNITY_MERGE,
@@ -72,8 +75,8 @@ export const RolePagePermissions = {
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],
-  
-  [UserRole.COMMUNITY_MANAGER]: [
+
+  [RoleId.MANAGER]: [
     PagePath.COMMUNITY_STAFF_MANAGE,
     PagePath.STAFF_DETAIL,
     PagePath.STAFF_ADD,
@@ -82,26 +85,22 @@ export const RolePagePermissions = {
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],
-  
-  [UserRole.COMMUNITY_STAFF]: [
+
+  [RoleId.STAFF]: [
     PagePath.COMMUNITY_USER_MANAGE,
     PagePath.COMMUNITY_USER_ADD,
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],
-  
-  [UserRole.SUPERVISOR]: [
-    PagePath.PROFILE
-  ],
-  
-  [UserRole.SOLO]: [
+
+  [RoleId.SOLO]: [
     PagePath.PROFILE
   ]
 }
 
 // 角色-功能权限映射
 export const RoleFeaturePermissions = {
-  [UserRole.SUPER_ADMIN]: [
+  [RoleId.SUPER_ADMIN]: [
     FeaturePermission.CREATE_COMMUNITY,
     FeaturePermission.EDIT_COMMUNITY,
     FeaturePermission.DELETE_COMMUNITY,
@@ -117,8 +116,8 @@ export const RoleFeaturePermissions = {
     FeaturePermission.VIEW_USER_DETAIL,
     FeaturePermission.VIEW_UNCHECKED_DETAIL
   ],
-  
-  [UserRole.COMMUNITY_MANAGER]: [
+
+  [RoleId.MANAGER]: [
     FeaturePermission.ADD_STAFF,
     FeaturePermission.REMOVE_STAFF,
     FeaturePermission.VIEW_STAFF_DETAIL,
@@ -128,17 +127,15 @@ export const RoleFeaturePermissions = {
     FeaturePermission.VIEW_USER_DETAIL,
     FeaturePermission.VIEW_UNCHECKED_DETAIL
   ],
-  
-  [UserRole.COMMUNITY_STAFF]: [
+
+  [RoleId.STAFF]: [
     FeaturePermission.ADD_USER,
     FeaturePermission.REMOVE_USER,
     FeaturePermission.VIEW_USER_DETAIL,
     FeaturePermission.VIEW_UNCHECKED_DETAIL
   ],
-  
-  [UserRole.SUPERVISOR]: [],
-  
-  [UserRole.SOLO]: []
+
+  [RoleId.SOLO]: []
 }
 
 // 权限错误消息

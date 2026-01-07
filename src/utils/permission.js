@@ -3,37 +3,21 @@
  * 提供页面级和功能级的权限检查
  */
 
-import { 
-  UserRole, 
-  RolePagePermissions, 
+import {
+  RoleId,
+  RolePagePermissions,
   RoleFeaturePermissions,
-  PermissionErrorMessages 
+  PermissionErrorMessages
 } from '@/constants/permissions'
 import { useUserStore } from '@/store/modules/user'
 
 /**
  * 获取当前用户角色
- * @returns {string} 用户角色
+ * @returns {number} 用户角色ID
  */
 export const getCurrentUserRole = () => {
   const userStore = useUserStore()
-  const role = userStore.role
-
-  // 将后端返回的 role 数字ID 映射为标准的角色常量值
-  // role=1: 普通用户, role=2: 社区专员, role=3: 社区主管, role=4: 超级系统管理员
-  if (role === 4 || role === 'community_admin' || role === '超级系统管理员') {
-    return UserRole.SUPER_ADMIN
-  } else if (role === 3 || role === 'community_manager' || role === '社区主管') {
-    return UserRole.COMMUNITY_MANAGER
-  } else if (role === 2 || role === 'community' || role === '社区专员') {
-    return UserRole.COMMUNITY_STAFF
-  } else if (role === 'supervisor') {
-    return UserRole.SUPERVISOR
-  } else if (role === 1 || role === 'solo' || role === '普通用户') {
-    return UserRole.SOLO
-  }
-
-  return role || null
+  return userStore.role || null
 }
 
 /**
@@ -48,7 +32,7 @@ export const isLoggedIn = () => {
 /**
  * 检查用户是否有访问指定页面的权限
  * @param {string} pagePath - 页面路径
- * @param {string} userRole - 用户角色（可选，默认使用当前用户角色）
+ * @param {number} userRole - 用户角色ID（可选，默认使用当前用户角色）
  * @returns {boolean} 是否有权限
  */
 export const hasPagePermission = (pagePath, userRole = null) => {
@@ -56,17 +40,17 @@ export const hasPagePermission = (pagePath, userRole = null) => {
   if (!isLoggedIn()) {
     return false
   }
-  
+
   const role = userRole || getCurrentUserRole()
-  
+
   // 如果没有角色，没有权限
   if (!role) {
     return false
   }
-  
+
   // 获取该角色允许访问的页面列表
   const allowedPages = RolePagePermissions[role] || []
-  
+
   // 检查页面路径是否在允许列表中
   return allowedPages.includes(pagePath)
 }
@@ -74,7 +58,7 @@ export const hasPagePermission = (pagePath, userRole = null) => {
 /**
  * 检查用户是否有执行指定功能的权限
  * @param {string} featureName - 功能名称
- * @param {string} userRole - 用户角色（可选，默认使用当前用户角色）
+ * @param {number} userRole - 用户角色ID（可选，默认使用当前用户角色）
  * @returns {boolean} 是否有权限
  */
 export const hasFeaturePermission = (featureName, userRole = null) => {
@@ -82,83 +66,79 @@ export const hasFeaturePermission = (featureName, userRole = null) => {
   if (!isLoggedIn()) {
     return false
   }
-  
+
   const role = userRole || getCurrentUserRole()
-  
+
   // 如果没有角色，没有权限
   if (!role) {
     return false
   }
-  
+
   // 获取该角色允许的功能列表
   const allowedFeatures = RoleFeaturePermissions[role] || []
-  
+
   // 检查功能是否在允许列表中
   return allowedFeatures.includes(featureName)
 }
 
 /**
  * 检查用户是否可以管理社区（CRUD操作）
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否有权限
  */
 export const canManageCommunity = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.SUPER_ADMIN || role === 'community_admin'
+  return role === RoleId.SUPER_ADMIN
 }
 
 /**
  * 检查用户是否可以管理工作人员
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否有权限
  */
 export const canManageStaff = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return (role === UserRole.SUPER_ADMIN || role === 'community_admin') || 
-         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager')
+  return role === RoleId.SUPER_ADMIN || role === RoleId.MANAGER
 }
 
 /**
  * 检查用户是否可以管理社区用户
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否有权限
  */
 export const canManageUsers = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return (role === UserRole.SUPER_ADMIN || role === 'community_admin') || 
-         (role === UserRole.COMMUNITY_MANAGER || role === 'community_manager') ||
-         (role === UserRole.COMMUNITY_STAFF || role === 'community')
+  return role === RoleId.SUPER_ADMIN || role === RoleId.MANAGER || role === RoleId.STAFF
 }
 
 /**
  * 检查用户是否为超级管理员
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否为超级管理员
  */
 export const isSuperAdmin = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  // 后端返回的超级管理员角色可能是 'community_admin' 字符串，也可能是 'super_admin' 字符串
-  return role === UserRole.SUPER_ADMIN || role === 'community_admin'
+  return role === RoleId.SUPER_ADMIN
 }
 
 /**
  * 检查用户是否为社区主管
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否为社区主管
  */
 export const isCommunityManager = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.COMMUNITY_MANAGER || role === 'community_manager'
+  return role === RoleId.MANAGER
 }
 
 /**
  * 检查用户是否为社区专员
- * @param {string} userRole - 用户角色（可选）
+ * @param {number} userRole - 用户角色ID（可选）
  * @returns {boolean} 是否为社区专员
  */
 export const isCommunityStaff = (userRole = null) => {
   const role = userRole || getCurrentUserRole()
-  return role === UserRole.COMMUNITY_STAFF || role === 'community'
+  return role === RoleId.STAFF
 }
 
 /**
