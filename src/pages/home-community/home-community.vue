@@ -496,7 +496,36 @@ const handleManageCommunity = () => {
 }
 
 onMounted(async () => {
-  // 初始化数据 - 只在首次挂载时执行
+  console.log('Community page loaded, checking permissions...')
+
+  // 1. Load user info
+  await userStore.fetchUserInfo()
+
+  // 2. Load community list
+  await communityStore.fetchCommunities()
+
+  // 3. Check if user has any community access
+  if (communityStore.communities.length === 0) {
+    uni.showModal({
+      title: '权限提示',
+      content: '您还没有加入任何社区，请联系社区管理员',
+      showCancel: false,
+      success: () => {
+        // Redirect to solo homepage
+        uni.switchTab({
+          url: '/pages/home-solo/home-solo'
+        })
+      }
+    })
+    return
+  }
+
+  // 4. Set current community if not set
+  if (!communityStore.currentCommunity && communityStore.communities.length > 0) {
+    communityStore.setCurrentCommunity(communityStore.communities[0])
+  }
+
+  // 5. Load page data - initialize data only on first mount
   await loadPageData()
 })
 
