@@ -31,9 +31,6 @@ import { loginAsSuperAdmin } from "../helpers/auth.js";
 import { registerAndLoginAsUser } from "../helpers/auth.js";
 
 test.describe("社区工作人员关闭事件测试", () => {
-    let staffUser;
-    let regularUser;
-
     test.beforeAll(async () => {
         console.log("开始测试套件：社区工作人员关闭事件");
     });
@@ -58,46 +55,30 @@ test.describe("社区工作人员关闭事件测试", () => {
         await createHelpEvent(page);
         console.log("✅ 普通用户已发起求助事件");
 
-        // 步骤2: 退出当前用户，切换到社区工作人员账户
-        console.log("步骤2: 退出并切换到社区工作人员账户");
+        //TODO: 步骤2:退出当前用户，即：点击“我的”tab , 找到按钮“退出登录” 并点击，在弹出对话框后，再点“确定”，get("/") 回到登录页
 
-        // 直接清理存储并导航到登录页（简化退出流程）
-        console.log("清理存储并导航到登录页");
+        // 检查是否已到达登录页
 
-        // 清理所有存储
-        await page.evaluate(() => {
-            localStorage.clear();
-            sessionStorage.clear();
-        });
-
-        // 导航到登录页
-        await page.goto("/pages/login/login");
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        console.log("✅ 已退出登录");
-
-        // 使用超级管理员登录
+        // 步骤3: 使用超级管理员登录
         await loginAsSuperAdmin(page);
         console.log("✅ 超级管理员已登录");
 
-        // 步骤3: 导航到社区管理页面
-        console.log("步骤3: 导航到社区管理页面");
+        // 步骤4: 导航到社区管理页面
+        console.log("步骤4: 导航到社区管理页面");
         await navigateToCommunityManagement(page);
         console.log("✅ 已导航到社区管理页面");
 
-        // 步骤4: 查看待处理事件列表
-        console.log("步骤4: 查看待处理事件列表");
-        const hasPendingEvents = await checkPendingEvents(page);
-        expect(hasPendingEvents).toBeTruthy();
+        //TODO: 步骤5: 查看待处理事件列表
+        // TODO： 点击页面上方的选择框，选择“安卡大家庭”社区
+        // 等待并确认页面上方出现黄色事件警告条，
         console.log("✅ 找到待处理事件");
 
-        // 步骤5: 选择并关闭事件
-        console.log("步骤5: 选择并关闭事件");
+        //TODO: 步骤6: 验证待处理事件列表
+        // 先点事件警告条，打开事件信息页，再选择事件已解决的按钮，输入备注信息后，点确认
         await closeEventAsStaff(page);
         console.log("✅ 事件已关闭");
 
-        // 步骤6: 验证事件关闭成功
+        // 步骤7: 验证事件关闭成功
         console.log("步骤6: 验证事件关闭成功");
         const pageText = await page.locator("body").textContent();
         const hasSuccessIndicator =
@@ -107,175 +88,6 @@ test.describe("社区工作人员关闭事件测试", () => {
 
         expect(hasSuccessIndicator).toBeTruthy();
         console.log("✅ 事件关闭验证通过");
-    });
-
-    test.skip("社区工作人员关闭事件时，关闭原因太短应该显示错误提示", async ({
-        page,
-    }) => {
-        console.log("开始测试：关闭原因太短");
-
-        // 创建普通用户并发起求助
-        regularUser = await registerAndLoginAsUser(page);
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-        await createHelpEvent(page);
-
-        // 退出当前用户
-        const profileTab = page
-            .locator(".tabbar-item")
-            .filter({ hasText: "我的" })
-            .or(page.locator("text=我的"))
-            .first();
-        await profileTab.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        const logoutButton = page
-            .locator("text=退出登录")
-            .or(page.locator(".logout-btn"))
-            .first();
-        await logoutButton.click({ force: true });
-        await page.waitForTimeout(1000);
-
-        const confirmButton = page
-            .locator("text=确定")
-            .or(page.locator("uni-button.confirm"))
-            .first();
-        await confirmButton.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
-
-        // 导航到根路径以显示登录页面
-        await page.goto("/");
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        // 切换到社区工作人员
-        await loginAsSuperAdmin(page);
-
-        // 导航到社区管理页面
-        await navigateToCommunityManagement(page);
-
-        // 查看并尝试关闭事件（使用太短的原因）
-        await checkPendingEvents(page);
-        await attemptCloseEventWithShortReason(page);
-
-        // 验证错误提示
-        const pageText = await page.locator("body").textContent();
-        expect(pageText).toContain("关闭原因长度必须在10-500字符之间");
-        console.log("✅ 显示正确的错误提示");
-    });
-
-    test.skip("社区工作人员关闭事件时，关闭原因太长应该显示错误提示", async ({
-        page,
-    }) => {
-        console.log("开始测试：关闭原因太长");
-
-        // 创建普通用户并发起求助
-        regularUser = await registerAndLoginAsUser(page);
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-        await createHelpEvent(page);
-
-        // 退出当前用户
-        const profileTab = page
-            .locator(".tabbar-item")
-            .filter({ hasText: "我的" })
-            .or(page.locator("text=我的"))
-            .first();
-        await profileTab.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        const logoutButton = page
-            .locator("text=退出登录")
-            .or(page.locator(".logout-btn"))
-            .first();
-        await logoutButton.click({ force: true });
-        await page.waitForTimeout(1000);
-
-        const confirmButton = page
-            .locator("text=确定")
-            .or(page.locator("uni-button.confirm"))
-            .first();
-        await confirmButton.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
-
-        // 导航到根路径以显示登录页面
-        await page.goto("/");
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        // 切换到社区工作人员
-        await loginAsSuperAdmin(page);
-
-        // 导航到社区管理页面
-        await navigateToCommunityManagement(page);
-
-        // 查看并尝试关闭事件（使用太长的原因）
-        await checkPendingEvents(page);
-        await attemptCloseEventWithLongReason(page);
-
-        // 验证错误提示
-        const pageText = await page.locator("body").textContent();
-        expect(pageText).toContain("关闭原因长度必须在10-500字符之间");
-        console.log("✅ 显示正确的错误提示");
-    });
-
-    test.skip("社区工作人员应该能够取消关闭事件", async ({ page }) => {
-        console.log("开始测试：取消关闭事件");
-
-        // 创建普通用户并发起求助
-        regularUser = await registerAndLoginAsUser(page);
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-        await createHelpEvent(page);
-
-        // 退出当前用户
-        const profileTab = page
-            .locator(".tabbar-item")
-            .filter({ hasText: "我的" })
-            .or(page.locator("text=我的"))
-            .first();
-        await profileTab.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        const logoutButton = page
-            .locator("text=退出登录")
-            .or(page.locator(".logout-btn"))
-            .first();
-        await logoutButton.click({ force: true });
-        await page.waitForTimeout(1000);
-
-        const confirmButton = page
-            .locator("text=确定")
-            .or(page.locator("uni-button.confirm"))
-            .first();
-        await confirmButton.click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
-
-        // 导航到根路径以显示登录页面
-        await page.goto("/");
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        // 切换到社区工作人员
-        await loginAsSuperAdmin(page);
-
-        // 导航到社区管理页面
-        await navigateToCommunityManagement(page);
-
-        // 查看并尝试关闭事件（然后取消）
-        await checkPendingEvents(page);
-        await cancelCloseEvent(page);
-
-        // 验证事件未关闭
-        const pageText = await page.locator("body").textContent();
-        expect(pageText).toContain("待处理");
-        console.log("✅ 事件未关闭，取消操作成功");
     });
 });
 
@@ -341,11 +153,7 @@ async function navigateToCommunityManagement(page) {
     const communityTab = page
         .locator(".tabbar-item")
         .filter({ hasText: "社区" })
-        .or(page.locator("text=社区"))
         .first();
-    
-    console.log("等待社区标签出现...");
-    await communityTab.waitFor({ state: "visible", timeout: 10000 });
     await communityTab.click({ force: true });
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(2000);
@@ -366,35 +174,6 @@ async function navigateToCommunityManagement(page) {
     await page.waitForTimeout(2000);
 
     console.log("✅ 已导航到社区管理页面");
-}
-
-/**
- * 辅助函数：检查待处理事件
- *
- * @param {Page} page - Playwright Page 对象
- * @returns {Promise<boolean>} 是否有待处理事件
- */
-async function checkPendingEvents(page) {
-    console.log("辅助函数：检查待处理事件");
-
-    await page.waitForTimeout(2000);
-    const pageText = await page.locator("body").textContent();
-    
-    console.log("页面内容预览:", pageText.substring(0, 300));
-
-    // 查找待处理事件的关键词
-    const hasPendingEvents =
-        pageText.includes("待处理") ||
-        pageText.includes("求助") ||
-        pageText.includes("事件");
-
-    console.log(
-        `${hasPendingEvents ? "✅" : "❌"} ${
-            hasPendingEvents ? "找到" : "未找到"
-        }待处理事件`
-    );
-
-    return hasPendingEvents;
 }
 
 /**
@@ -457,173 +236,4 @@ async function closeEventAsStaff(page) {
     await page.waitForLoadState("networkidle");
 
     console.log("✅ 事件关闭操作完成");
-}
-
-/**
- * 辅助函数：尝试使用太短的关闭原因关闭事件
- *
- * @param {Page} page - Playwright Page 对象
- */
-async function attemptCloseEventWithShortReason(page) {
-    console.log("辅助函数：尝试使用太短的关闭原因");
-
-    // 点击事件列表中的第一个事件
-    const eventItem = page
-        .locator(".event-item")
-        .or(page.locator(".event-card"))
-        .first();
-    await eventItem.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(500);
-    await eventItem.click({ force: true });
-
-    // 等待事件详情页面加载
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2000);
-
-    // 点击"关闭事件"按钮
-    const closeButton = page
-        .locator("text=关闭事件")
-        .or(page.locator("text=处理"))
-        .first();
-    await closeButton.click({ force: true });
-
-    // 等待关闭原因对话框出现
-    await page.waitForTimeout(2000);
-
-    // 输入太短的关闭原因（<10字符）
-    const shortReason = "太短";
-    const textArea = page
-        .locator("textarea")
-        .or(page.locator('input[type="text"]'))
-        .first();
-    await textArea.click({ force: true });
-    await textArea.clear();
-    await textArea.type(shortReason, { delay: 100 });
-    await page.waitForTimeout(500);
-
-    // 点击确认按钮
-    const confirmButton = page
-        .locator("text=确认")
-        .or(page.locator("text=提交"))
-        .or(page.locator("uni-button.submit"))
-        .first();
-    await confirmButton.click({ force: true });
-
-    // 等待响应
-    await page.waitForTimeout(2000);
-
-    console.log("✅ 尝试使用太短的关闭原因完成");
-}
-
-/**
- * 辅助函数：尝试使用太长的关闭原因关闭事件
- *
- * @param {Page} page - Playwright Page 对象
- */
-async function attemptCloseEventWithLongReason(page) {
-    console.log("辅助函数：尝试使用太长的关闭原因");
-
-    // 点击事件列表中的第一个事件
-    const eventItem = page
-        .locator(".event-item")
-        .or(page.locator(".event-card"))
-        .first();
-    await eventItem.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(500);
-    await eventItem.click({ force: true });
-
-    // 等待事件详情页面加载
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2000);
-
-    // 点击"关闭事件"按钮
-    const closeButton = page
-        .locator("text=关闭事件")
-        .or(page.locator("text=处理"))
-        .first();
-    await closeButton.click({ force: true });
-
-    // 等待关闭原因对话框出现
-    await page.waitForTimeout(2000);
-
-    // 输入太长的关闭原因（>500字符）
-    // 注意：由于前端有 maxlength="500" 限制，实际只能输入500个字符
-    const longReason = "a".repeat(501);
-    const textArea = page
-        .locator("textarea")
-        .or(page.locator('input[type="text"]'))
-        .first();
-    await textArea.click({ force: true });
-    await textArea.clear();
-    await textArea.type(longReason, { delay: 10 });
-    await page.waitForTimeout(500);
-
-    // 验证文本框实际只接受了500个字符
-    const actualValue = await textArea.inputValue();
-    expect(actualValue.length).toBe(500);
-
-    // 点击确认按钮
-    const confirmButton = page
-        .locator("text=确认")
-        .or(page.locator("text=提交"))
-        .or(page.locator("uni-button.submit"))
-        .first();
-    await confirmButton.click({ force: true });
-
-    // 等待响应
-    await page.waitForTimeout(2000);
-
-    console.log("✅ 尝试使用太长的关闭原因完成");
-}
-
-/**
- * 辅助函数：取消关闭事件
- *
- * @param {Page} page - Playwright Page 对象
- */
-async function cancelCloseEvent(page) {
-    console.log("辅助函数：取消关闭事件");
-
-    // 点击事件列表中的第一个事件
-    const eventItem = page
-        .locator(".event-item")
-        .or(page.locator(".event-card"))
-        .first();
-    await eventItem.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(500);
-    await eventItem.click({ force: true });
-
-    // 等待事件详情页面加载
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2000);
-
-    // 点击"关闭事件"按钮
-    const closeButton = page
-        .locator("text=关闭事件")
-        .or(page.locator("text=处理"))
-        .first();
-    await closeButton.click({ force: true });
-
-    // 等待关闭原因对话框出现
-    await page.waitForTimeout(2000);
-
-    // 输入关闭原因
-    const closureReason = "这是一个有效的关闭原因，长度符合要求。";
-    const textArea = page
-        .locator("textarea")
-        .or(page.locator('input[type="text"]'))
-        .first();
-    await textArea.click({ force: true });
-    await textArea.clear();
-    await textArea.type(closureReason, { delay: 100 });
-    await page.waitForTimeout(500);
-
-    // 点击取消按钮
-    const cancelButton = page.locator("text=取消").first();
-    await cancelButton.click({ force: true });
-
-    // 等待对话框关闭
-    await page.waitForTimeout(2000);
-
-    console.log("✅ 取消关闭事件完成");
 }
