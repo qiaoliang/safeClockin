@@ -194,9 +194,6 @@ const topIssues = computed(() => {
   return allStats.value.slice(0, 3)
 })
 
-// 计算属性：是否是社区主管
-const isCommunityManager = computed(() => userStore.isCommunityManager)
-
 // 计算属性：是否是社区工作人员
 const isCommunityStaff = computed(() => userStore.isCommunityStaff)
 
