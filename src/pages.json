@@ -247,6 +247,15 @@
         "navigationBarBackgroundColor": "#FAE9DB",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/community-dashboard/community-dashboard",
+      "style": {
+        "navigationBarTitleText": "数据看板",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true
+      }
     }
   ],
   "easycom": {
