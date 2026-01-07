@@ -198,6 +198,39 @@ const allStats = ref([])
 const totalRules = ref(0)
 const showEventModal = ref(false)
 
+// Current community
+const currentCommunity = computed(() => communityStore.currentCommunity)
+
+// Permission check for manage button
+const canManageCurrentCommunity = computed(() => {
+  const user = userStore.userInfo
+  const community = currentCommunity.value
+
+  if (!user || !community) return false
+
+  const userRole = user.role
+  const communityId = community.community_id
+
+  // Super Admin: can manage if they are a manager/specialist of this community
+  if (userRole === 4 || userRole === 'community_admin' || userRole === '超级系统管理员') {
+    return isUserManagerOfCommunity(communityId)
+  }
+
+  // Community Manager/Specialist: can manage their assigned community
+  if (userRole === 3 || userRole === '社区主管' || userRole === 2 || userRole === '社区专员') {
+    return user.community_id === communityId
+  }
+
+  return false
+})
+
+// Check if super admin is a manager of a specific community
+const isUserManagerOfCommunity = (communityId) => {
+  // Check membership from user store's communityRoles
+  const roleInCommunity = userStore.getRoleInCommunity(communityId)
+  return roleInCommunity === 'manager' || roleInCommunity === 'specialist'
+}
+
 // 计算属性：显示前3个逾期事项
 const topIssues = computed(() => {
   return allStats.value.slice(0, 3)
@@ -426,6 +459,36 @@ const formatEventTime = (timeStr) => {
   if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
   if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
   return `${Math.floor(diff / 86400000)}天前`
+}
+
+/**
+ * Navigate to community details page
+ */
+const handleManageCommunity = () => {
+  const communityId = currentCommunity.value.community_id
+
+  if (!communityId) {
+    uni.showToast({
+      title: '请先选择社区',
+      icon: 'none'
+    })
+    return
+  }
+
+  uni.navigateTo({
+    url: `/pages/community-details-new/community-details-new?community_id=${communityId}`,
+    fail: (err) => {
+      console.error('Navigation failed:', err)
+      uni.showModal({
+        title: '跳转失败',
+        content: '无法打开社区详情页，请返回后重试',
+        showCancel: false,
+        success: () => {
+          uni.navigateBack()
+        }
+      })
+    }
+  })
 }
 
 onMounted(async () => {
