@@ -3,8 +3,8 @@
  * 提供页面级和功能级的权限检查
  */
 
+import { RoleId } from '@/constants/roles.js'
 import {
-  RoleId,
   RolePagePermissions,
   RoleFeaturePermissions,
   PermissionErrorMessages

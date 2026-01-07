@@ -1,15 +1,16 @@
 // 社区权限单元测试
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { 
-  getCurrentUserRole, 
-  hasFeaturePermission, 
-  canManageCommunity, 
-  canManageStaff, 
+import {
+  getCurrentUserRole,
+  hasFeaturePermission,
+  canManageCommunity,
+  canManageStaff,
   canManageUsers,
   isSuperAdmin,
   isCommunityManager,
   isCommunityStaff
 } from '@/utils/permission'
+import { RoleId } from '@/constants/roles.js'
 
 // 模拟用户store
 vi.mock('@/store/modules/user', () => ({
@@ -25,29 +26,184 @@ import { useUserStore } from '@/store/modules/user'
 
 describe('社区权限单元测试', () => {
   let mockUserStore
-  
+
   beforeEach(() => {
     // 重置模拟
     vi.clearAllMocks()
-    
+
     // 创建新的模拟store
     mockUserStore = {
       role: null,
       isLoggedIn: false,
       token: null
     }
-    
+
     // 设置模拟实现
     useUserStore.mockReturnValue(mockUserStore)
   })
-  
+
   describe('getCurrentUserRole函数', () => {
-    it('应该正确映射超级管理员角色', () => {
-      // 测试各种超级管理员角色表示方式
-      const testCases = [
-        { role: 'community_admin', expected: 'super_admin' },
-        { role: 4, expected: 'super_admin' },
-        { role: '超级系统管理员', expected: 'super_admin' }
+    it('应该返回数字角色ID', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+      expect(getCurrentUserRole()).toBe(RoleId.SUPER_ADMIN)
+
+      mockUserStore.role = RoleId.MANAGER
+      expect(getCurrentUserRole()).toBe(RoleId.MANAGER)
+
+      mockUserStore.role = RoleId.STAFF
+      expect(getCurrentUserRole()).toBe(RoleId.STAFF)
+
+      mockUserStore.role = RoleId.SOLO
+      expect(getCurrentUserRole()).toBe(RoleId.SOLO)
+
+      mockUserStore.role = null
+      expect(getCurrentUserRole()).toBeNull()
+    })
+  })
+
+  describe('权限检查函数', () => {
+    it('超级管理员应该有所有权限', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+      mockUserStore.isLoggedIn = true
+
+      expect(isSuperAdmin()).toBe(true)
+      expect(isCommunityManager()).toBe(false)
+      expect(isCommunityStaff()).toBe(false)
+      expect(canManageCommunity()).toBe(true)
+      expect(canManageStaff()).toBe(true)
+      expect(canManageUsers()).toBe(true)
+    })
+
+    it('社区主管应该有工作人员和用户管理权限', () => {
+      mockUserStore.role = RoleId.MANAGER
+      mockUserStore.isLoggedIn = true
+
+      expect(isSuperAdmin()).toBe(false)
+      expect(isCommunityManager()).toBe(true)
+      expect(isCommunityStaff()).toBe(false)
+      expect(canManageCommunity()).toBe(false)
+      expect(canManageStaff()).toBe(true)
+      expect(canManageUsers()).toBe(true)
+    })
+
+    it('社区专员应该只有用户管理权限', () => {
+      mockUserStore.role = RoleId.STAFF
+      mockUserStore.isLoggedIn = true
+
+      expect(isSuperAdmin()).toBe(false)
+      expect(isCommunityManager()).toBe(false)
+      expect(isCommunityStaff()).toBe(true)
+      expect(canManageCommunity()).toBe(false)
+      expect(canManageStaff()).toBe(false)
+      expect(canManageUsers()).toBe(true)
+    })
+
+    it('普通用户不应该有任何管理权限', () => {
+      mockUserStore.role = RoleId.SOLO
+      mockUserStore.isLoggedIn = true
+
+      expect(isSuperAdmin()).toBe(false)
+      expect(isCommunityManager()).toBe(false)
+      expect(isCommunityStaff()).toBe(false)
+      expect(canManageCommunity()).toBe(false)
+      expect(canManageStaff()).toBe(false)
+      expect(canManageUsers()).toBe(false)
+    })
+  })
+
+  describe('hasFeaturePermission函数', () => {
+    beforeEach(() => {
+      mockUserStore.isLoggedIn = true
+    })
+
+    it('超级管理员应该有所有功能权限', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+
+      expect(hasFeaturePermission('create_community')).toBe(true)
+      expect(hasFeaturePermission('merge_community')).toBe(true)
+      expect(hasFeaturePermission('add_staff')).toBe(true)
+      expect(hasFeaturePermission('add_user')).toBe(true)
+    })
+
+    it('社区主管应该有工作人员和用户管理权限', () => {
+      mockUserStore.role = RoleId.MANAGER
+
+      expect(hasFeaturePermission('add_staff')).toBe(true)
+      expect(hasFeaturePermission('add_user')).toBe(true)
+      expect(hasFeaturePermission('create_community')).toBe(false)
+      expect(hasFeaturePermission('merge_community')).toBe(false)
+    })
+
+    it('社区专员应该只有用户管理权限', () => {
+      mockUserStore.role = RoleId.STAFF
+
+      expect(hasFeaturePermission('add_user')).toBe(true)
+      expect(hasFeaturePermission('add_staff')).toBe(false) // 不应该有工作人员管理权限
+      expect(hasFeaturePermission('create_community')).toBe(false)
+    })
+
+    it('普通用户不应该有任何功能权限', () => {
+      mockUserStore.role = RoleId.SOLO
+
+      expect(hasFeaturePermission('add_user')).toBe(false)
+      expect(hasFeaturePermission('add_staff')).toBe(false)
+      expect(hasFeaturePermission('create_community')).toBe(false)
+    })
+
+    it('未登录时应该没有任何权限', () => {
+      mockUserStore.isLoggedIn = false
+      mockUserStore.role = RoleId.SUPER_ADMIN
+
+      expect(hasFeaturePermission('add_user')).toBe(false)
+      expect(hasFeaturePermission('create_community')).toBe(false)
+    })
+  })
+
+  describe('canManageCommunity函数', () => {
+    it('只有超级管理员可以管理社区', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+      expect(canManageCommunity()).toBe(true)
+
+      mockUserStore.role = RoleId.MANAGER
+      expect(canManageCommunity()).toBe(false)
+
+      mockUserStore.role = RoleId.STAFF
+      expect(canManageCommunity()).toBe(false)
+    })
+  })
+
+  describe('canManageStaff函数', () => {
+    it('超级管理员和社区主管可以管理工作人员', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+      expect(canManageStaff()).toBe(true)
+
+      mockUserStore.role = RoleId.MANAGER
+      expect(canManageStaff()).toBe(true)
+
+      mockUserStore.role = RoleId.STAFF
+      expect(canManageStaff()).toBe(false)
+
+      mockUserStore.role = RoleId.SOLO
+      expect(canManageStaff()).toBe(false)
+    })
+  })
+
+  describe('canManageUsers函数', () => {
+    it('超级管理员、主管和专员都可以管理用户', () => {
+      mockUserStore.role = RoleId.SUPER_ADMIN
+      expect(canManageUsers()).toBe(true)
+
+      mockUserStore.role = RoleId.MANAGER
+      expect(canManageUsers()).toBe(true)
+
+      mockUserStore.role = RoleId.STAFF
+      expect(canManageUsers()).toBe(true)
+
+      mockUserStore.role = RoleId.SOLO
+      expect(canManageUsers()).toBe(false)
+    })
+  })
+})
       ]
       
       testCases.forEach(({ role, expected }) => {
