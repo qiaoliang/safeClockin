@@ -202,54 +202,57 @@ import UserInfoCard from "@/components/UserInfoCard.vue";
 
 const userStore = useUserStore();
 
-// 计算属性：社区管理菜单项 - 根据角色动态生成
+// Community management menu items
+// ⚠️ MODIFIED: Only show to super_admin
 const communityManagementItems = computed(() => {
-  const items = [];
+  const user = userStore.userInfo
 
-  // super_admin (role=4) 可以看到所有功能
-  if (userStore.isSuperAdmin) {
-    items.push(
-      { name: "社区列表", icon: "🏘️", path: "/pages/community-manage/community-manage" },
-      {
-        name: "工作人员管理",
-        icon: "👥",
-        path: "/pages/community-staff-manage/community-staff-manage",
-      },
-      {
-        name: "用户管理",
-        icon: "👤",
-        path: "/pages/community-user-manage/community-user-manage",
-      },
-      { name: "社区合并", icon: "🔗", path: "/pages/community-merge/community-merge" },
-      { name: "社区拆分", icon: "✂️", path: "/pages/community-split/community-split" }
-    );
-  }
-  // community_manager 可以管理工作人员和用户
-  else if (userStore.isCommunityManager) {
-    items.push(
-      {
-        name: "工作人员管理",
-        icon: "👥",
-        path: "/pages/community-staff-manage/community-staff-manage",
-      },
-      {
-        name: "用户管理",
-        icon: "👤",
-        path: "/pages/community-user-manage/community-user-manage",
-      }
-    );
-  }
-  // community_staff 只能管理用户
-  else if (userStore.isCommunityStaff) {
-    items.push({
-      name: "用户管理",
-      icon: "👤",
-      path: "/pages/community-user-manage/community-user-manage",
-    });
+  if (!user) return []
+
+  // KEY CHANGE: Only super_admin sees this section
+  if (user.role !== 'super_admin') {
+    return []
   }
 
-  return items;
-});
+  // Super admin's community management menu
+  const items = []
+
+  // Community list management
+  items.push({
+    name: '社区列表',
+    icon: '🏘️',
+    path: '/pages/community-manage/community-manage'
+  })
+
+  // Staff management
+  items.push({
+    name: '工作人员管理',
+    icon: '👥',
+    path: '/pages/community-staff-manage/community-staff-manage'
+  })
+
+  // User management
+  items.push({
+    name: '用户管理',
+    icon: '👤',
+    path: '/pages/community-user-manage/community-user-manage'
+  })
+
+  // Merge/split community features
+  items.push({
+    name: '社区合并',
+    icon: '🔗',
+    path: '/pages/community-merge/community-merge'
+  })
+
+  items.push({
+    name: '社区拆分',
+    icon: '✂️',
+    path: '/pages/community-split/community-split'
+  })
+
+  return items
+})
 
 // 计算属性：是否显示打卡选项管理section
 // 社区相关角色（超级管理员、社区主管、社区专员）不显示打卡选项管理
