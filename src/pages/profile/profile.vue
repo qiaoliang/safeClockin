@@ -210,7 +210,14 @@ const communityManagementItems = computed(() => {
   if (!user) return []
 
   // KEY CHANGE: Only super_admin sees this section
-  if (user.role !== 'super_admin') {
+  // Support multiple role formats: numeric (4), English ('super_admin', 'community_admin'), Chinese ('超级系统管理员')
+  const userRole = user.role
+  const isSuperAdmin = userRole === 4 ||
+                       userRole === 'super_admin' ||
+                       userRole === 'community_admin' ||
+                       userRole === '超级系统管理员'
+
+  if (!isSuperAdmin) {
     return []
   }
 

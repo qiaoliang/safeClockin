@@ -160,8 +160,8 @@ test.describe('事件关闭功能测试', () => {
 
     console.log('步骤1: 输入太短的关闭原因');
 
-    // 输入太短的关闭原因（<10字符）
-    const shortReason = '太短';
+    // 输入太短的关闭原因（<5字符）
+    const shortReason = '短';
     const textArea = page.locator('textarea').or(page.locator('input[type="text"]')).first();
     await textArea.click({ force: true });
     await textArea.clear();
@@ -181,7 +181,7 @@ test.describe('事件关闭功能测试', () => {
 
     // 验证显示错误提示
     const pageText = await page.locator('body').textContent();
-    expect(pageText).toContain('关闭原因长度必须在10-500字符之间');
+    expect(pageText).toContain('关闭原因长度必须在5-200字符之间');
     console.log('✅ 显示正确的错误提示');
   });
 
@@ -192,9 +192,9 @@ test.describe('事件关闭功能测试', () => {
 
     console.log('步骤1: 输入太长的关闭原因');
 
-    // 输入太长的关闭原因（>500字符）
-    // 注意：由于前端有 maxlength="500" 限制，实际只能输入500个字符
-    const longReason = 'a'.repeat(501);
+    // 输入太长的关闭原因（>200字符）
+    // 注意：由于前端有 maxlength="200" 限制，实际只能输入200个字符
+    const longReason = 'a'.repeat(201);
     const textArea = page.locator('textarea').or(page.locator('input[type="text"]')).first();
     await textArea.click({ force: true });
     await textArea.clear();
@@ -203,10 +203,10 @@ test.describe('事件关闭功能测试', () => {
 
     console.log('步骤2: 验证前端 maxlength 限制');
 
-    // 验证文本框实际只接受了500个字符（由于 maxlength 限制）
+    // 验证文本框实际只接受了200个字符（由于 maxlength 限制）
     const actualValue = await textArea.inputValue();
-    expect(actualValue.length).toBe(500);
-    console.log('✅ 前端 maxlength 限制有效，最多只能输入500个字符');
+    expect(actualValue.length).toBe(200);
+    console.log('✅ 前端 maxlength 限制有效，最多只能输入200个字符');
 
     console.log('步骤3: 尝试提交');
 
