@@ -20,23 +20,6 @@ export async function waitForLoginPage(page) {
 }
 
 /**
- * 切换到密码登录标签页
- */
-export async function switchToPasswordLoginTab(page) {
-  // 点击"密码登录"标签
-  await page.locator('text=密码登录').click();
-  
-  // 等待标签切换和表单更新
-  await page.waitForTimeout(1000);
-  
-  // 验证密码输入框可见
-  const pageText = await page.locator('body').textContent();
-  if (!pageText.includes('输入密码')) {
-    throw new Error('未找到密码输入框');
-  }
-}
-
-/**
  * 使用手机号和密码登录
  */
 export async function loginWithPhoneAndPassword(page, phone, password) {
@@ -146,32 +129,33 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
     superAdmin = TEST_USERS.SUPER_ADMIN;
   }
   
-  // 先清除可能的登录状态，导航到根路径
+  // 清除所有 cookies
+  console.log('清除浏览器 cookies...');
+  const context = page.context();
+  await context.clearCookies();
+  
+  // 重新导航到根路径
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(3000); // 等待应用完全初始化
   
-  // 检查当前页面是否在首页（已登录状态），如果是则尝试登出
+  // 检查当前页面是否在首页（已登录状态）
   const pageText = await page.locator('body').textContent();
   if (pageText.includes('打卡') || pageText.includes('社区') || pageText.includes('我的')) {
-    console.log('检测到已登录状态，尝试登出...');
+    console.log('检测到已登录状态，强制清除登录状态...');
     
-    // 点击"我的"标签进入个人中心
-    const profileTab = page.locator('.tabbar-item').filter({ hasText: '我的' }).first();
-    await profileTab.click({ force: true });
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
-    
-    // 查找并点击登出按钮
-    const profilePageText = await page.locator('body').textContent();
-    if (profilePageText.includes('登出') || profilePageText.includes('退出登录')) {
-      const logoutButton = page.locator('text=登出').or(page.locator('text=退出登录')).first();
-      await logoutButton.click({ force: true });
-      await page.waitForTimeout(2000);
+    // 尝试清除 localStorage 和 sessionStorage
+    try {
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+    } catch (error) {
+      console.log('清除存储时出错（可能跨域）:', error.message);
     }
     
-    // 重新导航到根路径
-    await page.goto('/');
+    // 重新加载页面
+    await page.reload();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
   }
@@ -181,10 +165,14 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
   
   // 点击"手机号登录"按钮
   await page.locator('text=手机号登录').click({ force: true });
+  
+  // 等待导航到手机登录页面
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
   
   // 切换到"密码登录"标签页
-  await switchToPasswordLoginTab(page);
+  await page.locator('.tab').filter({ hasText: '密码登录' }).click({ force: true });
+  await page.waitForTimeout(1000);
   
   // 输入手机号和密码
   await page.locator('input[type="number"]').fill(superAdmin.phone);
@@ -259,6 +247,9 @@ export async function registerAndLoginAsUser(page, options = {}) {
     // 步骤 2：点击"手机号登录"按钮
     console.log('步骤2: 点击"手机号登录"按钮');
     await page.locator('text=手机号登录').click({ force: true });
+    
+    // 等待导航到手机登录页面
+    await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
 
     // 步骤 3：切换到"注册"标签
