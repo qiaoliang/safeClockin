@@ -281,8 +281,8 @@
         <textarea
           v-model="closeReason"
           class="close-reason-input"
-          placeholder="请输入关闭原因（10-500字符）"
-          :maxlength="500"
+          placeholder="请输入关闭原因（5-200字符）"
+          :maxlength="200"
         />
       </view>
       <view class="close-event-footer">
@@ -830,10 +830,10 @@ const confirmCloseEvent = async () => {
   console.log('🔍 DEBUG confirmCloseEvent 被调用');
   console.log('🔍 DEBUG closeReason.value:', closeReason.value);
   
-  if (!closeReason.value || closeReason.value.trim().length < 10 || closeReason.value.trim().length > 500) {
+  if (!closeReason.value || closeReason.value.trim().length < 5 || closeReason.value.trim().length > 200) {
     console.log('🔍 DEBUG 关闭原因验证失败');
     uni.showToast({
-      title: "关闭原因长度必须在10-500字符之间",
+      title: "关闭原因长度必须在5-200字符之间",
       icon: "none",
     });
     return;

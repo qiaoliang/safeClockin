@@ -134,10 +134,10 @@ export const useEventStore = defineStore("event", {
                     throw new Error("没有进行中的事件");
                 }
         
-                // 验证关闭原因长度（10-500字符）
-                if (!closureReason || closureReason.trim().length < 10 || closureReason.trim().length > 500) {
+                // 验证关闭原因长度（5-200字符）
+                if (!closureReason || closureReason.trim().length < 5 || closureReason.trim().length > 200) {
                     console.log('🔍 DEBUG 关闭原因验证失败');
-                    throw new Error("关闭原因长度必须在10-500字符之间");
+                    throw new Error("关闭原因长度必须在5-200字符之间");
                 }
         
                 const url = `/api/events/${this.activeEvent.event_id}/close`;
