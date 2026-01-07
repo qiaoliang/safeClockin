@@ -116,13 +116,13 @@ const getAbnormalityLabel = (level) => {
   margin-bottom: 30rpx;
 
   .section-title {
-    font-size: 32rpx;
+    font-size: $uni-font-size-base;
     font-weight: bold;
     color: #333;
   }
 
   .section-subtitle {
-    font-size: 24rpx;
+    font-size: $uni-font-size-md;
     color: #999;
   }
 }
@@ -140,7 +140,7 @@ const getAbnormalityLabel = (level) => {
   padding: 100rpx 0;
 
   .empty-text {
-    font-size: 28rpx;
+    font-size: $uni-font-size-sm;
     color: #999;
   }
 }
@@ -181,7 +181,7 @@ const getAbnormalityLabel = (level) => {
 }
 
 .user-name {
-  font-size: 30rpx;
+  font-size: $uni-font-size-md;
   font-weight: bold;
   color: #333;
 }
@@ -194,7 +194,7 @@ const getAbnormalityLabel = (level) => {
 .abnormality-tag {
   padding: 5rpx 15rpx;
   border-radius: 20rpx;
-  font-size: 22rpx;
+  font-size: $uni-font-size-xs;
   font-weight: bold;
 
   &.level-low {
@@ -218,7 +218,7 @@ const getAbnormalityLabel = (level) => {
   background-color: #e3f2fd;
   color: #4facfe;
   border-radius: 20rpx;
-  font-size: 22rpx;
+  font-size: $uni-font-size-xs;
 }
 
 .rule-abnormalities {
@@ -231,7 +231,7 @@ const getAbnormalityLabel = (level) => {
   padding: 5rpx 10rpx;
   background-color: #f5f5f5;
   border-radius: 8rpx;
-  font-size: 22rpx;
+  font-size: $uni-font-size-xs;
   color: #666;
 }
 
@@ -243,7 +243,7 @@ const getAbnormalityLabel = (level) => {
 }
 
 .abnormality-value {
-  font-size: 40rpx;
+  font-size: $uni-font-size-lg;
   font-weight: bold;
   color: #f5576c;
 }
@@ -269,7 +269,7 @@ const getAbnormalityLabel = (level) => {
 }
 
 .load-more-text {
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   color: #667eea;
 }
 </style>

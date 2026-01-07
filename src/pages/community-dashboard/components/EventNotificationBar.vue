@@ -84,7 +84,7 @@ const handleEventClick = (event) => {
 }
 
 .notification-icon {
-  font-size: 40rpx;
+  font-size: $uni-font-size-lg;
   margin-right: 20rpx;
 }
 
@@ -96,18 +96,18 @@ const handleEventClick = (event) => {
 }
 
 .notification-title {
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   font-weight: bold;
   color: #fff;
 }
 
 .notification-time {
-  font-size: 24rpx;
+  font-size: $uni-font-size-xs;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .notification-arrow {
-  font-size: 40rpx;
+  font-size: $uni-font-size-lg;
   color: #fff;
   margin-left: 20rpx;
 }

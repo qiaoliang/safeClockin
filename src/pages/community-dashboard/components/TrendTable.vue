@@ -128,13 +128,13 @@ const getRateClass = (rate) => {
 }
 
 .section-title {
-  font-size: 32rpx;
+  font-size: $uni-font-size-base;
   font-weight: bold;
   color: #333;
 }
 
 .section-subtitle {
-  font-size: 24rpx;
+  font-size: $uni-font-size-md;
   color: #999;
 }
 
@@ -146,7 +146,7 @@ const getRateClass = (rate) => {
 .day-option {
   padding: 10rpx 30rpx;
   border-radius: 20rpx;
-  font-size: 24rpx;
+  font-size: $uni-font-size-md;
   background-color: #f5f5f5;
   color: #666;
 
@@ -190,7 +190,7 @@ const getRateClass = (rate) => {
 .table-cell {
   flex: 1;
   padding: 20rpx;
-  font-size: 26rpx;
+  font-size: $uni-font-size-md;
   color: #333;
   text-align: center;
 }
@@ -207,7 +207,7 @@ const getRateClass = (rate) => {
 }
 
 .rule-missed-title {
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   font-weight: bold;
   color: #333;
 }
@@ -233,18 +233,18 @@ const getRateClass = (rate) => {
 }
 
 .rule-icon {
-  font-size: 36rpx;
+  font-size: $uni-font-size-base;
   margin-right: 15rpx;
 }
 
 .rule-name {
   flex: 1;
-  font-size: 28rpx;
+  font-size: $uni-font-size-sm;
   color: #333;
 }
 
 .rule-count {
-  font-size: 26rpx;
+  font-size: $uni-font-size-md;
   font-weight: bold;
 
   &.rule-count-error {
@@ -263,7 +263,7 @@ const getRateClass = (rate) => {
 }
 
 .empty-text {
-  font-size: 26rpx;
+  font-size: $uni-font-size-md;
   color: #999;
 }
 </style>
