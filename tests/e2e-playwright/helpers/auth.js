@@ -128,69 +128,41 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
   if (!superAdmin) {
     superAdmin = TEST_USERS.SUPER_ADMIN;
   }
-  
-  // 清除所有 cookies
-  console.log('清除浏览器 cookies...');
-  const context = page.context();
-  await context.clearCookies();
-  
-  // 重新导航到根路径
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(3000); // 等待应用完全初始化
-  
-  // 检查当前页面是否在首页（已登录状态）
-  const pageText = await page.locator('body').textContent();
-  if (pageText.includes('打卡') || pageText.includes('社区') || pageText.includes('我的')) {
-    console.log('检测到已登录状态，强制清除登录状态...');
-    
-    // 尝试清除 localStorage 和 sessionStorage
-    try {
-      await page.evaluate(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-      });
-    } catch (error) {
-      console.log('清除存储时出错（可能跨域）:', error.message);
-    }
-    
-    // 重新加载页面
-    await page.reload();
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
-  }
-  
-  // 等待登录页面加载
+
+  console.log('超级管理员登录...');
+
+  // 等待登录页面（欢迎页）加载
   await waitForLoginPage(page);
-  
+
   // 点击"手机号登录"按钮
   await page.locator('text=手机号登录').click({ force: true });
-  
-  // 等待导航到手机登录页面
+
+  // 等待手机登录页面加载 - 等待 .tab 元素出现
+  await page.waitForSelector('.tab', { timeout: 10000 });
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
-  
+
   // 切换到"密码登录"标签页
   await page.locator('.tab').filter({ hasText: '密码登录' }).click({ force: true });
   await page.waitForTimeout(1000);
-  
+
   // 输入手机号和密码
   await page.locator('input[type="number"]').fill(superAdmin.phone);
   await page.waitForTimeout(500);
   await page.locator('input[type="password"]').fill(superAdmin.password);
   await page.waitForTimeout(500);
-  
+
   // 点击登录按钮（使用 uni-button 选择器）
   await page.locator('uni-button.submit').click({ force: true });
-  
+
   // 等待登录完成（超级管理员应该自动导航到"我的"页面）
   await page.waitForTimeout(5000);
   await page.waitForLoadState('networkidle');
-  
+
   // 验证登录成功
   const loginPageText = await page.locator('body').textContent();
   expect(loginPageText).toContain('我的');
-  
+
   console.log('✅ 超级管理员登录成功');
 }
 
@@ -241,11 +213,24 @@ export async function registerAndLoginAsUser(page, options = {}) {
     // 步骤 1：导航到登录页面
     console.log('步骤1: 导航到登录页面');
     await page.goto('/');
+    
+    // 等待页面完全加载（JavaScript 执行完成）
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
+    
+    // 验证页面是否正确加载
+    const initialPageText = await page.locator('body').textContent();
+    console.log('页面初始内容预览:', initialPageText.substring(0, 200));
+    
+    if (!initialPageText.includes('安全守护')) {
+      throw new Error('登录页面未正确加载，未找到"安全守护"文本');
+    }
 
     // 步骤 2：点击"手机号登录"按钮
     console.log('步骤2: 点击"手机号登录"按钮');
+    
+    // 等待"手机号登录"按钮出现（增加超时时间）
+    await page.waitForSelector('text=手机号登录', { timeout: 15000 });
     await page.locator('text=手机号登录').click({ force: true });
     
     // 等待导航到手机登录页面
