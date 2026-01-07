@@ -101,6 +101,9 @@ fi
 # 运行测试
 log_info "开始运行 Playwright E2E 测试..."
 
+# 记录测试开始时间
+TEST_START_TIME=$(date +%s)
+
 # 根据参数选择运行模式
 if [ "$1" = "--ui" ]; then
     # UI 模式
@@ -120,17 +123,29 @@ else
     npx playwright test
 fi
 
+# 记录测试结束时间
+TEST_END_TIME=$(date +%s)
+
+# 计算总用时（秒）
+TEST_DURATION=$((TEST_END_TIME - TEST_START_TIME))
+
+# 格式化总用时（转换为 mm:ss 格式）
+TEST_MINUTES=$((TEST_DURATION / 60))
+TEST_SECONDS=$((TEST_DURATION % 60))
+
 # 检查测试结果
 TEST_RESULT=$?
 
 if [ $TEST_RESULT -eq 0 ]; then
     log_info "✅ 所有测试通过"
+    log_info "⏱️  测试集总用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
     
     # 显示测试报告
     log_info "测试报告: playwright-report/index.html"
     log_info "查看报告: npx playwright show-report"
 else
     log_error "❌ 测试失败"
+    log_info "⏱️  测试集总用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
     
     # 显示测试报告
     log_info "测试报告: playwright-report/index.html"

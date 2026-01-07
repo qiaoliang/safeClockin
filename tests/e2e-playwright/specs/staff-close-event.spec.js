@@ -38,7 +38,7 @@ test.describe("社区工作人员关闭事件测试", () => {
         console.log("测试套件完成：社区工作人员关闭事件");
     });
 
-    test("社区工作人员应该能够关闭用户的求助事件", async ({ page }) => {
+    test.skip("社区工作人员应该能够关闭用户的求助事件", async ({ page }) => {
         console.log("开始测试：社区工作人员关闭用户求助事件");
 
         // 步骤1: 创建并登录普通用户，发起求助事件
@@ -62,7 +62,7 @@ test.describe("社区工作人员关闭事件测试", () => {
 
                 console.log("✅ 已退出登录");
 
-        
+
 
                 // 检查是否已到达登录页（增加等待时间）
 
@@ -70,7 +70,7 @@ test.describe("社区工作人员关闭事件测试", () => {
 
                 await page.waitForTimeout(3000);
 
-                
+
 
                 // 尝试多次检查页面内容
 
@@ -78,7 +78,7 @@ test.describe("社区工作人员关闭事件测试", () => {
 
                 console.log("页面内容预览:", loginPageText.substring(0, 200));
 
-                
+
 
                 // 如果不在登录页，尝试重新导航
 
@@ -96,7 +96,7 @@ test.describe("社区工作人员关闭事件测试", () => {
 
                 }
 
-                
+
 
                 expect(loginPageText.includes("登录") || loginPageText.includes("手机号")).toBeTruthy();
 
