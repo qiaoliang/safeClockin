@@ -74,18 +74,8 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# 根据环境类型设置输出路径
-if [ "$ENV_TYPE" = "unit" ]; then
-    BUILD_OUTPUT_DIR="build"
-elif [ "$ENV_TYPE" = "func" ]; then
-    BUILD_OUTPUT_DIR="build"
-elif [ "$ENV_TYPE" = "uat" ]; then
-    BUILD_OUTPUT_DIR="uat"
-elif [ "$ENV_TYPE" = "prod" ]; then
-    BUILD_OUTPUT_DIR="build"
-else
-    BUILD_OUTPUT_DIR="build"
-fi
+# 根据环境类型设置输出路径（所有环境统一使用 build）
+BUILD_OUTPUT_DIR="build"
 
 echo "===== ENV_TYPE ========="
 echo $ENV_TYPE
