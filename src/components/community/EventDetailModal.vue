@@ -96,6 +96,13 @@
               📷
             </button>
             <button
+              v-if="isStaffView && currentEvent?.status === 1"
+              class="resolve-btn"
+              @click="openResolveDialog"
+            >
+              问题已解决
+            </button>
+            <button
               class="action-btn"
               :disabled="!responseText.trim() && !selectedImage && selectedTags.length === 0"
               @click="handleSendResponse"
@@ -117,6 +124,49 @@
           </text>
         </view>
       </view>
+
+      <!-- 解决对话框 -->
+      <uni-popup
+        ref="resolvePopup"
+        type="dialog"
+        :safe-area="false"
+      >
+        <view class="resolve-dialog">
+          <view class="dialog-header">
+            <text class="dialog-title">
+              确认问题已解决
+            </text>
+          </view>
+          <view class="dialog-body">
+            <textarea
+              v-model="resolveReason"
+              class="resolve-textarea"
+              placeholder="请详细说明问题解决情况..."
+              :maxlength="200"
+            />
+            <text
+              :class="['char-count', { 'invalid': resolveReason.length < 5 }]"
+            >
+              {{ characterCountText }}
+            </text>
+          </view>
+          <view class="dialog-footer">
+            <button
+              class="cancel-btn"
+              @click="closeResolveDialog"
+            >
+              取消
+            </button>
+            <button
+              class="confirm-btn"
+              :disabled="!isResolveReasonValid || isResolving"
+              @click="handleConfirmResolve"
+            >
+              {{ isResolving ? '关闭中...' : '确认' }}
+            </button>
+          </view>
+        </view>
+      </uni-popup>
     </view>
   </uni-popup>
 </template>
@@ -138,10 +188,33 @@ const props = defineProps({
 const communityStore = useCommunityStore()
 
 const popup = ref(null)
+const resolvePopup = ref(null)
 const responseText = ref('')
 const selectedImage = ref(null)
 const selectedTags = ref([])
 const scrollTop = ref(0)
+
+// 解决事件相关状态
+const showResolveDialog = ref(false)
+const resolveReason = ref('')
+const isResolving = ref(false)
+
+// 获取当前事件（从store）
+const currentEvent = computed(() => communityStore.currentEvent)
+
+// 验证解决原因是否有效
+const isResolveReasonValid = computed(() =>
+  resolveReason.value.length >= 5 && resolveReason.value.length <= 200
+)
+
+// 字符计数文本
+const characterCountText = computed(() => {
+  const count = resolveReason.value.length
+  if (count < 5) {
+    return `${count}/200字 (最少5字)`
+  }
+  return `${count}/200字`
+})
 
 const quickTags = computed(() => {
   return props.isStaffView ? QUICK_TAGS_CONFIG.staff : QUICK_TAGS_CONFIG.user
@@ -355,6 +428,47 @@ const uploadMedia = async (filePath, type) => {
   })
 }
 
+// 打开解决对话框
+const openResolveDialog = () => {
+  resolveReason.value = ''
+  showResolveDialog.value = true
+  resolvePopup.value?.open()
+}
+
+// 关闭解决对话框
+const closeResolveDialog = () => {
+  showResolveDialog.value = false
+  resolvePopup.value?.close()
+}
+
+// 确认解决事件
+const handleConfirmResolve = async () => {
+  if (!isResolveReasonValid.value || isResolving.value) return
+
+  isResolving.value = true
+  try {
+    await communityStore.resolveEvent(
+      currentEvent.value.event_id,
+      resolveReason.value
+    )
+
+    uni.showToast({
+      title: '问题已解决',
+      icon: 'success'
+    })
+
+    closeResolveDialog()
+    close() // 关闭事件详情模态框
+  } catch (error) {
+    uni.showToast({
+      title: error.message || '关闭失败，请重试',
+      icon: 'none'
+    })
+  } finally {
+    isResolving.value = false
+  }
+}
+
 // 监听事件消息变化，自动滚动到底部
 watch(eventMessages, () => {
   setTimeout(() => {
@@ -538,5 +652,84 @@ defineExpose({
 .preset-tag.success {
   border: 2rpx solid $uni-success;
   color: $uni-success;
+}
+
+.resolve-btn {
+  padding: $uni-spacing-base $uni-spacing-xl;
+  background: $uni-success;
+  color: $uni-white;
+  border-radius: $uni-radius-xl;
+  font-size: $uni-font-size-base;
+  border: none;
+}
+
+.resolve-dialog {
+  width: 600rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-spacing-xxxl;
+}
+
+.dialog-header {
+  margin-bottom: $uni-spacing-xl;
+}
+
+.dialog-title {
+  font-size: $uni-font-size-xl;
+  font-weight: bold;
+  color: $uni-text-primary;
+}
+
+.dialog-body {
+  margin-bottom: $uni-spacing-xl;
+}
+
+.resolve-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: $uni-spacing-base;
+  border: 2rpx solid $uni-border-base;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+  margin-bottom: $uni-spacing-base;
+  box-sizing: border-box;
+}
+
+.char-count {
+  display: block;
+  font-size: $uni-font-size-sm;
+  color: $uni-text-secondary;
+  text-align: right;
+
+  &.invalid {
+    color: $uni-error;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  gap: $uni-spacing-base;
+}
+
+.cancel-btn, .confirm-btn {
+  flex: 1;
+  padding: $uni-spacing-base;
+  border-radius: $uni-radius-base;
+  font-size: $uni-font-size-base;
+}
+
+.cancel-btn {
+  background: $uni-bg-color-lighter;
+  color: $uni-text-primary;
+}
+
+.confirm-btn {
+  background: $uni-success;
+  color: $uni-white;
+
+  &:disabled {
+    background: $uni-border-base;
+    color: $uni-text-secondary;
+  }
 }
 </style>

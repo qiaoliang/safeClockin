@@ -731,6 +731,32 @@ export const useCommunityStore = defineStore('community', {
         console.error('添加消息失败:', error)
         throw error
       }
+    },
+
+    /**
+     * 关闭事件（标记为已解决）
+     * @param {number} eventId - 事件ID
+     * @param {string} closureReason - 关闭原因（5-200字符）
+     */
+    async resolveEvent(eventId, closureReason) {
+      try {
+        const response = await request({
+          url: `/api/events/${eventId}/close`,
+          method: 'PUT',
+          data: { closure_reason: closureReason }
+        })
+
+        if (response.code === 1) {
+          // 刷新待处理事件列表以更新通知横幅
+          await this.fetchPendingEvents()
+          return response.data
+        } else {
+          throw new Error(response.msg || '关闭事件失败')
+        }
+      } catch (error) {
+        console.error('Resolve event failed:', error)
+        throw error
+      }
     }
   }
 })
