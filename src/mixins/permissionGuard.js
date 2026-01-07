@@ -74,28 +74,28 @@ export const withPermissionCheck = (pagePath, callback) => {
 }
 
 /**
- * 功能权限检查装饰器
- * @param {string} featureName - 功能名称
+ * 操作权限检查装饰器
+ * @param {string} actionName - 操作名称
  * @param {Function} callback - 权限检查通过后的回调函数
  * @param {boolean} showToast - 是否显示提示
  * @returns {Function} 包装后的函数
  */
-export const withFeaturePermissionCheck = (featureName, callback, showToast = true) => {
+export const withActionPermissionCheck = (actionName, callback, showToast = true) => {
   return (...args) => {
-    const { checkFeaturePermission } = require('@/utils/permission')
-    
-    console.log(`[功能权限检查] 功能: ${featureName}`)
-    console.log(`[功能权限检查] 当前用户角色: ${getCurrentUserRole()}`)
-    
-    const hasPermission = checkFeaturePermission(featureName, showToast)
-    
+    const { checkActionPermission } = require('@/utils/permission')
+
+    console.log(`[操作权限检查] 操作: ${actionName}`)
+    console.log(`[操作权限检查] 当前用户角色: ${getCurrentUserRole()}`)
+
+    const hasPermission = checkActionPermission(actionName, showToast)
+
     if (!hasPermission) {
-      console.warn(`[功能权限拒绝] 用户无权执行: ${featureName}`)
+      console.warn(`[操作权限拒绝] 用户无权执行: ${actionName}`)
       return
     }
-    
-    console.log(`[功能权限通过] 用户可以执行: ${featureName}`)
-    
+
+    console.log(`[操作权限通过] 用户可以执行: ${actionName}`)
+
     if (typeof callback === 'function') {
       return callback(...args)
     }
@@ -103,27 +103,27 @@ export const withFeaturePermissionCheck = (featureName, callback, showToast = tr
 }
 
 /**
- * 批量功能权限检查
- * @param {Array<string>} featureNames - 功能名称列表
+ * 批量操作权限检查
+ * @param {Array<string>} actionNames - 操作名称列表
  * @returns {boolean} 是否全部有权限
  */
-export const checkMultipleFeaturePermissions = (featureNames) => {
-  const { hasFeaturePermission } = require('@/utils/permission')
+export const checkMultipleActionPermissions = (actionNames) => {
+  const { hasActionPermission } = require('@/utils/permission')
   
-  return featureNames.every(featureName => {
-    const hasPermission = hasFeaturePermission(featureName)
-    console.log(`[批量权限检查] ${featureName}: ${hasPermission ? '通过' : '拒绝'}`)
+  return actionNames.every(actionName => {
+    const hasPermission = hasActionPermission(actionName)
+    console.log(`[批量权限检查] ${actionName}: ${hasPermission ? '通过' : '拒绝'}`)
     return hasPermission
   })
 }
 
 /**
- * 获取用户在当前页面可执行的功能列表
- * @param {Array<string>} allFeatures - 页面所有功能列表
- * @returns {Array<string>} 用户可执行的功能列表
+ * 获取用户在当前页面可执行的操作列表
+ * @param {Array<string>} allActions - 页面所有操作列表
+ * @returns {Array<string>} 用户可执行的操作列表
  */
-export const getPageAccessibleFeatures = (allFeatures) => {
-  const { hasFeaturePermission } = require('@/utils/permission')
-  
-  return allFeatures.filter(feature => hasFeaturePermission(feature))
+export const getPageAccessibleActions = (allActions) => {
+  const { hasActionPermission } = require('@/utils/permission')
+
+  return allActions.filter(action => hasActionPermission(action))
 }

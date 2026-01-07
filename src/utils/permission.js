@@ -56,13 +56,13 @@ export const hasPagePermission = (pagePath, userRole = null) => {
 }
 
 /**
- * 检查用户是否有执行指定功能的权限
- * @param {string} featureName - 功能名称
+ * 检查用户是否有执行指定操作的权限
+ * @param {string} actionName - 操作名称
  * @param {number} userRole - 用户角色ID（可选，默认使用当前用户角色）
  * @returns {boolean} 是否有权限
  */
-export const hasFeaturePermission = (featureName, userRole = null) => {
-  // 如果未登录，没有任何功能权限
+export const hasActionPermission = (actionName, userRole = null) => {
+  // 如果未登录，没有任何操作权限
   if (!isLoggedIn()) {
     return false
   }
@@ -74,11 +74,11 @@ export const hasFeaturePermission = (featureName, userRole = null) => {
     return false
   }
 
-  // 获取该角色允许的功能列表
-  const allowedFeatures = RoleFeaturePermissions[role] || []
+  // 获取该角色允许的操作列表
+  const allowedActions = RoleFeaturePermissions[role] || []
 
-  // 检查功能是否在允许列表中
-  return allowedFeatures.includes(featureName)
+  // 检查操作是否在允许列表中
+  return allowedActions.includes(actionName)
 }
 
 /**
@@ -216,12 +216,12 @@ export const checkPagePermission = (pagePath) => {
 }
 
 /**
- * 功能权限守卫（在执行功能前调用）
- * @param {string} featureName - 功能名称
+ * 操作权限守卫（在执行操作前调用）
+ * @param {string} actionName - 操作名称
  * @param {boolean} showToast - 是否显示提示（默认true）
  * @returns {boolean} 是否有权限执行
  */
-export const checkFeaturePermission = (featureName, showToast = true) => {
+export const checkActionPermission = (actionName, showToast = true) => {
   // 检查是否登录
   if (!isLoggedIn()) {
     if (showToast) {
@@ -232,9 +232,9 @@ export const checkFeaturePermission = (featureName, showToast = true) => {
     }
     return false
   }
-  
-  // 检查功能权限
-  if (!hasFeaturePermission(featureName)) {
+
+  // 检查操作权限
+  if (!hasActionPermission(actionName)) {
     if (showToast) {
       uni.showToast({
         title: PermissionErrorMessages.NO_FEATURE_ACCESS,
@@ -243,7 +243,7 @@ export const checkFeaturePermission = (featureName, showToast = true) => {
     }
     return false
   }
-  
+
   return true
 }
 
@@ -261,9 +261,9 @@ export const getAccessiblePages = (userRole = null) => {
 }
 
 /**
- * 获取用户可执行的功能列表
+ * 获取用户可执行的操作列表
  * @param {string} userRole - 用户角色（可选）
- * @returns {Array<string>} 可执行的功能列表
+ * @returns {Array<string>} 可执行的操作列表
  */
 export const getAccessibleFeatures = (userRole = null) => {
   const role = userRole || getCurrentUserRole()

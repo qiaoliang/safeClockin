@@ -104,7 +104,7 @@
 
     <!-- 底部悬浮按钮 - 仅有添加权限的用户可见 -->
     <view
-      v-if="hasFeaturePermission(FeaturePermission.ADD_USER)"
+      v-if="hasActionPermission(FeaturePermission.ADD_USER)"
       class="floating-add-btn"
       @click="addUsers"
     >
@@ -163,7 +163,7 @@ import {
   SUCCESS_MESSAGES,
   LOADING_MESSAGES
 } from '@/constants/community'
-import { checkPagePermission, hasFeaturePermission } from '@/utils/permission'
+import { checkPagePermission, hasActionPermission } from '@/utils/permission'
 import { PagePath, FeaturePermission } from '@/constants/permissions'
 
 const communityStore = useCommunityStore()

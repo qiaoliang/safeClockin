@@ -3,7 +3,7 @@
     <!-- 顶部标题栏 -->
     <view class="header-bar">
       <view
-        v-if="hasFeaturePermission(FeaturePermission.MERGE_COMMUNITY) || hasFeaturePermission(FeaturePermission.SPLIT_COMMUNITY)"
+        v-if="hasActionPermission(FeaturePermission.MERGE_COMMUNITY) || hasActionPermission(FeaturePermission.SPLIT_COMMUNITY)"
         class="header-left"
         @click="showMoreMenu"
       >
@@ -165,7 +165,7 @@
 
     <!-- 底部悬浮按钮 - 仅有创建权限的用户可见 -->
     <view
-      v-if="hasFeaturePermission(FeaturePermission.CREATE_COMMUNITY)"
+      v-if="hasActionPermission(FeaturePermission.CREATE_COMMUNITY)"
       class="floating-add-btn"
       @click="createCommunity"
     >
@@ -248,7 +248,7 @@ import {
 import { checkPagePermission } from '@/utils/permission'
 import { PagePath, FeaturePermission } from '@/constants/permissions'
 import { SPECIAL_COMMUNITY_NAMES } from '@/constants/community'
-import { hasFeaturePermission } from '@/utils/permission'
+import { hasActionPermission } from '@/utils/permission'
 import { useUserStore } from '@/store/modules/user'
 
 const communityStore = useCommunityStore()
@@ -493,7 +493,7 @@ const hasCommunityAccess = (communityId) => {
 // 判断是否可以删除社区
 const canDeleteCommunity = (community) => {
   // 只有超级管理员可以删除
-  if (!hasFeaturePermission(FeaturePermission.DELETE_COMMUNITY)) {
+  if (!hasActionPermission(FeaturePermission.DELETE_COMMUNITY)) {
     return false
   }
 
@@ -583,7 +583,7 @@ const toggleCommunityStatus = (item, newStatus, onError = null) => {
 // 处理状态标签点击
 const handleStatusClick = (item) => {
   // 检查权限
-  if (!hasFeaturePermission(FeaturePermission.TOGGLE_COMMUNITY_STATUS)) {
+  if (!hasActionPermission(FeaturePermission.TOGGLE_COMMUNITY_STATUS)) {
     uni.showToast({
       title: '无权限执行此操作',
       icon: 'none'
