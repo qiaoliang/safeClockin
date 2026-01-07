@@ -267,21 +267,27 @@ async function navigateToCommunityManagement(page) {
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(2000);
 
-    // 查找并点击"社区管理"或"管理"按钮
-    const pageText = await page.locator("body").textContent();
-    console.log("当前页面内容预览:", pageText.substring(0, 300));
+    // NEW: Find the manage button next to community selector
+    console.log("查找管理按钮（社区选择器右侧）");
 
-    if (pageText.includes("社区管理")) {
-        const manageButton = page.locator("text=社区管理").first();
-        await manageButton.click({ force: true });
-    } else if (pageText.includes("管理")) {
-        const manageButton = page.locator("text=管理").first();
-        await manageButton.click({ force: true });
-    } else if (pageText.includes("数据看板")) {
-        // 如果已经在数据看板页面，尝试点击管理按钮
-        console.log("已在数据看板页面，尝试点击管理按钮");
-        const manageButton = page.locator("text=管理").first();
-        await manageButton.click({ force: true });
+    // Try new CSS class first
+    const manageButton = page.locator(".manage-button");
+    const count = await manageButton.count();
+
+    if (count > 0) {
+        console.log("找到新样式的管理按钮");
+        await manageButton.first().click({ force: true });
+    } else {
+        // Fallback to text search (backward compatibility)
+        console.log("尝试通过文本查找管理按钮");
+        const textButton = page.locator("text=管理").first();
+        const textCount = await textButton.count();
+
+        if (textCount > 0) {
+            await textButton.click({ force: true });
+        } else {
+            throw new Error("未找到管理按钮 - 用户可能没有社区管理权限");
+        }
     }
 
     // 等待页面加载
