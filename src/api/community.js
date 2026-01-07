@@ -216,3 +216,34 @@ export const getCommunityDailyStats = (communityId) => {
     method: 'GET'
   })
 }
+
+/**
+ * 批量转移用户到目标社区
+ * @param {number} sourceCommunityId - 源社区ID
+ * @param {number} targetCommunityId - 目标社区ID
+ * @param {number[]} userIds - 用户ID列表（最多10个）
+ * @returns {Promise}
+ */
+export const transferUsersBatch = (sourceCommunityId, targetCommunityId, userIds) => {
+  return request({
+    url: '/api/community/transfer-users',
+    method: 'POST',
+    data: {
+      source_community_id: sourceCommunityId,
+      target_community_id: targetCommunityId,
+      user_ids: userIds
+    }
+  })
+}
+
+/**
+ * 获取主管管理的社区列表
+ * @param {number} managerId - 主管用户ID
+ * @returns {Promise}
+ */
+export const getManagerCommunities = (managerId) => {
+  return request({
+    url: `/api/manager/${managerId}/communities`,
+    method: 'GET'
+  })
+}
