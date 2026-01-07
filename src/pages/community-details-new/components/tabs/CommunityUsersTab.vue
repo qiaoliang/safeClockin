@@ -5,17 +5,50 @@
       <h3 class="tab-title">
         用户管理
       </h3>
-      <button
-        class="add-button"
-        @click="handleAddUserClick"
-      >
-        <text class="add-icon">
-          +
-        </text>
-        <text class="add-text">
-          添加用户
-        </text>
-      </button>
+      <view class="header-actions">
+        <button
+          v-if="!isMultiSelectMode"
+          class="batch-transfer-button"
+          @click="handleBatchTransferClick"
+        >
+          <text class="batch-transfer-icon">
+            📦
+          </text>
+          <text class="batch-transfer-text">
+            批量转移
+          </text>
+        </button>
+        <button
+          v-else
+          class="cancel-button"
+          @click="handleCancelBatchTransfer"
+        >
+          <text class="cancel-text">
+            取消
+          </text>
+        </button>
+        <button
+          v-if="!isMultiSelectMode"
+          class="add-button"
+          @click="handleAddUserClick"
+        >
+          <text class="add-icon">
+            +
+          </text>
+          <text class="add-text">
+            添加用户
+          </text>
+        </button>
+        <button
+          v-if="isMultiSelectMode && selectedCount > 0"
+          class="confirm-button"
+          @click="handleConfirmBatchTransfer"
+        >
+          <text class="confirm-text">
+            确定 ({{ selectedCount }}/10)
+          </text>
+        </button>
+      </view>
     </view>
     
     <!-- 搜索框 -->
@@ -50,6 +83,22 @@
         :key="user.user_id"
         class="user-card"
       >
+        <!-- 多选框 -->
+        <view
+          v-if="isMultiSelectMode"
+          class="checkbox-container"
+          @click="handleToggleUserSelection(user.user_id)"
+        >
+          <view
+            class="checkbox"
+            :class="{ 'checked': isUserSelected(user.user_id) }"
+          >
+            <text v-if="isUserSelected(user.user_id)" class="check-icon">
+              ✓
+            </text>
+          </view>
+        </view>
+
         <view class="user-info">
           <view class="user-avatar">
             <text class="avatar-icon">
@@ -94,6 +143,7 @@
         </view>
         
         <button
+          v-if="!isMultiSelectMode"
           class="remove-button"
           @click="$emit('remove-user', user.user_id)"
         >
@@ -135,6 +185,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useTransferStore } from '@/store/modules/transfer'
 
 const props = defineProps({
   userList: {
@@ -147,7 +198,11 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['add-user', 'remove-user', 'refresh'])
+const emit = defineEmits(['add-user', 'remove-user', 'refresh', 'batch-transfer'])
+
+// 批量转移相关
+const transferStore = useTransferStore()
+const { isMultiSelectMode, selectedUserIds, selectedCount, isMaxSelected } = transferStore
 
 // 处理添加用户按钮点击
 const handleAddUserClick = () => {
@@ -210,6 +265,35 @@ const handleSearch = () => {
 const clearSearch = () => {
   searchQuery.value = ''
 }
+
+// 批量转移相关方法
+const handleBatchTransferClick = () => {
+  transferStore.enterMultiSelectMode()
+}
+
+const handleCancelBatchTransfer = () => {
+  transferStore.exitMultiSelectMode()
+}
+
+const handleToggleUserSelection = (userId) => {
+  transferStore.toggleUserSelection(userId)
+}
+
+const isUserSelected = (userId) => {
+  return transferStore.isUserSelected(userId)
+}
+
+const handleConfirmBatchTransfer = () => {
+  if (selectedCount.value === 0) {
+    uni.showToast({
+      title: '请选择要转移的用户',
+      icon: 'none'
+    })
+    return
+  }
+
+  emit('batch-transfer', selectedUserIds.value)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -220,6 +304,74 @@ const clearSearch = () => {
     display: flex;
     align-items: center;
     margin-bottom: $uni-spacing-lg;
+
+    .header-actions {
+      display: flex;
+      gap: $uni-spacing-sm;
+      align-items: center;
+    }
+
+    .batch-transfer-button {
+      display: flex;
+      align-items: center;
+      gap: $uni-spacing-xs;
+      padding: $uni-spacing-xs $uni-spacing-sm;
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: $uni-radius-sm;
+      transition: all 0.2s ease;
+
+      .batch-transfer-icon {
+        font-size: $uni-font-size-sm;
+        color: $uni-success;
+      }
+
+      .batch-transfer-text {
+        font-size: $uni-font-size-xs;
+        color: $uni-success;
+        font-weight: $uni-font-weight-base;
+      }
+
+      &:active {
+        background: rgba(76, 175, 80, 0.2);
+        transform: scale(0.98);
+      }
+    }
+
+    .cancel-button {
+      padding: $uni-spacing-xs $uni-spacing-sm;
+      background: rgba(107, 114, 128, 0.1);
+      border-radius: $uni-radius-sm;
+      transition: all 0.2s ease;
+
+      .cancel-text {
+        font-size: $uni-font-size-xs;
+        color: $uni-text-gray-600;
+        font-weight: $uni-font-weight-base;
+      }
+
+      &:active {
+        background: rgba(107, 114, 128, 0.2);
+        transform: scale(0.98);
+      }
+    }
+
+    .confirm-button {
+      padding: $uni-spacing-xs $uni-spacing-sm;
+      background: $uni-success;
+      border-radius: $uni-radius-sm;
+      transition: all 0.2s ease;
+
+      .confirm-text {
+        font-size: $uni-font-size-xs;
+        color: $uni-white;
+        font-weight: $uni-font-weight-base;
+      }
+
+      &:active {
+        background: rgba(16, 185, 129, 0.8);
+        transform: scale(0.98);
+      }
+    }
     
     .tab-title {
       font-size: $uni-font-size-base;
@@ -315,6 +467,34 @@ const clearSearch = () => {
       padding: $uni-spacing-md;
       margin-bottom: $uni-spacing-sm;
       transition: all 0.3s ease;
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        padding-right: $uni-spacing-sm;
+        margin-right: $uni-spacing-xs;
+
+        .checkbox {
+          width: 40rpx;
+          height: 40rpx;
+          border: 2rpx solid $uni-border-color;
+          border-radius: $uni-radius-xs;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+
+          &.checked {
+            background: $uni-success;
+            border-color: $uni-success;
+
+            .check-icon {
+              color: $uni-white;
+              font-size: $uni-font-size-sm;
+            }
+          }
+        }
+      }
       
       &:active {
         transform: translateY(-1px);
