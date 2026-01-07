@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import CommunitySelector from '@/components/community/CommunitySelector.vue'
 import EventNotificationBar from './components/EventNotificationBar.vue'
@@ -70,9 +70,14 @@ import {
   getPendingEvents
 } from '@/api/community-dashboard'
 import { useCommunityStore } from '@/store/modules/community'
+import { useUserStore } from '@/store/modules/user'
 
 // Store
 const communityStore = useCommunityStore()
+const userStore = useUserStore()
+
+// 计算属性：是否是社区工作人员
+const isCommunityStaff = computed(() => userStore.isCommunityStaff)
 
 // 状态
 const currentCommunityId = ref(null)
@@ -112,6 +117,24 @@ let eventsRefreshTimer = null
 // 计算属性
 const hasPendingEvents = computed(() => pendingEvents.value.length > 0)
 
+// 权限检查：超级管理员和社区工作人员可以访问
+const checkPermission = () => {
+  if (!userStore.isSuperAdmin && !isCommunityStaff.value) {
+    uni.showModal({
+      title: '权限提示',
+      content: '只有超级管理员和社区工作人员才能访问此页面',
+      showCancel: false,
+      confirmText: '知道了',
+      success: () => {
+        // 跳转到打卡首页
+        uni.switchTab({
+          url: '/pages/home-solo/home-solo'
+        })
+      }
+    })
+  }
+}
+
 // 初始化
 onMounted(() => {
   currentCommunityId.value = communityStore.currentCommunityId
@@ -127,6 +150,9 @@ onUnmounted(() => {
 
 // 页面显示时刷新数据
 onShow(() => {
+  // 检查权限
+  checkPermission()
+  
   if (currentCommunityId.value) {
     loadAllData()
   }
