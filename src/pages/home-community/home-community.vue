@@ -201,7 +201,11 @@ const showEventModal = ref(false)
 // Current community
 const currentCommunity = computed(() => communityStore.currentCommunity)
 
-// Permission check for manage button
+// Permission check for manage button visibility
+// Super Admin (role=4): Can manage if assigned as manager/staff to community
+// Community Manager (role=3): Can manage their assigned community only
+// Community Specialist (role=2): Can manage their assigned community only
+// Regular users (role=1): Cannot manage
 const canManageCurrentCommunity = computed(() => {
   const user = userStore.userInfo
   const community = currentCommunity.value
@@ -218,7 +222,7 @@ const canManageCurrentCommunity = computed(() => {
 
   // Community Manager/Specialist: can manage their assigned community
   if (userRole === 3 || userRole === '社区主管' || userRole === 2 || userRole === '社区专员') {
-    return user.community_id === communityId
+    return user.community_id != null && user.community_id === communityId
   }
 
   return false
@@ -228,7 +232,7 @@ const canManageCurrentCommunity = computed(() => {
 const isUserManagerOfCommunity = (communityId) => {
   // Check membership from user store's communityRoles
   const roleInCommunity = userStore.getRoleInCommunity(communityId)
-  return roleInCommunity === 'manager' || roleInCommunity === 'specialist'
+  return roleInCommunity === 'manager' || roleInCommunity === 'staff'
 }
 
 // 计算属性：显示前3个逾期事项
