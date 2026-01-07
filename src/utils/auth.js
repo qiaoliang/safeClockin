@@ -101,44 +101,32 @@ export async function handleLoginSuccess(response) {
     
     // 根据用户状态进行页面跳转
     const userInfo = userStore.userInfo
-    
-    if (!userInfo?.role) {
-      // 新用户需要选择角色
-      uni.redirectTo({
-        url: '/pages/role-select/role-select'
-      })
-    } else if (userInfo.role === 'community' && !userInfo.isVerified) {
-      // 社区工作人员需要身份验证
-      uni.redirectTo({
-        url: '/pages/community-auth/community-auth'
+
+    // 直接跳转到首页
+    const homePage = getHomePageByRole(userInfo?.role)
+
+    // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
+    const tabbarPages = [
+      '/pages/home-solo/home-solo',
+      '/pages/profile/profile'
+    ]
+
+    if (tabbarPages.includes(homePage)) {
+      uni.switchTab({
+        url: homePage
       })
     } else {
-      // 已有角色的用户直接跳转到对应首页
-      const homePage = getHomePageByRole(userInfo.role)
-      
-      // 检查是否为tabbar页面，如果是则使用switchTab，否则使用redirectTo
-      const tabbarPages = [
-        '/pages/home-solo/home-solo',
-        '/pages/profile/profile'
-      ]
-      
-      if (tabbarPages.includes(homePage)) {
-        uni.switchTab({
-          url: homePage
-        })
-      } else {
-        uni.redirectTo({
-          url: homePage
-        })
-      }
-      
-      // 显示登录成功提示
-      uni.showToast({
-        title: '登录成功',
-        icon: 'success',
-        duration: 1500
+      uni.redirectTo({
+        url: homePage
       })
     }
+
+    // 显示登录成功提示
+    uni.showToast({
+      title: '登录成功',
+      icon: 'success',
+      duration: 1500
+    })
   } catch (error) {
     console.error('登录成功处理失败:', error)
     

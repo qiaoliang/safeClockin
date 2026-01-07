@@ -16,21 +16,6 @@
       </text>
     </view>
 
-    <view
-      v-if="needCommunityVerify"
-      class="hint-section"
-    >
-      <text class="hint-text">
-        社区身份未验证，完成后可使用社区功能
-      </text>
-      <button
-        class="hint-btn"
-        @click="navigateTo('/pages/community-auth/community-auth')"
-      >
-        去验证
-      </button>
-    </view>
-
     <!-- 用户统计区域 -->
     <view
       v-if="userInfo"
@@ -339,11 +324,6 @@ const editProfile = () => {
 const needCompleteInfo = computed(() => {
   const u = userInfo.value || {};
   return !u.avatarUrl || !u.nickName || !u.phone_number;
-});
-
-const needCommunityVerify = computed(() => {
-  const u = userInfo.value || {};
-  return u.role === "community" && u.verification_status !== 2;
 });
 
 const showAbout = () => {

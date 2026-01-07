@@ -92,10 +92,6 @@ export const useUserStore = defineStore("user", {
         // 角色判断
         isSoloUser: (state) => state.userState.profile.role === 1 || state.userState.profile.role === "solo",
         isSupervisor: (state) => state.userState.profile.role === "supervisor",
-        isCommunityWorker: (state) => {
-            const role = state.userState.profile.role;
-            return role === 2 || role === 3 || role === "community";
-        },
 
         // 社区管理权限判断
         isSuperAdmin: (state) => {
