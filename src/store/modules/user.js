@@ -92,7 +92,7 @@ export const useUserStore = defineStore("user", {
 
         // 角色判断
         isSoloUser: (state) => state.userState.profile.role === RoleId.SOLO,
-        isSupervisor: (state) => state.userState.profile.role === "supervisor", // 保留向后兼容
+        isSupervisor: (state) => state.userState.profile.role === RoleId.SUPER_ADMIN,
 
         // 社区管理权限判断
         isSuperAdmin: (state) => {
@@ -102,61 +102,25 @@ export const useUserStore = defineStore("user", {
             return role === RoleId.SUPER_ADMIN;
         },
 
-        // 社区主管：需要检查用户在当前社区的角色
+        // 社区主管：检查用户的全局角色
         isCommunityManager: (state) => {
-            // 优先检查当前社区角色，如果没有指定社区则检查默认角色
-            const currentCommunityId = state.currentCommunityId;
-            if (currentCommunityId && state.userState.profile.communityRoles) {
-                const roleInCurrentCommunity =
-                    state.userState.profile.communityRoles[currentCommunityId];
-                return roleInCurrentCommunity === "manager";
-            }
-            // 向后兼容：如果未使用新结构，检查旧字段
-            if (state.userState.profile.communityRole === "manager") {
-                return true;
-            }
-            // 检查全局角色：后端返回 role 数字ID
             const role = state.userState.profile.role;
             return role === RoleId.MANAGER;
         },
 
         isCommunityStaff: (state) => {
-            // 社区专员：需要检查用户在当前社区的角色
-            const currentCommunityId = state.currentCommunityId;
-            if (currentCommunityId && state.userState.profile.communityRoles) {
-                const roleInCurrentCommunity =
-                    state.userState.profile.communityRoles[currentCommunityId];
-                return roleInCurrentCommunity === "staff";
-            }
-            // 向后兼容：如果未使用新结构，检查旧字段
-            if (state.userState.profile.communityRole === "staff") {
-                return true;
-            }
-            // 检查全局角色：后端返回 role 数字ID
+            // 社区工作人员：包括社区专员和社区主管
             const role = state.userState.profile.role;
-            return role === RoleId.STAFF;
+            return role === RoleId.STAFF || role === RoleId.MANAGER;
         },
 
         hasCommunityPermission: (state) => {
             // 判断是否有任何级别的社区管理权限
-            const currentCommunityId = state.currentCommunityId;
-            if (currentCommunityId && state.userState.profile.communityRoles) {
-                const roleInCurrentCommunity =
-                    state.userState.profile.communityRoles[currentCommunityId];
-                return (
-                    state.userState.profile.role === RoleId.SUPER_ADMIN ||
-                    roleInCurrentCommunity === "manager" ||
-                    roleInCurrentCommunity === "staff"
-                );
-            }
-            // 向后兼容
             const role = state.userState.profile.role;
             return (
                 role === RoleId.SUPER_ADMIN ||
                 role === RoleId.MANAGER ||
-                role === RoleId.STAFF ||
-                state.userState.profile.communityRole === "manager" ||
-                state.userState.profile.communityRole === "staff"
+                role === RoleId.STAFF
             );
         },
 
