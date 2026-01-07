@@ -22,9 +22,18 @@
       </text>
     </view>
 
-    <!-- 社区选择器 -->
-    <view class="community-selector-section">
+    <!-- 2. 社区选择器 + 管理按钮区域 -->
+    <view class="community-header-section">
       <CommunitySelector @change="handleCommunityChange" />
+
+      <!-- 管理按钮（仅当有权限时显示） -->
+      <view
+        v-if="canManageCurrentCommunity"
+        class="manage-button"
+        @click="handleManageCommunity"
+      >
+        <text class="manage-text">管理</text>
+      </view>
     </view>
 
     <!-- 数据概览 -->
@@ -442,8 +451,40 @@ onShow(() => {
   padding: 0 0 80rpx;
 }
 
-.community-selector-section {
-  margin: $uni-spacing-xl $uni-spacing-xxl;
+.community-header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $uni-spacing-xl $uni-spacing-xxxl;
+  background: $uni-bg-color-white;
+  border-bottom: 2rpx solid $uni-border-light;
+
+  :deep(.community-selector) {
+    flex: 1;
+    margin-right: $uni-spacing-base;
+  }
+}
+
+.manage-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $uni-spacing-base $uni-spacing-xl;
+  background: $uni-primary;
+  border-radius: $uni-radius-base;
+  min-width: 120rpx;
+  height: 64rpx;
+
+  .manage-text {
+    font-size: $uni-font-size-base;
+    color: $uni-white;
+    font-weight: $uni-font-weight-bold;
+  }
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
 }
 
 .notification-bar {
