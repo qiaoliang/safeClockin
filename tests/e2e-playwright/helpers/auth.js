@@ -131,6 +131,13 @@ export async function loginAsSuperAdmin(page, superAdmin = null) {
 
   console.log('超级管理员登录...');
 
+  // 导航到登录页面
+  await page.goto('/');
+  
+  // 等待页面完全加载（JavaScript 执行完成）
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000);
+
   // 等待登录页面（欢迎页）加载
   await waitForLoginPage(page);
 
