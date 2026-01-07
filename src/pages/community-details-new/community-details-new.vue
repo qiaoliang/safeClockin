@@ -80,13 +80,14 @@
           />
 
           <!-- 用户管理 -->
-          <CommunityUsersTab 
+          <CommunityUsersTab
             v-if="activeTab === 'users'"
             :user-list="userList"
             :community-id="communityId"
             @add-user="handleAddUser"
             @remove-user="handleRemoveUser"
             @refresh="refreshUserList"
+            @batch-transfer="handleBatchTransfer"
           />
 
           <!-- 规则管理（分组显示） -->
@@ -138,12 +139,35 @@
       @confirm="confirmAddStaff"
     />
 
-    <CommunityAddUserModal 
+    <CommunityAddUserModal
       :visible="showAddUserModal"
       :community-id="communityId"
       :community-name="communityData.name"
       @close="closeAddUserModal"
       @confirm="confirmAddUser"
+    />
+
+    <!-- 批量转移相关组件 -->
+    <TargetCommunitySelector
+      ref="targetCommunitySelectorRef"
+      :source-community-id="communityId"
+      @select="handleSelectTargetCommunity"
+      @close="transferStore.exitMultiSelectMode"
+    />
+
+    <TransferPreviewModal
+      ref="transferPreviewModalRef"
+      :source-community-name="communityData.name"
+      :target-community-name="selectedTargetCommunity?.name || ''"
+      :user-count="transferStore.selectedCount"
+      @confirm="handleConfirmTransfer"
+      @cancel="transferStore.exitMultiSelectMode"
+    />
+
+    <TransferResultModal
+      ref="transferResultModalRef"
+      :result="transferStore.transferResult"
+      @confirm="handleCloseTransferResult"
     />
   </view>
 </template>
@@ -153,6 +177,7 @@ import { ref, onMounted, computed } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { useCommunityStore } from '@/store/modules/community'
+import { useTransferStore } from '@/store/modules/transfer'
 import { getCommunityDetail, getCommunityStaffList, getCommunityUsers } from '@/api/community'
 import { getCommunityRules } from '@/api/community-checkin'
 import { authApi } from '@/api/auth'
@@ -167,6 +192,9 @@ import CommunitySupportTab from './components/tabs/CommunitySupportTab.vue'
 import CommunitySettingsModal from './components/modals/CommunitySettingsModal.vue'
 import CommunityAddStaffModal from './components/modals/CommunityAddStaffModal.vue'
 import CommunityAddUserModal from './components/modals/CommunityAddUserModal.vue'
+import TargetCommunitySelector from './components/modals/TargetCommunitySelector.vue'
+import TransferPreviewModal from './components/modals/TransferPreviewModal.vue'
+import TransferResultModal from './components/modals/TransferResultModal.vue'
 
 // API
 import { addCommunityStaff } from '@/api/community'
@@ -174,6 +202,13 @@ import { addCommunityStaff } from '@/api/community'
 // Store
 const userStore = useUserStore()
 const communityStore = useCommunityStore()
+const transferStore = useTransferStore()
+
+// 批量转移相关
+const targetCommunitySelectorRef = ref(null)
+const transferPreviewModalRef = ref(null)
+const transferResultModalRef = ref(null)
+const selectedTargetCommunity = ref(null)
 
 // 页面参数
 const communityId = ref('')
@@ -766,6 +801,74 @@ const refreshStaffList = () => {
 
 const refreshUserList = () => {
   loadUserList()
+}
+
+// 批量转移相关方法
+const handleBatchTransfer = async (userIds) => {
+  try {
+    // 加载主管管理的社区列表
+    await transferStore.loadManagerCommunities(userStore.userInfo.user_id)
+
+    if (transferStore.managerCommunities.length === 0) {
+      uni.showToast({
+        title: '您没有管理的其他社区',
+        icon: 'none'
+      })
+      return
+    }
+
+    // 打开目标社区选择器
+    targetCommunitySelectorRef.value?.open()
+  } catch (error) {
+    console.error('加载社区列表失败:', error)
+    uni.showToast({
+      title: '加载社区列表失败',
+      icon: 'none'
+    })
+  }
+}
+
+// 选择目标社区后显示预览
+const handleSelectTargetCommunity = (community) => {
+  selectedTargetCommunity.value = community
+  transferStore.selectTargetCommunity(community.community_id)
+
+  // 打开预览确认对话框
+  transferPreviewModalRef.value?.open()
+}
+
+// 确认转移
+const handleConfirmTransfer = async () => {
+  try {
+    const success = await transferStore.executeTransfer(communityId.value)
+
+    if (success) {
+      // 关闭预览对话框
+      transferPreviewModalRef.value?.close()
+
+      // 显示结果对话框
+      transferResultModalRef.value?.open()
+
+      // 退出多选模式
+      transferStore.exitMultiSelectMode()
+
+      // 刷新用户列表
+      await refreshUserList()
+    }
+  } catch (error) {
+    console.error('转移失败:', error)
+    uni.showToast({
+      title: error.message || '转移失败',
+      icon: 'none'
+    })
+    transferPreviewModalRef.value?.setLoading(false)
+  }
+}
+
+// 关闭结果对话框
+const handleCloseTransferResult = () => {
+  transferResultModalRef.value?.close()
+  transferStore.resetTransfer()
 }
 </script>
 
