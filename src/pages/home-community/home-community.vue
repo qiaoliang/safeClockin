@@ -1,20 +1,5 @@
 <template>
   <view class="home-community-container">
-    <!-- 顶部操作栏 -->
-    <view class="header-bar">
-      <text class="page-title">
-        数据看板
-      </text>
-      <view
-        class="header-actions"
-        @click="showQuickMenu"
-      >
-        <text class="action-btn">
-          管理
-        </text>
-      </view>
-    </view>
-
     <!-- 滚动通知条 -->
     <view
       v-if="hasPendingEvents && latestPendingEvent"
@@ -243,40 +228,6 @@ const checkPermission = () => {
   }
 }
 
-// 显示快捷管理菜单
-const showQuickMenu = () => {
-  const items = ['用户管理']
-  
-  // manager 可以看到工作人员管理
-  if (isCommunityManager.value) {
-    items.unshift('工作人员管理')
-  }
-  
-  items.push('更多功能...')
-  
-  uni.showActionSheet({
-    itemList: items,
-    success: (res) => {
-      const index = res.tapIndex
-      
-      if (items[index] === '用户管理') {
-        uni.navigateTo({
-          url: '/pages/community-user-manage/community-user-manage'
-        })
-      } else if (items[index] === '工作人员管理') {
-        uni.navigateTo({
-          url: '/pages/community-staff-manage/community-staff-manage'
-        })
-      } else if (items[index] === '更多功能...') {
-        // 跳转到个人中心
-        uni.switchTab({
-          url: '/pages/profile/profile'
-        })
-      }
-    }
-  })
-}
-
 // 跳转到未打卡详情
 const goToUncheckedDetail = () => {
   uni.navigateTo({
@@ -492,32 +443,6 @@ onShow(() => {
   min-height: 100vh;
   background: linear-gradient(135deg, $uni-bg-gradient-start 0%, $uni-bg-gradient-end 100%);
   padding: 0 0 80rpx;
-}
-
-.header-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $uni-spacing-xxl;
-  background: $uni-bg-color;
-  box-shadow: $uni-shadow-xs;
-
-  .page-title {
-    font-size: $uni-font-size-xxl;
-    font-weight: 600;
-    color: $uni-text-primary;
-  }
-
-  .header-actions {
-    .action-btn {
-      padding: $uni-spacing-base $uni-spacing-xl;
-      background: $uni-primary;
-      color: $uni-white;
-      border-radius: $uni-radius-xl;
-      font-size: $uni-font-size-base;
-      font-weight: 500;
-    }
-  }
 }
 
 .community-selector-section {
