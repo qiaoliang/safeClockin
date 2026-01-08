@@ -22,20 +22,19 @@
       </text>
     </view>
 
-    <!-- 2. 社区选择器 + 管理按钮区域 -->
+    <!-- 社区选择器 + 管理按钮区域 -->
     <view class="community-header-section">
       <CommunitySelector @change="handleCommunityChange" />
 
       <!-- 管理按钮（仅当有权限时显示） -->
       <view
         v-if="canManageCurrentCommunity"
-        class="manage-button"
+        class="manage-button-inline"
         @click="handleManageCommunity"
       >
         <text class="manage-text">管理</text>
       </view>
     </view>
-
     <!-- 数据概览 -->
     <view class="overview-section">
       <view class="section-header">
@@ -43,7 +42,7 @@
           数据概览
         </text>
       </view>
-      
+
       <view class="overview-cards">
         <view class="overview-card total-count">
           <text class="card-title">
@@ -56,7 +55,7 @@
             人
           </text>
         </view>
-        
+
         <view class="overview-card checkin-rate">
           <text class="card-title">
             今日打卡率
@@ -68,7 +67,7 @@
             平均完成率
           </text>
         </view>
-        
+
         <view class="overview-card unchecked-count">
           <text class="card-title">
             未打卡人数
@@ -94,15 +93,9 @@
             近期未完成打卡最多的事项
           </text>
         </view>
-        <text 
-          v-if="totalRules > 3"
-          class="more-link"
-          @click="showAllStats"
-        >
-          更多
-        </text>
+
       </view>
-      
+
       <view class="issues-list">
         <view
           v-for="(stat, index) in topIssues"
@@ -119,13 +112,13 @@
           <text class="issue-name">
             {{ stat.rule_name }}
           </text>
-          <text 
+          <text
             :class="['issue-count', stat.total_missed > 0 ? 'issue-count-error' : 'issue-count-success']"
           >
             {{ stat.total_missed }}人次
           </text>
         </view>
-        
+
         <!-- 无数据提示 -->
         <view
           v-if="topIssues.length === 0"
@@ -162,7 +155,7 @@
 
     <!-- 未打卡详情按钮 -->
     <view class="unchecked-detail-section">
-      <button 
+      <button
         class="unchecked-detail-btn"
         @click="goToUncheckedDetail"
       >
@@ -216,13 +209,15 @@ const canManageCurrentCommunity = computed(() => {
   const communityId = community.community_id
 
   // Super Admin: can manage if they are a manager/specialist of this community
-  if (userRole === 4 || userRole === 'community_admin' || userRole === '超级系统管理员') {
+  if (userRole === 4) {
     return isUserManagerOfCommunity(communityId)
   }
 
-  // Community Manager/Specialist: can manage their assigned community
-  if (userRole === 3 || userRole === '社区主管' || userRole === 2 || userRole === '社区专员') {
-    return user.community_id != null && user.community_id === communityId
+  // Community Manager/Specialist: can manage if the community is in their accessible communities list
+  if (userRole === 3  || userRole === 2 ) {
+    // Check if the current community is in the user's managed communities list
+    // This works whether the user manages 1 or multiple communities
+    return communityStore.communities.some(c => c.community_id === communityId)
   }
 
   return false
@@ -532,7 +527,7 @@ onMounted(async () => {
 onShow(() => {
   // 页面显示时检查权限
   checkPermission()
-  
+
   // 刷新页面数据 - 每次显示都执行
   loadPageData()
 })
@@ -557,7 +552,6 @@ onShow(() => {
 
   :deep(.community-selector) {
     flex: 1;
-    margin-right: $uni-spacing-base;
   }
 }
 
@@ -670,6 +664,35 @@ onShow(() => {
   color: $uni-info;
   text-decoration: underline;
   margin-left: $uni-spacing-base;
+}
+
+.manage-button-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $uni-spacing-sm $uni-spacing-lg;
+  background: $uni-primary;
+  border-radius: $uni-radius-base;
+  min-width: 80rpx;
+  height: 56rpx;
+  white-space: nowrap;
+
+  .manage-text {
+    font-size: $uni-font-size-base;
+    color: $uni-white;
+    font-weight: $uni-font-weight-bold;
+  }
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.more-link {
+  font-size: $uni-font-size-base;
+  color: $uni-info;
+  text-decoration: underline;
 }
 
 .overview-cards {

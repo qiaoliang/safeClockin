@@ -108,7 +108,9 @@ const canManageCurrentCommunity = computed(() => {
 
   // 社区主管/专员：管理自己所属的社区
   if (userRole === RoleId.MANAGER || userRole === RoleId.STAFF) {
-    return user.community_id != null && user.community_id === communityId
+    // Check if the current community is in the user's managed communities list
+    // This works whether the user manages 1 or multiple communities
+    return communityStore.communities.some(c => c.community_id === communityId)
   }
 
   return false
