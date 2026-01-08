@@ -264,7 +264,7 @@ const formatDate = (dateString) => {
             background: rgba(107, 114, 128, 0.1);
             padding: 2rpx 8rpx;
             border-radius: $uni-radius-xs;
-            display: inline-block;
+            white-space: nowrap;
           }
 
           .staff-role {
