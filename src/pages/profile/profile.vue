@@ -258,6 +258,13 @@ const communityManagementItems = computed(() => {
     path: '/pages/community-split/community-split'
   })
 
+  // Admin management (only super admin)
+  items.push({
+    name: '管理员任免',
+    icon: '👑',
+    path: '/pages/admin-management/admin-management'
+  })
+
   return items
 })
 
