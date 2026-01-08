@@ -508,8 +508,8 @@ const handleSettings = () => {
 const handleTabChange = (tabId) => {
   activeTab.value = tabId
   
-  // 懒加载用户列表：当切换到"用户"Tab时加载数据
-  if (tabId === 'users' && !userListLoaded.value) {
+  // 每次切换到"用户"Tab时都重新加载数据，确保数据是最新的
+  if (tabId === 'users') {
     loadUserList()
   }
 }
