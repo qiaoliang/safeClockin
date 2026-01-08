@@ -123,15 +123,9 @@
             <text class="user-name">
               {{ user.nickname || '未设置昵称' }}
             </text>
-            <text class="user-phone">
-              {{ user.phone_number || '未设置手机号' }}
-            </text>
-            <view class="user-tags">
-              <text
-                class="user-status-tag"
-                :class="getVerificationStatusClass(user.verification_status)"
-              >
-                {{ getVerificationStatusText(user.verification_status) }}
+            <view class="user-meta">
+              <text class="user-phone">
+                {{ user.phone_number || '未设置手机号' }}
               </text>
               <text
                 v-if="user.created_at"
@@ -573,49 +567,25 @@ const handleConfirmBatchTransfer = () => {
             color: $uni-accent;
             margin-bottom: $uni-spacing-xs;
           }
-          
-          .user-phone {
-            display: block;
-            font-size: $uni-font-size-xs;
-            color: $uni-text-gray-600;
-            margin-bottom: $uni-spacing-xs;
-          }
-          
-          .user-tags {
+
+          .user-meta {
             display: flex;
             align-items: center;
-            gap: $uni-spacing-xs;
-            
-            .user-status-tag {
-              font-size: $uni-font-size-xxs;
-              padding: 2rpx 8rpx;
-              border-radius: $uni-radius-xs;
-              display: inline-block;
-              
-              &.verified {
-                background: rgba(16, 185, 129, 0.1);
-                color: $uni-success;
-              }
-              
-              &.unverified {
-                background: rgba(245, 158, 11, 0.1);
-                color: $uni-warning;
-              }
-              
-              &.unknown {
-                background: rgba(107, 114, 128, 0.1);
-                color: $uni-text-gray-600;
-              }
-            }
-            
-            .checkin-tag {
-              font-size: $uni-font-size-xxs;
-              color: $uni-text-gray-600;
-              background: rgba(107, 114, 128, 0.1);
-              padding: 2rpx 8rpx;
-              border-radius: $uni-radius-xs;
-              display: inline-block;
-            }
+            gap: $uni-spacing-base;
+          }
+
+          .user-phone {
+            font-size: $uni-font-size-xs;
+            color: $uni-text-gray-600;
+          }
+
+          .checkin-tag {
+            font-size: $uni-font-size-xxs;
+            color: $uni-text-gray-600;
+            background: rgba(107, 114, 128, 0.1);
+            padding: 2rpx 8rpx;
+            border-radius: $uni-radius-xs;
+            display: inline-block;
           }
         }
       }
