@@ -2,22 +2,31 @@
  * 浏览记录组件单元测试
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import * as userApi from '@/api/user'
+import { request } from '@/api/request'
+
+// Mock request 模块
+vi.mock('@/api/request', () => ({
+  request: vi.fn(() => Promise.resolve({}))
+}))
 
 describe('Profile View Logs API Tests', () => {
+  beforeEach(() => {
+    // 清除 mock 调用记录
+    vi.clearAllMocks()
+  })
+
   describe('API 方法定义', () => {
     it('应该定义 logProfileView 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.logProfileView).toBe('function')
+      expect(typeof userApi.logProfileView).toBe('function')
     })
 
     it('应该定义 logViewGuardianInfo 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.logViewGuardianInfo).toBe('function')
+      expect(typeof userApi.logViewGuardianInfo).toBe('function')
     })
 
     it('应该定义 getProfileViewLogs 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.getProfileViewLogs).toBe('function')
+      expect(typeof userApi.getProfileViewLogs).toBe('function')
     })
   })
 
@@ -26,13 +35,9 @@ describe('Profile View Logs API Tests', () => {
       const viewedUserId = 123
       const communityId = 456
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.logProfileView(viewedUserId, communityId)
 
-      const { logProfileView } = require('@/api/user')
-      logProfileView(viewedUserId, communityId)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/log-profile-view',
         method: 'POST',
         data: {
@@ -47,13 +52,9 @@ describe('Profile View Logs API Tests', () => {
       const wardUserId = 123
       const communityId = 456
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.logViewGuardianInfo(guardianId, wardUserId, communityId)
 
-      const { logViewGuardianInfo } = require('@/api/user')
-      logViewGuardianInfo(guardianId, wardUserId, communityId)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/log-view-guardian',
         method: 'POST',
         data: {
@@ -71,13 +72,9 @@ describe('Profile View Logs API Tests', () => {
         limit: 50
       }
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.getProfileViewLogs(communityId, params)
 
-      const { getProfileViewLogs } = require('@/api/user')
-      getProfileViewLogs(communityId, params)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/profile-view-logs',
         method: 'GET',
         data: {
@@ -90,13 +87,9 @@ describe('Profile View Logs API Tests', () => {
     it('getProfileViewLogs 应该只接受 communityId 而不需要其他参数', () => {
       const communityId = 456
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.getProfileViewLogs(communityId)
 
-      const { getProfileViewLogs } = require('@/api/user')
-      getProfileViewLogs(communityId)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/profile-view-logs',
         method: 'GET',
         data: {

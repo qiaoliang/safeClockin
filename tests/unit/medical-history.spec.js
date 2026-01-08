@@ -2,33 +2,40 @@
  * 医疗历史组件单元测试
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import * as userApi from '@/api/user'
+import { request } from '@/api/request'
+
+// Mock request 模块
+vi.mock('@/api/request', () => ({
+  request: vi.fn(() => Promise.resolve({}))
+}))
 
 describe('Medical History API Tests', () => {
+  beforeEach(() => {
+    // 清除 mock 调用记录
+    vi.clearAllMocks()
+  })
+
   describe('API 方法定义', () => {
     it('应该定义 getUserMedicalHistories 方法', () => {
       // 验证 API 方法存在
-      const api = require('@/api/user')
-      expect(typeof api.getUserMedicalHistories).toBe('function')
+      expect(typeof userApi.getUserMedicalHistories).toBe('function')
     })
 
     it('应该定义 addMedicalHistory 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.addMedicalHistory).toBe('function')
+      expect(typeof userApi.addMedicalHistory).toBe('function')
     })
 
     it('应该定义 updateMedicalHistory 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.updateMedicalHistory).toBe('function')
+      expect(typeof userApi.updateMedicalHistory).toBe('function')
     })
 
     it('应该定义 deleteMedicalHistory 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.deleteMedicalHistory).toBe('function')
+      expect(typeof userApi.deleteMedicalHistory).toBe('function')
     })
 
     it('应该定义 getCommonConditions 方法', () => {
-      const api = require('@/api/user')
-      expect(typeof api.getCommonConditions).toBe('function')
+      expect(typeof userApi.getCommonConditions).toBe('function')
     })
   })
 
@@ -37,16 +44,11 @@ describe('Medical History API Tests', () => {
       const userId = 123
       const expectedUrl = `/api/user/${userId}/medical-history`
 
-      // 模拟 request 函数
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
-
       // 调用 API
-      const { getUserMedicalHistories } = require('@/api/user')
-      getUserMedicalHistories(userId)
+      userApi.getUserMedicalHistories(userId)
 
       // 验证调用
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: expectedUrl,
         method: 'GET'
       })
@@ -60,13 +62,9 @@ describe('Medical History API Tests', () => {
         visibility: 1
       }
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.addMedicalHistory(medicalData)
 
-      const { addMedicalHistory } = require('@/api/user')
-      addMedicalHistory(medicalData)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/medical-history',
         method: 'POST',
         data: medicalData
@@ -81,13 +79,9 @@ describe('Medical History API Tests', () => {
         visibility: 2
       }
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.updateMedicalHistory(historyId, updateData)
 
-      const { updateMedicalHistory } = require('@/api/user')
-      updateMedicalHistory(historyId, updateData)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: `/api/user/medical-history/${historyId}`,
         method: 'PUT',
         data: updateData
@@ -98,13 +92,9 @@ describe('Medical History API Tests', () => {
       const historyId = 456
       const userId = 123
 
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.deleteMedicalHistory(historyId, userId)
 
-      const { deleteMedicalHistory } = require('@/api/user')
-      deleteMedicalHistory(historyId, userId)
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: `/api/user/medical-history/${historyId}`,
         method: 'DELETE',
         data: { user_id: userId }
@@ -112,13 +102,9 @@ describe('Medical History API Tests', () => {
     })
 
     it('getCommonConditions 应该不需要参数', () => {
-      const mockRequest = vi.fn(() => Promise.resolve({}))
-      vi.doMock('@/api/request', () => ({ request: mockRequest }))
+      userApi.getCommonConditions()
 
-      const { getCommonConditions } = require('@/api/user')
-      getCommonConditions()
-
-      expect(mockRequest).toHaveBeenCalledWith({
+      expect(request).toHaveBeenCalledWith({
         url: '/api/user/medical-history/common-conditions',
         method: 'GET'
       })
