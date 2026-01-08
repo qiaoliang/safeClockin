@@ -229,7 +229,7 @@
                         }}
                       </text>
                       <text class="user-community">
-                        {{ getCommunityName(user.communityId) }}
+                        {{ user.communityName || '未分配社区' }}
                       </text>
                     </view>
                   </view>
@@ -309,7 +309,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
 import { useUserStore } from "@/store/modules/user";
-import { useCommunityStore } from "@/store/modules/community";
 import { authApi } from "@/api/auth";
 import { SPECIAL_COMMUNITY_NAMES } from "@/constants/community";
 
@@ -332,7 +331,6 @@ const emit = defineEmits(["close", "confirm"]);
 
 // Store
 const userStore = useUserStore();
-const communityStore = useCommunityStore();
 
 // 计算属性：是否为安卡大家庭
 const isAnkaFamily = computed(() => {
@@ -479,14 +477,6 @@ const formatPhoneNumber = (phone) => {
   if (!phone) return "未设置手机号";
   if (phone.length !== 11) return phone;
   return `${phone.slice(0, 3)}****${phone.slice(7)}`;
-};
-
-// 获取社区名称
-const getCommunityName = (communityId) => {
-  if (!communityId && communityId !== 0) return "未分配社区";
-  // 使用 == 进行宽松比较，处理数字和字符串类型不匹配问题
-  const community = communityStore.communities.find(c => c.community_id == communityId);
-  return community ? community.name : "未知社区";
 };
 
 // 验证表单
@@ -636,12 +626,7 @@ const handleClose = () => {
 watch(
   () => props.visible,
   (newVal) => {
-    if (newVal) {
-      // 模态框打开时，确保社区列表已加载
-      if (communityStore.communities.length === 0) {
-        communityStore.loadCommunities();
-      }
-    } else {
+    if (!newVal) {
       resetForm();
     }
   }

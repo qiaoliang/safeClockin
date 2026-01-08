@@ -368,7 +368,8 @@ export const authApi = {
         phone_number: user.phone_number,
         avatarUrl: user.avatar_url,
         isStaff: user.is_staff,
-        communityId: user.community_id
+        communityId: user.community_id,
+        communityName: user.community_name
       }))
       response.data.users = transformedUsers
     }
