@@ -88,6 +88,7 @@
           v-if="isMultiSelectMode"
           class="checkbox-container"
           @click="handleToggleUserSelection(user.user_id)"
+          @click.stop
         >
           <view
             class="checkbox"
@@ -186,6 +187,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useTransferStore } from '@/store/modules/transfer'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps({
   userList: {
@@ -202,7 +204,7 @@ const emit = defineEmits(['add-user', 'remove-user', 'refresh', 'batch-transfer'
 
 // 批量转移相关
 const transferStore = useTransferStore()
-const { isMultiSelectMode, selectedUserIds, selectedCount, isMaxSelected } = transferStore
+const { isMultiSelectMode, selectedUserIds, selectedCount, isMaxSelected } = storeToRefs(transferStore)
 
 // 处理添加用户按钮点击
 const handleAddUserClick = () => {
