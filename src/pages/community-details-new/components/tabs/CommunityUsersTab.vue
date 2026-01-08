@@ -268,7 +268,13 @@ const clearSearch = () => {
 
 // 批量转移相关方法
 const handleBatchTransferClick = () => {
+  console.log('[批量转移] 点击批量转移按钮')
+  console.log('[批量转移] transferStore:', transferStore)
+  console.log('[批量转移] isMultiSelectMode before:', transferStore.isMultiSelectMode)
+  
   transferStore.enterMultiSelectMode()
+  
+  console.log('[批量转移] isMultiSelectMode after:', transferStore.isMultiSelectMode)
 }
 
 const handleCancelBatchTransfer = () => {

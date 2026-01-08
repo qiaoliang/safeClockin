@@ -805,9 +805,15 @@ const refreshUserList = () => {
 
 // 批量转移相关方法
 const handleBatchTransfer = async (userIds) => {
+  console.log('[批量转移] 主组件收到批量转移事件')
+  console.log('[批量转移] userIds:', userIds)
+  console.log('[批量转移] userStore.userInfo:', userStore.userInfo)
+  
   try {
     // 加载主管管理的社区列表
+    console.log('[批量转移] 开始加载主管管理的社区列表')
     await transferStore.loadManagerCommunities(userStore.userInfo.user_id)
+    console.log('[批量转移] 社区列表加载完成:', transferStore.managerCommunities)
 
     if (transferStore.managerCommunities.length === 0) {
       uni.showToast({
