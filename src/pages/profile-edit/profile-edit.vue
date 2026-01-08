@@ -325,7 +325,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { authApi } from '@/api/auth'
-import { userApi } from '@/api/user'
+import { getUserMedicalHistories, addMedicalHistory, updateMedicalHistory, deleteMedicalHistory } from '@/api/user'
 import MedicalHistoryList from '@/components/medical-history/MedicalHistoryList.vue'
 import MedicalHistoryForm from '@/components/medical-history/MedicalHistoryForm.vue'
 
@@ -551,7 +551,7 @@ async function loadMedicalHistories() {
     const userId = userStore.userInfo?.user_id
     if (!userId) return
     
-    const res = await userApi.getUserMedicalHistories(userId)
+    const res = await getUserMedicalHistories(userId)
     if (res.code === 1) {
       medicalHistories.value = res.data || []
     }
@@ -586,10 +586,10 @@ async function handleSaveMedicalHistory(formData) {
     let res
     if (editingMedicalHistory.value.id) {
       // 更新病史
-      res = await userApi.updateMedicalHistory(editingMedicalHistory.value.id, formData)
+      res = await updateMedicalHistory(editingMedicalHistory.value.id, formData)
     } else {
       // 添加病史
-      res = await userApi.addMedicalHistory({
+      res = await addMedicalHistory({
         ...formData,
         user_id: userStore.userInfo?.user_id
       })
@@ -620,7 +620,7 @@ async function handleDeleteMedicalHistory(historyId) {
   try {
     uni.showLoading({ title: '删除中...' })
     
-    const res = await userApi.deleteMedicalHistory(historyId, userStore.userInfo?.user_id)
+    const res = await deleteMedicalHistory(historyId, userStore.userInfo?.user_id)
     
     if (res.code === 1) {
       uni.showToast({ title: '删除成功', icon: 'none' })
