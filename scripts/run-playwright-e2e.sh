@@ -50,8 +50,21 @@ log_info "开始构建 H5 应用..."
 ./scripts/h5build.sh
 
 # 验证构建结果
-if [ ! -d "$FRONTEND_PATH/src/unpackage/dist/build/web" ]; then
+BUILD_OUTPUT_DIR="$FRONTEND_PATH/src/unpackage/dist/build/web"
+if [ ! -d "$BUILD_OUTPUT_DIR" ]; then
     log_error "H5 构建失败：构建目录不存在"
+    log_error "期望路径: $BUILD_OUTPUT_DIR"
+    log_error "实际存在的目录："
+    find "$FRONTEND_PATH/src/unpackage" -type d 2>/dev/null || echo "  (无目录)"
+    exit 1
+fi
+
+# 验证构建输出中是否有 index.html
+if [ ! -f "$BUILD_OUTPUT_DIR/index.html" ]; then
+    log_error "H5 构建失败：index.html 不存在"
+    log_error "构建目录: $BUILD_OUTPUT_DIR"
+    log_error "目录内容："
+    ls -la "$BUILD_OUTPUT_DIR" 2>/dev/null || echo "  (无法列出)"
     exit 1
 fi
 log_info "✅ H5 应用构建完成"

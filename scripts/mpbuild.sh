@@ -43,20 +43,19 @@ echo "脚本目录: $SCRIPT_DIR"
 FRONTEND_PATH="$(dirname "$SCRIPT_DIR")"
 echo "前端项目路径: $FRONTEND_PATH"
 
-# 检查前端项目路径是否以 'frontend' 结尾
-if [[ ! "$FRONTEND_PATH" =~ /frontend$ ]]; then
-    echo "错误: 前端项目路径必须在以 'frontend' 结尾的目录下"
-    echo "前端项目路径: $FRONTEND_PATH"
-    echo "请确保脚本位于 frontend/scripts 目录中"
-    exit 1
-fi
-echo "前端项目路径: $FRONTEND_PATH"
-
 # 检查前端目录是否存在
 if [ ! -d "$FRONTEND_PATH" ]; then
     echo "错误: 前端目录不存在: $FRONTEND_PATH"
     exit 1
 fi
+
+# 检查是否是有效的前端项目目录（通过检查 package.json）
+if [ ! -f "$FRONTEND_PATH/package.json" ]; then
+    echo "错误: 不是有效的前端项目目录（未找到 package.json）"
+    echo "前端项目路径: $FRONTEND_PATH"
+    exit 1
+fi
+echo "✓ 前端项目目录验证通过"
 
 # 进入前端目录
 cd "$FRONTEND_PATH"
@@ -111,12 +110,16 @@ echo "===== END ========="
 
 # 清理旧的构建结果
 BUILD_DIST_PATH="$FRONTEND_PATH/src/unpackage/dist/$BUILD_OUTPUT_DIR/mp-weixin"
-if [ -d "$BUILD_DIST_PATH" ]; then
-    echo "清理旧的构建结果: $BUILD_DIST_PATH"
-    rm -rf "$BUILD_DIST_PATH"
+# 检查是否是符号链接，如果是则不删除
+if [ -L "$BUILD_DIST_PATH" ]; then
+    echo "检测到符号链接，跳过清理: $BUILD_DIST_PATH"
+else
+    if [ -d "$BUILD_DIST_PATH" ]; then
+        echo "清理旧的构建结果: $BUILD_DIST_PATH"
+        rm -rf "$BUILD_DIST_PATH"
+    fi
+    mkdir -p $BUILD_DIST_PATH
 fi
-
-mkdir -p $BUILD_DIST_PATH
 
 echo "构建输出目录: $BUILD_DIST_PATH"
 
@@ -352,10 +355,62 @@ echo "  源码映射: true"
 # 捕获构建输出以便诊断
 BUILD_EXIT_CODE=0
 
-echo "清理上次构建残留的文件....$BUILD_OUTPUT_PATH"
-rm -rf "$PROJECT_PATH/unpackage/dist"
+# 检查是否是符号链接，如果是则不删除
+if [ -L "$BUILD_OUTPUT_PATH" ]; then
+    echo "检测到符号链接，跳过清理: $BUILD_OUTPUT_PATH"
+else
+    echo "清理上次构建残留的文件....$BUILD_OUTPUT_PATH"
+    rm -rf "$PROJECT_PATH/unpackage/dist"
+fi
 
-/Applications/HBuilderX.app/Contents/MacOS/cli publish --platform mp-weixin --project $PROJECT_PATH --appid wx55a59cbcd4156ce4 
+# 运行 HBuilderX CLI 构建
+echo "运行 HBuilderX CLI 构建..."
+/Applications/HBuilderX.app/Contents/MacOS/cli publish --platform mp-weixin --project $PROJECT_PATH --appid wx55a59cbcd4156ce4
+
+# HBuilderX CLI 在 worktree 中可能会将构建输出到主仓库路径
+# 检查并处理这种情况
+MAIN_REPO_BUILD_PATH="/Users/qiaoliang/working/code/safeGuard/frontend/src/unpackage/dist/$BUILD_OUTPUT_DIR/mp-weixin"
+
+# 检查是否在 worktree 环境中
+if [[ "$FRONTEND_PATH" =~ /worktree/ ]]; then
+    echo "检测到 worktree 环境"
+    
+    # 检查符号链接是否已存在
+    if [ -L "$BUILD_OUTPUT_PATH" ]; then
+        echo "✓ 符号链接已存在，跳过创建"
+    elif [ -d "$BUILD_OUTPUT_PATH" ]; then
+        echo "警告: 构建目录已存在且不是符号链接，将被覆盖"
+        rm -rf "$BUILD_OUTPUT_PATH"
+        echo "创建符号链接: $BUILD_OUTPUT_PATH -> $MAIN_REPO_BUILD_PATH"
+        ln -s "$MAIN_REPO_BUILD_PATH" "$BUILD_OUTPUT_PATH"
+        if [ $? -eq 0 ]; then
+            echo "✓ 符号链接创建成功"
+        else
+            echo "✗ 符号链接创建失败，尝试复制文件..."
+            cp -R "$MAIN_REPO_BUILD_PATH" "$BUILD_OUTPUT_PATH"
+        fi
+    elif [ -d "$MAIN_REPO_BUILD_PATH" ]; then
+        echo "检测到 HBuilderX CLI 将构建输出到主仓库路径"
+        echo "主仓库构建路径: $MAIN_REPO_BUILD_PATH"
+        echo "预期构建路径: $BUILD_OUTPUT_PATH"
+        
+        # 创建符号链接
+        echo "创建符号链接: $BUILD_OUTPUT_PATH -> $MAIN_REPO_BUILD_PATH"
+        ln -s "$MAIN_REPO_BUILD_PATH" "$BUILD_OUTPUT_PATH"
+        
+        if [ $? -eq 0 ]; then
+            echo "✓ 符号链接创建成功"
+        else
+            echo "✗ 符号链接创建失败，尝试复制文件..."
+            # 如果符号链接失败，复制文件
+            cp -R "$MAIN_REPO_BUILD_PATH" "$BUILD_OUTPUT_PATH"
+        fi
+    else
+        echo "警告: 主仓库构建路径不存在: $MAIN_REPO_BUILD_PATH"
+    fi
+else
+    echo "检测到主仓库环境，无需创建符号链接"
+fi
 
 # 验证构建结果
 

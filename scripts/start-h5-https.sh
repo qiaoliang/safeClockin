@@ -66,7 +66,21 @@ echo "=========================================="
 echo ""
 
 # 使用 http-server 包启动 HTTPS 服务器
-BUILD_DIR="src/unpackage/dist/build/web"
+BUILD_DIR="$FRONTEND_PATH/src/unpackage/dist/build/web"
+
+# 检查构建目录是否存在
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "错误: 构建目录不存在: $BUILD_DIR"
+    echo "请先运行构建命令: ./scripts/h5build.sh"
+    exit 1
+fi
+
+# 检查构建目录中是否有 index.html
+if [ ! -f "$BUILD_DIR/index.html" ]; then
+    echo "错误: 构建目录中未找到 index.html"
+    echo "构建目录: $BUILD_DIR"
+    exit 1
+fi
 
 # 检查端口是否已被占用
 if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
