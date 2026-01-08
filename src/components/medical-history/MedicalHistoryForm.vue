@@ -86,8 +86,8 @@ const rules = {
 onMounted(async () => {
   try {
     const res = await getCommonConditions()
-    if (res.code === 0) {
-      conditionOptions.value = res.data.map(name => ({ text: name, value: name }))
+    if (res.code === 1) {
+      conditionOptions.value = res.data.conditions.map(name => ({ text: name, value: name }))
     }
   } catch (error) {
     console.error('获取常见病史失败:', error)
