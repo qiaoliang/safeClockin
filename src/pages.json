@@ -190,6 +190,14 @@
       }
     },
     {
+      "path": "pages/admin-management/admin-management",
+      "style": {
+        "navigationBarTitleText": "管理员任免",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "pages/community-user-manage/community-user-manage",
       "style": {
         "navigationBarTitleText": "社区用户管理",
