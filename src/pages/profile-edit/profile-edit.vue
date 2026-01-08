@@ -164,6 +164,32 @@
       </view>
     </view>
 
+    <!-- 病史信息区域 -->
+    <view class="card">
+      <view class="card-title">
+        病史信息
+      </view>
+      
+      <MedicalHistoryList
+        v-if="!isEditingMedicalHistory"
+        :histories="medicalHistories"
+        @add="handleAddMedicalHistory"
+        @edit="handleEditMedicalHistory"
+        @delete="handleDeleteMedicalHistory"
+      />
+      
+      <view
+        v-else
+        class="editing-container"
+      >
+        <MedicalHistoryForm
+          :model-value="editingMedicalHistory"
+          @submit="handleSaveMedicalHistory"
+          @cancel="handleCancelEditMedicalHistory"
+        />
+      </view>
+    </view>
+
     <!-- 底部保存按钮 -->
     <view class="footer">
       <button
@@ -299,6 +325,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { authApi } from '@/api/auth'
+import { userApi } from '@/api/user'
+import MedicalHistoryList from '@/components/medical-history/MedicalHistoryList.vue'
+import MedicalHistoryForm from '@/components/medical-history/MedicalHistoryForm.vue'
 
 const userStore = useUserStore()
 const saving = ref(false)
@@ -343,6 +372,11 @@ let timer = null
 const passwordModal = ref(false)
 const changingPassword = ref(false)
 
+// Medical history management
+const medicalHistories = ref([])
+const isEditingMedicalHistory = ref(false)
+const editingMedicalHistory = ref(null)
+
 onMounted(() => {
   // 加载用户数据
   const userInfo = userStore.userInfo
@@ -358,6 +392,9 @@ onMounted(() => {
       avatar_url: userInfo.avatar_url || ''
     }
   }
+  
+  // 加载病史数据
+  loadMedicalHistories()
 })
 
 async function saveNickname() {
@@ -506,6 +543,97 @@ async function confirmChangePassword() {
       uni.showToast({ title: res.msg || '修改失败', icon: 'none' })
     }
   } finally { changingPassword.value = false }
+}
+
+// Medical history functions
+async function loadMedicalHistories() {
+  try {
+    const userId = userStore.userInfo?.user_id
+    if (!userId) return
+    
+    const res = await userApi.getUserMedicalHistories(userId)
+    if (res.code === 1) {
+      medicalHistories.value = res.data || []
+    }
+  } catch (error) {
+    console.error('加载病史失败:', error)
+  }
+}
+
+function handleAddMedicalHistory() {
+  editingMedicalHistory.value = {
+    condition_name: '',
+    treatment_plan: {
+      type: [],
+      medication: '',
+      frequency: '',
+      notes: ''
+    },
+    visibility: 1
+  }
+  isEditingMedicalHistory.value = true
+}
+
+function handleEditMedicalHistory(history) {
+  editingMedicalHistory.value = { ...history }
+  isEditingMedicalHistory.value = true
+}
+
+async function handleSaveMedicalHistory(formData) {
+  try {
+    saving.value = true
+    
+    let res
+    if (editingMedicalHistory.value.id) {
+      // 更新病史
+      res = await userApi.updateMedicalHistory(editingMedicalHistory.value.id, formData)
+    } else {
+      // 添加病史
+      res = await userApi.addMedicalHistory({
+        ...formData,
+        user_id: userStore.userInfo?.user_id
+      })
+    }
+    
+    if (res.code === 1) {
+      uni.showToast({ title: '保存成功', icon: 'none' })
+      await loadMedicalHistories()
+      isEditingMedicalHistory.value = false
+      editingMedicalHistory.value = null
+    } else {
+      uni.showToast({ title: res.msg || '保存失败', icon: 'none' })
+    }
+  } catch (error) {
+    console.error('保存病史失败:', error)
+    uni.showToast({ title: '保存失败', icon: 'none' })
+  } finally {
+    saving.value = false
+  }
+}
+
+function handleCancelEditMedicalHistory() {
+  isEditingMedicalHistory.value = false
+  editingMedicalHistory.value = null
+}
+
+async function handleDeleteMedicalHistory(historyId) {
+  try {
+    uni.showLoading({ title: '删除中...' })
+    
+    const res = await userApi.deleteMedicalHistory(historyId, userStore.userInfo?.user_id)
+    
+    if (res.code === 1) {
+      uni.showToast({ title: '删除成功', icon: 'none' })
+      await loadMedicalHistories()
+    } else {
+      uni.showToast({ title: res.msg || '删除失败', icon: 'none' })
+    }
+  } catch (error) {
+    console.error('删除病史失败:', error)
+    uni.showToast({ title: '删除失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
 }
 </script>
 
@@ -699,5 +827,9 @@ async function confirmChangePassword() {
   border: 2rpx solid #ddd;
   border-radius: 8rpx;
   text-align: center;
+}
+
+.editing-container {
+  padding: 20rpx;
 }
 </style>

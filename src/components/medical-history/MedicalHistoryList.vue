@@ -6,17 +6,32 @@
       class="history-item"
     >
       <view class="history-header">
-        <text class="condition-name">{{ item.condition_name }}</text>
+        <text class="condition-name">
+          {{ item.condition_name }}
+        </text>
         <view class="actions">
-          <text @click="handleEdit(item)">编辑</text>
-          <text @click="handleDelete(item.id)">删除</text>
+          <text @click="handleEdit(item)">
+            编辑
+          </text>
+          <text @click="handleDelete(item.id)">
+            删除
+          </text>
         </view>
       </view>
 
-      <view class="treatment-info" v-if="item.treatment_plan">
-        <text v-if="item.treatment_plan.type">类型: {{ item.treatment_plan.type.join(', ') }}</text>
-        <text v-if="item.treatment_plan.medication">药品: {{ item.treatment_plan.medication }}</text>
-        <text v-if="item.treatment_plan.frequency">频率: {{ item.treatment_plan.frequency }}</text>
+      <view
+        v-if="item.treatment_plan"
+        class="treatment-info"
+      >
+        <text v-if="item.treatment_plan.type">
+          类型: {{ item.treatment_plan.type.join(', ') }}
+        </text>
+        <text v-if="item.treatment_plan.medication">
+          药品: {{ item.treatment_plan.medication }}
+        </text>
+        <text v-if="item.treatment_plan.frequency">
+          频率: {{ item.treatment_plan.frequency }}
+        </text>
       </view>
 
       <view class="visibility-badge">
@@ -24,11 +39,16 @@
       </view>
     </view>
 
-    <view v-if="histories.length === 0" class="empty">
+    <view
+      v-if="histories.length === 0"
+      class="empty"
+    >
       <text>暂无病史记录</text>
     </view>
 
-    <button @click="handleAdd">添加病史</button>
+    <button @click="handleAdd">
+      添加病史
+    </button>
   </view>
 </template>
 
@@ -87,6 +107,16 @@ const handleDelete = (id) => {
 .condition-name {
   font-size: 32rpx;
   font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.actions text {
+  color: #F48224;
+  font-size: 28rpx;
 }
 
 .visibility-badge {
