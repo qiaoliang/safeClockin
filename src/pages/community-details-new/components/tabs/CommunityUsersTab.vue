@@ -469,7 +469,7 @@ const handleConfirmBatchTransfer = () => {
       @include card-gradient;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: $uni-spacing-md;
       margin-bottom: $uni-spacing-sm;
       transition: all 0.3s ease;
