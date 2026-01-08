@@ -4,7 +4,10 @@
     type="dialog"
     :safe-area="false"
   >
-    <view class="transfer-result-modal">
+    <view
+      v-if="result"
+      class="transfer-result-modal"
+    >
       <view class="modal-header">
         <text
           v-if="isSuccess"
@@ -118,7 +121,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   result: {
@@ -133,7 +136,7 @@ const popup = ref(null)
 
 // 判断是否完全成功
 const isSuccess = computed(() => {
-  return props.result.failed && props.result.failed.length === 0
+  return props.result && props.result.failed && props.result.failed.length === 0
 })
 
 const open = () => {

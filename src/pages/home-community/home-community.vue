@@ -26,13 +26,16 @@
     <view class="community-header-section">
       <CommunitySelector @change="handleCommunityChange" />
 
-      <!-- 管理按钮（仅当有权限时显示） -->
-      <view
-        v-if="canManageCurrentCommunity"
-        class="manage-button-inline"
-        @click="handleManageCommunity"
-      >
-        <text class="manage-text">管理</text>
+      <!-- 右侧按钮组 -->
+      <view class="header-actions">
+        <!-- 管理按钮（仅当有权限时显示） -->
+        <view
+          v-if="canManageCurrentCommunity"
+          class="manage-button-inline"
+          @click="handleManageCommunity"
+        >
+          <text class="manage-text">管理</text>
+        </view>
       </view>
     </view>
     <!-- 数据概览 -->
@@ -552,7 +555,15 @@ onShow(() => {
 
   :deep(.community-selector) {
     flex: 1;
+    margin-right: $uni-spacing-base;
   }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $uni-spacing-base;
+  flex-shrink: 0;
 }
 
 .manage-button {
