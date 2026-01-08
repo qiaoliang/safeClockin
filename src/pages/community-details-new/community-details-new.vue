@@ -244,60 +244,48 @@ const showSettingsModal = ref(false)
 const showAddStaffModal = ref(false)
 const showAddUserModal = ref(false)
 
-// 权限检查
-const hasEditPermission = computed(() => {
-  try {
-    const userRole = userStore.role
-    const userInfo = userStore.userInfo || {}
-    
-    if (!userRole || !communityId.value) {
-      return false
-    }
-    
-    // 超级管理员可以编辑所有社区
-    if (userRole === 4 || userRole === '超级系统管理员') return true
-    
-    // 社区主管可以编辑自己管理的社区
-    if (userRole === 3 || userRole === '社区主管') {
-      // 这里简化了逻辑，实际应该检查用户是否是该社区的主管
-      // 由于权限检查主要在后端进行，这里先返回true，让后端进行最终验证
-      return true
-    }
-    
-    return false
-  } catch (error) {
-    console.error('权限计算错误:', error)
-    return false
+// 权限检查 - 统一的权限检查函数
+const checkCommunityPermission = (userRole) => {
+  if (!userRole || !communityId.value) return false
+  // 超级管理员可以管理所有社区
+  if (userRole === 4) return true
+  // 社区工作人员可以管理自己分配的社区
+  if (userRole === 3 || userRole === 2) {
+    return communityStore.communities.some(c => c.community_id == communityId.value)
   }
-})
+  return false
+}
 
-// 查看权限检查
-const hasViewPermission = computed(() => {
-  try {
-    const userRole = userStore.role
-    const userInfo = userStore.userInfo || {}
-    
-    if (!userRole || !communityId.value) {
-      return false
-    }
-    
-    // 超级管理员可以查看所有社区
-    if (userRole === 4 || userRole === '超级系统管理员') return true
-    
-    // 社区工作人员可以查看自己管理的社区
-    // 注意：这里简化了逻辑，实际应该从API获取用户管理的社区列表
-    // 或者检查用户是否是该社区的工作人员
-    // 由于权限检查主要在后端进行，这里先返回true，让后端进行最终验证
-    if (userRole === 3 || userRole === '社区主管' || userRole === '社区专员') {
-      return true
-    }
-    
-    return false
-  } catch (error) {
-    console.error('查看权限计算错误:', error)
-    return false
-  }
-})
+const hasEditPermission = computed(() => checkCommunityPermission(userStore.role))
+const hasViewPermission = computed(() => checkCommunityPermission(userStore.role))
+
+// 通用确认对话框处理函数
+const handleConfirmAction = async ({ title, content, loadingTitle, successTitle, errorTitle, onConfirm }) => {
+  return new Promise((resolve) => {
+    uni.showModal({
+      title,
+      content,
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            uni.showLoading({ title: loadingTitle, mask: true })
+            await onConfirm()
+            uni.showToast({ title: successTitle, icon: 'success' })
+            resolve(true)
+          } catch (err) {
+            console.error(`${title}失败:`, err)
+            uni.showToast({ title: err.message || errorTitle, icon: 'none' })
+            resolve(false)
+          } finally {
+            uni.hideLoading()
+          }
+        } else {
+          resolve(false)
+        }
+      }
+    })
+  })
+}
 
 // URL解码函数
 const decodeText = (text) => {
@@ -519,31 +507,18 @@ const handleAddStaff = () => {
 }
 
 const handleRemoveStaff = async (staffId) => {
-  uni.showModal({
+  await handleConfirmAction({
     title: '确认移除',
     content: '确定要移除该专员吗？',
-    success: async (res) => {
-      if (res.confirm) {
-        try {
-          uni.showLoading({ title: '移除中...' })
-          
-          // 调用真实的API移除工作人员
-          const response = await communityStore.removeStaffMember(communityId.value, staffId)
-          
-          if (response.code === 1) {
-            uni.showToast({ title: '移除成功', icon: 'success' })
-            
-            // 重新加载工作人员列表
-            await loadStaffList()
-          } else {
-            uni.showToast({ title: response.msg || '移除失败', icon: 'error' })
-          }
-        } catch (err) {
-          console.error('移除专员失败:', err)
-          uni.showToast({ title: '移除失败', icon: 'error' })
-        } finally {
-          uni.hideLoading()
-        }
+    loadingTitle: '移除中...',
+    successTitle: '移除成功',
+    errorTitle: '移除失败',
+    onConfirm: async () => {
+      const response = await communityStore.removeStaffMember(communityId.value, staffId)
+      if (response.code === 1) {
+        await loadStaffList()
+      } else {
+        throw new Error(response.msg || '移除失败')
       }
     }
   })
@@ -554,35 +529,20 @@ const handleAddUser = () => {
 }
 
 const handleRemoveUser = async (userId) => {
-  uni.showModal({
+  await handleConfirmAction({
     title: '确认移除',
     content: '确定要移除该用户吗？',
-    success: async (res) => {
-      if (res.confirm) {
-        try {
-          uni.showLoading({ title: '移除中...' })
-          
-          // 调用真实的API移除用户
-          const response = await communityStore.removeCommunityUser(communityId.value, userId)
-          
-          if (response.code === 1) {
-            uni.showToast({ title: '移除成功', icon: 'success' })
-            
-            // 重置加载状态，强制重新加载用户列表
-            userListLoaded.value = false
-            userList.value = []
-            
-            // 重新加载用户列表
-            await loadUserList()
-          } else {
-            uni.showToast({ title: response.msg || '移除失败', icon: 'error' })
-          }
-        } catch (err) {
-          console.error('移除用户失败:', err)
-          uni.showToast({ title: '移除失败', icon: 'error' })
-        } finally {
-          uni.hideLoading()
-        }
+    loadingTitle: '移除中...',
+    successTitle: '移除成功',
+    errorTitle: '移除失败',
+    onConfirm: async () => {
+      const response = await communityStore.removeCommunityUser(communityId.value, userId)
+      if (response.code === 1) {
+        userListLoaded.value = false
+        userList.value = []
+        await loadUserList()
+      } else {
+        throw new Error(response.msg || '移除失败')
       }
     }
   })
@@ -597,15 +557,7 @@ const handleEditRule = (ruleId) => {
 }
 
 const handleRemoveRule = (ruleId) => {
-  uni.showModal({
-    title: '确认删除',
-    content: '确定要删除该规则吗？',
-    success: async (res) => {
-      if (res.confirm) {
-        uni.showToast({ title: '删除规则功能开发中', icon: 'none' })
-      }
-    }
-  })
+  uni.showToast({ title: '删除规则功能开发中', icon: 'none' })
 }
 
 const handleAssign = () => {
@@ -613,15 +565,7 @@ const handleAssign = () => {
 }
 
 const handleUnassign = (assignId) => {
-  uni.showModal({
-    title: '确认取消分配',
-    content: '确定要取消该分配吗？',
-    success: async (res) => {
-      if (res.confirm) {
-        uni.showToast({ title: '取消分配功能开发中', icon: 'none' })
-      }
-    }
-  })
+  uni.showToast({ title: '取消分配功能开发中', icon: 'none' })
 }
 
 const handleAddSupport = () => {
@@ -629,15 +573,7 @@ const handleAddSupport = () => {
 }
 
 const handleCompleteSupport = (supportId) => {
-  uni.showModal({
-    title: '确认完成',
-    content: '确定要标记该应援为已完成吗？',
-    success: async (res) => {
-      if (res.confirm) {
-        uni.showToast({ title: '完成应援功能开发中', icon: 'none' })
-      }
-    }
-  })
+  uni.showToast({ title: '完成应援功能开发中', icon: 'none' })
 }
 
 const closeSettingsModal = () => {
@@ -650,24 +586,17 @@ const handleEditCommunity = () => {
   })
 }
 
-const handleDeleteCommunity = () => {
-  uni.showModal({
+const handleDeleteCommunity = async () => {
+  await handleConfirmAction({
     title: '确认删除',
     content: '确定要删除该社区吗？此操作不可撤销。',
-    success: async (res) => {
-      if (res.confirm) {
-        try {
-          // TODO: 调用API删除社区
-          await new Promise(resolve => setTimeout(resolve, 500))
-          uni.showToast({ title: '删除成功', icon: 'success' })
-          setTimeout(() => {
-            uni.navigateBack()
-          }, 1500)
-        } catch (err) {
-          console.error('删除社区失败:', err)
-          uni.showToast({ title: '删除失败', icon: 'error' })
-        }
-      }
+    loadingTitle: '删除中...',
+    successTitle: '删除成功',
+    errorTitle: '删除失败',
+    onConfirm: async () => {
+      // TODO: 调用API删除社区
+      await new Promise(resolve => setTimeout(resolve, 500))
+      setTimeout(() => uni.navigateBack(), 1500)
     }
   })
 }
@@ -794,14 +723,9 @@ const confirmAddUser = async (data) => {
   }
 }
 
-// 刷新函数
-const refreshStaffList = () => {
-  loadStaffList()
-}
-
-const refreshUserList = () => {
-  loadUserList()
-}
+// 刷新函数 - 直接使用 load 函数，无需额外包装
+const refreshStaffList = loadStaffList
+const refreshUserList = loadUserList
 
 // 批量转移相关方法
 const handleBatchTransfer = async (userIds) => {

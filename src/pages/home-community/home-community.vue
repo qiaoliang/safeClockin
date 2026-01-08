@@ -478,7 +478,7 @@ const handleManageCommunity = () => {
   }
 
   uni.navigateTo({
-    url: `/pages/community-details-new/community-details-new?community_id=${communityId}`,
+    url: `/pages/community-details-new/community-details-new?id=${communityId}`,
     fail: (err) => {
       console.error('Navigation failed:', err)
       uni.showModal({
