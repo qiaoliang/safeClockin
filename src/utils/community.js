@@ -54,6 +54,44 @@ export const formatDateTime = (dateStr) => {
 };
 
 /**
+ * 格式化相对时间（X小时前、X天前等）
+ * @param {string} dateStr - 日期字符串
+ * @returns {string} 格式化后的相对时间
+ */
+export const formatTimeAgo = (dateStr) => {
+    if (!dateStr) return "";
+
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
+
+    const now = new Date();
+    const diff = now - date;
+
+    // 小于1分钟显示"刚刚"
+    if (diff < 60000) {
+        return "刚刚";
+    }
+
+    // 小于1小时显示"X分钟前"
+    if (diff < 3600000) {
+        return `${Math.floor(diff / 60000)}分钟前`;
+    }
+
+    // 小于24小时显示"X小时前"
+    if (diff < 86400000) {
+        return `${Math.floor(diff / 3600000)}小时前`;
+    }
+
+    // 小于7天显示"X天前"
+    if (diff < 604800000) {
+        return `${Math.floor(diff / 86400000)}天前`;
+    }
+
+    // 其他显示完整日期
+    return formatDate(dateStr);
+};
+
+/**
  * 防抖函数
  * @param {Function} func - 需要防抖的函数
  * @param {number} wait - 等待时间(ms)

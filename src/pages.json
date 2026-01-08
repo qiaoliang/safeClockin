@@ -216,6 +216,14 @@
       }
     },
     {
+      "path": "pages/member-detail/member-detail",
+      "style": {
+        "navigationBarTitleText": "成员详情",
+        "navigationBarBackgroundColor": "#FAE9DB",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "pages/about/about",
       "style": {
         "navigationBarTitleText": "关于我们",

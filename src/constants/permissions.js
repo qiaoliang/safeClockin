@@ -31,7 +31,8 @@ export const PagePath = {
   // 用户管理页面（社区主管和专员）
   COMMUNITY_USER_MANAGE: '/pages/community-user-manage/community-user-manage',
   COMMUNITY_USER_ADD: '/pages/community-user-add/community-user-add',
-  
+  MEMBER_DETAIL: '/pages/member-detail/member-detail',
+
   // 其他页面
   HOME_COMMUNITY: '/pages/home-community/home-community',
   PROFILE: '/pages/profile/profile'
@@ -72,6 +73,7 @@ export const RolePagePermissions = {
     PagePath.STAFF_ADD,
     PagePath.COMMUNITY_USER_MANAGE,
     PagePath.COMMUNITY_USER_ADD,
+    PagePath.MEMBER_DETAIL,
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],
@@ -82,6 +84,7 @@ export const RolePagePermissions = {
     PagePath.STAFF_ADD,
     PagePath.COMMUNITY_USER_MANAGE,
     PagePath.COMMUNITY_USER_ADD,
+    PagePath.MEMBER_DETAIL,
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],
@@ -89,6 +92,7 @@ export const RolePagePermissions = {
   [RoleId.STAFF]: [
     PagePath.COMMUNITY_USER_MANAGE,
     PagePath.COMMUNITY_USER_ADD,
+    PagePath.MEMBER_DETAIL,
     PagePath.HOME_COMMUNITY,
     PagePath.PROFILE
   ],

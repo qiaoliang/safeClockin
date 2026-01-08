@@ -268,10 +268,8 @@ const loadUserList = async (refresh = false) => {
 
 // 查看用户详情
 const viewUserDetail = (item) => {
-  // TODO: 跳转到用户详情页
-  uni.showToast({
-    title: `查看用户：${item.nickname}`,
-    icon: 'none'
+  uni.navigateTo({
+    url: `/pages/member-detail/member-detail?userId=${item.user_id}&communityId=${currentCommunity.value.id}`
   })
 }
 
