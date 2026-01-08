@@ -56,11 +56,11 @@
               <text class="user-name">
                 {{ item.nickname }}
               </text>
-              <text class="user-phone">
-                {{ formatPhone(item.phone_number) }}
-              </text>
 
               <view class="user-meta">
+                <text class="user-phone">
+                  {{ formatPhone(item.phone_number) }}
+                </text>
                 <text class="join-time">
                   📅 {{ formatDate(item.join_time) }}
                 </text>
@@ -527,16 +527,14 @@ uni.$on('usersAdded', () => {
 }
 
 .user-phone {
-  display: block;
-  font-size: $uni-font-size-base;
+  font-size: $uni-font-size-sm;
   color: $uni-base-color;
-  margin-bottom: 12rpx;
 }
 
 .user-meta {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: $uni-spacing-base;
 }
 
 .join-time {
