@@ -247,3 +247,31 @@ export const getManagerCommunities = (managerId) => {
     method: 'GET'
   })
 }
+
+/**
+ * 设置或取消超级管理员
+ * @param {number} targetUserId - 目标用户ID
+ * @param {boolean} isSuperAdmin - 是否设置为超级管理员
+ * @returns {Promise} API响应
+ */
+export const setSuperAdmin = (targetUserId, isSuperAdmin) => {
+  return request({
+    url: '/api/community/set-super-admin',
+    method: 'POST',
+    data: {
+      target_user_id: targetUserId,
+      is_super_admin: isSuperAdmin
+    }
+  })
+}
+
+/**
+ * 获取管理员列表
+ * @returns {Promise} API响应
+ */
+export const getAdminList = () => {
+  return request({
+    url: '/api/community/admin-list',
+    method: 'GET'
+  })
+}
