@@ -824,7 +824,9 @@ const handleBatchTransfer = async (userIds) => {
     }
 
     // 打开目标社区选择器
-    targetCommunitySelectorRef.value?.open()
+    setTimeout(() => {
+      targetCommunitySelectorRef.value?.open()
+    }, 100)
   } catch (error) {
     console.error('加载社区列表失败:', error)
     uni.showToast({
