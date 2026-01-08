@@ -36,9 +36,17 @@
             <text class="staff-name">
               {{ staff.name }}
             </text>
-            <text class="staff-phone">
-              {{ staff.phone }}
-            </text>
+            <view class="staff-meta">
+              <text class="staff-phone">
+                {{ staff.phone }}
+              </text>
+              <text
+                v-if="staff.addedAt"
+                class="staff-added-time"
+              >
+                成为专员时间: {{ formatDate(staff.addedAt) }}
+              </text>
+            </view>
             <text class="staff-role">
               {{ staff.roleDisplay }}
             </text>
@@ -99,13 +107,15 @@ const normalizedStaffList = computed(() => {
     const phone = staff.phone || staff.phone_number || '未知'
     const role = staff.role || 'staff'
     const roleDisplay = getRoleDisplay(role)
-    
+    const addedAt = staff.added_at || staff.created_at || null
+
     return {
       id,
       name,
       phone,
       role,
       roleDisplay,
+      addedAt,
       // 保留原始数据用于调试
       _raw: staff
     }
@@ -130,6 +140,22 @@ const getRoleIcon = (role) => {
     'admin': '⚙️'
   }
   return iconMap[role] || '👤'
+}
+
+// 辅助函数：格式化日期
+const formatDate = (dateString) => {
+  if (!dateString) return '未知时间'
+
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+  } catch (error) {
+    return '日期格式错误'
+  }
 }
 </script>
 
@@ -219,14 +245,28 @@ const getRoleIcon = (role) => {
             color: $uni-accent;
             margin-bottom: $uni-spacing-xs;
           }
-          
-          .staff-phone {
-            display: block;
-            font-size: $uni-font-size-xs;
-            color: $uni-text-gray-600;
+
+          .staff-meta {
+            display: flex;
+            align-items: center;
+            gap: $uni-spacing-base;
             margin-bottom: $uni-spacing-xs;
           }
-          
+
+          .staff-phone {
+            font-size: $uni-font-size-xs;
+            color: $uni-text-gray-600;
+          }
+
+          .staff-added-time {
+            font-size: $uni-font-size-xxs;
+            color: $uni-text-gray-600;
+            background: rgba(107, 114, 128, 0.1);
+            padding: 2rpx 8rpx;
+            border-radius: $uni-radius-xs;
+            display: inline-block;
+          }
+
           .staff-role {
             display: block;
             font-size: $uni-font-size-xxs;
