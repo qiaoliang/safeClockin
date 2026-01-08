@@ -27,7 +27,13 @@
       >
         <view class="staff-info">
           <view class="staff-avatar">
-            <text class="avatar-icon">
+            <image
+              v-if="staff.avatarUrl"
+              :src="staff.avatarUrl"
+              class="avatar-image"
+              mode="aspectFill"
+            />
+            <text v-else class="avatar-icon">
               {{ getRoleIcon(staff.role) }}
             </text>
           </view>
@@ -108,6 +114,7 @@ const normalizedStaffList = computed(() => {
     const role = staff.role || 'staff'
     const roleDisplay = getRoleDisplay(role)
     const addedAt = staff.added_at || staff.created_at || null
+    const avatarUrl = staff.avatar_url || null
 
     return {
       id,
@@ -116,6 +123,7 @@ const normalizedStaffList = computed(() => {
       role,
       roleDisplay,
       addedAt,
+      avatarUrl,
       // 保留原始数据用于调试
       _raw: staff
     }
@@ -230,7 +238,14 @@ const formatDate = (dateString) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          
+          overflow: hidden;
+
+          .avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: $uni-radius-full;
+          }
+
           .avatar-icon {
             font-size: $uni-font-size-lg;
             color: $uni-secondary;

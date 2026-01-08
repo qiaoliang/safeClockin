@@ -102,7 +102,13 @@
 
         <view class="user-info">
           <view class="user-avatar">
-            <text class="avatar-icon">
+            <image
+              v-if="user.avatar_url"
+              :src="user.avatar_url"
+              class="avatar-image"
+              mode="aspectFill"
+            />
+            <text v-else class="avatar-icon">
               👤
             </text>
             <view
@@ -517,7 +523,14 @@ const handleConfirmBatchTransfer = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          
+          overflow: hidden;
+
+          .avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: $uni-radius-full;
+          }
+
           .avatar-icon {
             font-size: $uni-font-size-lg;
             color: $uni-info;
