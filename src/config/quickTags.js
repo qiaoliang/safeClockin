@@ -10,7 +10,6 @@ export const STAFF_QUICK_TAGS = [
   { text: '已电话联系', type: 'default' },
   { text: '正在前往', type: 'default' },
   { text: '已到达现场', type: 'default' },
-  { text: '问题已解决', type: 'success' },
   { text: '需要进一步协助', type: 'warning' }
 ]
 

@@ -100,7 +100,7 @@
               class="resolve-btn"
               @click="openResolveDialog"
             >
-              问题已解决
+              已解决
             </button>
             <button
               class="action-btn"
