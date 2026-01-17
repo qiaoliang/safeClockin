@@ -126,3 +126,18 @@ export const getProfileViewLogs = (communityId, params = {}) => {
     }
   })
 }
+
+/**
+ * 搜索用户
+ * @param {string} keyword - 搜索关键词
+ * @returns {Promise}
+ */
+export const searchUsers = (keyword) => {
+  return request({
+    url: '/api/user/search',
+    method: 'GET',
+    data: {
+      keyword
+    }
+  })
+}
