@@ -335,7 +335,7 @@ fi
 
 # 运行 HBuilderX CLI 构建
 echo "运行 HBuilderX CLI 构建..."
-/Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
+NODE_ENV=development /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
 
 # HBuilderX CLI 在 worktree 中可能会将构建输出到主仓库路径
 # 检查并处理这种情况

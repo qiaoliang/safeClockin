@@ -13,23 +13,11 @@
 export async function getUserState(page) {
   try {
     const userState = await page.evaluate(() => {
-      // 尝试使用测试辅助函数获取 userState
-      try {
-        if (typeof window !== 'undefined' && typeof window.__TEST_GET_USER_STATE__ === 'function') {
-          console.log('✅ 找到 window.__TEST_GET_USER_STATE__');
-          const state = window.__TEST_GET_USER_STATE__()
-          console.log('✅ __TEST_GET_USER_STATE__ 返回:', state);
-          return state;
-        }
-      } catch (e) {
-        console.log('无法使用 __TEST_GET_USER_STATE__:', e.message);
-      }
-
-      // 备选方案：直接从 localStorage 读取
+      // 首先尝试直接从 localStorage 读取（不依赖测试辅助函数）
       try {
         const stored = localStorage.getItem('userState');
         if (stored) {
-          console.log('✅ 从 localStorage 读取到 userState（加密）');
+          console.log('✅ 从 localStorage 读取到 userState');
           // 尝试解析为 JSON
           try {
             const parsed = JSON.parse(stored);
@@ -39,11 +27,22 @@ export async function getUserState(page) {
             }
           } catch (e) {
             console.log('⚠️ userState 是加密的');
-            return null;
           }
         }
       } catch (e) {
         console.log('无法从 localStorage 读取:', e.message);
+      }
+
+      // 尝试使用测试辅助函数获取 userState（如果存在）
+      try {
+        if (typeof window !== 'undefined' && typeof window.__TEST_GET_USER_STATE__ === 'function') {
+          console.log('✅ 找到 window.__TEST_GET_USER_STATE__');
+          const state = window.__TEST_GET_USER_STATE__()
+          console.log('✅ __TEST_GET_USER_STATE__ 返回:', state);
+          if (state) return state;
+        }
+      } catch (e) {
+        console.log('无法使用 __TEST_GET_USER_STATE__:', e.message);
       }
 
       // 如果无法从 store 读取，尝试从 localStorage 读取并解密
