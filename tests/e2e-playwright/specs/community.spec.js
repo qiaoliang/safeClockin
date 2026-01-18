@@ -159,6 +159,11 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
+        // 获取创建前的社区列表文本（用于健壮性验证）
+        const pageTextBeforeCreate = await page.locator("body").textContent();
+        const communityCountBefore = (pageTextBeforeCreate.match(/社区/g) || []).length;
+        console.log(`创建前社区数量: ${communityCountBefore}`);
+
         console.log('步骤2: 点击页面右上角的"+"按钮');
 
         // 点击页面右上角的"+"按钮（使用 .floating-add-btn 选择器）
@@ -233,7 +238,16 @@ test.describe("超级管理员社区管理测试", () => {
 
         // 验证社区列表中出现新创建的社区
         const pageTextAfterCreate = await page.locator("body").textContent();
+        
+        // 健壮性验证：方法1 - 验证社区名称存在
         expect(pageTextAfterCreate).toContain(newCommunityName);
+        console.log(`✅ 验证通过：页面包含社区名称 "${newCommunityName}"`);
+
+        // 健壮性验证：方法2 - 验证社区数量增加
+        const communityCountAfter = (pageTextAfterCreate.match(/社区/g) || []).length;
+        console.log(`创建后社区数量: ${communityCountAfter}`);
+        expect(communityCountAfter).toBeGreaterThan(communityCountBefore);
+        console.log(`✅ 验证通过：社区数量从 ${communityCountBefore} 增加到 ${communityCountAfter}`);
 
         console.log('步骤12: 验证该社区条目右侧有"停用"和"删除"两个按钮');
 
