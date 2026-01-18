@@ -234,7 +234,16 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
-        console.log("步骤11: 验证社区列表中出现新创建的社区");
+        console.log("步骤11: 手动刷新社区列表");
+
+        // 手动刷新社区列表（下拉刷新）
+        await page.mouse.wheel(0, -200); // 向上滚动
+        await page.waitForTimeout(1000);
+        await page.mouse.wheel(0, 200); // 向下滚动
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(3000);
+
+        console.log("步骤12: 验证社区列表中出现新创建的社区");
 
         // 验证社区列表中出现新创建的社区
         const pageTextAfterCreate = await page.locator("body").textContent();
