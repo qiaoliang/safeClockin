@@ -200,20 +200,28 @@ export async function getUserCommunityInfo(page) {
 
 /**
  * 获取用户的完整信息
- * 
+ *
  * @param {Page} page - Playwright Page 对象
  * @returns {Promise<Object|null>} 用户完整信息
  */
 export async function getUserProfile(page) {
   const userState = await getUserState(page);
-  
+
   if (!userState || !userState.profile) {
+    console.log('❌ userState 或 profile 不存在');
     return null;
   }
 
   const profile = userState.profile;
 
-  return {
+  // 调试日志：输出所有可用的字段
+  console.log('🔍 调试信息 - profile 所有字段:', Object.keys(profile));
+  console.log('🔍 调试信息 - profile.communityId:', profile.communityId);
+  console.log('🔍 调试信息 - profile.community_id:', profile.community_id);
+  console.log('🔍 调试信息 - profile.communityName:', profile.communityName);
+  console.log('🔍 调试信息 - profile.community_name:', profile.community_name);
+
+  const result = {
     userId: profile.userId,
     nickname: profile.nickname,
     avatarUrl: profile.avatarUrl,
@@ -226,4 +234,8 @@ export async function getUserProfile(page) {
     communityRole: profile.communityRole,
     allKeys: Object.keys(profile)
   };
+
+  console.log('✅ 返回的用户信息:', JSON.stringify(result, null, 2));
+
+  return result;
 }
