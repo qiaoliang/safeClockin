@@ -7,9 +7,9 @@
 help:
 	@echo "SafeGuard Frontend 测试命令:"
 	@echo ""
-	@echo "  ut        - 运行单元测试"
+	@echo "  ut               - 运行单元测试"
 	@echo "  test-integration - 运行集成测试"
-	@echo "  e2e         - 运行端到端测试"
+	@echo "  e2e              - 运行端到端测试"
 	@echo "  test-all         - 运行所有测试"
 	@echo "  test-coverage    - 运行测试并生成覆盖率报告"
 	@echo "  test-clean       - 清理测试相关文件"
@@ -17,7 +17,9 @@ help:
 	@echo ""
 	@echo "使用示例:"
 	@echo "  make ut"
-	@echo "  make test-all"
+	@echo "  make e2e                                     # 运行所有 E2E 测试"
+	@echo "  make e2e TEST=login.spec.js                  # 运行单个测试文件"
+	@echo "  make e2e TEST=\"login.spec.js basic.spec.js\" # 运行多个测试文件"
 
 # 运行单元测试
 ut:
@@ -30,9 +32,28 @@ test-integration:
 	npx vitest run --config vitest.integration.config.js
 
 # 运行端到端测试（Playwright E2E）
+# 使用方法:
+#   make e2e                                     # 运行所有测试
+#   make e2e TEST=login.spec.js                  # 运行单个测试
+#   make e2e TEST="tests/e2e-playwright/specs/login.spec.js"  # 完整路径
 e2e:
 	@echo "🌐 运行端到端测试（Playwright）..."
-	./scripts/run-playwright-e2e.sh
+	@if [ -z "$(TEST)" ]; then \
+		echo "运行所有 E2E 测试..."; \
+		./scripts/run-playwright-e2e.sh; \
+	else \
+		if [ -f "$(TEST)" ]; then \
+			echo "运行测试文件: $(TEST)"; \
+			./scripts/run-playwright-e2e.sh "$(TEST)"; \
+		elif [ -f "tests/e2e-playwright/specs/$(TEST)" ]; then \
+			echo "运行测试文件: tests/e2e-playwright/specs/$(TEST)"; \
+			./scripts/run-playwright-e2e.sh "tests/e2e-playwright/specs/$(TEST)"; \
+		else \
+			echo "错误: 测试文件不存在: $(TEST)"; \
+			echo "请检查文件路径或使用 make help 查看用法"; \
+			exit 1; \
+		fi \
+	fi
 	@echo "✅ Playwright E2E 测试完成"
 
 # 运行所有测试（按顺序执行）
