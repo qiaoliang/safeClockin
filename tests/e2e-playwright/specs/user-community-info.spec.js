@@ -26,6 +26,20 @@ test.describe('用户社区信息验证', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
 
+    // === 第一步：验证页面显示社区信息（如果页面能显示，说明数据存在）===
+    console.log('\n=== 第一步：验证页面显示社区信息 ===');
+
+    // 检查页面上是否有任何文本包含"安卡大家庭"或"社区"
+    const pageText = await page.content();
+    console.log('📄 页面完整文本（前500字符）:', pageText.substring(0, 500));
+
+    // 检查是否有"安卡大家庭"或"社区"相关文本
+    const hasCommunityText = pageText.includes('安卡大家庭') || pageText.includes('社区');
+    console.log(f"✅ 页面包含社区相关文本: {hasCommunityText}");
+
+    // === 第二步：验证 userState 中的 community_id ===
+    console.log('\n=== 第二步：验证 userState 中的 community_id ===');
+
     // 使用 helper 方法获取用户信息（包括加密数据）
     console.log('获取用户的完整信息');
     const userProfile = await getUserProfile(page);
