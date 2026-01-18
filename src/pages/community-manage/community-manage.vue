@@ -233,8 +233,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onShow } from 'vue'
-import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
+import { ref, computed, onMounted } from 'vue'
+import { onLoad, onPullDownRefresh, onReachBottom, onShow } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
 import { formatDate } from '@/utils/community'
 import {
