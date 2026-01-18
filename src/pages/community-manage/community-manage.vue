@@ -233,7 +233,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onShow } from 'vue'
 import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 import { useCommunityStore } from '@/store/modules/community'
 import { formatDate } from '@/utils/community'
@@ -678,6 +678,12 @@ onReachBottom(async () => {
 })
 
 onMounted(() => {
+  loadCommunities(true)
+})
+
+onShow(() => {
+  // 每次页面显示时重新加载社区列表
+  // 这样从其他页面返回时可以获取最新数据
   loadCommunities(true)
 })
 </script>
