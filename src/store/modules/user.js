@@ -383,11 +383,12 @@ export const useUserStore = defineStore("user", {
                         apiResponse.data?.wechatOpenid ||
                         apiResponse.data?.wechat_openid,
                     isVerified: apiResponse.data?.is_verified || false,
+                    // 社区信息字段映射（支持驼峰和下划线命名）
+                    communityId: apiResponse.data?.communityId || apiResponse.data?.community_id || null,
+                    communityName: apiResponse.data?.communityName || apiResponse.data?.community_name || null,
                     // 确保社区角色信息存在
                     communityRoles: apiResponse.data?.communityRoles || {},
                     communityRole: apiResponse.data?.communityRole || null,
-                    // 保存所有返回的用户信息字段
-                    ...apiResponse.data,
                 };
 
                 this.isLoggedIn = true;
