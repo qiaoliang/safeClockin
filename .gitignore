@@ -1,4 +1,3 @@
-test-failed-*.png
 *.log
 src/config/*.bak
 src/config/*.backup
@@ -12,4 +11,5 @@ node_modules
 *.key
 playwright-report/
 test-results/
+playwright-test-result/
 logs/

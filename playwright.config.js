@@ -16,11 +16,14 @@ export default defineConfig({
   // 使用单线程运行测试（避免SQLite数据库锁定）
   workers: 1,
   
+  // 测试结果输出目录
+  outputDir: 'playwright-test-result',
+  
   // 测试报告
   reporter: [
-    ['html'],
+    ['html', { outputFolder: 'playwright-test-result/html-report' }],
     ['list'],
-    ['junit', { outputFile: 'test-results/e2e-results.xml' }]
+    ['junit', { outputFile: 'playwright-test-result/e2e-results.xml' }]
   ],
   
   // 全局设置
@@ -32,6 +35,11 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    
+    // 截图和视频输出目录
+    screenshotDir: 'playwright-test-result/screenshots',
+    videoDir: 'playwright-test-result/videos',
+    traceDir: 'playwright-test-result/traces',
     
     // 超时配置
     actionTimeout: 10000,
