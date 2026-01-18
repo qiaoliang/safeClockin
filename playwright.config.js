@@ -26,7 +26,7 @@ export default defineConfig({
   // 全局设置
   use: {
     // 基础 URL（Web 服务器地址）
-    baseURL: process.env.BASE_URL || 'http://localhost:8081',
+    baseURL: process.env.BASE_URL || 'https://localhost:8081',
     
     // 截图和视频配置
     trace: 'on-first-retry',
