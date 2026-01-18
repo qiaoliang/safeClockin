@@ -117,23 +117,35 @@ log_info "开始运行 Playwright E2E 测试..."
 # 记录测试开始时间
 TEST_START_TIME=$(date +%s)
 
+# 解析参数：分离运行模式和测试文件路径
+TEST_MODE=""
+TEST_FILES=""
+
+for arg in "$@"; do
+    if [[ "$arg" == "--ui" || "$arg" == "--debug" || "$arg" == "--headed" ]]; then
+        TEST_MODE="$arg"
+    else
+        TEST_FILES="$TEST_FILES $arg"
+    fi
+done
+
 # 根据参数选择运行模式
-if [ "$1" = "--ui" ]; then
+if [ "$TEST_MODE" = "--ui" ]; then
     # UI 模式
     log_info "使用 UI 模式运行测试"
-    npx playwright test --ui
-elif [ "$1" = "--debug" ]; then
+    npx playwright test $TEST_FILES --ui
+elif [ "$TEST_MODE" = "--debug" ]; then
     # 调试模式
     log_info "使用调试模式运行测试"
-    npx playwright test --debug
-elif [ "$1" = "--headed" ]; then
+    npx playwright test $TEST_FILES --debug
+elif [ "$TEST_MODE" = "--headed" ]; then
     # 有头模式（显示浏览器窗口）
     log_info "使用有头模式运行测试"
-    npx playwright test --headed
+    npx playwright test $TEST_FILES --headed
 else
     # 默认模式（无头模式）
     log_info "使用无头模式运行测试"
-    npx playwright test
+    npx playwright test $TEST_FILES
 fi
 
 # 记录测试结束时间

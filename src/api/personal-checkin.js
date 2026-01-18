@@ -11,7 +11,7 @@ import { request } from "./request";
  */
 export const getPersonalRules = () => {
     return request({
-        url: "/api/user_checkin/rules",
+        url: "/api/checkin/rules",
         method: "GET",
     });
 };
@@ -23,7 +23,7 @@ export const getPersonalRules = () => {
  */
 export const createPersonalRule = (ruleData) => {
     return request({
-        url: "/api/user_checkin/rules",
+        url: "/api/checkin/rules",
         method: "POST",
         data: ruleData,
     });
@@ -37,7 +37,7 @@ export const createPersonalRule = (ruleData) => {
  */
 export const updatePersonalRule = (ruleId, ruleData) => {
     return request({
-        url: `/api/user_checkin/rules/${ruleId}`,
+        url: `/api/checkin/rules/${ruleId}`,
         method: "PUT",
         data: ruleData,
     });
@@ -50,7 +50,7 @@ export const updatePersonalRule = (ruleId, ruleData) => {
  */
 export const enablePersonalRule = (ruleId) => {
     return request({
-        url: `/api/user_checkin/rules/${ruleId}/enable`,
+        url: `/api/checkin/rules/${ruleId}/enable`,
         method: "POST",
     });
 };
@@ -62,7 +62,7 @@ export const enablePersonalRule = (ruleId) => {
  */
 export const disablePersonalRule = (ruleId) => {
     return request({
-        url: `/api/user_checkin/rules/${ruleId}/disable`,
+        url: `/api/checkin/rules/${ruleId}/disable`,
         method: "POST",
     });
 };
@@ -74,7 +74,7 @@ export const disablePersonalRule = (ruleId) => {
  */
 export const deletePersonalRule = (ruleId) => {
     return request({
-        url: `/api/user_checkin/rules/${ruleId}`,
+        url: `/api/checkin/rules/${ruleId}`,
         method: "DELETE",
     });
 };
@@ -86,7 +86,7 @@ export const deletePersonalRule = (ruleId) => {
  */
 export const getPersonalRuleDetail = (ruleId) => {
     return request({
-        url: `/api/user_checkin/rules/${ruleId}`,
+        url: `/api/checkin/rules/${ruleId}`,
         method: "GET",
     });
 };
