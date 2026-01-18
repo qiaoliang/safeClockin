@@ -6,17 +6,49 @@
 
 /**
  * 读取用户的 userState（包括加密数据）
- * 
+ *
  * @param {Page} page - Playwright Page 对象
  * @returns {Promise<Object|null>} 用户信息对象
  */
 export async function getUserState(page) {
   try {
     const userState = await page.evaluate(() => {
-      // 尝试从 storage 读取加密的 userState
-      // 在 H5 环境中，uni-app 使用 localStorage
+      // 尝试使用测试辅助函数获取 userState
+      try {
+        if (typeof window !== 'undefined' && typeof window.__TEST_GET_USER_STATE__ === 'function') {
+          console.log('✅ 找到 window.__TEST_GET_USER_STATE__');
+          const state = window.__TEST_GET_USER_STATE__()
+          console.log('✅ __TEST_GET_USER_STATE__ 返回:', state);
+          return state;
+        }
+      } catch (e) {
+        console.log('无法使用 __TEST_GET_USER_STATE__:', e.message);
+      }
+
+      // 备选方案：直接从 localStorage 读取
+      try {
+        const stored = localStorage.getItem('userState');
+        if (stored) {
+          console.log('✅ 从 localStorage 读取到 userState（加密）');
+          // 尝试解析为 JSON
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed && typeof parsed === 'object') {
+              console.log('✅ userState 已解析（未加密）');
+              return parsed;
+            }
+          } catch (e) {
+            console.log('⚠️ userState 是加密的');
+            return null;
+          }
+        }
+      } catch (e) {
+        console.log('无法从 localStorage 读取:', e.message);
+      }
+
+      // 如果无法从 store 读取，尝试从 localStorage 读取并解密
       let encryptedData = null;
-      
+
       try {
         if (typeof uni !== 'undefined' && uni.getStorageSync) {
           encryptedData = uni.getStorageSync('userState');
@@ -29,10 +61,21 @@ export async function getUserState(page) {
           encryptedData = localStorage.getItem('userState');
         }
       }
-      
+
       if (!encryptedData) {
         console.log('userState 不存在');
         return null;
+      }
+
+      // 尝试解析为 JSON（如果是未加密的数据）
+      try {
+        const parsed = JSON.parse(encryptedData);
+        if (parsed && typeof parsed === 'object') {
+          console.log('✅ userState 已解析（未加密）');
+          return parsed;
+        }
+      } catch (e) {
+        // 不是 JSON，可能是加密的数据
       }
 
       // 尝试解密（使用与生产代码相同的逻辑）

@@ -21,7 +21,7 @@ export default defineConfig({
   
   // 测试报告
   reporter: [
-    ['html', { outputFolder: 'playwright-test-result/html-report' }],
+    ['html', { outputFolder: 'playwright-report' }],
     ['list'],
     ['junit', { outputFile: 'playwright-test-result/e2e-results.xml' }]
   ],
