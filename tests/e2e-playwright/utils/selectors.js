@@ -136,19 +136,47 @@ export const eventSelectors = {
 
 // ==================== 打卡规则选择器 ====================
 export const ruleSelectors = {
-  // 规则列表
+  // 规则列表页
   list: {
     container: 'data-testid=rule-list-page',
-    addButton: 'data-testid=add-rule-button',
-    ruleItem: (id) => `data-testid=rule-item-${id}`,
+    title: 'data-testid=rule-list-title',
+    viewRulesButton: 'data-testid=view-rules-button',
+    addPersonalRuleButton: 'data-testid=add-personal-rule-button',
+    ruleItem: (name) => `data-testid=rule-item-${name}`,
+    ruleCard: 'data-testid=rule-card',
+    // 规则操作按钮
+    editButton: 'data-testid=rule-edit-button',
+    deleteButton: 'data-testid=rule-delete-button',
+    inviteButton: 'data-testid=rule-invite-button',
   },
 
-  // 创建/编辑规则
+  // 添加/编辑规则表单
   form: {
     container: 'data-testid=rule-form-page',
+    title: 'data-testid=rule-form-title',
+    // 添加规则页面标题
+    addTitle: 'data-testid=add-rule-title',
+    // 编辑规则页面标题
+    editTitle: 'data-testid=edit-rule-title',
+    // 表单字段
     nameInput: 'data-testid=rule-name-input',
-    timeInput: 'data-testid=rule-time-input',
-    submitBtn: 'data-testid=rule-submit-button',
+    plannedTimeInput: 'data-testid=rule-planned-time-input',
+    endTimeInput: 'data-testid=rule-end-time-input',
+    // 按钮
+    submitButton: 'data-testid=rule-submit-button',
+    cancelButton: 'data-testid=rule-cancel-button',
+    // 确认对话框
+    confirmDialog: 'data-testid=rule-confirm-dialog',
+    confirmButton: 'data-testid=rule-confirm-button',
+    deleteConfirmButton: 'data-testid=rule-delete-confirm-button',
+  },
+
+  // 打卡首页
+  home: {
+    container: 'data-testid=checkin-home-page',
+    checkinButton: 'data-testid=checkin-button',
+    viewRulesButton: 'data-testid=view-rules-button',
+    todayRules: 'data-testid=today-rules-list',
   },
 };
 
