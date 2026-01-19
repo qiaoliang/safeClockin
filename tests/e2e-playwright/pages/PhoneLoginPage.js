@@ -97,6 +97,21 @@ export class PhoneLoginPage extends BasePage {
     await this.switchToPasswordTab();
     await this.fillPhone(phone);
     await this.fillPassword(password);
+
+    // 勾选用户协议
+    try {
+      await this.page.locator(this.selectors.agreementCheckbox).check();
+      await this.page.waitForTimeout(500);
+    } catch {
+      // 如果 checkbox 不可用，尝试点击
+      try {
+        await this.page.locator('checkbox').first().click();
+        await this.page.waitForTimeout(500);
+      } catch {
+        console.log('⚠️ 用户协议复选框未找到，尝试继续登录');
+      }
+    }
+
     await this.clickSubmit();
 
     // 等待登录完成（跳转到首页）
@@ -112,6 +127,20 @@ export class PhoneLoginPage extends BasePage {
     await this.switchToCodeTab();
     await this.fillPhone(phone);
     await this.fillCode(code);
+
+    // 勾选用户协议
+    try {
+      await this.page.locator(this.selectors.agreementCheckbox).check();
+      await this.page.waitForTimeout(500);
+    } catch {
+      try {
+        await this.page.locator('checkbox').first().click();
+        await this.page.waitForTimeout(500);
+      } catch {
+        console.log('⚠️ 用户协议复选框未找到，尝试继续登录');
+      }
+    }
+
     await this.clickSubmit();
 
     // 等待登录完成（跳转到首页）
