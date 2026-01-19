@@ -141,8 +141,8 @@ export class RuleListPage extends BasePage {
     try {
       await this.safeClick(this.selectors.form.deleteConfirmButton);
     } catch {
-      // 回退到文本选择器
-      await this.page.getByText('删除', { exact: true }).click({ force: true });
+      // 使用模态框确认按钮的类选择器，避免匹配多个"删除"按钮
+      await this.page.locator('.modal-confirm-btn').click({ force: true });
     }
     await this.waitForNetworkIdle();
   }

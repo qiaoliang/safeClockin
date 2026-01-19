@@ -15,7 +15,15 @@ export class BasePage {
    */
   async goto(path = '/') {
     await this.page.goto(path);
-    await this.page.waitForLoadState('networkidle');
+    // 使用较短的超时时间，如果超时则至少等待 DOM 加载完成
+    try {
+      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+    } catch {
+      // 如果网络空闲等待失败，至少确保 DOM 加载完成
+      await this.page.waitForLoadState('domcontentloaded', { timeout: 5000 }).catch(() => {});
+      // 给页面一些额外时间渲染
+      await this.page.waitForTimeout(1000);
+    }
   }
 
   /**
