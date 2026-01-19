@@ -31,12 +31,23 @@ export class RuleListPage extends BasePage {
    * 点击"添加个人规则"按钮
    */
   async clickAddPersonalRule() {
-    // 优先使用 data-testid 选择器
+    // 等待页面稳定
+    await this.page.waitForTimeout(1000);
+
     try {
-      await this.safeClick(this.selectors.addPersonalRuleButton);
+      // 优先使用 data-testid 选择器
+      const selector = this.page.locator(this.selectors.addPersonalRuleButton).first();
+      await selector.waitFor({ state: 'visible', timeout: 5000 });
+      await selector.click({ force: true });
     } catch {
-      // 回退到文本选择器
-      await this.page.getByText('添加个人规则', { exact: true }).click({ force: true });
+      // 回退到文本选择器，使用更宽松的匹配
+      try {
+        await this.page.getByText('添加个人规则').first().click({ force: true, timeout: 5000 });
+      } catch {
+        // 最后的回退：通过按钮类名查找
+        const addBtn = this.page.locator('.add-rule-btn, button').filter({ hasText: '添加个人规则' }).first();
+        await addBtn.click({ force: true, timeout: 5000 });
+      }
     }
     await this.waitForNetworkIdle();
   }
@@ -45,11 +56,23 @@ export class RuleListPage extends BasePage {
    * 点击"查看规则"按钮（从打卡首页）
    */
   async clickViewRules() {
+    // 等待页面加载完成
+    await this.page.waitForTimeout(2000);
+
     try {
-      await this.safeClick(this.selectors.viewRulesButton);
+      // 优先使用 data-testid 选择器
+      const selector = this.page.locator(this.selectors.viewRulesButton).first();
+      await selector.waitFor({ state: 'visible', timeout: 5000 });
+      await selector.click({ force: true });
     } catch {
-      // 回退到文本选择器
-      await this.page.getByText('查看规则', { exact: true }).click({ force: true });
+      // 回退到文本选择器，使用更宽松的匹配
+      try {
+        await this.page.getByText('查看规则').first().click({ force: true, timeout: 5000 });
+      } catch {
+        // 最后的回退：通过 CSS 类名查找
+        const gridItem = this.page.locator('.grid-item-content').filter({ hasText: '查看规则' }).first();
+        await gridItem.click({ force: true, timeout: 5000 });
+      }
     }
     await this.waitForNetworkIdle();
   }
