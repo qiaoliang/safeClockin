@@ -4,6 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
+import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { ProfilePage } from '../pages/ProfilePage.js';
 import { EventClosePage } from '../pages/EventClosePage.js';
@@ -26,7 +27,6 @@ test.describe('社区工作人员关闭事件测试', () => {
       // 使用普通用户登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,

@@ -4,6 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
+import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { OneClickHelpPage } from '../pages/OneClickHelpPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
 
@@ -22,7 +23,6 @@ test.describe('一键求助功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -114,7 +114,6 @@ test.describe('一键求助功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -138,7 +137,6 @@ test.describe('一键求助功能测试', () => {
       // 登录用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NEW_USER.phone,
@@ -166,7 +164,6 @@ test.describe('一键求助功能测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -208,7 +205,6 @@ test.describe('一键求助功能测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -248,7 +244,6 @@ test.describe('一键求助功能测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -299,7 +294,6 @@ test.describe('一键求助功能测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -339,7 +333,6 @@ test.describe('一键求助功能测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,

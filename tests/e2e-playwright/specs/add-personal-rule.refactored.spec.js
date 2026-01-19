@@ -4,6 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
+import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { RuleListPage } from '../pages/RuleListPage.js';
 import { RuleFormPage } from '../pages/RuleFormPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
@@ -18,14 +19,13 @@ test.describe('添加个人打卡规则测试', () => {
   test.describe('创建打卡规则', () => {
     test('用户登录后添加个人打卡规则', async ({ page }) => {
       const loginPage = new LoginPage(page);
+      const phoneLoginPage = new PhoneLoginPage(page);
       const ruleListPage = new RuleListPage(page);
       const ruleFormPage = new RuleFormPage(page);
 
       // 步骤 1：登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
-      const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
         TEST_USERS.NORMAL.password
@@ -85,7 +85,6 @@ test.describe('添加个人打卡规则测试', () => {
       // 步骤 1：登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -146,7 +145,6 @@ test.describe('添加个人打卡规则测试', () => {
       // 步骤 1：登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -196,7 +194,6 @@ test.describe('添加个人打卡规则测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -246,7 +243,6 @@ test.describe('添加个人打卡规则测试', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,

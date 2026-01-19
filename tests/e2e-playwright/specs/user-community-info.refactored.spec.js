@@ -4,6 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
+import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
 
@@ -39,7 +40,6 @@ test.describe('首页社区名称显示', () => {
       // 注册并登录新用户（使用已有用户测试）
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.switchToRegisterTab();
 
@@ -109,7 +109,6 @@ test.describe('首页社区名称显示', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -182,7 +181,6 @@ test.describe('首页社区名称显示', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -201,7 +199,6 @@ test.describe('首页社区名称显示', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -243,7 +240,6 @@ test.describe('首页社区名称显示', () => {
       // 使用新用户登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NEW_USER.phone,
@@ -268,7 +264,6 @@ test.describe('首页社区名称显示', () => {
       // 登录
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,

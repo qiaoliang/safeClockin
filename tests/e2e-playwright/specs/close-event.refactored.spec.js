@@ -5,6 +5,7 @@
 import { test, expect } from '@playwright/test';
 import { test as customTest } from '../fixtures/base.fixture.js';
 import { LoginPage } from '../pages/LoginPage.js';
+import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { OneClickHelpPage } from '../pages/OneClickHelpPage.js';
 import { EventClosePage } from '../pages/EventClosePage.js';
@@ -47,7 +48,7 @@ test.describe('事件关闭功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const phoneLoginPage = new (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage(page);
+      const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
         TEST_USERS.NORMAL.password
@@ -65,7 +66,6 @@ test.describe('事件关闭功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -110,7 +110,6 @@ test.describe('事件关闭功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
@@ -205,7 +204,6 @@ test.describe('事件关闭功能测试', () => {
       // 登录普通用户
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
-      const PhoneLoginPage = (await import('../pages/PhoneLoginPage.js')).PhoneLoginPage;
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
         TEST_USERS.NORMAL.phone,
