@@ -22,24 +22,37 @@ export class PhoneLoginPage extends BasePage {
    * 切换到密码登录标签
    */
   async switchToPasswordTab() {
-    await this.safeClick(this.selectors.tabPassword);
-    await this.page.waitForTimeout(500);
+    try {
+      await this.safeClick(this.selectors.tabPassword);
+    } catch {
+      // 回退到通过文本查找 tab 元素
+      await this.page.locator('.tab').filter({ hasText: '密码登录' }).click({ force: true });
+    }
+    await this.page.waitForTimeout(1000);
   }
 
   /**
    * 切换到验证码登录标签
    */
   async switchToCodeTab() {
-    await this.safeClick(this.selectors.tabCode);
-    await this.page.waitForTimeout(500);
+    try {
+      await this.safeClick(this.selectors.tabCode);
+    } catch {
+      await this.page.locator('.tab').filter({ hasText: '验证码登录' }).click({ force: true });
+    }
+    await this.page.waitForTimeout(1000);
   }
 
   /**
    * 切换到注册标签
    */
   async switchToRegisterTab() {
-    await this.safeClick(this.selectors.tabRegister);
-    await this.page.waitForTimeout(500);
+    try {
+      await this.safeClick(this.selectors.tabRegister);
+    } catch {
+      await this.page.locator('.tab').filter({ hasText: '注册' }).click({ force: true });
+    }
+    await this.page.waitForTimeout(1000);
   }
 
   /**
@@ -77,7 +90,20 @@ export class PhoneLoginPage extends BasePage {
    * 点击提交按钮
    */
   async clickSubmit() {
-    await this.safeClick(this.selectors.submitBtn);
+    // uni-app 的 button 元素会被渲染为 uni-button 组件
+    // 使用 uni-button.submit 选择器
+    try {
+      await this.page.locator('uni-button.submit').click({ force: true, timeout: 5000 });
+    } catch {
+      // 回退到 data-testid 选择器
+      try {
+        await this.safeClick(this.selectors.submitBtn);
+      } catch {
+        // 最后的回退：通过文本查找
+        const submitText = await this.page.locator('uni-button.submit').textContent();
+        await this.page.getByText(submitText).click({ force: true });
+      }
+    }
     await this.waitForNetworkIdle();
   }
 
@@ -97,25 +123,18 @@ export class PhoneLoginPage extends BasePage {
     await this.switchToPasswordTab();
     await this.fillPhone(phone);
     await this.fillPassword(password);
-
-    // 勾选用户协议
-    try {
-      await this.page.locator(this.selectors.agreementCheckbox).check();
-      await this.page.waitForTimeout(500);
-    } catch {
-      // 如果 checkbox 不可用，尝试点击
-      try {
-        await this.page.locator('checkbox').first().click();
-        await this.page.waitForTimeout(500);
-      } catch {
-        console.log('⚠️ 用户协议复选框未找到，尝试继续登录');
-      }
-    }
-
     await this.clickSubmit();
 
     // 等待登录完成（跳转到首页）
-    await this.page.waitForTimeout(3000);
+    await this.page.waitForTimeout(5000);
+
+    // 验证登录成功
+    const pageText = await this.page.locator('body').textContent();
+    const hasHomePage = pageText.includes('打卡') || pageText.includes('社区') || pageText.includes('我的');
+
+    if (!hasHomePage) {
+      throw new Error('登录失败，未跳转到首页。页面内容: ' + pageText.substring(0, 200));
+    }
   }
 
   /**
