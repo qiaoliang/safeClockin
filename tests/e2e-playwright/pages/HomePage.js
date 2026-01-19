@@ -34,19 +34,9 @@ export class HomePage extends BasePage {
       throw new Error(`Unknown tab: ${tabName}. Available tabs: ${Object.keys(tabTextMap).join(', ')}`);
     }
 
-    try {
-      // 优先使用 data-testid 选择器
-      const selector = this.selectors.bottomNav[tabName];
-      await this.safeClick(selector);
-    } catch {
-      // 回退到通过 uni-app 的底部导航栏类名和文本查找
-      try {
-        await this.page.locator('.uni-tabbar__label').filter({ hasText: tabText }).click({ force: true });
-      } catch {
-        // 最后的回退：通过文本直接查找
-        await this.page.getByText(tabText).click({ force: true });
-      }
-    }
+    // 使用 uni-app 的底部导航栏类名和文本查找，强制点击
+    await this.page.locator('.uni-tabbar__label').filter({ hasText: tabText }).click({ force: true });
+
     await this.waitForNetworkIdle();
     await this.page.waitForTimeout(1000);
   }

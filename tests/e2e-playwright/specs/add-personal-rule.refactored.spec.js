@@ -32,11 +32,8 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
-      // 等待登录完成并导航到首页
-      // 登录后默认跳转到"我的"页面，需要先导航到首页
-      const homePage = new HomePage(page);
-      await homePage.goToHome();
-      await page.waitForTimeout(2000);
+      // 等待登录完成（普通用户会自动跳转到首页）
+      await page.waitForTimeout(3000);
 
       // 验证在首页
       const homePageText = await page.locator('body').textContent();
@@ -214,11 +211,8 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
-      // 等待登录完成并导航到首页
-      // 登录后默认跳转到"我的"页面，需要先导航到首页
-      const homePage = new HomePage(page);
-      await homePage.goToHome();
-      await page.waitForTimeout(2000);
+      // 等待登录完成（普通用户会自动跳转到首页）
+      await page.waitForTimeout(3000);
 
       // 导航到添加规则页面
       const ruleListPage = new RuleListPage(page);
@@ -267,11 +261,8 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
-      // 等待登录完成并导航到首页
-      // 登录后默认跳转到"我的"页面，需要先导航到首页
-      const homePage = new HomePage(page);
-      await homePage.goToHome();
-      await page.waitForTimeout(2000);
+      // 等待登录完成（普通用户会自动跳转到首页）
+      await page.waitForTimeout(3000);
 
       // 导航到添加规则页面
       const ruleListPage = new RuleListPage(page);
