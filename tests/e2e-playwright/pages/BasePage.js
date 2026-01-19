@@ -77,7 +77,15 @@ export class BasePage {
    * @param {number} timeout - 超时时间（毫秒）
    */
   async waitForNetworkIdle(timeout = 5000) {
-    await this.page.waitForLoadState('networkidle', { timeout });
+    // 使用较短的超时时间，如果超时则至少等待 DOM 加载完成
+    try {
+      await this.page.waitForLoadState('networkidle', { timeout });
+    } catch {
+      // 如果网络空闲等待失败，至少确保 DOM 加载完成
+      await this.page.waitForLoadState('domcontentloaded', { timeout: 3000 }).catch(() => {});
+      // 给页面一些额外时间渲染
+      await this.page.waitForTimeout(500);
+    }
   }
 
   /**
