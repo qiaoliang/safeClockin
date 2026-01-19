@@ -2,11 +2,10 @@
  * API 客户端用于测试数据清理和管理
  * 提供与后端 API 交互的方法，用于测试数据的创建和清理
  */
-import { ENV_CONFIG } from '../fixtures/test-data.mjs';
-
 export class ApiClient {
   constructor(apiUrl) {
-    this.apiUrl = apiUrl || ENV_CONFIG.API_URL;
+    // 直接使用环境变量，避免循环导入问题
+    this.apiUrl = apiUrl || process.env.BASE_URL_FOR_SAFEGUARD || 'http://localhost:9999';
     this.token = null;
     this.request = this.request.bind(this);
   }
@@ -42,7 +41,22 @@ export class ApiClient {
     };
 
     const response = await fetch(url, requestOptions);
-    const data = await response.json();
+
+    // 检查响应类型
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(
+        `API 请求返回非 JSON 响应: ${response.status} ${response.statusText}\n` +
+        `Content-Type: ${contentType}\n` +
+        `URL: ${url}\n` +
+        `响应内容: ${text.substring(0, 200)}`
+      );
+    }
 
     if (!response.ok) {
       throw new Error(`API 请求失败: ${response.status} ${response.statusText} - ${JSON.stringify(data)}`);
@@ -96,7 +110,7 @@ export class ApiClient {
    * @returns {Promise<object>} 登录响应
    */
   async loginWithPassword(phone, password) {
-    const response = await this.post('/api/auth/login-phone-password', {
+    const response = await this.post('/api/auth/login_phone_password', {
       phone,
       password,
     });
@@ -114,7 +128,7 @@ export class ApiClient {
    * @returns {Promise<object>} 登录响应
    */
   async loginWithWechat(code = 'test_wechat_code') {
-    const response = await this.post('/api/auth/wechat-login', { code });
+    const response = await this.post('/api/auth/login_wechat', { code });
 
     if (response.code === 1 && response.data?.token) {
       this.token = response.data.token;
@@ -131,7 +145,7 @@ export class ApiClient {
    * @returns {Promise<object>} 创建响应
    */
   async createCommunity(data) {
-    return this.post('/api/communities', {
+    return this.post('/api/community/create', {
       name: data.name,
       location: data.location || '测试地址',
       description: data.description || '测试社区描述',
@@ -144,7 +158,10 @@ export class ApiClient {
    * @returns {Promise<object>} 删除响应
    */
   async deleteCommunity(communityId) {
-    return this.delete(`/api/communities/${communityId}`);
+    // 使用 POST 方法，社区 ID 在请求体中
+    return this.post('/api/community/delete', {
+      community_id: communityId
+    });
   }
 
   /**
@@ -173,7 +190,11 @@ export class ApiClient {
    * @returns {Promise<object>} 更新响应
    */
   async updateCommunity(communityId, data) {
-    return this.put(`/api/communities/${communityId}`, data);
+    // 使用 POST 方法，社区 ID 在请求体中
+    return this.post('/api/community/update', {
+      community_id: communityId,
+      ...data
+    });
   }
 
   // ==================== 用户管理 ====================

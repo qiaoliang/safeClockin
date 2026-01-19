@@ -2,6 +2,7 @@
  * E2E 测试数据夹具
  * 包含测试用户数据和环境配置
  */
+import { ApiClient } from '../helpers/api-client.mjs';
 
 /**
  * 测试用户数据
@@ -152,8 +153,6 @@ export function generateRandomTestData() {
  * @param {boolean} testData.shouldDeleteUser - 是否删除用户（默认 false）
  */
 export async function cleanupTestData(testData) {
-  // 动态导入 ApiClient 避免循环依赖
-  const { ApiClient } = await import('../helpers/api-client.js');
   const apiClient = new ApiClient();
 
   // 使用超级管理员登录获取 token

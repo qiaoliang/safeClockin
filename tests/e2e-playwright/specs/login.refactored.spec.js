@@ -6,14 +6,19 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
 import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
-import { TEST_USERS } from '../fixtures/test-data.mjs';
+import { TEST_USERS, TestDataTracker, cleanupTestData } from '../fixtures/test-data.mjs';
+import { ApiClient } from '../helpers/api-client.mjs';
 
 test.describe('登录功能测试', () => {
   let loginPage;
   let phoneLoginPage;
   let homePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    // 清理浏览器状态，确保测试隔离
+    await context.clearCookies();
+    await page.goto('/');
+
     loginPage = new LoginPage(page);
     phoneLoginPage = new PhoneLoginPage(page);
     homePage = new HomePage(page);
@@ -73,21 +78,20 @@ test.describe('登录功能测试', () => {
       await loginPage.goto();
       await loginPage.loginAsSuperAdmin();
 
-      // 验证登录成功后跳转到首页
+      // 超级管理员登录后会跳转到个人中心页面
       await page.waitForTimeout(2000);
       const text = await page.locator('body').textContent();
-      expect(text).toMatch(/今日打卡|当前监护/);
+      expect(text).toMatch(/个人中心|系统超级系统管理员/);
     });
 
     test('超级管理员登录后应该能访问个人中心', async ({ page }) => {
       await loginPage.loginAsSuperAdmin();
 
-      // 使用 HomePage 导航到个人中心
-      await homePage.goToProfile();
-
+      // 超级管理员登录后自动跳转到个人中心页面
       // 验证在个人中心页面
+      await page.waitForTimeout(2000);
       const text = await page.locator('body').textContent();
-      expect(text).toContain('我的');
+      expect(text).toMatch(/个人中心|系统超级系统管理员|社区管理/);
     });
   });
 
@@ -136,8 +140,13 @@ test.describe('登录功能测试', () => {
  * 测试数据清理示例
  */
 test.describe('测试数据管理', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // 清理浏览器状态，确保测试隔离
+    await context.clearCookies();
+    await page.goto('/');
+  });
+
   test('使用 TestDataTracker 管理测试数据', async ({ page }) => {
-    const { TestDataTracker, cleanupTestData } = await import('../fixtures/test-data.mjs');
     const tracker = new TestDataTracker();
 
     // 登录
@@ -153,9 +162,6 @@ test.describe('测试数据管理', () => {
   });
 
   test('使用 ApiClient 直接清理数据', async ({ page }) => {
-    const { ApiClient } = await import('../helpers/api-client.js');
-    const { cleanupTestData } = await import('../fixtures/test-data.mjs');
-
     // 创建 API 客户端
     const apiClient = new ApiClient();
     await apiClient.loginWithPassword(

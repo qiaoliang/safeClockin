@@ -3,11 +3,12 @@
  * 展示完整的测试流程和数据清理
  */
 import { test, expect } from '@playwright/test';
+import { test as customTest } from '../fixtures/base.fixture.js';
 import { LoginPage } from '../pages/LoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { ProfilePage } from '../pages/ProfilePage.js';
 import { CommunityListPage } from '../pages/CommunityListPage.js';
-import { ApiClient, createAuthenticatedApiClient } from '../helpers/api-client.js';
+import { ApiClient, createAuthenticatedApiClient } from '../helpers/api-client.mjs';
 import { TEST_USERS, TestDataTracker } from '../fixtures/test-data.mjs';
 
 test.describe('创建社区功能测试', () => {
@@ -29,6 +30,12 @@ test.describe('创建社区功能测试', () => {
     if (!result.success) {
       console.error('测试数据清理失败:', result.errors);
     }
+  });
+
+  // 每个测试前清理浏览器状态
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
+    await page.goto('/');
   });
 
   test.describe('UI 交互测试', () => {
@@ -274,9 +281,10 @@ test.describe('创建社区功能测试', () => {
 
 /**
  * 使用 TestFixture 的示例
+ * 使用自定义 fixtures 进行测试
  */
-test.describe('使用自定义 Fixtures', () => {
-  test('使用 authenticatedPage fixture', async ({ authenticatedPage }) => {
+customTest.describe('使用自定义 Fixtures', () => {
+  customTest('使用 authenticatedPage fixture', async ({ authenticatedPage }) => {
     // authenticatedPage fixture 已经自动登录
     const text = await authenticatedPage.locator('body').textContent();
     expect(text).toMatch(/今日打卡|当前监护|我的/);

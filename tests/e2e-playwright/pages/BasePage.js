@@ -46,8 +46,22 @@ export class BasePage {
    */
   async safeFill(selector, value) {
     await this.waitForElementVisible(selector);
-    await this.page.locator(selector).clear();
-    await this.page.locator(selector).fill(value);
+    const element = this.page.locator(selector);
+
+    // uni-app 将 <input> 转换为 <uni-input> 自定义组件
+    // 尝试找到内部的 input 元素
+    const innerInput = element.locator('input').first();
+    const innerInputExists = await innerInput.count() > 0;
+
+    if (innerInputExists) {
+      // 使用内部的 input 元素
+      await innerInput.click();
+      await innerInput.fill(value);
+    } else {
+      // 回退到直接填充
+      await element.click();
+      await element.fill(value);
+    }
   }
 
   /**
