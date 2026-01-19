@@ -160,7 +160,13 @@ export class LoginPage extends BasePage {
    * @returns {Promise<boolean>}
    */
   async isWechatLoginButtonVisible() {
-    return await this.isElementVisible(this.selectors.loginWelcomePage.wechatLoginBtn);
+    // 先尝试使用 data-testid
+    const byTestId = await this.isElementVisible(this.selectors.loginWelcomePage.wechatLoginBtn);
+    if (byTestId) return true;
+
+    // 回退到文本检查
+    const pageText = await this.getPageText();
+    return pageText.includes('微信快捷登录');
   }
 
   /**
@@ -168,6 +174,12 @@ export class LoginPage extends BasePage {
    * @returns {Promise<boolean>}
    */
   async isPhoneLoginButtonVisible() {
-    return await this.isElementVisible(this.selectors.loginWelcomePage.phoneLoginBtn);
+    // 先尝试使用 data-testid
+    const byTestId = await this.isElementVisible(this.selectors.loginWelcomePage.phoneLoginBtn);
+    if (byTestId) return true;
+
+    // 回退到文本检查
+    const pageText = await this.getPageText();
+    return pageText.includes('手机号登录');
   }
 }

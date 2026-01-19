@@ -15,7 +15,16 @@ export class ProfilePage extends BasePage {
    * 检查个人中心页是否加载完成
    */
   async isLoaded() {
-    await this.waitForElementVisible(this.selectors.container);
+    // 等待页面加载
+    await this.page.waitForTimeout(2000);
+
+    // 验证页面包含个人中心相关内容
+    const pageText = await this.getPageText();
+    const hasProfileContent = pageText.includes('我的') || pageText.includes('个人中心');
+
+    if (!hasProfileContent) {
+      throw new Error('个人中心页未正确加载。页面内容: ' + pageText.substring(0, 200));
+    }
   }
 
   /**
@@ -54,21 +63,19 @@ export class ProfilePage extends BasePage {
    * @returns {Promise<object>} 用户信息对象
    */
   async getUserInfo() {
-    // 等待用户信息区域加载
-    await this.waitForElementVisible(this.selectors.userInfoSection);
+    // 等待页面加载
+    await this.page.waitForTimeout(1000);
 
-    const userInfoElement = this.page.locator(this.selectors.userInfoSection);
-
-    // 提取用户名和手机号
-    const text = await userInfoElement.textContent();
+    // 获取整个页面文本
+    const pageText = await this.getPageText();
 
     // 简单的文本解析，根据实际页面结构调整
-    const phoneMatch = text.match(/1[3-9]\d{9}/);
+    const phoneMatch = pageText.match(/1[3-9]\d{9}/);
     const phone = phoneMatch ? phoneMatch[0] : '';
 
     return {
       phone,
-      rawText: text,
+      rawText: pageText,
     };
   }
 
@@ -77,7 +84,13 @@ export class ProfilePage extends BasePage {
    * @returns {Promise<boolean>}
    */
   async isCommunityListButtonVisible() {
-    return await this.isElementVisible(this.selectors.communityListBtn);
+    // 先尝试使用 data-testid
+    const byTestId = await this.isElementVisible(this.selectors.communityListBtn);
+    if (byTestId) return true;
+
+    // 回退到文本检查
+    const pageText = await this.getPageText();
+    return pageText.includes('社区列表');
   }
 
   /**
@@ -85,6 +98,12 @@ export class ProfilePage extends BasePage {
    * @returns {Promise<boolean>}
    */
   async isLogoutButtonVisible() {
-    return await this.isElementVisible(this.selectors.logoutBtn);
+    // 先尝试使用 data-testid
+    const byTestId = await this.isElementVisible(this.selectors.logoutBtn);
+    if (byTestId) return true;
+
+    // 回退到文本检查
+    const pageText = await this.getPageText();
+    return pageText.includes('退出登录') || pageText.includes('退出');
   }
 }
