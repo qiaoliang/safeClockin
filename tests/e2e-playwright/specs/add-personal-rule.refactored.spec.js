@@ -95,8 +95,8 @@ test.describe('添加个人打卡规则测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 等待登录完成并导航到首页
@@ -159,8 +159,8 @@ test.describe('添加个人打卡规则测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 等待登录完成并导航到首页
