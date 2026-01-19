@@ -31,7 +31,13 @@ export class ProfilePage extends BasePage {
    * 点击社区列表按钮，进入社区管理
    */
   async clickCommunityList() {
-    await this.safeClick(this.selectors.communityListBtn);
+    // 社区列表按钮的 data-testid 是动态的：menu-社区列表
+    try {
+      await this.safeClick('data-testid=menu-社区列表');
+    } catch {
+      // 回退到文本选择器
+      await this.page.getByText('社区列表', { exact: true }).click({ force: true });
+    }
     await this.waitForNetworkIdle();
   }
 

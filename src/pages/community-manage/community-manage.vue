@@ -1,5 +1,5 @@
 <template>
-  <view class="community-manage-container">
+  <view class="community-manage-container" data-testid="community-list-page">
     <!-- 顶部标题栏 -->
     <view class="header-bar">
       <view

@@ -120,6 +120,7 @@
       <view
         class="grid-item-content"
         @click="handleSetRules"
+        data-testid="view-rules-button"
       >
         <view
           class="grid-icon-wrapper"

@@ -43,6 +43,7 @@
 ### 3. 社区管理相关 ✅
 
 #### `src/pages/community-manage/community-manage.vue`
+- ✅ `data-testid="community-list-page"` - 社区列表页面容器（NEW）
 - ✅ `data-testid="community-list-title"` - 社区列表标题
 - ✅ `:data-testid="`community-item-${item.name}`"` - 社区列表项（动态）
 - ✅ `data-testid="add-community-button"` - 添加社区按钮
@@ -61,6 +62,7 @@
 - ✅ `data-testid="home-role-checkin"` - 打卡角色标签
 - ✅ `data-testid="home-role-supervisor"` - 监护角色标签
 - ✅ `data-testid="one-click-help-button"` - 一键求助按钮
+- ✅ `data-testid="view-rules-button"` - 查看规则按钮（NEW）
 - ✅ `data-testid="close-reason-input"` - 关闭原因输入框
 - ✅ `data-testid="close-event-cancel-button"` - 关闭事件取消按钮
 - ✅ `data-testid="close-event-submit-button"` - 关闭事件确认按钮
