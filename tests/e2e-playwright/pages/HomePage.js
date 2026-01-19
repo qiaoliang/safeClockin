@@ -23,12 +23,32 @@ export class HomePage extends BasePage {
    * @param {string} tabName - 标签名称 ('home', 'community', 'profile')
    */
   async navigateToTab(tabName) {
-    const selector = this.selectors.bottomNav[tabName];
-    if (!selector) {
-      throw new Error(`Unknown tab: ${tabName}. Available tabs: ${Object.keys(this.selectors.bottomNav).join(', ')}`);
+    const tabTextMap = {
+      'home': '打卡',
+      'community': '社区',
+      'profile': '我的'
+    };
+
+    const tabText = tabTextMap[tabName];
+    if (!tabText) {
+      throw new Error(`Unknown tab: ${tabName}. Available tabs: ${Object.keys(tabTextMap).join(', ')}`);
     }
-    await this.safeClick(selector);
+
+    try {
+      // 优先使用 data-testid 选择器
+      const selector = this.selectors.bottomNav[tabName];
+      await this.safeClick(selector);
+    } catch {
+      // 回退到通过 uni-app 的底部导航栏类名和文本查找
+      try {
+        await this.page.locator('.uni-tabbar__label').filter({ hasText: tabText }).click({ force: true });
+      } catch {
+        // 最后的回退：通过文本直接查找
+        await this.page.getByText(tabText).click({ force: true });
+      }
+    }
     await this.waitForNetworkIdle();
+    await this.page.waitForTimeout(1000);
   }
 
   /**

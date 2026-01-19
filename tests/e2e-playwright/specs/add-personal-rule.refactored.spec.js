@@ -5,6 +5,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage.js';
 import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
+import { HomePage } from '../pages/HomePage.js';
 import { RuleListPage } from '../pages/RuleListPage.js';
 import { RuleFormPage } from '../pages/RuleFormPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
@@ -31,10 +32,15 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
-      // 等待首页加载
+      // 等待登录完成并导航到首页
+      // 登录后默认跳转到"我的"页面，需要先导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
       await page.waitForTimeout(2000);
+
+      // 验证在首页
       const homePageText = await page.locator('body').textContent();
-      expect(homePageText).toMatch(/今日打卡|当前监护|我的/);
+      expect(homePageText).toMatch(/今日打卡|当前监护/);
 
       // 步骤 2：导航到打卡规则页面
       await ruleListPage.clickViewRules();
@@ -91,6 +97,10 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
+      // 等待登录完成并导航到首页
+      // 登录后默认跳转到"我的"页面，需要先导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
       await page.waitForTimeout(2000);
 
       // 步骤 2：导航到打卡规则页面
@@ -151,6 +161,10 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
+      // 等待登录完成并导航到首页
+      // 登录后默认跳转到"我的"页面，需要先导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
       await page.waitForTimeout(2000);
 
       // 步骤 2：导航到打卡规则页面
@@ -200,6 +214,10 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
+      // 等待登录完成并导航到首页
+      // 登录后默认跳转到"我的"页面，需要先导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
       await page.waitForTimeout(2000);
 
       // 导航到添加规则页面
@@ -249,6 +267,10 @@ test.describe('添加个人打卡规则测试', () => {
         TEST_USERS.NORMAL.password
       );
 
+      // 等待登录完成并导航到首页
+      // 登录后默认跳转到"我的"页面，需要先导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
       await page.waitForTimeout(2000);
 
       // 导航到添加规则页面
