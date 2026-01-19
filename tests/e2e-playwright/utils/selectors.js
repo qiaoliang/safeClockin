@@ -101,6 +101,13 @@ export const eventSelectors = {
   detail: {
     container: 'data-testid=event-detail-page',
     closeBtn: 'data-testid=close-event-button',
+    // 事件状态显示
+    statusActive: 'data-testid=event-status-active',
+    statusClosed: 'data-testid=event-status-closed',
+    // 关闭信息显示
+    closedByLabel: 'data-testid=closed-by-label',
+    closedAtLabel: 'data-testid=closed-at-label',
+    closureReasonLabel: 'data-testid=closure-reason-label',
   },
 
   // 关闭事件
@@ -109,6 +116,21 @@ export const eventSelectors = {
     reasonInput: 'data-testid=close-reason-input',
     submitBtn: 'data-testid=close-event-submit-button',
     cancelBtn: 'data-testid=close-event-cancel-button',
+    // 错误提示
+    reasonError: 'data-testid=close-reason-error',
+  },
+
+  // 一键求助
+  oneClickHelp: {
+    helpButton: 'data-testid=one-click-help-button',
+    confirmDialog: 'data-testid=help-confirm-dialog',
+    confirmButton: 'data-testid=help-confirm-button',
+    cancelButton: 'data-testid=help-cancel-button',
+    // 求助后的状态显示
+    continueHelpButton: 'data-testid=continue-help-button',
+    problemSolvedButton: 'data-testid=problem-solved-button',
+    // 事件列表显示
+    activeEventCard: 'data-testid=active-event-card',
   },
 };
 
