@@ -50,8 +50,8 @@ test.describe('事件关闭功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 验证在首页
@@ -68,8 +68,8 @@ test.describe('事件关闭功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 等待首页加载
@@ -112,8 +112,8 @@ test.describe('事件关闭功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 等待首页加载
@@ -206,8 +206,8 @@ test.describe('事件关闭功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);

@@ -79,64 +79,53 @@ export const test = base.extend({
 
   /**
    * 已登录的社区管理员用户对象
+   * 注意：当前使用 SUPER_ADMIN，如需使用其他账号请在数据库中创建
    * 包含登录信息和页面对象
    */
   communityAdminUser: async ({ page }, use) => {
-    const user = TEST_USERS.COMMUNITY_ADMIN;
+    const user = TEST_USERS.SUPER_ADMIN;
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.clickPhoneLogin();
-
-    const phoneLoginPage = new PhoneLoginPage(page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
+    await loginPage.loginAsSuperAdmin();
 
     await use({
       page,
       user,
       loginPage,
-      phoneLoginPage,
     });
   },
 
   /**
    * 已登录的普通员工用户对象
+   * 注意：当前使用 SUPER_ADMIN，如需使用其他账号请在数据库中创建
    * 包含登录信息和页面对象
    */
   staffUser: async ({ page }, use) => {
-    const user = TEST_USERS.STAFF;
+    const user = TEST_USERS.SUPER_ADMIN;
     const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.clickPhoneLogin();
-
-    const phoneLoginPage = new PhoneLoginPage(page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
+    await loginPage.loginAsSuperAdmin();
 
     await use({
       page,
       user,
       loginPage,
-      phoneLoginPage,
     });
   },
 
   /**
    * 已登录的普通用户对象
+   * 注意：当前使用 SUPER_ADMIN，如需使用其他账号请在数据库中创建
    * 包含登录信息和页面对象
    */
   normalUser: async ({ page }, use) => {
-    const user = TEST_USERS.NORMAL;
+    const user = TEST_USERS.SUPER_ADMIN;
     const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.clickPhoneLogin();
-
-    const phoneLoginPage = new PhoneLoginPage(page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
+    await loginPage.loginAsSuperAdmin();
 
     await use({
       page,
       user,
       loginPage,
-      phoneLoginPage,
     });
   },
 });

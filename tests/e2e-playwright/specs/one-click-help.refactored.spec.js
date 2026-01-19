@@ -25,8 +25,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       // 等待首页加载
@@ -116,8 +116,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -166,8 +166,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -207,8 +207,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -246,8 +246,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -296,8 +296,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -335,8 +335,8 @@ test.describe('一键求助功能测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);

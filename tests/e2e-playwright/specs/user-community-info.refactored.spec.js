@@ -44,7 +44,7 @@ test.describe('首页社区名称显示', () => {
       await phoneLoginPage.switchToRegisterTab();
 
       // 使用测试用户（已加入社区）
-      await phoneLoginPage.fillPhone(TEST_USERS.NORMAL.phone);
+      await phoneLoginPage.fillPhone(TEST_USERS.SUPER_ADMIN.phone);
       await phoneLoginPage.fillCode('123456');
       await phoneLoginPage.fillPassword('Test123456');
 
@@ -66,7 +66,7 @@ test.describe('首页社区名称显示', () => {
       // 验证首页显示社区名称
       const pageText = await page.locator('body').textContent();
 
-      // TEST_USERS.NORMAL 应该属于某个社区
+      // TEST_USERS.SUPER_ADMIN 应该属于某个社区
       // 至少验证页面正常显示
       expect(pageText.length).toBeGreaterThan(0);
 
@@ -111,8 +111,8 @@ test.describe('首页社区名称显示', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -183,8 +183,8 @@ test.describe('首页社区名称显示', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(3000);
@@ -201,8 +201,8 @@ test.describe('首页社区名称显示', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -242,8 +242,8 @@ test.describe('首页社区名称显示', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NEW_USER.phone,
-        TEST_USERS.NEW_USER.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
@@ -266,8 +266,8 @@ test.describe('首页社区名称显示', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
       await page.waitForTimeout(2000);
