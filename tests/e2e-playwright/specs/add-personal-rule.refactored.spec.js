@@ -24,16 +24,21 @@ test.describe('添加个人打卡规则测试', () => {
       const ruleListPage = new RuleListPage(page);
       const ruleFormPage = new RuleFormPage(page);
 
-      // 步骤 1：登录普通用户
+      // 步骤 1：登录超级管理员
       await loginPage.goto();
       await loginPage.clickPhoneLogin();
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
-      // 等待登录完成（普通用户会自动跳转到首页）
+      // 等待登录完成（超级管理员会自动跳转到"我的"页面）
       await page.waitForTimeout(3000);
+
+      // 导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
+      await page.waitForTimeout(2000);
 
       // 验证在首页
       const homePageText = await page.locator('body').textContent();
@@ -207,12 +212,17 @@ test.describe('添加个人打卡规则测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
-      // 等待登录完成（普通用户会自动跳转到首页）
+      // 等待登录完成（超级管理员会自动跳转到"我的"页面）
       await page.waitForTimeout(3000);
+
+      // 导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
+      await page.waitForTimeout(2000);
 
       // 导航到添加规则页面
       const ruleListPage = new RuleListPage(page);
@@ -257,12 +267,17 @@ test.describe('添加个人打卡规则测试', () => {
       await loginPage.clickPhoneLogin();
       const phoneLoginPage = new PhoneLoginPage(page);
       await phoneLoginPage.loginWithPassword(
-        TEST_USERS.NORMAL.phone,
-        TEST_USERS.NORMAL.password
+        TEST_USERS.SUPER_ADMIN.phone,
+        TEST_USERS.SUPER_ADMIN.password
       );
 
-      // 等待登录完成（普通用户会自动跳转到首页）
+      // 等待登录完成（超级管理员会自动跳转到"我的"页面）
       await page.waitForTimeout(3000);
+
+      // 导航到首页
+      const homePage = new HomePage(page);
+      await homePage.goToHome();
+      await page.waitForTimeout(2000);
 
       // 导航到添加规则页面
       const ruleListPage = new RuleListPage(page);
