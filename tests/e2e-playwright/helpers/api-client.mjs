@@ -260,7 +260,7 @@ export class ApiClient {
    */
   async closeEvent(eventId, reason) {
     return this.post(`/api/events/${eventId}/close`, {
-      close_reason: reason,
+      closure_reason: reason,
     });
   }
 
