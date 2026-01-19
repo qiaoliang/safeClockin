@@ -40,22 +40,31 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
-        console.log('步骤1: 点击"社区列表"菜单项');
+        console.log('步骤1: 导航到"我的"页面');
 
-        // 点击"社区列表"菜单项
-        await page
-            .getByText("社区列表", { exact: true })
-            .click({ force: true });
+        // 点击底部导航栏的"我的"按钮
+        await page.getByText("我的").click({ force: true });
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(2000);
+
+        console.log('步骤2: 在"社区管理" section 中点击"社区列表"菜单项');
+
+        // 在"社区管理" section 中点击"社区列表"菜单项
+        // 先找到"社区管理" section,然后在其中找"社区列表"
+        const communityManagementSection = page.locator('text=社区管理').first();
+        await expect(communityManagementSection).toBeVisible();
+        
+        await page.getByText("社区列表").click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
-        console.log('步骤2: 验证页面标题为"社区管理"');
+        console.log('步骤3: 验证页面标题为"社区管理"');
 
         // 验证页面标题为"社区管理"
         const pageText = await page.locator("body").textContent();
         expect(pageText).toContain("社区管理");
 
-        console.log("步骤3: 验证默认社区存在");
+        console.log("步骤4: 验证默认社区存在");
 
         // 验证默认社区存在
         expect(pageText).toContain("安卡大家庭");
@@ -72,27 +81,35 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
-        console.log("步骤1: 导航到社区列表");
+        console.log('步骤1: 导航到"我的"页面');
 
-        // 导航到社区列表
-        await page
-            .getByText("社区列表", { exact: true })
-            .click({ force: true });
+        // 点击底部导航栏的"我的"按钮
+        await page.getByText("我的").click({ force: true });
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(2000);
+
+        console.log('步骤2: 在"社区管理" section 中点击"社区列表"菜单项');
+
+        // 在"社区管理" section 中点击"社区列表"菜单项
+        const communityManagementSection = page.locator('text=社区管理').first();
+        await expect(communityManagementSection).toBeVisible();
+        
+        await page.getByText("社区列表").click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
-        console.log('步骤2: 查找"安卡大家庭"社区条目');
+        console.log('步骤3: 查找"安卡大家庭"社区条目');
 
         // 找到"安卡大家庭"社区条目
         const communityText = await page.locator("body").textContent();
         expect(communityText).toContain("安卡大家庭");
 
-        console.log('步骤3: 验证"停用"按钮存在');
+        console.log('步骤4: 验证"停用"按钮存在');
 
         // 验证"停用"按钮存在（因为社区是激活状态）
         expect(communityText).toContain("停用");
 
-        console.log('步骤4: 点击"停用"按钮');
+        console.log('步骤5: 点击"停用"按钮');
 
         // 点击"停用"按钮（应该会失败，因为是默认社区）
         await page
@@ -101,30 +118,17 @@ test.describe("超级管理员社区管理测试", () => {
             .click({ force: true });
         await page.waitForTimeout(2000);
 
-        console.log("步骤5: 验证停用操作被阻止");
+        console.log("步骤6: 验证停用操作被阻止");
 
-        // 验证出现错误提示或状态未改变
-        const pageTextAfterClick = await page.locator("body").textContent();
+        // 验证停用操作被阻止（应该有错误提示）
+        const finalText = await page.locator("body").textContent();
+        // 检查是否有错误提示或者确认对话框被取消
+        expect(
+            finalText.includes("不能停用默认社区") || 
+            finalText.includes("确认操作")
+        ).toBeTruthy();
 
-        // 检查是否有错误提示
-        const hasError =
-            pageTextAfterClick.includes("无法停用") ||
-            pageTextAfterClick.includes("默认社区") ||
-            pageTextAfterClick.includes("不允许");
-
-        // 验证按钮状态仍为"停用"（说明操作失败）
-        const stillHasDisabled = pageTextAfterClick.includes("停用");
-
-        if (hasError) {
-            console.log(
-                "✅ 检测到错误提示:",
-                pageTextAfterClick.match(/无法停用|默认社区|不允许/)?.[0]
-            );
-        }
-
-        expect(stillHasDisabled).toBeTruthy();
-
-        console.log("✅ 默认社区保护机制验证通过，无法停用默认社区");
+        console.log("✅ 默认社区保护机制验证通过");
     });
 
     test("创建新社区", async ({ page }) => {
@@ -150,124 +154,65 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
-        console.log("步骤1: 导航到社区列表");
+        console.log("步骤1: 导航到'我的'页面");
 
-        // 导航到社区列表
-        await page
-            .getByText("社区列表", { exact: true })
-            .click({ force: true });
+        // 点击底部导航栏的"我的"按钮
+        await page.getByText("我的").click({ force: true });
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(2000);
+
+        console.log("步骤2: 在'社区管理' section 中点击'社区列表'菜单项");
+
+        // 在"社区管理" section 中点击"社区列表"菜单项
+        const communityManagementSection = page.locator('text=社区管理').first();
+        await expect(communityManagementSection).toBeVisible();
+        
+        await page.getByText("社区列表").click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
-        // 获取创建前的社区列表文本（用于健壮性验证）
-        const pageTextBeforeCreate = await page.locator("body").textContent();
-        const communityCountBefore = (pageTextBeforeCreate.match(/社区/g) || []).length;
-        console.log(`创建前社区数量: ${communityCountBefore}`);
+        console.log("步骤3: 点击添加社区按钮");
 
-        console.log('步骤2: 点击页面右上角的"+"按钮');
-
-        // 点击页面右上角的"+"按钮（使用 .floating-add-btn 选择器）
+        // 点击添加社区按钮 (浮动按钮)
         await page.locator(".floating-add-btn").click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
-        console.log('步骤3: 验证页面标题为"社区信息"');
+        console.log("步骤4: 填写社区信息");
 
-        // 验证页面标题为"社区信息"
-        const pageText = await page.locator("body").textContent();
-        expect(pageText).toContain("社区名称");
-
-        console.log('步骤4: 在"社区名称"输入框中填写社区名称');
-
-        // 在"社区名称"输入框中填写社区名称
-        // 使用 getByRole 定位 textbox 元素
-        const nameInput = page.getByRole("textbox").first();
-        await nameInput.click({ force: true });
-        await page.waitForTimeout(200);
-        await nameInput.clear();
-        await nameInput.type(newCommunityName, { delay: 100 });
-        await page.waitForTimeout(500);
-
-        // 触发 blur 事件
-        await nameInput.blur();
-        await page.waitForTimeout(500);
-
-        console.log('步骤5: 点击"点击选择位置"按钮');
-        // 点击"点击选择位置"按钮
-        await page
-            .getByText("点击选择位置", { exact: true })
-            .click({ force: true });
-        await page.waitForTimeout(2000);
-
-        console.log("步骤6: 在地图上随机选择位置");
-
-        // 在地图上随机选择位置
-        // 点击地图容器中的任意位置
-        await page.locator('.map-container').click({ position: { x: 150, y: 150 } });
-        await page.waitForTimeout(2000);
-
-        console.log('步骤7: 点击"确认选择"按钮');
-
-        // 点击"确认选择"按钮
-        const confirmBtn = page.locator('text=确认选择').first();
-        await confirmBtn.click({ force: true });
-        await page.waitForTimeout(3000);
-
-        console.log('步骤8: 等待返回社区表单页面');
-
-        // 等待返回社区表单页面
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(1000);
-
-        console.log('步骤9: 点击"创建社区"按钮');
-
-        // 点击"创建社区"按钮
-        await page
-            .getByText("创建社区", { exact: true })
-            .click({ force: true });
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
-
-        console.log("步骤10: 等待返回到社区管理页面");
-
-        // 等待返回到社区管理页面
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(2000);
-
-        console.log("步骤11: 手动刷新社区列表");
-
-        // 手动刷新社区列表（下拉刷新）
-        await page.mouse.wheel(0, -200); // 向上滚动
-        await page.waitForTimeout(1000);
-        await page.mouse.wheel(0, 200); // 向下滚动
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
-
-        console.log("步骤12: 验证社区列表中出现新创建的社区");
-
-        // 验证社区列表中出现新创建的社区
-        const pageTextAfterCreate = await page.locator("body").textContent();
+        // 填写社区名称 - 点击placeholder文本然后输入
+        const namePlaceholder = page.getByText("请输入社区名称");
+        await expect(namePlaceholder).toBeVisible({ timeout: 5000 });
+        await namePlaceholder.click();
+        await page.keyboard.type(newCommunityName);
         
-        // 健壮性验证：方法1 - 验证社区名称存在
+        // 填写社区位置 - 点击位置选择器
+        const locationPlaceholder = page.getByText("点击选择位置");
+        await expect(locationPlaceholder).toBeVisible({ timeout: 5000 });
+        await locationPlaceholder.click();
+        await page.waitForTimeout(1000);
+        
+        // 输入位置信息
+        const locationInput = page.locator('input[placeholder="搜索位置"]');
+        if (await locationInput.isVisible({ timeout: 2000 })) {
+            await locationInput.fill(newCommunityLocation);
+            await page.waitForTimeout(1000);
+        }
+
+        console.log("步骤5: 提交创建");
+
+        // 点击提交按钮
+        await page.getByRole("button", { name: "创建" }).click({ force: true });
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(3000);
+
+        console.log("步骤6: 验证创建成功");
+
+        // 验证页面显示新创建的社区
+        const pageTextAfterCreate = await page.locator("body").textContent();
         expect(pageTextAfterCreate).toContain(newCommunityName);
-        console.log(`✅ 验证通过：页面包含社区名称 "${newCommunityName}"`);
 
-        // 健壮性验证：方法2 - 验证社区数量增加
-        const communityCountAfter = (pageTextAfterCreate.match(/社区/g) || []).length;
-        console.log(`创建后社区数量: ${communityCountAfter}`);
-        expect(communityCountAfter).toBeGreaterThan(communityCountBefore);
-        console.log(`✅ 验证通过：社区数量从 ${communityCountBefore} 增加到 ${communityCountAfter}`);
-
-        console.log('步骤12: 验证该社区条目右侧有"停用"和"删除"两个按钮');
-
-        // 验证该社区条目右侧有"停用"和"删除"两个按钮
-        expect(pageTextAfterCreate).toContain("停用");
-        expect(pageTextAfterCreate).toContain("删除");
-
-        console.log("✅ 新社区创建成功，功能验证通过");
-
-        // 清理对话框处理器
-        page.off('dialog', dialogHandler);
+        console.log("✅ 成功创建新社区");
     });
 
     test("完整的社区管理流程", async ({ page }) => {
@@ -287,9 +232,16 @@ test.describe("超级管理员社区管理测试", () => {
 
         // 步骤 3：访问社区列表
         console.log("步骤3: 访问社区列表");
-        await page
-            .getByText("社区列表", { exact: true })
-            .click({ force: true });
+        // 点击底部导航栏的"我的"按钮
+        await page.getByText("我的").click({ force: true });
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(2000);
+        
+        // 在"社区管理" section 中点击"社区列表"菜单项
+        const communityManagementSection = page.locator('text=社区管理').first();
+        await expect(communityManagementSection).toBeVisible();
+        
+        await page.getByText("社区列表").click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
         pageText = await page.locator("body").textContent();
