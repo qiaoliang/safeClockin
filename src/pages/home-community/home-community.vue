@@ -1,5 +1,5 @@
 <template>
-  <view class="home-community-container">
+  <view class="home-community-container" data-testid="home-community-page">
     <!-- 滚动通知条 -->
     <view
       v-if="hasPendingEvents && latestPendingEvent"

@@ -1,6 +1,6 @@
 <!-- pages/add-rule/add-rule.vue -->
 <template>
-  <view class="add-rule-container">
+  <view class="add-rule-container" data-testid="rule-form-page">
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
@@ -28,12 +28,13 @@
             *
           </text>
         </text>
-        <input 
+        <input
           v-model="formData.rule_name"
           class="input"
           type="text"
           placeholder="请输入事项名称，如：早餐打卡"
           maxlength="50"
+          data-testid="rule-name-input"
         >
       </view>
 
@@ -164,11 +165,12 @@
 
       <!-- 提交按钮 -->
       <view class="submit-section">
-        <button 
-          class="submit-btn" 
+        <button
+          class="submit-btn"
           :disabled="!isFormValid || isSubmitting"
           form-type="submit"
           @click="handleSubmitButtonClick"
+          data-testid="rule-submit-button"
         >
           {{ isSubmitting ? '提交中...' : (isEditing ? '更新规则' : '添加规则') }}
         </button>

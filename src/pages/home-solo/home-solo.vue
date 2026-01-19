@@ -1,6 +1,7 @@
 <template>
-  <!-- 顶部问候区域 -->
-  <uni-card
+  <view class="home-page-container" data-testid="home-page">
+    <!-- 顶部问候区域 -->
+    <uni-card
     class="greeting-card"
     :is-shadow="false"
     :is-full="false"
@@ -307,6 +308,7 @@
       </view>
     </view>
   </uni-popup>
+  </view>
 </template>
 
 <script setup>

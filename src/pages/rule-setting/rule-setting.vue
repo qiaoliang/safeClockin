@@ -1,8 +1,8 @@
 <template>
-  <view class="rule-setting-container">
+  <view class="rule-setting-container" data-testid="rule-list-page">
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title">
+      <text class="header-title" data-testid="rule-list-title">
         打卡规则
       </text>
       <text class="header-subtitle">
@@ -52,10 +52,11 @@
             个人规则
           </text>
         </view>
-        <view 
-          v-for="rule in personalRules" 
-          :key="rule.rule_id" 
+        <view
+          v-for="rule in personalRules"
+          :key="rule.rule_id"
           class="rule-item"
+          :data-testid="`rule-item-${rule.rule_name}`"
         >
           <view class="rule-icon">
             <text
@@ -90,18 +91,21 @@
             <button
               class="edit-btn"
               @click="editRule(rule)"
+              data-testid="rule-edit-button"
             >
               编辑
             </button>
             <button
               class="delete-btn"
               @click="showDeleteModal(rule)"
+              data-testid="rule-delete-button"
             >
               删除
             </button>
             <button
               class="invite-btn"
               @click="inviteForRule(rule)"
+              data-testid="rule-invite-button"
             >
               邀请
             </button>
@@ -195,6 +199,7 @@
       <button
         class="add-rule-btn"
         @click="addNewRule"
+        data-testid="add-personal-rule-button"
       >
         <text class="add-icon">
           +

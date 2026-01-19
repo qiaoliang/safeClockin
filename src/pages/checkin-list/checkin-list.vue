@@ -1,6 +1,6 @@
 <!-- pages/checkin-list/checkin-list.vue -->
 <template>
-  <view class="checkin-list-container">
+  <view class="checkin-list-container" data-testid="checkin-home-page">
     <!-- 顶部标题 -->
     <view class="header-section">
       <text class="header-title">
@@ -15,6 +15,7 @@
     <view
       v-if="checkinItems.length > 0"
       class="checkin-list-section"
+      data-testid="today-rules-list"
     >
       <view class="list-title">
         今日打卡事项
@@ -61,10 +62,11 @@
           </text>
         </view>
         
-        <button 
-          v-else 
+        <button
+          v-else
           class="checkin-btn"
           @click="performCheckin(item)"
+          data-testid="checkin-button"
         >
           打卡
         </button>
