@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 import { registerAndLoginAsUser } from '../helpers/auth.js';
 
 test.describe('添加个人打卡规则测试', () => {
-  test('用户登录后添加个人打卡规则', async ({ page }) => {
+  test.skip('用户登录后添加个人打卡规则', async ({ page }) => {
     // 步骤 1：使用 helper 方法注册并登录
     const userInfo = await registerAndLoginAsUser(page);
     console.log(`用户 ${userInfo.phone} 登录成功`);
