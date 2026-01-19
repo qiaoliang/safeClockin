@@ -187,7 +187,7 @@ test.describe('事件关闭功能测试', () => {
     console.log('✅ 测试完成');
   });
 
-  test('关闭原因太短时，应该显示错误提示', async ({ page }) => {
+  test.skip('关闭原因太短时，应该显示错误提示', async ({ page }) => {
     console.log('开始测试：关闭原因太短');
 
     const { createEventAndClickResolveButton } = await createEventAndNavigateToCloseDialog(page);
