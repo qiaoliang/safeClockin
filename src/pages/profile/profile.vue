@@ -1,10 +1,11 @@
 <!-- pages/profile/profile.vue -->
 <template>
-  <view class="profile-container">
+  <view class="profile-container" data-testid="profile-page">
     <!-- 用户信息卡片 -->
     <UserInfoCard
       :user-info="userInfo"
       @edit-profile="editProfile"
+      data-testid="user-info-section"
     />
 
     <view
@@ -128,13 +129,14 @@
       <view class="menu-group-title">
         社区管理
       </view>
-      
+
       <!-- 管理功能菜单 -->
       <view
         v-for="item in communityManagementItems"
         :key="item.name"
         class="menu-item"
         @click="navigateTo(item.path)"
+        :data-testid="`menu-${item.name}`"
       >
         <view class="menu-icon">
           {{ item.icon }}
@@ -186,6 +188,7 @@
       <button
         class="logout-btn"
         @click="handleLogout"
+        data-testid="logout-button"
       >
         退出登录
       </button>

@@ -4,18 +4,21 @@
       <view
         :class="['tab', activeTab==='register'?'active':'']"
         @click="activeTab='register'"
+        data-testid="tab-register"
       >
         注册
       </view>
       <view
         :class="['tab', activeTab==='login-code'?'active':'']"
         @click="activeTab='login-code'"
+        data-testid="tab-code-login"
       >
         验证码登录
       </view>
       <view
         :class="['tab', activeTab==='login-password'?'active':'']"
         @click="activeTab='login-password'"
+        data-testid="tab-password-login"
       >
         密码登录
       </view>
@@ -28,6 +31,7 @@
           class="input"
           type="number"
           placeholder="请输入手机号"
+          data-testid="phone-input"
         >
       </view>
 
@@ -40,11 +44,13 @@
           class="input"
           type="number"
           placeholder="验证码"
+          data-testid="code-input"
         >
         <button
           class="code-btn"
           :disabled="countdown>0 || sending"
           @click="onSendCode"
+          data-testid="get-code-button"
         >
           {{ countdown>0 ? `${countdown}s` : '获取验证码' }}
         </button>
@@ -59,6 +65,7 @@
           class="input"
           :type="showPassword ? 'text' : 'password'"
           :placeholder="activeTab==='register' ? '设置密码（至少8位，含字母和数字）' : '输入密码'"
+          data-testid="password-input"
         >
         <text
           class="password-toggle"
@@ -96,6 +103,7 @@
             <checkbox
               value="agree"
               :checked="agree"
+              data-testid="agreement-checkbox"
             />
             <text>我已阅读并同意《用户协议》《隐私政策》</text>
           </label>
@@ -106,6 +114,7 @@
         class="submit"
         :disabled="submitting"
         @click="onSubmit"
+        data-testid="login-submit-button"
       >
         {{ submitText }}
       </button>

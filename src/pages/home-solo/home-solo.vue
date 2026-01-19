@@ -45,6 +45,7 @@
           <view
             :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
             @click="switchRole('checkin')"
+            data-testid="home-role-checkin"
           >
             <text class="tab-icon">
               🕐
@@ -56,6 +57,7 @@
           <view
             :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
             @click="switchRole('supervisor')"
+            data-testid="home-role-supervisor"
           >
             <text class="tab-icon">
               🛡️
@@ -249,6 +251,7 @@
       v-else
       class="help-btn"
       @click="handleOneClickHelp"
+      data-testid="one-click-help-button"
     >
       <text class="btn-icon">
         🆘
@@ -283,18 +286,21 @@
           class="close-reason-input"
           placeholder="请输入关闭原因（5-200字符）"
           :maxlength="200"
+          data-testid="close-reason-input"
         />
       </view>
       <view class="close-event-footer">
         <button
           class="close-event-btn cancel-btn"
           @click="handleCancelClose"
+          data-testid="close-event-cancel-button"
         >
           取消
         </button>
         <button
           class="close-event-btn confirm-btn"
           @click="confirmCloseEvent"
+          data-testid="close-event-submit-button"
         >
           确认
         </button>

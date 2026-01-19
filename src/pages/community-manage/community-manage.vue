@@ -11,7 +11,7 @@
           ⋮
         </text>
       </view>
-      <text class="header-title">
+      <text class="header-title" data-testid="community-list-title">
         社区管理
       </text>
       <view
@@ -47,6 +47,7 @@
               class="community-item"
               @click="viewCommunityDetail(item)"
               @longpress="showActionMenu(item)"
+              :data-testid="`community-item-${item.name}`"
             >
               <view class="community-header">
                 <text class="community-name">
@@ -168,6 +169,7 @@
       v-if="hasActionPermission(FeaturePermission.CREATE_COMMUNITY)"
       class="floating-add-btn"
       @click="createCommunity"
+      data-testid="add-community-button"
     >
       <text class="add-icon">
         +

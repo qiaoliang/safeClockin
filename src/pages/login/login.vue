@@ -1,6 +1,6 @@
 <!-- pages/login/login.vue -->
 <template>
-  <view class="login-container">
+  <view class="login-container" data-testid="login-welcome-page">
     <!-- Logo和标题 -->
     <view class="logo-section">
       <view class="app-logo floating-card">
@@ -8,7 +8,7 @@
           🛡️
         </text>
       </view>
-      <text class="app-title slide-up">
+      <text class="app-title slide-up" data-testid="login-welcome-title">
         安全守护
       </text>
       <text
@@ -18,7 +18,7 @@
         让关爱无处不在，守护每一份安心
       </text>
     </view>
-    
+
     <!-- 特色功能展示 -->
     <view
       class="features-section slide-up"
@@ -39,7 +39,7 @@
           </text>
         </view>
       </view>
-      
+
       <view class="feature-card">
         <view class="feature-icon blue-bg">
           <text class="icon">
@@ -55,7 +55,7 @@
           </text>
         </view>
       </view>
-      
+
       <view class="feature-card">
         <view class="feature-icon orange-bg">
           <text class="icon">
@@ -72,12 +72,13 @@
         </view>
       </view>
     </view>
-    
+
     <!-- 微信登录按钮 -->
-    <button 
+    <button
       class="wechat-login-button"
       :disabled="isLoading"
       @click="onWechatLogin"
+      data-testid="wechat-login-button"
     >
       <text class="wechat-icon">
         💬
@@ -86,7 +87,7 @@
         微信快捷登录
       </text>
     </button>
-    
+
     <!-- 分割线 -->
     <view class="divider">
       <view class="divider-line" />
@@ -95,18 +96,19 @@
       </text>
       <view class="divider-line" />
     </view>
-    
+
     <!-- 手机号登录入口 -->
     <button
       class="phone-login-button"
       @click="showPhoneLogin"
+      data-testid="phone-login-button"
     >
       <text class="phone-icon">
         📱
       </text>
       <text>手机号登录</text>
     </button>
-    
+
     <!-- 用户协议 -->
     <view class="agreement-section">
       <text class="agreement-text">
@@ -129,7 +131,7 @@
           《隐私政策》
         </text>
       </view>
-      
+
       <!-- 版本信息 -->
       <view class="version-info">
         <text class="version-text">
@@ -140,9 +142,9 @@
         </text>
       </view>
     </view>
-    
+
     <!-- 头像昵称填写组件 -->
-    <user-info-form 
+    <user-info-form
       :visible="showUserInfoForm"
       :code="loginCode"
       @confirm="onUserInfoConfirm"
@@ -177,27 +179,27 @@ onMounted(() => {
 
 const onWechatLogin = async () => {
   if (isLoading.value || isWechatLoginProcessing) return
-  
+
   isLoading.value = true
   isWechatLoginProcessing = true
-  
+
   try {
     // 第一步：获取微信登录凭证
     const loginRes = await uni.login()
-    
+
     if (!loginRes.code) {
       throw new Error('获取微信登录凭证失败')
     }
-    
-    
+
+
     // Defense-in-depth: 直接使用code登录，后端会处理缺失的用户信息
     try {
       await handleLoginSuccess({ code: loginRes.code })
-      
+
       // 清除可能存在的场景标记
       storage.remove('login_scenario')
       uni.removeStorageSync('login_scenario')
-      
+
     } catch (loginError) {
       console.error('❌ 微信登录失败:', loginError)
       // 不再处理NEED_USER_INFO错误，因为后端支持仅code登录
@@ -219,16 +221,16 @@ const onUserInfoConfirm = async (userInfo) => {
       code: userInfo.code,
       userInfo: userInfo.userInfo
     })
-    
+
     // 调用成功回调
     if (userInfo.onSuccess) {
       userInfo.onSuccess()
     }
-    
+
     showUserInfoForm.value = false
   } catch (error) {
     console.error('登录失败:', error)
-    
+
     // 调用错误回调
     if (userInfo.onError) {
       userInfo.onError(error)
@@ -530,31 +532,31 @@ const showPrivacyPolicy = () => {
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px); 
+  0%, 100% {
+    transform: translateY(0px);
   }
-  50% { 
-    transform: translateY(-20rpx); 
+  50% {
+    transform: translateY(-20rpx);
   }
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(60rpx);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes pulse {
-  0%, 100% { 
-    opacity: 1; 
+  0%, 100% {
+    opacity: 1;
   }
-  50% { 
-    opacity: 0.7; 
+  50% {
+    opacity: 0.7;
   }
 }
 </style>
