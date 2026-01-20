@@ -102,7 +102,7 @@ export const getCommunityUsers = (communityId, params = {}) => {
  */
 export const createCommunity = (data) => {
   return request({
-    url: '/api/communities',
+    url: '/api/community/create',
     method: 'POST',
     data
   })
