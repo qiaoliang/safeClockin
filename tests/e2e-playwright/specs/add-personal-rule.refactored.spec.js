@@ -14,7 +14,6 @@ test.describe('添加个人打卡规则测试', () => {
   // 每个测试前清理浏览器状态
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
-    await page.goto('/');
   });
 
   test.describe('创建打卡规则', () => {

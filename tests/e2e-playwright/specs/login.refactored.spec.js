@@ -17,7 +17,6 @@ test.describe('登录功能测试', () => {
   test.beforeEach(async ({ page, context }) => {
     // 清理浏览器状态，确保测试隔离
     await context.clearCookies();
-    await page.goto('/');
 
     loginPage = new LoginPage(page);
     phoneLoginPage = new PhoneLoginPage(page);

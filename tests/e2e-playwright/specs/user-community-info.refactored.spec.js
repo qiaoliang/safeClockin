@@ -12,7 +12,6 @@ test.describe('首页社区名称显示', () => {
   // 每个测试前清理浏览器状态
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
-    await page.goto('/');
   });
 
   test.describe('社区信息显示', () => {

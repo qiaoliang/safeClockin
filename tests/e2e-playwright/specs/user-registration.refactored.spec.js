@@ -19,7 +19,6 @@ test.describe('用户注册和登录测试', () => {
   // 每个测试前清理浏览器状态
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
-    await page.goto('/');
   });
 
   test.describe('注册流程', () => {
