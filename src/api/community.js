@@ -26,7 +26,7 @@ export const getCommunityDetail = (communityId) => {
  */
 export const getCommunityList = (params = {}) => {
   return request({
-    url: '/api/community/list',
+    url: '/api/communities/available',
     method: 'GET',
     data: params
   })
@@ -34,12 +34,18 @@ export const getCommunityList = (params = {}) => {
 
 /**
  * 获取用户管理的社区列表
+ * @param {Object} params - 查询参数
+ * @param {number} params.limit - 限制返回数量（必需）
  * @returns {Promise} API响应
  */
-export const getManagedCommunities = () => {
+export const getManagedCommunities = (params = {}) => {
   return request({
     url: '/api/user/managed-communities',
-    method: 'GET'
+    method: 'GET',
+    data: {
+      limit: 100, // 默认限制，避免返回过多数据
+      ...params
+    }
   })
 }
 
@@ -53,10 +59,10 @@ export const getManagedCommunities = () => {
  */
 export const getCommunityStaffList = (communityId, params = {}) => {
   return request({
-    url: '/api/community/staff/list-enhanced',
+    url: `/api/communities/${communityId}/users`,
     method: 'GET',
     data: {
-      community_id: communityId,
+      role: params.role || 'staff',
       ...params
     }
   })
@@ -110,12 +116,9 @@ export const createCommunity = (data) => {
  */
 export const updateCommunity = (communityId, data) => {
   return request({
-    url: '/api/community/update',
-    method: 'POST',
-    data: {
-      community_id: communityId,
-      ...data
-    }
+    url: `/api/communities/${communityId}`,
+    method: 'PUT',
+    data
   })
 }
 
@@ -155,12 +158,8 @@ export const addCommunityStaff = (data) => {
  */
 export const removeCommunityStaff = (communityId, userId) => {
   return request({
-    url: '/api/community/remove-staff',
-    method: 'POST',
-    data: {
-      community_id: communityId,
-      user_id: userId
-    }
+    url: `/api/communities/${communityId}/users/${userId}`,
+    method: 'DELETE'
   })
 }
 

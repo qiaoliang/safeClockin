@@ -69,7 +69,10 @@ export const useCommunityStore = defineStore('community', {
         // 使用 /api/user/managed-communities API
         const response = await request({
           url: '/api/user/managed-communities',
-          method: 'GET'
+          method: 'GET',
+          data: {
+            limit: 100 // 添加 limit 参数
+          }
         })
         
         if (response.code === 1) {
@@ -266,17 +269,16 @@ export const useCommunityStore = defineStore('community', {
     async loadStaffMembers(communityId, options = {}) {
       try {
         const response = await request({
-          url: '/api/community/staff/list',
+          url: `/api/communities/${communityId}/users`,
           method: 'GET',
           data: {
-            community_id: communityId,
-            role: options.role || 'all',
+            role: options.role || 'staff',
             sort_by: options.sortBy || 'time'
           }
         })
         
         if (response.code === 1) {
-          this.staffMembers = response.data.staff || []
+          this.staffMembers = response.data.users || []
         }
         
         return response
@@ -360,12 +362,11 @@ export const useCommunityStore = defineStore('community', {
         const page = refresh ? 1 : this.currentPage
         
         const response = await request({
-          url: '/api/community/users',
+          url: `/api/communities/${communityId}/users`,
           method: 'GET',
           data: {
-            community_id: communityId,
             page,
-            page_size: this.pageSize
+            per_page: this.pageSize
           }
         })
         
@@ -426,12 +427,8 @@ export const useCommunityStore = defineStore('community', {
     async removeCommunityUser(communityId, userId) {
       try {
         const response = await request({
-          url: '/api/community/remove-user',
-          method: 'POST',
-          data: {
-            community_id: communityId,
-            user_id: userId
-          }
+          url: `/api/communities/${communityId}/users/${userId}`,
+          method: 'DELETE'
         })
         
         if (response.code === 1) {
@@ -614,7 +611,7 @@ export const useCommunityStore = defineStore('community', {
 
       try {
         const response = await request({
-          url: `/api/communities/${this.currentCommunity.community_id}/pending-events`,
+          url: `/api/community-dashboard/${this.currentCommunity.community_id}/pending-events`,
           method: 'GET'
         })
 

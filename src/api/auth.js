@@ -187,15 +187,13 @@ export const authApi = {
     method: 'GET',
     data: params
   }),
-  acceptSupervisionInvitation:(data) => request({
-    url: '/api/supervision/accept',
-    method: 'POST',
-    data
+  acceptSupervisionInvitation:(relationId) => request({
+    url: `/api/supervision/invitations/${relationId}/accept`,
+    method: 'POST'
   }),
-  rejectSupervisionInvitation:(data) => request({
-    url: '/api/supervision/reject',
-    method: 'POST',
-    data
+  rejectSupervisionInvitation:(relationId) => request({
+    url: `/api/supervision/invitations/${relationId}/reject`,
+    method: 'POST'
   }),
   getMySupervisedUsers:() => request({
     url: '/api/supervision/my_supervised',
