@@ -15,13 +15,13 @@
         "androidpacktype": "0",
         //安卓使用自有证书自有打包证书参数
         //安卓打包证书别名,自有证书打包填写的参数
-        "certalias": "",
+        "certalias": "safeguard",
         //安卓打包证书文件路径,自有证书打包填写的参数
-        "certfile": "",
+        "certfile": "/Users/qiaoliang/working/code/safeGuard/frontend/certs/safeguard-test.keystore",
         //安卓打包证书密码,自有证书打包填写的参数
-        "certpassword": "",
+        "certpassword": "safeguard123",
         //安卓打包证书库密码（HBuilderx4.41支持）,自有证书打包填写的参数
-        "storePassword": "",
+        "storePassword": "safeguard123",
         //安卓平台要打的渠道包 取值有"google","yyb","360","huawei","xiaomi","oppo","vivo"，如果要打多个逗号隔开
         "channels": ""
     },

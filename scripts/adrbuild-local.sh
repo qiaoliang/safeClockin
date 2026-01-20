@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Android 小 构建脚本
-# 动态获取当前脚本的绝对路径，并运行微信小 构建命令
+# Android 本地打包脚本
+# 使用 HBuilderX 本地打包功能生成 APK
+# 注意: 需要先制作自定义调试基座
 
 set -e  # 遇到错误时退出
 
-echo "=== 开始 Android 小 构建 ==="
+echo "=== 开始 Android 本地打包 ==="
 
 # 解析命令行参数
 # 支持格式: ./h5build.sh ENV_TYPE=func
@@ -325,7 +326,80 @@ BUILD_EXIT_CODE=0
 echo "清理上次构建残留的文件....$BUILD_OUTPUT_PATH"
 rm -rf "$BUILD_OUTPUT_PATH"
 
-/Applications/HBuilderX.app/Contents/MacOS/cli pack --platform android --project $PROJECT_PATH
+echo "开始本地打包（使用自定义调试基座）..."
+echo "注意: 本地打包需要先制作自定义调试基座"
+echo "      菜单: 运行 -> 手机或模拟器 -> 制作自定义调试基座"
+
+# 使用本地打包模式（不使用云打包）
+BUILD_OUTPUT=$(/Applications/HBuilderX.app/Contents/MacOS/cli pack --platform android --project $PROJECT_PATH --config $FRONTEND_PATH/HBuilderConfig.json --force --type=local 2>&1)
+echo "$BUILD_OUTPUT"
+
+# 等待构建完成
+echo "等待本地构建完成..."
+sleep 5
+
+# 查找生成的 APK 文件
+echo "查找生成的 APK 文件..."
+APK_PATH=$(find "$BUILD_OUTPUT_PATH" -name "*.apk" -type f | head -1)
+
+if [ -z "$APK_PATH" ]; then
+    echo "错误: 未找到生成的 APK 文件"
+    echo "构建输出目录: $BUILD_OUTPUT_PATH"
+    echo "请检查构建是否成功"
+    exit 1
+fi
+
+echo "✓ 找到 APK 文件: $APK_PATH"
+
+APK_SIZE=$(stat -f%z "$APK_PATH" 2>/dev/null || stat -c%s "$APK_PATH" 2>/dev/null)
+echo "✓ APK 构建完成: $APK_PATH ($(echo $APK_SIZE | awk '{printf "%.2f MB", $1/1024/1024}'))"
+
+# 检查模拟器是否运行
+echo "检查模拟器状态..."
+if ! adb devices | grep -q "device$"; then
+    echo "模拟器未运行，正在启动 Pixel 模拟器..."
+    $HOME/Library/Android/sdk/emulator/emulator -avd Pixel &
+    echo "等待模拟器启动..."
+    sleep 30
+    
+    # 等待模拟器完全启动
+    MAX_WAIT=120
+    WAIT_TIME=0
+    while [ $WAIT_TIME -lt $MAX_WAIT ]; do
+        if adb devices | grep -q "device$"; then
+            echo "✓ 模拟器已启动"
+            break
+        fi
+        sleep 5
+        WAIT_TIME=$((WAIT_TIME + 5))
+    done
+    
+    if [ $WAIT_TIME -ge $MAX_WAIT ]; then
+        echo "错误: 模拟器启动超时"
+        exit 1
+    fi
+else
+    echo "✓ 模拟器正在运行"
+fi
+
+# 安装 APK
+echo "开始安装 APK..."
+adb install -r "$APK_PATH"
+
+if [ $? -eq 0 ]; then
+    echo "=========================================="
+    echo "✓ APK 安装成功！"
+    echo "=========================================="
+    echo "包名: com.leadagile.safeguard"
+    echo "APK 路径: $APK_PATH"
+    echo ""
+    echo "您可以使用以下命令启动应用："
+    echo "  adb shell am start -n com.leadagile.safeguard/io.dcloud.PandoraEntry"
+    echo "=========================================="
+else
+    echo "错误: APK 安装失败"
+    exit 1
+fi
 
 # 验证构建结果
 
