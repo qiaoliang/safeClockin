@@ -99,6 +99,10 @@ describe('debounce', () => {
       const promise3 = debouncedFn('call3')
       vi.advanceTimersByTime(300)
 
+      // 处理被 reject 的 Promise（防抖的正常行为）
+      promise1.catch(() => {})
+      promise2.catch(() => {})
+
       await promise3
 
       expect(mockFn).toHaveBeenCalledTimes(1)
