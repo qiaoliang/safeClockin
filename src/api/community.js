@@ -225,7 +225,7 @@ export const getCommunityDailyStats = (communityId) => {
  */
 export const transferUsersBatch = (sourceCommunityId, targetCommunityId, userIds) => {
   return request({
-    url: '/api/community/transfer-users',
+    url: '/api/transfer-users',
     method: 'POST',
     data: {
       source_community_id: sourceCommunityId,

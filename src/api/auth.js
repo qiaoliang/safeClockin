@@ -168,7 +168,7 @@ export const authApi = {
   }),
   // 监督相关API
   inviteSupervisor:(data) => request({
-    url: '/api/supervision/invite',
+    url: '/api/supervision/invite/internal',
     method: 'POST',
     data
   }),
@@ -354,7 +354,7 @@ export const authApi = {
   }),
   // 从安卡大家庭搜索用户（用于添加用户到其他社区）
   searchAnkaFamilyUsers: (params) => request({
-    url: '/api/communities/ankafamily/users/search',
+    url: '/api/user/search',
     method: 'GET',
     data: params
   }).then(response => {
