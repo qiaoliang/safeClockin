@@ -342,15 +342,17 @@ echo "=========================================="
 echo "下载链接: $DOWNLOAD_URL"
 echo "=========================================="
 
-# 检查下载链接是否有效
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DOWNLOAD_URL")
-if [ "$HTTP_CODE" != "200" ]; then
-    echo "下载链接尚未就绪 (HTTP $HTTP_CODE)，开始轮询检查..."
+# 检查下载链接是否有效（使用 HEAD 请求，不消耗下载次数）
+HTTP_CODE=$(curl -s -I -o /dev/null -w "%{http_code}" "$DOWNLOAD_URL")
+echo "下载链接 HTTP 状态: $HTTP_CODE"
+
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "403" ]; then
+    echo "下载链接尚未就绪 (HTTP $HTTP_CODE)，开始智能轮询检查..."
     
     # 轮询检查下载链接
-    MAX_ATTEMPTS=60  # 最多检查 60 次（60分钟）
+    MAX_ATTEMPTS=60  # 最多检查 60 次
     ATTEMPT=0
-    CHECK_INTERVAL=60  # 每 60 秒检查一次
+    CHECK_INTERVAL=60  # 默认每 60 秒检查一次
     
     while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
         ATTEMPT=$((ATTEMPT + 1))
@@ -358,9 +360,14 @@ if [ "$HTTP_CODE" != "200" ]; then
         
         sleep $CHECK_INTERVAL
         
-        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DOWNLOAD_URL")
+        HTTP_CODE=$(curl -s -I -o /dev/null -w "%{http_code}" "$DOWNLOAD_URL")
+        echo "  HTTP 状态: $HTTP_CODE"
+        
         if [ "$HTTP_CODE" = "200" ]; then
             echo "✓ 打包完成！下载链接已就绪"
+            break
+        elif [ "$HTTP_CODE" = "403" ]; then
+            echo "  下载链接已就绪（需要认证），可以开始下载"
             break
         else
             echo "  打包尚未完成 (HTTP $HTTP_CODE)，等待 $CHECK_INTERVAL 秒..."
@@ -371,6 +378,8 @@ if [ "$HTTP_CODE" != "200" ]; then
         echo "错误: 超过最大等待时间，打包可能失败"
         exit 1
     fi
+else
+    echo "✓ 下载链接已就绪"
 fi
 
 # 下载 APK

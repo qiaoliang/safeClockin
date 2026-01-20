@@ -22,4 +22,19 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
+  // 抑制 Vue 编译器警告
+  build: {
+    rollupOptions: {
+      output: {
+        // 使用 es 格式而不是 iife 格式，避免代码分割警告
+        format: 'es',
+      }
+    }
+  },
+  // 抑制编译器警告
+  esbuild: {
+    logOverride: {
+      'this-is-undefined-in-esm': 'silent'
+    }
+  }
 })
