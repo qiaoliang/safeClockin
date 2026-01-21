@@ -1,5 +1,8 @@
 <template>
-  <view class="community-manage-container" data-testid="community-list-page">
+  <view
+    class="community-manage-container"
+    data-testid="community-list-page"
+  >
     <!-- 顶部标题栏 -->
     <view class="header-bar">
       <view
@@ -11,7 +14,10 @@
           ⋮
         </text>
       </view>
-      <text class="header-title" data-testid="community-list-title">
+      <text
+        class="header-title"
+        data-testid="community-list-title"
+      >
         社区管理
       </text>
       <view
@@ -45,9 +51,9 @@
           >
             <view
               class="community-item"
+              :data-testid="`community-item-${item.name}`"
               @click="viewCommunityDetail(item)"
               @longpress="showActionMenu(item)"
-              :data-testid="`community-item-${item.name}`"
             >
               <view class="community-header">
                 <text class="community-name">
@@ -168,8 +174,8 @@
     <view
       v-if="hasActionPermission(FeaturePermission.CREATE_COMMUNITY)"
       class="floating-add-btn"
-      @click="createCommunity"
       data-testid="add-community-button"
+      @click="createCommunity"
     >
       <text class="add-icon">
         +
@@ -387,7 +393,7 @@ const applyFilter = () => {
 // 显示操作菜单
 const showActionMenu = (item) => {
   // 根据社区状态和是否可删除动态生成菜单项
-  let itemList = ['查看工作人员', '查看用户', '修改']
+  const itemList = ['查看工作人员', '查看用户', '修改']
 
   if (item.status === CommunityStatus.ACTIVE) {
     itemList.push('停用')

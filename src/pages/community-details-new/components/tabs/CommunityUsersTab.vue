@@ -94,7 +94,10 @@
             class="checkbox"
             :class="{ 'checked': isUserSelected(user.user_id) }"
           >
-            <text v-if="isUserSelected(user.user_id)" class="check-icon">
+            <text
+              v-if="isUserSelected(user.user_id)"
+              class="check-icon"
+            >
               ✓
             </text>
           </view>
@@ -108,7 +111,10 @@
               class="avatar-image"
               mode="aspectFill"
             />
-            <text v-else class="avatar-icon">
+            <text
+              v-else
+              class="avatar-icon"
+            >
               👤
             </text>
             <view

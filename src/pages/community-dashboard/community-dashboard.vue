@@ -17,7 +17,9 @@
         class="manage-button"
         @click="handleManageCommunity"
       >
-        <text class="manage-text">管理</text>
+        <text class="manage-text">
+          管理
+        </text>
       </view>
     </view>
 
@@ -55,8 +57,13 @@
     />
 
     <!-- 空状态提示 -->
-    <view v-if="!statsLoading && stats.total_rules === 0" class="empty-state">
-      <text class="empty-text">还没有社区规则！</text>
+    <view
+      v-if="!statsLoading && stats.total_rules === 0"
+      class="empty-state"
+    >
+      <text class="empty-text">
+        还没有社区规则！
+      </text>
     </view>
   </view>
 </template>

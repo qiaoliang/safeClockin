@@ -3,22 +3,22 @@
     <view class="tabs">
       <view
         :class="['tab', activeTab==='register'?'active':'']"
-        @click="activeTab='register'"
         data-testid="tab-register"
+        @click="activeTab='register'"
       >
         注册
       </view>
       <view
         :class="['tab', activeTab==='login-code'?'active':'']"
-        @click="activeTab='login-code'"
         data-testid="tab-code-login"
+        @click="activeTab='login-code'"
       >
         验证码登录
       </view>
       <view
         :class="['tab', activeTab==='login-password'?'active':'']"
-        @click="activeTab='login-password'"
         data-testid="tab-password-login"
+        @click="activeTab='login-password'"
       >
         密码登录
       </view>
@@ -49,8 +49,8 @@
         <button
           class="code-btn"
           :disabled="countdown>0 || sending"
-          @click="onSendCode"
           data-testid="get-code-button"
+          @click="onSendCode"
         >
           {{ countdown>0 ? `${countdown}s` : '获取验证码' }}
         </button>
@@ -113,8 +113,8 @@
       <button
         class="submit"
         :disabled="submitting"
-        @click="onSubmit"
         data-testid="login-submit-button"
+        @click="onSubmit"
       >
         {{ submitText }}
       </button>

@@ -1,7 +1,9 @@
 <template>
   <view class="admin-management-container">
     <view class="header">
-      <text class="title">管理员任免</text>
+      <text class="title">
+        管理员任免
+      </text>
     </view>
 
     <view class="admin-list">
@@ -15,9 +17,15 @@
             {{ admin.nickname?.charAt(0) || '用' }}
           </view>
           <view class="admin-details">
-            <text class="admin-name">{{ admin.nickname }}</text>
-            <text class="admin-phone">{{ maskPhoneNumber(admin.phone_number) }}</text>
-            <text class="admin-role">{{ admin.role }}</text>
+            <text class="admin-name">
+              {{ admin.nickname }}
+            </text>
+            <text class="admin-phone">
+              {{ maskPhoneNumber(admin.phone_number) }}
+            </text>
+            <text class="admin-role">
+              {{ admin.role }}
+            </text>
           </view>
         </view>
 
@@ -44,14 +52,18 @@
         v-if="adminList.length === 0 && !loading"
         class="empty-state"
       >
-        <text class="empty-text">暂无管理员</text>
+        <text class="empty-text">
+          暂无管理员
+        </text>
       </view>
 
       <view
         v-if="loading"
         class="loading-state"
       >
-        <text class="loading-text">加载中...</text>
+        <text class="loading-text">
+          加载中...
+        </text>
       </view>
     </view>
   </view>

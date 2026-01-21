@@ -1,6 +1,9 @@
 <!-- pages/login/login.vue -->
 <template>
-  <view class="login-container" data-testid="login-welcome-page">
+  <view
+    class="login-container"
+    data-testid="login-welcome-page"
+  >
     <!-- Logo和标题 -->
     <view class="logo-section">
       <view class="app-logo floating-card">
@@ -8,7 +11,10 @@
           🛡️
         </text>
       </view>
-      <text class="app-title slide-up" data-testid="login-welcome-title">
+      <text
+        class="app-title slide-up"
+        data-testid="login-welcome-title"
+      >
         安全守护
       </text>
       <text
@@ -77,8 +83,8 @@
     <button
       class="wechat-login-button"
       :disabled="isLoading"
-      @click="onWechatLogin"
       data-testid="wechat-login-button"
+      @click="onWechatLogin"
     >
       <text class="wechat-icon">
         💬
@@ -100,8 +106,8 @@
     <!-- 手机号登录入口 -->
     <button
       class="phone-login-button"
-      @click="showPhoneLogin"
       data-testid="phone-login-button"
+      @click="showPhoneLogin"
     >
       <text class="phone-icon">
         📱

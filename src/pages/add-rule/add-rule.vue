@@ -1,6 +1,9 @@
 <!-- pages/add-rule/add-rule.vue -->
 <template>
-  <view class="add-rule-container" data-testid="rule-form-page">
+  <view
+    class="add-rule-container"
+    data-testid="rule-form-page"
+  >
     <!-- 顶部标题 -->
     <view class="header-section">
       <view class="header-content">
@@ -169,8 +172,8 @@
           class="submit-btn"
           :disabled="!isFormValid || isSubmitting"
           form-type="submit"
-          @click="handleSubmitButtonClick"
           data-testid="rule-submit-button"
+          @click="handleSubmitButtonClick"
         >
           {{ isSubmitting ? '提交中...' : (isEditing ? '更新规则' : '添加规则') }}
         </button>

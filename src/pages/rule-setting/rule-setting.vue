@@ -1,8 +1,14 @@
 <template>
-  <view class="rule-setting-container" data-testid="rule-list-page">
+  <view
+    class="rule-setting-container"
+    data-testid="rule-list-page"
+  >
     <!-- 顶部标题 -->
     <view class="header-section">
-      <text class="header-title" data-testid="rule-list-title">
+      <text
+        class="header-title"
+        data-testid="rule-list-title"
+      >
         打卡规则
       </text>
       <text class="header-subtitle">
@@ -90,22 +96,22 @@
           <view class="rule-actions">
             <button
               class="edit-btn"
-              @click="editRule(rule)"
               data-testid="rule-edit-button"
+              @click="editRule(rule)"
             >
               编辑
             </button>
             <button
               class="delete-btn"
-              @click="showDeleteModal(rule)"
               data-testid="rule-delete-button"
+              @click="showDeleteModal(rule)"
             >
               删除
             </button>
             <button
               class="invite-btn"
-              @click="inviteForRule(rule)"
               data-testid="rule-invite-button"
+              @click="inviteForRule(rule)"
             >
               邀请
             </button>
@@ -198,8 +204,8 @@
     <view class="add-rule-section">
       <button
         class="add-rule-btn"
-        @click="addNewRule"
         data-testid="add-personal-rule-button"
+        @click="addNewRule"
       >
         <text class="add-icon">
           +

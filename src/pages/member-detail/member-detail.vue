@@ -44,8 +44,8 @@
 
     <!-- 病史信息 -->
     <uni-section
-      title="病史信息"
       v-if="canViewMedicalHistory"
+      title="病史信息"
     >
       <view class="medical-history-section">
         <MedicalHistoryList
@@ -69,8 +69,8 @@
 
     <!-- 监护人信息 -->
     <uni-section
-      title="监护人信息"
       v-if="guardians.length > 0"
+      title="监护人信息"
     >
       <uni-list>
         <uni-list-item
@@ -81,7 +81,7 @@
           show-arrow
           @click="viewGuardianDetail(guardian)"
         >
-          <template v-slot:footer>
+          <template #footer>
             <text class="guardian-tag">
               {{ guardian.relationship || '监护人' }}
             </text>
@@ -92,8 +92,8 @@
 
     <!-- 监护关系信息 -->
     <uni-section
-      title="监护对象"
       v-if="wards.length > 0"
+      title="监护对象"
     >
       <uni-list>
         <uni-list-item
@@ -104,7 +104,7 @@
           show-arrow
           @click="viewWardDetail(ward)"
         >
-          <template v-slot:footer>
+          <template #footer>
             <text class="ward-tag">
               {{ ward.relationship || '监护对象' }}
             </text>
@@ -115,8 +115,8 @@
 
     <!-- 浏览记录入口 -->
     <uni-section
-      title="浏览记录"
       v-if="canViewLogs"
+      title="浏览记录"
     >
       <view class="view-logs-section">
         <button

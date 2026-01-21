@@ -17,7 +17,11 @@
       <!-- 消息内容 -->
       <view class="timeline-content">
         <!-- 头像 -->
-        <image class="avatar" :src="getUserAvatar(item)" mode="aspectFill" />
+        <image
+          class="avatar"
+          :src="getUserAvatar(item)"
+          mode="aspectFill"
+        />
 
         <!-- 消息主体 -->
         <view class="message-body">
@@ -41,7 +45,10 @@
           </view>
 
           <!-- 文字内容 -->
-          <text v-if="item.message_content || item.event_content" class="message-text">
+          <text
+            v-if="item.message_content || item.event_content"
+            class="message-text"
+          >
             {{ item.event_content || item.message_content }}
           </text>
 
@@ -60,16 +67,25 @@
             class="voice-message"
             @click="playVoice(item)"
           >
-            <text class="voice-icon"> 🎤 </text>
-            <text class="voice-duration"> {{ item.media_duration }}" </text>
+            <text class="voice-icon">
+              🎤
+            </text>
+            <text class="voice-duration">
+              {{ item.media_duration }}"
+            </text>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 空状态 -->
-    <view v-if="displayList.length === 0" class="empty-state">
-      <text class="empty-text"> 暂无消息 </text>
+    <view
+      v-if="displayList.length === 0"
+      class="empty-state"
+    >
+      <text class="empty-text">
+        暂无消息
+      </text>
     </view>
   </view>
 </template>

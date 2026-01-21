@@ -1,5 +1,8 @@
 <template>
-  <view class="home-community-container" data-testid="home-community-page">
+  <view
+    class="home-community-container"
+    data-testid="home-community-page"
+  >
     <!-- 滚动通知条 -->
     <view
       v-if="hasPendingEvents && latestPendingEvent"
@@ -34,7 +37,9 @@
           class="manage-button-inline"
           @click="handleManageCommunity"
         >
-          <text class="manage-text">管理</text>
+          <text class="manage-text">
+            管理
+          </text>
         </view>
       </view>
     </view>
@@ -96,7 +101,6 @@
             近期未完成打卡最多的事项
           </text>
         </view>
-
       </view>
 
       <view class="issues-list">

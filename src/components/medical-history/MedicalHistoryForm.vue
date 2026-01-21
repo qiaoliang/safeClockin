@@ -1,7 +1,15 @@
 <template>
   <view class="medical-history-form">
-    <uni-forms ref="form" :modelValue="formData" :rules="rules">
-      <uni-forms-item label="疾病名称" required name="condition_name">
+    <uni-forms
+      ref="form"
+      :model-value="formData"
+      :rules="rules"
+    >
+      <uni-forms-item
+        label="疾病名称"
+        required
+        name="condition_name"
+      >
         <uni-data-picker
           v-model="formData.condition_name"
           :localdata="conditionOptions"
@@ -10,16 +18,19 @@
         />
       </uni-forms-item>
 
-      <uni-forms-item label="治疗方案" name="treatment_plan">
+      <uni-forms-item
+        label="治疗方案"
+        name="treatment_plan"
+      >
         <view class="treatment-plan">
           <uni-data-checkbox
             v-model="formData.treatment_plan.type"
             :localdata="treatmentTypes"
           />
           <uni-easyinput
+            v-if="formData.treatment_plan.type.includes('吃药')"
             v-model="formData.treatment_plan.medication"
             placeholder="药品名称"
-            v-if="formData.treatment_plan.type.includes('吃药')"
           />
           <uni-easyinput
             v-model="formData.treatment_plan.frequency"
@@ -33,7 +44,10 @@
         </view>
       </uni-forms-item>
 
-      <uni-forms-item label="可见性" name="visibility">
+      <uni-forms-item
+        label="可见性"
+        name="visibility"
+      >
         <uni-data-checkbox
           v-model="formData.visibility"
           :localdata="visibilityOptions"
@@ -41,7 +55,9 @@
       </uni-forms-item>
     </uni-forms>
 
-    <button @click="handleSubmit">保存</button>
+    <button @click="handleSubmit">
+      保存
+    </button>
   </view>
 </template>
 

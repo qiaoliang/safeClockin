@@ -8,16 +8,28 @@
         @input="handleSearchInput"
         @clear="handleClear"
       />
-      <view v-if="searching" class="search-indicator">
-        <uni-load-more status="loading" :content-text="{ contentdown: '搜索中...' }" />
+      <view
+        v-if="searching"
+        class="search-indicator"
+      >
+        <uni-load-more
+          status="loading"
+          :content-text="{ contentdown: '搜索中...' }"
+        />
       </view>
     </view>
 
-    <view v-if="error" class="error-message">
+    <view
+      v-if="error"
+      class="error-message"
+    >
       {{ error }}
     </view>
 
-    <view v-if="searchResults.length > 0" class="search-results">
+    <view
+      v-if="searchResults.length > 0"
+      class="search-results"
+    >
       <view
         v-for="user in searchResults"
         :key="user.user_id"
@@ -30,14 +42,23 @@
           mode="aspectFill"
         />
         <view class="user-info">
-          <text class="user-name">{{ user.nickname || user.name }}</text>
-          <text class="user-phone">{{ formatPhone(user.phone_number) }}</text>
+          <text class="user-name">
+            {{ user.nickname || user.name }}
+          </text>
+          <text class="user-phone">
+            {{ formatPhone(user.phone_number) }}
+          </text>
         </view>
       </view>
     </view>
 
-    <view v-else-if="searchKeyword && !searching && searchResults.length === 0" class="empty-state">
-      <text class="empty-text">未找到匹配的用户</text>
+    <view
+      v-else-if="searchKeyword && !searching && searchResults.length === 0"
+      class="empty-state"
+    >
+      <text class="empty-text">
+        未找到匹配的用户
+      </text>
     </view>
   </view>
 </template>

@@ -1,314 +1,317 @@
 <template>
-  <view class="home-page-container" data-testid="home-page">
+  <view
+    class="home-page-container"
+    data-testid="home-page"
+  >
     <!-- 顶部问候区域 -->
     <uni-card
-    class="greeting-card"
-    :is-shadow="false"
-    :is-full="false"
-    :border="false"
-    padding="40rpx"
-  >
-    <template #default>
-      <view class="greeting-content">
-        <view class="user-info-row">
-          <view class="user-avatar-section">
-            <image
-              :src="userInfo?.avatarUrl || 'https://s.coze.cn/image/dhcVCXur50w/'"
-              class="user-avatar-img"
-              mode="aspectFill"
-            />
-            <view class="user-greeting">
-              <text class="greeting-text">
-                {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
+      class="greeting-card"
+      :is-shadow="false"
+      :is-full="false"
+      :border="false"
+      padding="40rpx"
+    >
+      <template #default>
+        <view class="greeting-content">
+          <view class="user-info-row">
+            <view class="user-avatar-section">
+              <image
+                :src="userInfo?.avatarUrl || 'https://s.coze.cn/image/dhcVCXur50w/'"
+                class="user-avatar-img"
+                mode="aspectFill"
+              />
+              <view class="user-greeting">
+                <text class="greeting-text">
+                  {{ getGreetingText() }}，{{ getDisplayName(userInfo) }}
+                </text>
+                <text class="community-text">
+                  {{ userInfo.community_name }}
+                </text>
+                <text class="date-text">
+                  {{ getCurrentDate() }}
+                </text>
+              </view>
+            </view>
+            <view class="weather-info">
+              <view class="weather-content">
+                <text class="weather-icon">
+                  ☀️
+                </text>
+                <text class="weather-text">
+                  晴 18°C
+                </text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 角色切换标签 -->
+          <view class="role-tabs">
+            <view
+              :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
+              data-testid="home-role-checkin"
+              @click="switchRole('checkin')"
+            >
+              <text class="tab-icon">
+                🕐
               </text>
-              <text class="community-text">
-                {{ userInfo.community_name }}
+              <text class="tab-text">
+                今日打卡
               </text>
-              <text class="date-text">
-                {{ getCurrentDate() }}
+            </view>
+            <view
+              :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
+              data-testid="home-role-supervisor"
+              @click="switchRole('supervisor')"
+            >
+              <text class="tab-icon">
+                🛡️
+              </text>
+              <text class="tab-text">
+                当前监护
               </text>
             </view>
           </view>
-          <view class="weather-info">
-            <view class="weather-content">
-              <text class="weather-icon">
-                ☀️
-              </text>
-              <text class="weather-text">
-                晴 18°C
-              </text>
+        </view>
+      </template>
+    </uni-card>
+
+    <!-- 当前任务悬浮按钮 -->
+    <view class="floating-tasks-section">
+      <button
+        class="floating-tasks-btn"
+        :class="{
+          'btn-no-rules': hasNoRules,
+          'btn-all-completed': hasAllCompleted,
+          'btn-missed-only': hasMissedOnly
+        }"
+        @click="handleTasksClick"
+      >
+        <view class="tasks-btn-content">
+          <view class="tasks-icon-wrapper">
+            <text class="tasks-icon">
+              {{ tasksIcon }}
+            </text>
+            <view
+              v-if="hasPendingTasks"
+              class="tasks-badge"
+            >
+              {{ pendingCheckinCount }}
             </view>
           </view>
-        </view>
-
-        <!-- 角色切换标签 -->
-        <view class="role-tabs">
-          <view
-            :class="['role-tab', currentRole === 'checkin' ? 'active' : '']"
-            @click="switchRole('checkin')"
-            data-testid="home-role-checkin"
-          >
-            <text class="tab-icon">
-              🕐
+          <view class="tasks-text-content">
+            <text class="tasks-title">
+              {{ tasksTitle }}
             </text>
-            <text class="tab-text">
-              今日打卡
+            <text class="tasks-subtitle">
+              {{ tasksSubtitle }}
             </text>
           </view>
-          <view
-            :class="['role-tab', currentRole === 'supervisor' ? 'active' : '']"
-            @click="switchRole('supervisor')"
-            data-testid="home-role-supervisor"
-          >
-            <text class="tab-icon">
-              🛡️
-            </text>
-            <text class="tab-text">
-              当前监护
-            </text>
-          </view>
-        </view>
-      </view>
-    </template>
-  </uni-card>
-
-  <!-- 当前任务悬浮按钮 -->
-  <view class="floating-tasks-section">
-    <button
-      class="floating-tasks-btn"
-      :class="{
-        'btn-no-rules': hasNoRules,
-        'btn-all-completed': hasAllCompleted,
-        'btn-missed-only': hasMissedOnly
-      }"
-      @click="handleTasksClick"
-    >
-      <view class="tasks-btn-content">
-        <view class="tasks-icon-wrapper">
-          <text class="tasks-icon">
-            {{ tasksIcon }}
-          </text>
-          <view
-            v-if="hasPendingTasks"
-            class="tasks-badge"
-          >
-            {{ pendingCheckinCount }}
-          </view>
-        </view>
-        <view class="tasks-text-content">
-          <text class="tasks-title">
-            {{ tasksTitle }}
-          </text>
-          <text class="tasks-subtitle">
-            {{ tasksSubtitle }}
+          <text class="tasks-arrow">
+            ›
           </text>
         </view>
-        <text class="tasks-arrow">
-          ›
-        </text>
-      </view>
-    </button>
-  </view>
-
-  <!-- 功能快捷入口 -->
-  <uni-grid
-    :column="3"
-    :show-border="false"
-    :square="false"
-  >
-    <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleSetRules"
-        data-testid="view-rules-button"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #b37fef"
-        >
-          <text class="grid-icon">
-            ⚙️
-          </text>
-        </view>
-        <text class="grid-text">
-          查看规则
-        </text>
-      </view>
-    </uni-grid-item>
-
-    <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleGuardianManage"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #8ce0a0"
-        >
-          <text class="grid-icon">
-            👨‍👩‍👧
-          </text>
-        </view>
-        <text class="grid-text">
-          监护管理
-        </text>
-      </view>
-    </uni-grid-item>
-
-    <uni-grid-item>
-      <view
-        class="grid-item-content"
-        @click="handleHealthRecord"
-      >
-        <view
-          class="grid-icon-wrapper"
-          style="background: #ffa0a0"
-        >
-          <text class="grid-icon">
-            💗
-          </text>
-        </view>
-        <text class="grid-text">
-          健康记录
-        </text>
-      </view>
-    </uni-grid-item>
-  </uni-grid>
-
-  <!-- 一键求助主按钮 / 事件进展卡片 -->
-  <view class="today-tasks-section">
-    <!-- 有进行中的事件时显示事件进展卡片 -->
-    <view
-      v-if="hasActiveEvent"
-      class="event-progress-card"
-    >
-      <!-- 顶部操作栏 -->
-      <view class="event-header">
-        <button
-          class="header-btn continue-btn"
-          @click="handleContinueHelp"
-        >
-          <text class="btn-text">
-            继续求助
-          </text>
-        </button>
-        <button
-          class="header-btn close-btn"
-          @click="handleCloseEvent"
-        >
-          <text class="btn-text">
-            问题已解决
-          </text>
-        </button>
-      </view>
-
-      <!-- 时间线区域 -->
-      <view class="timeline-section">
-        <EventTimeline
-          :messages="eventMessages"
-          :event-info="activeEvent"
-        />
-      </view>
-
-      <!-- 底部输入区域 -->
-      <view
-        v-if="showInputSection"
-        class="input-section"
-      >
-        <view class="input-row">
-          <input
-            v-model="messageInput"
-            class="message-input"
-            placeholder="输入消息..."
-            @confirm="handleSendMessage"
-          >
-          <button
-            class="send-btn"
-            @click="handleSendMessage"
-          >
-            <text>发送</text>
-          </button>
-        </view>
-        <view class="input-actions">
-          <button
-            class="action-btn"
-            :class="{ 'recording': isRecording }"
-            @touchstart="startRecording"
-            @touchend="stopRecording"
-          >
-            <text>{{ isRecording ? `${recordingDuration}"` : '🎤' }}</text>
-          </button>
-          <button
-            class="action-btn"
-            @click="handleChooseImage"
-          >
-            <text>📷</text>
-          </button>
-        </view>
-      </view>
+      </button>
     </view>
 
-    <!-- 没有进行中的事件时显示一键求助按钮 -->
-    <button
-      v-else
-      class="help-btn"
-      @click="handleOneClickHelp"
-      data-testid="one-click-help-button"
+    <!-- 功能快捷入口 -->
+    <uni-grid
+      :column="3"
+      :show-border="false"
+      :square="false"
     >
-      <text class="btn-icon">
-        🆘
-      </text>
-      <text class="btn-text">
-        一键求助
-      </text>
-      <text class="btn-subtext">
-        遇到困难？立即求助
-      </text>
-    </button>
-  </view>
+      <uni-grid-item>
+        <view
+          class="grid-item-content"
+          data-testid="view-rules-button"
+          @click="handleSetRules"
+        >
+          <view
+            class="grid-icon-wrapper"
+            style="background: #b37fef"
+          >
+            <text class="grid-icon">
+              ⚙️
+            </text>
+          </view>
+          <text class="grid-text">
+            查看规则
+          </text>
+        </view>
+      </uni-grid-item>
 
-  <!-- 关闭事件模态对话框 -->
-  <uni-popup
-    ref="closePopup"
-    type="center"
-    @change="onPopupChange"
-  >
-    <view class="close-event-modal">
-      <view class="close-event-header">
-        <text class="close-event-title">
-          关闭事件
-        </text>
-      </view>
-      <view class="close-event-content">
-        <text class="close-event-hint">
-          请说明事件当前的现状和关闭原因：
-        </text>
-        <textarea
-          v-model="closeReason"
-          class="close-reason-input"
-          placeholder="请输入关闭原因（5-200字符）"
-          :maxlength="200"
-          data-testid="close-reason-input"
-        />
-      </view>
-      <view class="close-event-footer">
-        <button
-          class="close-event-btn cancel-btn"
-          @click="handleCancelClose"
-          data-testid="close-event-cancel-button"
+      <uni-grid-item>
+        <view
+          class="grid-item-content"
+          @click="handleGuardianManage"
         >
-          取消
-        </button>
-        <button
-          class="close-event-btn confirm-btn"
-          @click="confirmCloseEvent"
-          data-testid="close-event-submit-button"
+          <view
+            class="grid-icon-wrapper"
+            style="background: #8ce0a0"
+          >
+            <text class="grid-icon">
+              👨‍👩‍👧
+            </text>
+          </view>
+          <text class="grid-text">
+            监护管理
+          </text>
+        </view>
+      </uni-grid-item>
+
+      <uni-grid-item>
+        <view
+          class="grid-item-content"
+          @click="handleHealthRecord"
         >
-          确认
-        </button>
+          <view
+            class="grid-icon-wrapper"
+            style="background: #ffa0a0"
+          >
+            <text class="grid-icon">
+              💗
+            </text>
+          </view>
+          <text class="grid-text">
+            健康记录
+          </text>
+        </view>
+      </uni-grid-item>
+    </uni-grid>
+
+    <!-- 一键求助主按钮 / 事件进展卡片 -->
+    <view class="today-tasks-section">
+      <!-- 有进行中的事件时显示事件进展卡片 -->
+      <view
+        v-if="hasActiveEvent"
+        class="event-progress-card"
+      >
+        <!-- 顶部操作栏 -->
+        <view class="event-header">
+          <button
+            class="header-btn continue-btn"
+            @click="handleContinueHelp"
+          >
+            <text class="btn-text">
+              继续求助
+            </text>
+          </button>
+          <button
+            class="header-btn close-btn"
+            @click="handleCloseEvent"
+          >
+            <text class="btn-text">
+              问题已解决
+            </text>
+          </button>
+        </view>
+
+        <!-- 时间线区域 -->
+        <view class="timeline-section">
+          <EventTimeline
+            :messages="eventMessages"
+            :event-info="activeEvent"
+          />
+        </view>
+
+        <!-- 底部输入区域 -->
+        <view
+          v-if="showInputSection"
+          class="input-section"
+        >
+          <view class="input-row">
+            <input
+              v-model="messageInput"
+              class="message-input"
+              placeholder="输入消息..."
+              @confirm="handleSendMessage"
+            >
+            <button
+              class="send-btn"
+              @click="handleSendMessage"
+            >
+              <text>发送</text>
+            </button>
+          </view>
+          <view class="input-actions">
+            <button
+              class="action-btn"
+              :class="{ 'recording': isRecording }"
+              @touchstart="startRecording"
+              @touchend="stopRecording"
+            >
+              <text>{{ isRecording ? `${recordingDuration}"` : '🎤' }}</text>
+            </button>
+            <button
+              class="action-btn"
+              @click="handleChooseImage"
+            >
+              <text>📷</text>
+            </button>
+          </view>
+        </view>
       </view>
+
+      <!-- 没有进行中的事件时显示一键求助按钮 -->
+      <button
+        v-else
+        class="help-btn"
+        data-testid="one-click-help-button"
+        @click="handleOneClickHelp"
+      >
+        <text class="btn-icon">
+          🆘
+        </text>
+        <text class="btn-text">
+          一键求助
+        </text>
+        <text class="btn-subtext">
+          遇到困难？立即求助
+        </text>
+      </button>
     </view>
-  </uni-popup>
+
+    <!-- 关闭事件模态对话框 -->
+    <uni-popup
+      ref="closePopup"
+      type="center"
+      @change="onPopupChange"
+    >
+      <view class="close-event-modal">
+        <view class="close-event-header">
+          <text class="close-event-title">
+            关闭事件
+          </text>
+        </view>
+        <view class="close-event-content">
+          <text class="close-event-hint">
+            请说明事件当前的现状和关闭原因：
+          </text>
+          <textarea
+            v-model="closeReason"
+            class="close-reason-input"
+            placeholder="请输入关闭原因（5-200字符）"
+            :maxlength="200"
+            data-testid="close-reason-input"
+          />
+        </view>
+        <view class="close-event-footer">
+          <button
+            class="close-event-btn cancel-btn"
+            data-testid="close-event-cancel-button"
+            @click="handleCancelClose"
+          >
+            取消
+          </button>
+          <button
+            class="close-event-btn confirm-btn"
+            data-testid="close-event-submit-button"
+            @click="confirmCloseEvent"
+          >
+            确认
+          </button>
+        </view>
+      </view>
+    </uni-popup>
   </view>
 </template>
 

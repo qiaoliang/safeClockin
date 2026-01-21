@@ -2,46 +2,84 @@
   <view class="community-staff-management">
     <!-- 标题和操作按钮 -->
     <view class="tab-header">
-      <h3 class="tab-title">专员管理</h3>
-      <button class="add-button" @click="showAddStaffModal">
-        <text class="add-icon"> + </text>
-        <text class="add-text"> 添加专员 </text>
+      <h3 class="tab-title">
+        专员管理
+      </h3>
+      <button
+        class="add-button"
+        @click="showAddStaffModal"
+      >
+        <text class="add-icon">
+          +
+        </text>
+        <text class="add-text">
+          添加专员
+        </text>
       </button>
     </view>
 
     <!-- 搜索框 -->
-    <view v-if="staffList.length > 0" class="search-container">
+    <view
+      v-if="staffList.length > 0"
+      class="search-container"
+    >
       <view class="search-input-wrapper">
-        <text class="search-icon"> 🔍 </text>
+        <text class="search-icon">
+          🔍
+        </text>
         <input
           v-model="searchQuery"
           class="search-input"
           type="text"
           placeholder="搜索专员姓名或手机号"
           @input="handleSearch"
-        />
-        <button v-if="searchQuery" class="clear-button" @click="clearSearch">
-          <text class="clear-icon"> × </text>
+        >
+        <button
+          v-if="searchQuery"
+          class="clear-button"
+          @click="clearSearch"
+        >
+          <text class="clear-icon">
+            ×
+          </text>
         </button>
       </view>
     </view>
 
     <!-- 加载状态 -->
-    <view v-if="loading" class="loading-container">
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
       <uni-load-more status="loading" />
     </view>
 
     <!-- 错误状态 -->
-    <view v-else-if="error" class="error-container">
+    <view
+      v-else-if="error"
+      class="error-container"
+    >
       <text class="error-text">
         {{ error }}
       </text>
-      <button class="retry-btn" @click="loadStaffList">重试</button>
+      <button
+        class="retry-btn"
+        @click="loadStaffList"
+      >
+        重试
+      </button>
     </view>
 
     <!-- 专员列表 -->
-    <view v-else class="staff-list">
-      <view v-for="staff in filteredStaffList" :key="staff.user_id" class="staff-item">
+    <view
+      v-else
+      class="staff-list"
+    >
+      <view
+        v-for="staff in filteredStaffList"
+        :key="staff.user_id"
+        class="staff-item"
+      >
         <!-- 专员头像和信息 -->
         <view class="staff-header">
           <view class="staff-avatar-container">
@@ -51,7 +89,10 @@
               class="staff-avatar"
               mode="aspectFill"
             />
-            <text v-else class="staff-avatar-placeholder">
+            <text
+              v-else
+              class="staff-avatar-placeholder"
+            >
               👤
             </text>
           </view>
@@ -74,15 +115,33 @@
         </view>
 
         <!-- 删除按钮 -->
-        <button class="delete-btn" @click.stop="handleDeleteStaff(staff)">
-          <text class="delete-icon"> 🗑️ </text>
+        <button
+          class="delete-btn"
+          @click.stop="handleDeleteStaff(staff)"
+        >
+          <text class="delete-icon">
+            🗑️
+          </text>
         </button>
       </view>
 
       <!-- 空状态 -->
-      <view v-if="filteredStaffList.length === 0" class="empty-container">
-        <text v-if="searchQuery" class="empty-icon"> 🔍 </text>
-        <text v-else class="empty-icon"> 👥 </text>
+      <view
+        v-if="filteredStaffList.length === 0"
+        class="empty-container"
+      >
+        <text
+          v-if="searchQuery"
+          class="empty-icon"
+        >
+          🔍
+        </text>
+        <text
+          v-else
+          class="empty-icon"
+        >
+          👥
+        </text>
 
         <text class="empty-title">
           {{ searchQuery ? "未找到匹配的专员" : "暂无专员" }}
@@ -94,10 +153,27 @@
       </view>
 
       <!-- 加载更多 -->
-      <view v-if="hasMore && !searchQuery" class="load-more-container">
-        <button class="load-more-btn" :disabled="loadingMore" @click="loadMore">
-          <text v-if="loadingMore" class="loading-text"> 加载中... </text>
-          <text v-else class="load-more-text"> 加载更多 </text>
+      <view
+        v-if="hasMore && !searchQuery"
+        class="load-more-container"
+      >
+        <button
+          class="load-more-btn"
+          :disabled="loadingMore"
+          @click="loadMore"
+        >
+          <text
+            v-if="loadingMore"
+            class="loading-text"
+          >
+            加载中...
+          </text>
+          <text
+            v-else
+            class="load-more-text"
+          >
+            加载更多
+          </text>
         </button>
       </view>
     </view>

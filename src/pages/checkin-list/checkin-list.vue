@@ -1,6 +1,9 @@
 <!-- pages/checkin-list/checkin-list.vue -->
 <template>
-  <view class="checkin-list-container" data-testid="checkin-home-page">
+  <view
+    class="checkin-list-container"
+    data-testid="checkin-home-page"
+  >
     <!-- 顶部标题 -->
     <view class="header-section">
       <text class="header-title">
@@ -65,8 +68,8 @@
         <button
           v-else
           class="checkin-btn"
-          @click="performCheckin(item)"
           data-testid="checkin-button"
+          @click="performCheckin(item)"
         >
           打卡
         </button>

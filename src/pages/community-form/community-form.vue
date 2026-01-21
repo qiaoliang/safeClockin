@@ -1,5 +1,8 @@
 <template>
-  <view class="community-form-container" data-testid="create-community-page">
+  <view
+    class="community-form-container"
+    data-testid="create-community-page"
+  >
     <uni-forms
       ref="formRef"
       :model-value="formData"
@@ -25,8 +28,8 @@
       >
         <view
           class="location-selector"
-          @click="selectLocation"
           data-testid="location-select-button"
+          @click="selectLocation"
         >
           <text
             v-if="formData.location"
@@ -90,16 +93,16 @@
         <button
           class="submit-btn"
           :disabled="submitting"
-          @click="submitForm"
           data-testid="create-community-submit-button"
+          @click="submitForm"
         >
           {{ submitting ? '提交中...' : (isEdit ? '保存修改' : '创建社区') }}
         </button>
         <button
           class="cancel-btn"
           :disabled="submitting"
-          @click="handleCancel"
           data-testid="create-community-cancel-button"
+          @click="handleCancel"
         >
           取消
         </button>

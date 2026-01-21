@@ -1,5 +1,8 @@
 <template>
-  <view class="event-notification-bar" @click="handleBarClick">
+  <view
+    class="event-notification-bar"
+    @click="handleBarClick"
+  >
     <scroll-view
       class="notification-scroll"
       scroll-x
@@ -12,12 +15,20 @@
           class="notification-item"
           @click.stop="handleEventClick(event)"
         >
-          <text class="notification-icon">🔔</text>
+          <text class="notification-icon">
+            🔔
+          </text>
           <view class="notification-content">
-            <text class="notification-title">{{ event.title }}</text>
-            <text class="notification-time">{{ event.relative_time }}</text>
+            <text class="notification-title">
+              {{ event.title }}
+            </text>
+            <text class="notification-time">
+              {{ event.relative_time }}
+            </text>
           </view>
-          <text class="notification-arrow">›</text>
+          <text class="notification-arrow">
+            ›
+          </text>
         </view>
       </view>
     </scroll-view>

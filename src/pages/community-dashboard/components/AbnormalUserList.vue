@@ -1,33 +1,62 @@
 <template>
   <view class="abnormal-user-list">
     <view class="section-header">
-      <text class="section-title">异常用户清单</text>
-      <text v-if="total > 0" class="section-subtitle">共{{ total }}人</text>
+      <text class="section-title">
+        异常用户清单
+      </text>
+      <text
+        v-if="total > 0"
+        class="section-subtitle"
+      >
+        共{{ total }}人
+      </text>
     </view>
 
-    <view v-if="loading" class="loading-container">
-      <uni-load-more status="loading" :content-text="{ contentdown: '', contentrefresh: '加载中...', contentnomore: '' }" />
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
+      <uni-load-more
+        status="loading"
+        :content-text="{ contentdown: '', contentrefresh: '加载中...', contentnomore: '' }"
+      />
     </view>
 
-    <view v-else-if="users.length === 0" class="empty-state">
-      <text class="empty-text">暂无异常用户，所有用户都按时打卡</text>
+    <view
+      v-else-if="users.length === 0"
+      class="empty-state"
+    >
+      <text class="empty-text">
+        暂无异常用户，所有用户都按时打卡
+      </text>
     </view>
 
-    <view v-else class="user-list">
+    <view
+      v-else
+      class="user-list"
+    >
       <view
         v-for="user in users"
         :key="user.user_id"
         class="user-item"
         @click="handleUserClick(user)"
       >
-        <image class="user-avatar" :src="user.avatar_url || '/static/default-avatar.png'" mode="aspectFill" />
+        <image
+          class="user-avatar"
+          :src="user.avatar_url || '/static/default-avatar.png'"
+          mode="aspectFill"
+        />
         <view class="user-info">
-          <text class="user-name">{{ user.nickname }}</text>
+          <text class="user-name">
+            {{ user.nickname }}
+          </text>
           <view class="user-tags">
             <text :class="['abnormality-tag', `level-${user.abnormality_level}`]">
               {{ getAbnormalityLabel(user.abnormality_level) }}
             </text>
-            <text class="rules-count">{{ user.unfinished_rules_count }}个规则未完成</text>
+            <text class="rules-count">
+              {{ user.unfinished_rules_count }}个规则未完成
+            </text>
           </view>
           <view class="rule-abnormalities">
             <text
@@ -40,14 +69,24 @@
           </view>
         </view>
         <view class="user-abnormality">
-          <text class="abnormality-value">{{ user.total_abnormality }}</text>
-          <text class="abnormality-label">异常值</text>
+          <text class="abnormality-value">
+            {{ user.total_abnormality }}
+          </text>
+          <text class="abnormality-label">
+            异常值
+          </text>
         </view>
       </view>
 
       <!-- 加载更多 -->
-      <view v-if="hasNext" class="load-more" @click="handleLoadMore">
-        <text class="load-more-text">加载更多</text>
+      <view
+        v-if="hasNext"
+        class="load-more"
+        @click="handleLoadMore"
+      >
+        <text class="load-more-text">
+          加载更多
+        </text>
       </view>
     </view>
   </view>

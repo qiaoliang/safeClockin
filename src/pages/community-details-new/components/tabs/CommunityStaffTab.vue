@@ -33,7 +33,10 @@
               class="avatar-image"
               mode="aspectFill"
             />
-            <text v-else class="avatar-icon">
+            <text
+              v-else
+              class="avatar-icon"
+            >
               {{ getRoleIcon(staff.role) }}
             </text>
           </view>

@@ -8,16 +8,29 @@
     >
       <slot :items="items" />
 
-      <view v-if="loading" class="loading-state">
+      <view
+        v-if="loading"
+        class="loading-state"
+      >
         <uni-load-more status="loading" />
       </view>
 
-      <view v-if="hasMore === false && items.length > 0" class="end-state">
-        <text class="end-text">没有更多数据了</text>
+      <view
+        v-if="hasMore === false && items.length > 0"
+        class="end-state"
+      >
+        <text class="end-text">
+          没有更多数据了
+        </text>
       </view>
 
-      <view v-if="items.length === 0 && !loading" class="empty-state">
-        <text class="empty-text">暂无数据</text>
+      <view
+        v-if="items.length === 0 && !loading"
+        class="empty-state"
+      >
+        <text class="empty-text">
+          暂无数据
+        </text>
       </view>
     </scroll-view>
   </view>

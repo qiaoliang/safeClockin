@@ -1,47 +1,96 @@
 <template>
   <view class="data-overview-cards">
     <view class="section-header">
-      <text class="section-title">数据概览</text>
-      <text class="help-icon" @click="toggleHelp">❓</text>
+      <text class="section-title">
+        数据概览
+      </text>
+      <text
+        class="help-icon"
+        @click="toggleHelp"
+      >
+        ❓
+      </text>
     </view>
 
     <!-- 帮助提示框 -->
-    <view v-if="showHelp" class="help-box">
+    <view
+      v-if="showHelp"
+      class="help-box"
+    >
       <view class="help-item">
-        <text class="help-item-title">用户总数</text>
-        <text class="help-item-desc">社区中所有状态为"正常"的用户数量</text>
+        <text class="help-item-title">
+          用户总数
+        </text>
+        <text class="help-item-desc">
+          社区中所有状态为"正常"的用户数量
+        </text>
       </view>
       <view class="help-item">
-        <text class="help-item-title">今日打卡率</text>
-        <text class="help-item-desc">(实际打卡次数 ÷ 应打卡次数) × 100%，其中应打卡次数 = 用户总数 × 社区规则数量</text>
+        <text class="help-item-title">
+          今日打卡率
+        </text>
+        <text class="help-item-desc">
+          (实际打卡次数 ÷ 应打卡次数) × 100%，其中应打卡次数 = 用户总数 × 社区规则数量
+        </text>
       </view>
       <view class="help-item">
-        <text class="help-item-title">未打卡人数</text>
-        <text class="help-item-desc">至少有一个规则今日未完成打卡的用户数量</text>
+        <text class="help-item-title">
+          未打卡人数
+        </text>
+        <text class="help-item-desc">
+          至少有一个规则今日未完成打卡的用户数量
+        </text>
       </view>
     </view>
 
-    <view v-if="loading" class="loading-container">
-      <uni-load-more status="loading" :content-text="{ contentdown: '', contentrefresh: '加载中...', contentnomore: '' }" />
+    <view
+      v-if="loading"
+      class="loading-container"
+    >
+      <uni-load-more
+        status="loading"
+        :content-text="{ contentdown: '', contentrefresh: '加载中...', contentnomore: '' }"
+      />
     </view>
 
-    <view v-else class="overview-cards">
+    <view
+      v-else
+      class="overview-cards"
+    >
       <view class="overview-card total-count">
-        <text class="card-title">用户总数</text>
-        <text class="card-number">{{ totalUsers }}</text>
-        <text class="card-desc">人</text>
+        <text class="card-title">
+          用户总数
+        </text>
+        <text class="card-number">
+          {{ totalUsers }}
+        </text>
+        <text class="card-desc">
+          人
+        </text>
       </view>
 
       <view class="overview-card checkin-rate">
-        <text class="card-title">今日打卡率</text>
-        <text class="card-number">{{ checkinRate }}%</text>
-        <text class="card-desc">平均完成率</text>
+        <text class="card-title">
+          今日打卡率
+        </text>
+        <text class="card-number">
+          {{ checkinRate }}%
+        </text>
+        <text class="card-desc">
+          平均完成率
+        </text>
       </view>
 
       <view class="overview-card unchecked-count">
-        <text class="card-title">未打卡人数</text>
-        <text class="card-number">{{ uncheckedCount }}</text>
-        <text class="card-desc">人</text>
+        <text class="card-title">
+          未打卡人数
+        </text>
+        <text class="card-number">
+          {{ uncheckedCount }}
+        </text>
+        <text class="card-desc">
+          人
+        </text>
       </view>
     </view>
   </view>

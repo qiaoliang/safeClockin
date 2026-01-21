@@ -18,7 +18,10 @@
 
     <!-- 未打卡概览 -->
     <view class="overview-section">
-      <view v-if="uncheckedCount > 0" class="overview-card unchecked-count">
+      <view
+        v-if="uncheckedCount > 0"
+        class="overview-card unchecked-count"
+      >
         <text class="card-title">
           未打卡人数
         </text>
@@ -30,7 +33,10 @@
         </text>
       </view>
 
-      <view v-else class="overview-card success-count">
+      <view
+        v-else
+        class="overview-card success-count"
+      >
         <text class="card-title">
           打卡情况
         </text>
@@ -42,13 +48,19 @@
         </text>
       </view>
 
-      <view v-if="uncheckedCount > 0" class="overview-card warning-desc">
+      <view
+        v-if="uncheckedCount > 0"
+        class="overview-card warning-desc"
+      >
         <text class="card-desc">
           当前有{{ uncheckedCount }}位用户未完成今日打卡，请及时关注并联系。
         </text>
       </view>
 
-      <view v-else class="overview-card success-desc">
+      <view
+        v-else
+        class="overview-card success-desc"
+      >
         <text class="card-desc">
           所有用户均已完成今日打卡，表现良好！
         </text>

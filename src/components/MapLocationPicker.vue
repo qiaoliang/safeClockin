@@ -7,7 +7,7 @@
         class="search-input"
         placeholder="搜索地址"
         @confirm="handleSearch"
-      />
+      >
       <button
         v-if="searchKeyword"
         class="clear-btn"
@@ -39,7 +39,9 @@
     <!-- 地址信息卡片 -->
     <view class="address-card">
       <view class="address-info">
-        <text class="address-text">{{ selectedAddress || '请在地图上选择位置' }}</text>
+        <text class="address-text">
+          {{ selectedAddress || '请在地图上选择位置' }}
+        </text>
         <text
           v-if="administrativeInfo"
           class="administrative-text"
@@ -67,8 +69,12 @@
         class="result-item"
         @click="selectSearchResult(item)"
       >
-        <text class="result-name">{{ item.title }}</text>
-        <text class="result-address">{{ item.address }}</text>
+        <text class="result-name">
+          {{ item.title }}
+        </text>
+        <text class="result-address">
+          {{ item.address }}
+        </text>
       </view>
     </view>
   </view>
