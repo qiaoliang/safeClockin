@@ -66,9 +66,11 @@ export const authApi = {
           } else if (key === 'wechat_openid') {
             transformedData['wechatOpenid'] = value
           } else if (key === 'phone_number') {
-            transformedData['phone_number'] = value
+            transformedData['phoneNumber'] = value
           } else if (key === 'community_id') {
             transformedData['communityId'] = value
+          } else if (key === 'community_name') {
+            transformedData['communityName'] = value
           } else {
             transformedData[key] = value
           }
@@ -165,12 +167,6 @@ export const authApi = {
     url: '/api/checkin/rules',
     method: 'DELETE',
     data: data
-  }),
-  // 用户搜索API
-  searchUsers:(params) => request({
-    url: '/api/user/search',
-    method: 'GET',
-    data: params
   }),
   // 监督相关API
   inviteSupervisor:(data) => request({

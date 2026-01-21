@@ -59,7 +59,7 @@
             社区
           </text>
           <text class="info-value">
-            {{ userInfo?.community_name }}
+            {{ userInfo?.communityName }}
           </text>
         </view>
       </view>
@@ -79,12 +79,12 @@
           </text>
           <text
             class="info-value"
-            :class="{ 'empty-value': !userInfo?.phone_number }"
+            :class="{ 'empty-value': !userInfo?.phoneNumber }"
           >
             {{ displayPhone }}
           </text>
           <text
-            v-if="userInfo?.phone_number"
+            v-if="userInfo?.phoneNumber"
             class="copy-hint"
           >
             点击复制
@@ -176,8 +176,8 @@ const roleColor = computed(() => {
 
 // 计算属性：显示的电话号码（带掩码）
 const displayPhone = computed(() => {
-  const phone = props.userInfo?.phone_number
-  console.log('[UserInfoCard] displayPhone - phone_number:', phone, 'userInfo:', props.userInfo)
+  const phone = props.userInfo?.phoneNumber
+  console.log('[UserInfoCard] displayPhone - phoneNumber:', phone, 'userInfo:', props.userInfo)
   if (!phone) return '未绑定手机'
   if (phone.length === 11) {
     return `${phone.slice(0, 3)}****${phone.slice(-4)}`
@@ -198,9 +198,9 @@ const handleEditProfile = () => {
 
 // 处理复制电话号码
 const handleCopyPhone = () => {
-  const phone = props.userInfo?.phone_number
+  const phone = props.userInfo?.phoneNumber
   if (!phone) return
-  
+
   uni.setClipboardData({
     data: phone,
     success: () => {
