@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   userInfo: {
@@ -133,6 +133,13 @@ const props = defineProps({
 const emit = defineEmits(['edit-profile'])
 
 const addressExpanded = ref(false)
+
+// 添加调试日志
+watch(() => props.userInfo, (newVal) => {
+  console.log('[UserInfoCard] userInfo changed:', newVal)
+  console.log('[UserInfoCard] name:', newVal?.name)
+  console.log('[UserInfoCard] address:', newVal?.address)
+}, { immediate: true, deep: true })
 
 // 计算属性：用户显示名称
 const displayName = computed(() => {

@@ -289,6 +289,10 @@ const userInfo = computed(() => {
   // Layer 1: 入口点验证 - 确保用户信息存在
   const user = userStore.userInfo;
 
+  console.log('[profile.vue] userInfo computed:', user);
+  console.log('[profile.vue] user.name:', user?.name);
+  console.log('[profile.vue] user.address:', user?.address);
+
   if (!user) {
     return null;
   }

@@ -499,6 +499,9 @@ export const useUserStore = defineStore("user", {
             try {
                 const response = await authApi.getUserProfile();
                 console.log("获取用户信息响应:", response);
+                console.log("获取用户信息原始数据:", response.data);
+                console.log("获取用户信息 - name:", response.data?.name);
+                console.log("获取用户信息 - address:", response.data?.address);
 
                 // 检查API响应是否成功
                 if (response.code !== 1) {
@@ -514,6 +517,8 @@ export const useUserStore = defineStore("user", {
                     ...target.profile,
                     ...response.data,
                 };
+
+                console.log("更新后的 profile:", target.profile);
 
                 // 更新缓存时间
                 target.cache.lastUpdate = Date.now();
