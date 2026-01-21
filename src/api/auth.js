@@ -166,6 +166,12 @@ export const authApi = {
     method: 'DELETE',
     data: data
   }),
+  // 用户搜索API
+  searchUsers:(params) => request({
+    url: '/api/user/search',
+    method: 'GET',
+    data: params
+  }),
   // 监督相关API
   inviteSupervisor:(data) => request({
     url: '/api/supervision/invite/internal',

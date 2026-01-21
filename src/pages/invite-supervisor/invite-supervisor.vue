@@ -234,25 +234,62 @@ const performInvite = async () => {
   isInviting.value = true
   
   try {
-    // 这里应调用邀请监护人的API
     uni.showLoading({
       title: '邀请中...'
     })
     
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // 步骤 1: 通过手机号搜索用户，获取用户ID
+    console.log('步骤1: 搜索用户', phone.value)
+    const searchResult = await authApi.searchUsers({
+      keyword: phone.value,
+      page: 1,
+      per_page: 1
+    })
+    
+    if (searchResult.code !== 1 || !searchResult.data.users || searchResult.data.users.length === 0) {
+      uni.hideLoading()
+      uni.showToast({
+        title: '未找到该用户',
+        icon: 'none'
+      })
+      return
+    }
+    
+    const receiverUser = searchResult.data.users[0]
+    const receiverId = receiverUser.user_id
+    console.log('找到用户:', receiverUser.nickname, 'ID:', receiverId)
+    
+    // 步骤 2: 获取用户的第一个打卡规则ID（如果没有规则，则需要先创建规则）
+    // 这里暂时使用一个默认规则ID，实际应该让用户选择或者创建规则
+    // TODO: 需要实现规则选择功能
+    const ruleId = 1 // 临时使用默认规则ID
+    
+    // 步骤 3: 调用邀请API
+    console.log('步骤2: 发送邀请', { ruleId, receiverId })
+    const inviteResult = await authApi.inviteSupervisor({
+      rule_id: ruleId,
+      receiver_ids: [receiverId],
+      message: `${supervisorName.value || '用户'}邀请您成为监护人`
+    })
     
     uni.hideLoading()
     
-    uni.showToast({
-      title: '邀请已发送',
-      icon: 'success'
-    })
-    
-    // 延迟返回，让用户看到成功提示
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
+    if (inviteResult.code === 1) {
+      uni.showToast({
+        title: '邀请已发送',
+        icon: 'success'
+      })
+      
+      // 延迟返回，让用户看到成功提示
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1500)
+    } else {
+      uni.showToast({
+        title: inviteResult.msg || '邀请失败',
+        icon: 'none'
+      })
+    }
   } catch (error) {
     console.error('邀请失败:', error)
     uni.hideLoading()
