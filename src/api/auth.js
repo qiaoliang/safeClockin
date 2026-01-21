@@ -71,6 +71,8 @@ export const authApi = {
             transformedData['communityId'] = value
           } else if (key === 'community_name') {
             transformedData['communityName'] = value
+          } else if (key === 'role_name') {
+            transformedData['roleName'] = value
           } else {
             transformedData[key] = value
           }
