@@ -7,6 +7,7 @@ export const useSupervisionStore = defineStore('supervision', {
     myGuardians: [],
     receivedInvitations: [],
     sentInvitations: [],
+    pendingInvitationsCount: 0,
     loading: false
   }),
   actions: {
@@ -29,11 +30,29 @@ export const useSupervisionStore = defineStore('supervision', {
         else this.sentInvitations = res.data.invitations || []
       }
     },
+    async fetchSentInvitations() {
+      await this.fetchInvitations('sent')
+    },
+    async fetchPendingInvitationsCount() {
+      const res = await authApi.getPendingInvitationsCount()
+      if (res.code === 1) {
+        this.pendingInvitationsCount = res.data.count || 0
+      }
+    },
     async acceptInvitation(relation_id) {
       return authApi.acceptSupervisionInvitation({ relation_id })
     },
     async rejectInvitation(relation_id) {
       return authApi.rejectSupervisionInvitation({ relation_id })
+    },
+    async batchAcceptInvitations(relation_ids) {
+      return authApi.batchAcceptInvitations({ relation_ids })
+    },
+    async batchRejectInvitations(relation_ids) {
+      return authApi.batchRejectInvitations({ relation_ids })
+    },
+    async withdrawInvitation(invitation_id) {
+      return authApi.withdrawInvitation({ invitation_id })
     },
     async inviteSupervisor(target_openid, rule_ids = []) {
       return authApi.inviteSupervisor({ target_openid, rule_ids })

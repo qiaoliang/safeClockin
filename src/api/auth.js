@@ -199,6 +199,24 @@ export const authApi = {
     url: `/api/supervision/invitations/${relationId}/reject`,
     method: 'POST'
   }),
+  batchAcceptInvitations:(data) => request({
+    url: '/api/supervision/invitations/batch-accept',
+    method: 'POST',
+    data
+  }),
+  batchRejectInvitations:(data) => request({
+    url: '/api/supervision/invitations/batch-reject',
+    method: 'POST',
+    data
+  }),
+  withdrawInvitation:(data) => request({
+    url: `/api/supervision/invitations/${data.invitation_id}/withdraw`,
+    method: 'POST'
+  }),
+  getPendingInvitationsCount:() => request({
+    url: '/api/supervision/invitations/pending-count',
+    method: 'GET'
+  }),
   getMySupervisedUsers:() => request({
     url: '/api/supervision/my_supervised',
     method: 'GET'
