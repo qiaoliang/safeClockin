@@ -371,6 +371,8 @@ export const useUserStore = defineStore("user", {
                     nickname:
                         apiResponse.data?.nickname ||
                         apiResponse.data?.nickName,
+                    name: apiResponse.data?.name || null,
+                    address: apiResponse.data?.address || null,
                     avatarUrl:
                         apiResponse.data?.avatarUrl ||
                         apiResponse.data?.avatar_url,

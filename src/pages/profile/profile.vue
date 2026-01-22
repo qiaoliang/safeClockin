@@ -385,17 +385,16 @@ const handleLogout = () => {
 // 页面显示时刷新用户数据
 onShow(() => {
   // Layer 1: 入口点验证 - 确保用户状态正确初始化
-
   // Layer 2: 业务逻辑验证 - 确保数据一致性
   if (!userStore.userInfo) {
     userStore.initUserState();
   }
 
   // Layer 3: 环境保护 - 防止数据过期
-  if (userStore.isLoggedIn && !userStore.userInfo) {
-    console.warn("⚠️ 异常状态：已登录但无用户信息，尝试重新获取");
+  // 如果已登录，尝试获取完整的用户信息（确保 name 和 address 等字段存在）
+  if (userStore.isLoggedIn) {
     userStore.fetchUserInfo().catch((error) => {
-      console.error("重新获取用户信息失败:", error);
+      console.error("获取用户信息失败:", error);
     });
   }
 });
