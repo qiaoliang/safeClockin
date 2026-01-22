@@ -132,7 +132,7 @@ const formatTime = (time) => {
 
 .invite-time {
   font-size: $uni-font-size-xs;
-  color: $uni-text-light-grey;
+  color: $uni-text-light;
 }
 
 .invitation-actions {
@@ -180,6 +180,6 @@ const formatTime = (time) => {
 
 .expired,
 .withdrawn {
-  color: $uni-text-light-grey;
+  color: $uni-text-light;
 }
 </style>
