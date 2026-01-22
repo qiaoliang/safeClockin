@@ -124,16 +124,10 @@ test.describe("超级管理员创建社区测试", () => {
         // 等待创建成功提示
         await page.waitForTimeout(2000);
 
-        console.log("步骤10: 手动点击返回按钮");
-        // 手动点击返回按钮(因为uni.navigateBack可能在测试环境不生效)
-        const backButton = page.locator('.uni-icon-back').or(page.getByText('取消')).or(page.locator('[class*="back"]'));
-        const isBackVisible = await backButton.isVisible().catch(() => false);
-
-        if (isBackVisible) {
-            await backButton.click();
-            await page.waitForLoadState("networkidle");
-            await page.waitForTimeout(3000);
-        }
+        // 页面会在 1.5 秒后自动返回（见 community-form.vue 的 setTimeout(navigateBack, 1500)）
+        // 等待足够时间让页面自动返回到社区列表
+        console.log("步骤10: 等待页面自动返回社区列表...");
+        await page.waitForTimeout(3000);
 
         console.log("步骤11: 验证成功返回到'社区管理'页面");
         // 验证成功返回到"社区管理"页面
@@ -141,9 +135,9 @@ test.describe("超级管理员创建社区测试", () => {
         expect(pageTextAfter).toContain("社区管理");
 
         console.log("步骤12: 等待数据加载完成");
-        // 额外等待,确保onShow触发的数据加载完成
+        // 额外等待，确保 onShow 触发的数据加载完成
         await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(2000);
 
         console.log("步骤13: 验证新创建的社区出现在列表中");
         // 验证新创建的社区出现在列表中
