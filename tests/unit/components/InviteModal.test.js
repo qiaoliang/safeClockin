@@ -22,6 +22,20 @@ const UserSearch = {
   }
 }
 
+// Mock uni-app components
+const UniEasyInput = {
+  name: 'UniEasyInput',
+  template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+  props: ['modelValue', 'placeholder'],
+  emits: ['update:modelValue']
+}
+
+const UniLoadMore = {
+  name: 'UniLoadMore',
+  template: '<div></div>',
+  props: ['status']
+}
+
 describe('InviteModal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -40,7 +54,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -57,7 +73,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -74,7 +92,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -91,7 +111,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -112,7 +134,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -133,7 +157,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -159,7 +185,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -189,7 +217,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -210,7 +240,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
@@ -229,7 +261,9 @@ describe('InviteModal', () => {
       },
       global: {
         components: {
-          UserSearch
+          UserSearch,
+          UniEasyInput,
+          UniLoadMore
         }
       }
     })
