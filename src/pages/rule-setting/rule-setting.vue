@@ -118,7 +118,7 @@
             <button
               class="invite-btn invite-btn-primary"
               data-testid="rule-invite-button"
-              @click="showInviteModal(rule)"
+              @click="showInviteModalForRule(rule)"
             >
               邀请
             </button>
