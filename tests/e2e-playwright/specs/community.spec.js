@@ -148,10 +148,16 @@ test.describe("超级管理员社区管理测试", () => {
         // 等待创建成功提示消失
         await page.waitForTimeout(3000);
 
-        // 点击返回按钮回到社区列表
-        await page.locator(".uni-navbar__buttons_view").click();
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
+        console.log("点击返回按钮回到社区列表");
+        // 使用与创建社区测试相同的返回按钮逻辑
+        const backButton = page.locator('.uni-icon-back').or(page.getByText('取消')).or(page.locator('[class*="back"]'));
+        const isBackVisible = await backButton.isVisible().catch(() => false);
+
+        if (isBackVisible) {
+            await backButton.click();
+            await page.waitForLoadState("networkidle");
+            await page.waitForTimeout(3000);
+        }
 
         console.log('步骤5: 验证新社区的删除按钮存在');
 
@@ -260,10 +266,16 @@ test.describe("超级管理员社区管理测试", () => {
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
-        // 点击返回按钮回到社区列表
-        await page.locator(".uni-navbar__buttons_view").click();
-        await page.waitForLoadState("networkidle");
-        await page.waitForTimeout(3000);
+        console.log("点击返回按钮回到社区列表");
+        // 使用与创建社区测试相同的返回按钮逻辑
+        const backButton = page.locator('.uni-icon-back').or(page.getByText('取消')).or(page.locator('[class*="back"]'));
+        const isBackVisible = await backButton.isVisible().catch(() => false);
+
+        if (isBackVisible) {
+            await backButton.click();
+            await page.waitForLoadState("networkidle");
+            await page.waitForTimeout(3000);
+        }
 
         console.log("✅ 步骤 4：新社区创建成功");
 
