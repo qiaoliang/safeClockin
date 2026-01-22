@@ -115,6 +115,13 @@
             >
               分享
             </button>
+            <button
+              class="invite-btn invite-btn-primary"
+              data-testid="rule-invite-button"
+              @click="showInviteModal(rule)"
+            >
+              邀请
+            </button>
           </view>
         </view>
       </view>
@@ -286,6 +293,15 @@
         </view>
       </view>
     </view>
+
+    <!-- 邀请监护人弹窗 -->
+    <InviteModal
+      :visible="showInviteModal"
+      :rule-id="selectedRuleForInvite?.rule_id"
+      :rule-name="selectedRuleForInvite?.rule_name"
+      @close="hideInviteModal"
+      @success="handleInviteSuccess"
+    />
   </view>
 </template>
 
@@ -296,6 +312,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
 import { getUserAllRules, isRuleEditable } from '@/api/user-checkin'
+import InviteModal from '@/components/InviteModal.vue'
 
 const userStore = useUserStore()
 const rules = ref([])
@@ -492,6 +509,15 @@ const copyInvitePath = () => {
   uni.setClipboardData({ data: lastInvitePath.value, success(){ uni.showToast({ title:'已复制', icon:'none' }) } })
 }
 
+// 邀请监护人
+const showInviteModal = ref(false)
+const selectedRuleForInvite = ref(null)
+const hideInviteModal = () => { showInviteModal.value = false }
+const showInviteModalForRule = (rule) => {
+  selectedRuleForInvite.value = rule
+  showInviteModal.value = true
+}
+
 const inviteForRule = async (rule) => {
   // 社区规则不能分享
   if (rule.rule_source === 'community') {
@@ -509,6 +535,14 @@ const inviteForRule = async (rule) => {
   } else {
     uni.showToast({ title: res.msg || '生成分享失败', icon: 'none' })
   }
+}
+
+const handleInviteSuccess = (data) => {
+  uni.showToast({
+    title: '邀请已发送',
+    icon: 'success'
+  })
+  hideInviteModal()
 }
 </script>
 
@@ -685,6 +719,12 @@ const inviteForRule = async (rule) => {
   padding: 16rpx 24rpx;
   font-size: 24rpx;
   border: 2rpx solid #F48224;
+}
+
+.invite-btn-primary {
+  background: $uni-primary;
+  color: #fff;
+  border: none;
 }
 
 .edit-btn {
