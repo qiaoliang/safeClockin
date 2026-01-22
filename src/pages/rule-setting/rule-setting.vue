@@ -113,7 +113,7 @@
               data-testid="rule-invite-button"
               @click="inviteForRule(rule)"
             >
-              邀请
+              分享
             </button>
           </view>
         </view>
@@ -251,7 +251,7 @@
         </view>
       </view>
     </view>
-    <!-- 分享邀请链接弹窗 -->
+    <!-- 分享链接弹窗 -->
     <view
       v-if="showShareModal"
       class="modal-overlay"
@@ -259,7 +259,7 @@
       <view class="modal-content">
         <view class="modal-header">
           <text class="modal-title">
-            邀请链接
+            分享链接
           </text>
         </view>
         <view class="modal-body">
@@ -483,7 +483,7 @@ onShow(() => {
   getCheckinRules()
 })
 
-// 生成某规则的邀请链接
+// 生成某规则的分享链接
 const showShareModal = ref(false)
 const lastInvitePath = ref('')
 const hideShareModal = () => { showShareModal.value = false }
@@ -493,10 +493,10 @@ const copyInvitePath = () => {
 }
 
 const inviteForRule = async (rule) => {
-  // 社区规则不能邀请
+  // 社区规则不能分享
   if (rule.rule_source === 'community') {
     uni.showToast({
-      title: '社区规则不能邀请监督人',
+      title: '社区规则不能分享监督人',
       icon: 'none'
     })
     return
@@ -507,7 +507,7 @@ const inviteForRule = async (rule) => {
     lastInvitePath.value = res.data?.mini_path || ''
     showShareModal.value = true
   } else {
-    uni.showToast({ title: res.msg || '生成邀请失败', icon: 'none' })
+    uni.showToast({ title: res.msg || '生成分享失败', icon: 'none' })
   }
 }
 </script>

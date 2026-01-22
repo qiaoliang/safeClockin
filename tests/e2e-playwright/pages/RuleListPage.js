@@ -184,7 +184,7 @@ export class RuleListPage extends BasePage {
     return {
       hasEdit: text.includes('编辑'),
       hasDelete: text.includes('删除'),
-      hasInvite: text.includes('邀请'),
+      hasInvite: text.includes('分享'),
     };
   }
 }
