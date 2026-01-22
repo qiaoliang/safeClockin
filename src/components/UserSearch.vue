@@ -98,7 +98,7 @@ const handleSearchInput = debounce(async () => {
     const response = await searchUsers(searchKeyword.value.trim())
 
     if (response.code === 1) {
-      searchResults.value = response.data || []
+      searchResults.value = response.data?.users || []
     } else {
       error.value = response.msg || '搜索失败'
       searchResults.value = []
