@@ -240,8 +240,8 @@ const handleSelectAllInvitations = () => {
 }
 
 // 接受邀请
-const handleAcceptInvitation = async (invitation) => {
-  const res = await supervisionStore.acceptInvitation(invitation.relation_id)
+const handleAcceptInvitation = async (relationId) => {
+  const res = await supervisionStore.acceptInvitation(relationId)
   if (res.code === 1) {
     uni.showToast({ title: '已同意', icon: 'success' })
     await refreshData()
@@ -251,8 +251,8 @@ const handleAcceptInvitation = async (invitation) => {
 }
 
 // 拒绝邀请
-const handleRejectInvitation = async (invitation) => {
-  const res = await supervisionStore.rejectInvitation(invitation.relation_id)
+const handleRejectInvitation = async (relationId) => {
+  const res = await supervisionStore.rejectInvitation(relationId)
   if (res.code === 1) {
     uni.showToast({ title: '已拒绝', icon: 'success' })
     await refreshData()

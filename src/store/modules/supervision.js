@@ -40,10 +40,10 @@ export const useSupervisionStore = defineStore('supervision', {
       }
     },
     async acceptInvitation(relation_id) {
-      return authApi.acceptSupervisionInvitation({ relation_id })
+      return authApi.acceptSupervisionInvitation(relation_id)
     },
     async rejectInvitation(relation_id) {
-      return authApi.rejectSupervisionInvitation({ relation_id })
+      return authApi.rejectSupervisionInvitation(relation_id)
     },
     async batchAcceptInvitations(relation_ids) {
       return authApi.batchAcceptInvitations({ relation_ids })
