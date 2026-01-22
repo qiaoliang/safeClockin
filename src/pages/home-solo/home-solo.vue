@@ -151,6 +151,12 @@
             <text class="grid-icon">
               👨‍👩‍👧
             </text>
+            <view
+              v-if="pendingInvitationsCount > 0"
+              class="badge"
+            >
+              {{ pendingInvitationsCount > 99 ? '99+' : pendingInvitationsCount }}
+            </view>
           </view>
           <text class="grid-text">
             监护管理
@@ -322,6 +328,7 @@ import { useUserStore } from '@/store/modules/user'
 import { request } from '@/api/request'
 import { useCheckinStore } from "@/store/modules/checkin";
 import { useEventStore } from "@/store/modules/event";
+import { useSupervisionStore } from "@/store/modules/supervision";
 import EventTimeline from "@/components/event/EventTimeline.vue";
 import config from '@/config'
 
@@ -331,6 +338,7 @@ const TENCENT_MAP_KEY = config.map?.key || ''
 const userStore = useUserStore();
 const checkinStore = useCheckinStore();
 const eventStore = useEventStore();
+const supervisionStore = useSupervisionStore();
 
 // 事件相关状态
 const messageInput = ref('');
@@ -338,6 +346,9 @@ const showCloseModal = ref(false);
 const closeReason = ref('');
 const showInputSection = ref(false); // 控制输入区域的显示
 const closePopup = ref(null); // 关闭事件模态框 ref
+
+// 监督邀请相关状态
+const pendingInvitationsCount = ref(0);
 
 // 响应式变量
 const currentRole = ref('checkin');
@@ -747,9 +758,8 @@ const handleSetRules = () => {
 };
 
 const handleGuardianManage = () => {
-  uni.showToast({
-    title: "监护管理功能开发中",
-    icon: "none",
+  uni.navigateTo({
+    url: "/pages/supervisor-manage/supervisor-manage",
   });
 };
 
@@ -798,6 +808,16 @@ const initEventData = async () => {
     await eventStore.fetchActiveEvent();
   } catch (error) {
     console.warn("初始化事件数据失败:", error);
+  }
+};
+
+// 初始化监督邀请数据
+const initSupervisionData = async () => {
+  try {
+    await supervisionStore.fetchPendingInvitationsCount();
+    pendingInvitationsCount.value = supervisionStore.pendingInvitationsCount;
+  } catch (error) {
+    console.warn("初始化监督邀请数据失败:", error);
   }
 };
 
@@ -1043,6 +1063,9 @@ const initializePageData = async () => {
     // 初始化事件数据
     await initEventData();
 
+    // 初始化监督邀请数据
+    await initSupervisionData();
+
     // 更新任务数据
     updateTaskData();
   } catch (error) {
@@ -1208,6 +1231,26 @@ const updateTaskData = () => {
   align-items: center;
   justify-content: center;
   margin-bottom: 12rpx;
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  background: #EF4444;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 600;
+  min-width: 36rpx;
+  height: 36rpx;
+  padding: 0 8rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #fff;
+  box-shadow: 0 2rpx 8rpx rgba(239, 68, 68, 0.3);
 }
 
 .grid-icon {
