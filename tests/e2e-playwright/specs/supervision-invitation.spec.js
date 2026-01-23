@@ -11,27 +11,21 @@ import { ORIGINAL_USERS } from '../fixtures/original_data.mjs';
 async function logout(page) {
   console.log('📤 开始退出登录...');
 
-  // 尝试通过点击"我的"标签页进入个人中心
+  // 点击"我的"标签页进入个人中心
   const profileTab = page.locator('uni-tab-bar .tab-bar-item').filter({ hasText: '我的' });
-  const profileTabCount = await profileTab.count();
-
-  if (profileTabCount > 0) {
+  if (await profileTab.count() > 0) {
     await profileTab.first().click();
     await page.waitForTimeout(1000);
 
-    // 查找退出登录按钮
+    // 查找并点击退出登录按钮
     const logoutButtons = page.locator('button').filter({ hasText: /退出|登出/ });
-    const logoutBtnCount = await logoutButtons.count();
-
-    if (logoutBtnCount > 0) {
+    if (await logoutButtons.count() > 0) {
       await logoutButtons.first().click();
       await page.waitForTimeout(1000);
 
       // 确认退出
       const confirmButtons = page.locator('button').filter({ hasText: /确认|确定/ });
-      const confirmBtnCount = await confirmButtons.count();
-
-      if (confirmBtnCount > 0) {
+      if (await confirmButtons.count() > 0) {
         await confirmButtons.first().click();
         await page.waitForTimeout(2000);
       }
@@ -42,18 +36,14 @@ async function logout(page) {
 }
 
 /**
- * 辅助函数：导航到规则设置页面并查找第一个个人规则的邀请按钮
+ * 辅助函数：查找第一个个人规则的邀请按钮
  */
 async function findFirstInviteButton(page) {
   console.log('🔍 查找第一个个人规则的邀请按钮...');
-
-  // 等待规则列表加载
   await page.waitForTimeout(2000);
 
-  // 查找所有邀请按钮
   const inviteButtons = page.locator('button').filter({ hasText: '邀请' });
   const count = await inviteButtons.count();
-
   console.log(`  找到 ${count} 个邀请按钮`);
 
   if (count === 0) {
@@ -68,41 +58,31 @@ async function findFirstInviteButton(page) {
  */
 async function searchUserInInviteModal(page, phoneNumber) {
   console.log(`🔍 在邀请弹窗中搜索用户: ${phoneNumber}`);
-
-  // 等待弹窗出现
   await page.waitForTimeout(1000);
 
-  // 查找手机号输入框
+  // 查找并填写手机号输入框
   const phoneInput = page.locator('input[type="number"]');
-  const phoneInputCount = await phoneInput.count();
-
-  if (phoneInputCount === 0) {
+  if (await phoneInput.count() === 0) {
     throw new Error('未找到手机号输入框');
   }
 
-  // 输入手机号
   await phoneInput.first().fill(phoneNumber);
   console.log(`  ✅ 已输入手机号: ${phoneNumber}`);
   await page.waitForTimeout(500);
 
-  // 查找搜索按钮或点击搜索
+  // 查找并点击搜索按钮（如果存在）
   const searchButtons = page.locator('button').filter({ hasText: /搜索|查找/ });
-  const searchBtnCount = await searchButtons.count();
-
-  if (searchBtnCount > 0) {
+  if (await searchButtons.count() > 0) {
     await searchButtons.first().click();
     console.log('  ✅ 已点击搜索按钮');
   } else {
-    // 如果没有搜索按钮，尝试直接触发搜索
     console.log('  ℹ️ 未找到搜索按钮，可能自动搜索');
   }
 
   await page.waitForTimeout(2000);
 
-  // 检查是否找到用户
+  // 检查搜索结果
   const pageText = await page.locator('body').textContent();
-
-  // 查找用户列表项或用户名显示
   const userItems = page.locator('.user-item, .friend-item, [class*="user"], [class*="friend"]');
   const userItemCount = await userItems.count();
 
@@ -111,7 +91,7 @@ async function searchUserInInviteModal(page, phoneNumber) {
     return true;
   }
 
-  // 检查页面文本中是否包含用户相关信息
+  // 检查是否提示未找到用户
   if (pageText.includes('未找到') || pageText.includes('没有找到') || pageText.includes('找不到')) {
     throw new Error('未找到该用户');
   }
@@ -126,11 +106,8 @@ async function searchUserInInviteModal(page, phoneNumber) {
 async function sendInvitation(page) {
   console.log('📨 发送邀请...');
 
-  // 查找发送邀请按钮
   const sendButtons = page.locator('button').filter({ hasText: /发送|邀请|确认/ });
-  const sendBtnCount = await sendButtons.count();
-
-  if (sendBtnCount === 0) {
+  if (await sendButtons.count() === 0) {
     throw new Error('未找到发送邀请按钮');
   }
 
@@ -138,19 +115,16 @@ async function sendInvitation(page) {
   console.log('  ✅ 已点击发送邀请按钮');
   await page.waitForTimeout(2000);
 
-  // 检查是否发送成功
+  // 检查发送结果
   const pageText = await page.locator('body').textContent();
-
   if (pageText.includes('邀请已发送') || pageText.includes('发送成功')) {
     console.log('  ✅ 邀请发送成功');
-    return true;
-  }
-
-  if (pageText.includes('失败') || pageText.includes('错误')) {
+  } else if (pageText.includes('失败') || pageText.includes('错误')) {
     throw new Error('邀请发送失败');
+  } else {
+    console.log('  ℹ️ 邀请请求已发送');
   }
 
-  console.log('  ℹ️ 邀请请求已发送');
   return true;
 }
 
@@ -159,33 +133,28 @@ async function sendInvitation(page) {
  */
 async function acceptFirstInvitation(page) {
   console.log('✅ 接受第一个邀请...');
-
-  // 等待页面加载
   await page.waitForTimeout(2000);
 
-  // 查找接受按钮
   const acceptButtons = page.locator('button').filter({ hasText: /接受|同意/ });
-  const acceptBtnCount = await acceptButtons.count();
+  const count = await acceptButtons.count();
 
-  if (acceptBtnCount === 0) {
+  if (count === 0) {
     throw new Error('未找到接受邀请按钮，可能没有待处理的邀请');
   }
 
-  console.log(`  找到 ${acceptBtnCount} 个接受按钮`);
-
+  console.log(`  找到 ${count} 个接受按钮`);
   await acceptButtons.first().click();
   console.log('  ✅ 已点击接受按钮');
   await page.waitForTimeout(2000);
 
-  // 检查是否接受成功
+  // 检查接受结果
   const pageText = await page.locator('body').textContent();
-
   if (pageText.includes('已同意') || pageText.includes('已接受')) {
     console.log('  ✅ 邀请已接受');
-    return true;
+  } else {
+    console.log('  ℹ️ 接受请求已发送');
   }
 
-  console.log('  ℹ️ 接受请求已发送');
   return true;
 }
 
