@@ -192,6 +192,7 @@ Role-based page navigation after login
 ### Important Conventions
 
 **CSS**: ALL CSS MUST use variables from `@/uni.scss`. This includes colors, spacing, border-radius, shadows, and animations. Hardcoded values are prohibited.
+**API**: ALL API  契约文档都放在 `backend/api-contract` 目录下，并以不同的领域名，放在不同的文件中。
 
 **Color Scheme**:
 - Primary: Orange (#f48224)
@@ -206,8 +207,9 @@ Role-based page navigation after login
 **Testing**:
 - Unit tests should mock all external dependencies
 - Integration tests use MSW handlers defined in `tests/setup.integration.js`
-- E2E tests use `data-testid` attributes for element selection
+- E2E playwright tests use `data-testid` attributes for element selection
 - Test verification code is always `123456` (configured in MSW handlers)
+- e2e test is for H5 webapp, elements in pages are NOT always in uni-app styles.
 
 **Error Handling**:
 - Network errors are centrally intercepted in `request.js`

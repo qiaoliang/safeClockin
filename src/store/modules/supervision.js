@@ -23,15 +23,17 @@ export const useSupervisionStore = defineStore('supervision', {
       if (res.code === 1) this.myGuardians = res.data.guardians || []
       this.loading = false
     },
-    async fetchInvitations(type = 'received') {
-      const res = await authApi.getSupervisionInvitations({ type })
+    async fetchInvitations() {
+      const res = await authApi.getSupervisionInvitations()
       if (res.code === 1) {
-        if (type === 'received') this.receivedInvitations = res.data.invitations || []
-        else this.sentInvitations = res.data.invitations || []
+        this.receivedInvitations = res.data.invitations || []
       }
     },
     async fetchSentInvitations() {
-      await this.fetchInvitations('sent')
+      const res = await authApi.getSentInvitations()
+      if (res.code === 1) {
+        this.sentInvitations = res.data.invitations || []
+      }
     },
     async fetchPendingInvitationsCount() {
       const res = await authApi.getPendingInvitationsCount()

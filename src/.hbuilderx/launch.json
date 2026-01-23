@@ -2,7 +2,10 @@
     "version" : "1.0",
     "configurations" : [
         {
-            "playground" : "custom",
+            "customPlaygroundType" : "device",
+            "localRepoPath" : "/Users/qiaoliang/working/code/safeGuard/frontend/certs",
+            "packageName" : "com.leadagile.safeguard",
+            "playground" : "standard",
             "type" : "uni-app:app-android"
         }
     ]

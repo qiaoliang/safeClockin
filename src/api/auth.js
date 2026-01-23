@@ -191,6 +191,11 @@ export const authApi = {
     method: 'GET',
     data: params
   }),
+  getSentInvitations:(params) => request({
+    url: '/api/supervision/sent-invitations',
+    method: 'GET',
+    data: params
+  }),
   acceptSupervisionInvitation:(relationId) => request({
     url: `/api/supervision/invitations/${relationId}/accept`,
     method: 'POST'

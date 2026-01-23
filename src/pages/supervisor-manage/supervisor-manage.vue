@@ -317,9 +317,9 @@ const handleWithdrawInvitation = async (invitationId) => {
 // 刷新数据
 const refreshData = async () => {
   await supervisionStore.fetchMySupervised()
-  await supervisionStore.fetchInvitations('received')
+  await supervisionStore.fetchInvitations()
   await supervisionStore.fetchSentInvitations()
-  
+
   mySupervised.value = supervisionStore.mySupervised
   receivedInvitations.value = supervisionStore.receivedInvitations
   sentInvitations.value = supervisionStore.sentInvitations || []

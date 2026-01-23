@@ -148,12 +148,12 @@ async function sendInvitation(page) {
   await page.waitForTimeout(2000);
 
   const pageText = await page.locator('body').textContent();
-  if (pageText.includes('邀请已发送') || pageText.includes('发送成功')) {
+  if (pageText.includes('邀请已发送') || pageText.includes('发送成功') || pageText.includes('邀请请求已发送')) {
     console.log('  ✅ 邀请发送成功');
   } else if (pageText.includes('失败') || pageText.includes('错误')) {
     throw new Error('邀请发送失败');
   } else {
-    console.log('  ℹ️ 邀请请求已发送');
+    console.log('  ℹ️ 未检测到明确的成功或失败消息');
   }
 }
 
