@@ -327,16 +327,21 @@ test.describe('监督邀请功能测试', () => {
 
       console.log(`  找到 ${inviteButtonCount} 个邀请按钮`);
 
+      // 根据初始化脚本，调试用户-2 (19144444444) 应该有"晚上吃药"打卡规则
+      // 如果没有邀请按钮，说明存在 bug：规则未正确显示在前端
       if (inviteButtonCount === 0) {
-        console.log('  ⚠️ 用户没有个人打卡规则');
-        console.log('  💡 根据初始化脚本，调试用户-2 (19144444444) 应该有"晚上吃药"规则');
-        console.log('  ℹ️ 如果规则不存在，可能是初始化脚本未运行或规则被删除');
-        console.log('  🔄 跳过后续测试步骤\n');
+        console.log('  ❌ BUG 检测：用户应该有个人打卡规则，但前端未显示邀请按钮');
+        console.log('  📋 预期行为：根据 src/database/initialization.py');
+        console.log('     - 调试用户-2 (19144444444) 应该有"晚上吃药"打卡规则');
+        console.log('     - 规则ID 应该存在且 status=1');
+        console.log('  🔍 可能的原因：');
+        console.log('     1. 初始化脚本未运行');
+        console.log('     2. 规则被删除或禁用');
+        console.log('     3. 前端显示逻辑存在 bug');
+        console.log('     4. API 返回规则但前端未正确渲染');
 
-        console.log('========================================');
-        console.log('⚠️ 测试跳过：缺少个人打卡规则');
-        console.log('========================================\n');
-        return;
+        // 使用 expect 断言让测试失败
+        expect(inviteButtonCount, '用户应该有个人打卡规则（参考初始化脚本）').toBeGreaterThan(0);
       }
 
       console.log('  ✅ 用户有个人打卡规则，继续测试\n');
