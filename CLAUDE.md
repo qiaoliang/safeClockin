@@ -14,17 +14,6 @@ SafeGuard Frontend is a uni-app based cross-platform safety monitoring applicati
 - **UI Library**: @dcloudio/uni-ui
 - **Security**: Custom XOR+Base64 encryption for sensitive data
 
-## Code Standred and Guide
-
-You should threat the following docs as `CLAUDE.md`.
-
-@./rules/code-style-guide.md
-@./rules/commit-rule.md
-@./rules/component-development-guild.md
-@./rules/e2e-single-test-guide.md
-@./rules/error-handling-guild.md
-@./rules/performance-optimization-guide.md
-
 ## Common Commands
 
 ### Development
@@ -47,10 +36,7 @@ npm run lint:fix        # Fix linting issues
 **Quick Commands (Makefile)**:
 ```bash
 make ut                 # Run unit tests
-make test-integration   # Run integration tests
-make e2e                # Run Playwright E2E tests
-make test-all           # Run all tests
-make test-coverage      # Generate coverage report
+npm run test:playwright # Headless mode
 ```
 
 **NPM Scripts**:
@@ -205,7 +191,7 @@ Role-based page navigation after login
 
 ### Important Conventions
 
-**CSS**: ALL CSS MUST use variables from `@./src/uni.scss`. This includes colors, spacing, border-radius, shadows, and animations. Hardcoded values are prohibited.
+**CSS**: ALL CSS MUST use variables from `@/uni.scss`. This includes colors, spacing, border-radius, shadows, and animations. Hardcoded values are prohibited.
 
 **Color Scheme**:
 - Primary: Orange (#f48224)
@@ -242,6 +228,17 @@ Role-based page navigation after login
 | `src/config/index.js` | Current environment configuration |
 | `tests/setup.integration.js` | MSW API mocks for integration tests |
 | `playwright.config.js` | Playwright E2E test configuration |
+
+## Special Developing Considerations
+
+Treat the following guides as important as `CLAUDE.md`:
+
+@./rules/code-style-guide.md
+@./rules/commit-rule.md
+@./rules/component-development-guide.md
+@./ruiles/e2e-single-test-guide.md
+@./rules/error-handling-guide.md
+@./rules/performance-optimization-guide.md
 
 ## Special Testing Considerations
 
