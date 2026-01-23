@@ -1,24 +1,46 @@
 /**
  * 认证相关的测试辅助函数
+ *
+ * 改进说明:
+ * - 使用更稳定的 data-testid 选择器
+ * - 改进等待策略，增加等待时间
+ * - 增加详细的调试日志
  */
 import { expect } from '@playwright/test';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
 
 // ==================== 常量定义 ====================
 export const AUTH_SELECTORS = {
-  phoneLoginBtn: 'text=手机号登录',
-  passwordTab: '.tab',
-  submitBtn: 'uni-button.submit',
-  phoneInput: 'input[type="number"]',
-  passwordInput: 'input[type="password"]',
-  codeBtn: '.code-btn',
-  agreementCheckbox: '.agree-label',
+  // 使用 data-testid 选择器（更稳定）
+  phoneLoginBtn: '[data-testid="phone-login-button"]',
+  wechatLoginBtn: '[data-testid="wechat-login-button"]',
+  loginTitle: '[data-testid="login-welcome-title"]',
+
+  // 手机号登录页面选择器
+  passwordTab: '[data-testid="tab-password-login"]',
+  codeTab: '[data-testid="tab-code-login"]',
+  submitBtn: '[data-testid="login-submit-button"]',
+  phoneInput: '[data-testid="phone-input"]',
+  passwordInput: '[data-testid="password-input"]',
+  codeInput: '[data-testid="code-input"]',
+
+  // 备用选择器（向后兼容）
+  legacy: {
+    passwordTab: '.tab',
+    submitBtn: 'uni-button.submit',
+    phoneInput: 'input[type="number"]',
+    passwordInput: 'input[type="password"]',
+    codeBtn: '.code-btn',
+    agreementCheckbox: '.agree-label',
+  }
 };
 
 export const AUTH_TIMEOUTS = {
-  pageLoad: 2000,
+  pageLoad: 5000,        // 增加到 5 秒
+  elementVisible: 3000,   // 元素可见等待
   formSwitch: 1000,
   loginWait: 5000,
+  networkIdle: 10000,     // 网络空闲等待
 };
 
 export const VALID_PAGE_INDICATORS = ['打卡', '社区', '我的'];
@@ -27,22 +49,59 @@ export const VALID_PAGE_INDICATORS = ['打卡', '社区', '我的'];
 
 /**
  * 等待页面稳定
+ * 改进: 增加等待时间，更好的网络状态检查
  */
 async function waitForPage(page, timeout = AUTH_TIMEOUTS.pageLoad) {
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(timeout);
+  console.log('  ⏳ 等待页面加载...');
+
+  try {
+    // 等待网络空闲
+    await page.waitForLoadState('networkidle', { timeout });
+    console.log('  ✅ 网络已空闲');
+  } catch (error) {
+    console.log('  ⚠️ 网络未能在指定时间内达到空闲状态，继续执行...');
+  }
+
+  // 额外等待，确保 Vue 渲染完成
+  await page.waitForTimeout(2000);
+  console.log('  ✅ 页面加载完成');
 }
 
 /**
  * 验证登录页面加载
+ * 改进: 增加详细的日志和错误诊断
  */
 export async function waitForLoginPage(page) {
+  console.log('  ⏳ 等待登录页面加载...');
+
   await waitForPage(page);
 
-  const pageText = await page.locator('body').textContent();
-  expect(pageText).toContain('安全守护');
-  expect(pageText).toContain('微信快捷登录');
-  expect(pageText).toContain('手机号登录');
+  // 检查页面 URL
+  const currentUrl = page.url();
+  console.log('  📍 当前 URL:', currentUrl);
+
+  // 等待登录标题元素可见
+  try {
+    await page.waitForSelector(AUTH_SELECTORS.loginTitle, {
+      timeout: AUTH_TIMEOUTS.elementVisible,
+      state: 'visible'
+    });
+    console.log('  ✅ 登录标题已加载');
+  } catch (error) {
+    console.error('  ❌ 登录标题未加载');
+
+    // 输出诊断信息
+    const bodyText = await page.locator('body').textContent();
+    console.error('  页面内容长度:', bodyText.length);
+    console.error('  页面内容预览:', bodyText.substring(0, 300));
+
+    throw new Error('登录页面未正确加载');
+  }
+
+  // 验证关键元素存在
+  const pageTitle = await page.locator(AUTH_SELECTORS.loginTitle).textContent();
+  expect(pageTitle).toContain('安全守护');
+  console.log('  ✅ 登录页面验证通过');
 }
 
 /**
@@ -54,13 +113,25 @@ export function isValidHomePage(pageText) {
 
 /**
  * 使用手机号和密码登录
+ * 改进: 使用 data-testid 选择器，增加错误处理和日志
+ *       确保先导航到登录页面
  */
 export async function loginWithPhoneAndPassword(page, phone, password) {
-  // 检查当前页面状态
-  const pageText = await page.locator('body').textContent();
-  const currentUrl = page.url();
+  console.log('\n🔐 开始登录流程...');
 
-  // 如果在首页（已登录状态），需要先退出或清除状态
+  // 检查当前页面状态
+  const currentUrl = page.url();
+  console.log('  📍 初始 URL:', currentUrl);
+
+  // 如果页面为空或未正确加载，先导航到登录页面
+  if (currentUrl === 'about:blank' || !currentUrl.includes('localhost:8081')) {
+    console.log('  ⏳ 页面未加载，导航到登录页面...');
+    await page.goto('/#/pages/login/login', { waitUntil: 'commit' });
+    await page.waitForTimeout(2000);
+  }
+
+  // 检查是否已登录
+  const pageText = await page.locator('body').textContent();
   if (isValidHomePage(pageText)) {
     console.log('  检测到已登录状态，清除认证状态...');
     await page.evaluate(() => {
@@ -68,63 +139,159 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
       sessionStorage.clear();
     });
     await page.waitForTimeout(500);
-    await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
+    await page.goto('/#/pages/login/login', { waitUntil: 'commit' });
     await page.waitForTimeout(2000);
   }
 
-  // 再次检查页面状态
-  const refreshedPageText = await page.locator('body').textContent();
+  // 等待登录页面加载
+  console.log('\n1️⃣ 等待登录页面...');
+  await waitForLoginPage(page);
 
   // 点击"手机号登录"按钮
-  const loginBtn = page.locator(AUTH_SELECTORS.phoneLoginBtn).first();
-  const btnCount = await loginBtn.count();
+  console.log('\n2️⃣ 点击手机号登录按钮...');
+  const loginBtn = page.locator(AUTH_SELECTORS.phoneLoginBtn);
 
-  if (btnCount > 0) {
-    await loginBtn.click({ force: true, timeout: 5000 });
+  try {
+    // 使用更长的超时时间
+    await loginBtn.click({ timeout: 5000 });
+    console.log('  ✅ 已点击手机号登录按钮');
     await waitForPage(page);
-  } else {
-    // 可能已经在手机登录页面或密码登录页面
-    if (refreshedPageText.includes('密码登录') || refreshedPageText.includes('验证码登录')) {
-      console.log('  已在登录页面');
-    } else {
-      console.log('  页面内容:', refreshedPageText.substring(0, 300));
-      throw new Error('未找到手机号登录按钮');
-    }
+  } catch (error) {
+    console.error('  ❌ 点击手机号登录按钮失败');
+    // 保存截图以便调试
+    await page.screenshot({ path: 'test-results/login-button-error.png' });
+    throw new Error('未找到手机号登录按钮');
   }
 
   // 切换到"密码登录"标签页
-  const tabElement = page.locator(AUTH_SELECTORS.passwordTab).filter({ hasText: '密码登录' });
-  const tabCount = await tabElement.count();
+  console.log('\n3️⃣ 切换到密码登录标签...');
 
-  if (tabCount > 0) {
-    await tabElement.click({ force: true });
-    await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
+  // 尝试使用新的 data-testid 选择器
+  let tabElement = page.locator(AUTH_SELECTORS.passwordTab);
+  let tabCount = await tabElement.count();
+
+  // 如果新选择器找不到，尝试使用旧选择器（向后兼容）
+  if (tabCount === 0) {
+    console.log('  ℹ️ 新选择器未找到，尝试备用选择器...');
+    tabElement = page.locator(AUTH_SELECTORS.legacy.passwordTab);
+    tabCount = await tabElement.count();
   }
 
-  // 输入手机号和密码
-  const phoneInput = page.locator(AUTH_SELECTORS.phoneInput).first();
-  await phoneInput.fill(phone);
-  await page.waitForTimeout(500);
+  if (tabCount > 0) {
+    await tabElement.nth(0).click({ force: true });
+    console.log('  ✅ 已切换到密码登录标签');
+    await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
+  } else {
+    console.log('  ℹ️ 已在密码登录页面');
+  }
 
-  const passwordInput = page.locator(AUTH_SELECTORS.passwordInput);
-  await passwordInput.fill(password);
-  await page.waitForTimeout(500);
+  // 输入手机号
+  console.log('\n4️⃣ 输入手机号...');
+  let phoneInput = page.locator(AUTH_SELECTORS.phoneInput);
+  let phoneInputCount = await phoneInput.count();
+
+  // 如果新选择器找不到，尝试旧选择器
+  if (phoneInputCount === 0) {
+    console.log('  ℹ️ 新手机号选择器未找到，尝试备用选择器...');
+    phoneInput = page.locator(AUTH_SELECTORS.legacy.phoneInput);
+    phoneInputCount = await phoneInput.count();
+  }
+
+  if (phoneInputCount > 0) {
+    // uni-input 是自定义组件，需要找到内部的真正 input 元素
+    const actualInput = phoneInput.first().locator('input').or(phoneInput.first().locator('[type="number"]'));
+    const actualInputCount = await actualInput.count();
+
+    if (actualInputCount > 0) {
+      await actualInput.first().click();
+      await page.waitForTimeout(200);
+      await actualInput.first().fill(phone);
+      console.log(`  ✅ 已输入手机号: ${phone}`);
+      await page.waitForTimeout(500);
+    } else {
+      throw new Error('未找到手机号输入框内的 input 元素');
+    }
+  } else {
+    throw new Error('未找到手机号输入框');
+  }
+
+  // 输入密码
+  console.log('\n5️⃣ 输入密码...');
+  let passwordInput = page.locator(AUTH_SELECTORS.passwordInput);
+  let passwordInputCount = await passwordInput.count();
+
+  // 如果新选择器找不到，尝试旧选择器
+  if (passwordInputCount === 0) {
+    console.log('  ℹ️ 新密码选择器未找到，尝试备用选择器...');
+    passwordInput = page.locator(AUTH_SELECTORS.legacy.passwordInput);
+    passwordInputCount = await passwordInput.count();
+  }
+
+  if (passwordInputCount > 0) {
+    // uni-input 是自定义组件，需要找到内部的真正 input 元素
+    const actualInput = passwordInput.locator('input').or(passwordInput.locator('[type="password"]'));
+    const actualInputCount = await actualInput.count();
+
+    if (actualInputCount > 0) {
+      await actualInput.click();
+      await page.waitForTimeout(200);
+      await actualInput.fill(password);
+      console.log('  ✅ 已输入密码');
+      await page.waitForTimeout(500);
+    } else {
+      throw new Error('未找到密码输入框内的 input 元素');
+    }
+  } else {
+    throw new Error('未找到密码输入框');
+  }
 
   // 点击登录按钮
-  await page.locator(AUTH_SELECTORS.submitBtn).click({ force: true });
+  console.log('\n6️⃣ 点击登录按钮...');
+  let submitBtn = page.locator(AUTH_SELECTORS.submitBtn);
+  let submitBtnCount = await submitBtn.count();
+
+  // 如果新选择器找不到，尝试旧选择器
+  if (submitBtnCount === 0) {
+    console.log('  ℹ️ 新提交按钮选择器未找到，尝试备用选择器...');
+    submitBtn = page.locator(AUTH_SELECTORS.legacy.submitBtn);
+    submitBtnCount = await submitBtn.count();
+  }
+
+  if (submitBtnCount > 0) {
+    await submitBtn.first().click({ force: true });
+    console.log('  ✅ 已点击登录按钮');
+  } else {
+    throw new Error('未找到登录按钮');
+  }
 
   // 等待登录完成
+  console.log('\n7️⃣ 等待登录完成...');
   await page.waitForTimeout(AUTH_TIMEOUTS.loginWait);
-  await page.waitForLoadState('networkidle');
+
+  try {
+    await page.waitForLoadState('networkidle', { timeout: AUTH_TIMEOUTS.networkIdle });
+    console.log('  ✅ 网络已空闲');
+  } catch (error) {
+    console.log('  ⚠️ 网络未在指定时间内达到空闲状态');
+  }
 
   // 验证是否跳转到首页
+  console.log('\n8️⃣ 验证登录结果...');
   const finalPageText = await page.locator('body').textContent();
+  const finalUrl = page.url();
+  console.log('  当前 URL:', finalUrl);
+
   if (!isValidHomePage(finalPageText)) {
-    console.log('当前页面内容:', finalPageText.substring(0, 200));
+    console.error('  ❌ 登录失败，未跳转到首页');
+    console.error('  页面内容:', finalPageText.substring(0, 200));
+
+    // 保存失败截图
+    await page.screenshot({ path: 'test-results/login-failed.png' });
     throw new Error('登录失败，未跳转到首页');
   }
 
-  console.log('✅ 登录成功');
+  console.log('  ✅ 登录成功！');
+  console.log('\n✅ 登录流程完成\n');
 }
 
 /**

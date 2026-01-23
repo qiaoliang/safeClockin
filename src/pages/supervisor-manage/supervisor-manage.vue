@@ -72,20 +72,20 @@
         >
           <view class="sent-inv-avatar">
             <image
-              :src="inv.solo_user?.avatar_url || '/static/logo.png'"
+              :src="inv.invitee_info?.avatar_url || '/static/logo.png'"
               class="avatar-image"
               mode="aspectFill"
             />
           </view>
           <view class="sent-inv-info">
             <text class="sent-inv-name">
-              {{ inv.solo_user?.nickname || '未知用户' }}
+              {{ inv.invitee_info?.nickname || '未知用户' }}
             </text>
             <text class="sent-inv-rule">
-              {{ inv.rule?.rule_name || '全部规则' }}
+              {{ inv.rule_info?.rule_name || '全部规则' }}
             </text>
             <text class="sent-inv-time">
-              {{ formatTime(inv.create_time) }}
+              {{ formatTime(inv.created_at) }}
             </text>
           </view>
           <view class="sent-inv-actions">
