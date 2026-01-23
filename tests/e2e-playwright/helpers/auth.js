@@ -24,33 +24,45 @@ export async function waitForLoginPage(page) {
  */
 export async function loginWithPhoneAndPassword(page, phone, password) {
   // 等待页面完全加载
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
-  
+
+  // 点击"手机号登录"按钮
+  await page.locator('text=手机号登录').click({ force: true });
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(2000);
+
+  // 切换到"密码登录"标签页
+  await page.locator('.tab').filter({ hasText: '密码登录' }).click({ force: true });
+  await page.waitForTimeout(1000);
+
   // 输入手机号（input type="number"）
   const phoneInput = page.locator('input[type="number"]').first();
   await phoneInput.fill(phone);
   await page.waitForTimeout(500);
-  
+
   // 输入密码
   const passwordInput = page.locator('input[type="password"]');
   await passwordInput.fill(password);
   await page.waitForTimeout(500);
-  
+
   // 点击登录按钮
-  await page.locator('text=密码登录').click();
-  
+  await page.locator('uni-button.submit').click({ force: true });
+
   // 等待登录完成（跳转到首页）
-  // 由于是 SPA，可能需要等待一段时间
   await page.waitForTimeout(5000);
-  
+  await page.waitForLoadState('networkidle');
+
   // 验证是否跳转到首页（检查页面内容）
   const pageText = await page.locator('body').textContent();
   const hasHomePage = pageText.includes('打卡') || pageText.includes('社区') || pageText.includes('我的');
-  
+
   if (!hasHomePage) {
     console.log('当前页面内容:', pageText.substring(0, 200));
     throw new Error('登录失败，未跳转到首页');
   }
+
+  console.log('✅ 登录成功');
 }
 
 /**
