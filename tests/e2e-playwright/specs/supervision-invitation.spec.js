@@ -4,6 +4,7 @@
 import { test, expect } from '@playwright/test';
 import { loginWithPhoneAndPassword } from '../helpers/auth.js';
 import { ORIGINAL_USERS } from '../fixtures/original_data.mjs';
+import { ApiClient } from '../helpers/api-client.mjs';
 
 /**
  * 辅助函数：退出登录
@@ -156,6 +157,34 @@ async function acceptFirstInvitation(page) {
   }
 
   return true;
+}
+
+/**
+ * 辅助函数：为用户创建个人打卡规则
+ */
+async function createPersonalCheckinRule(apiClient, userId) {
+  console.log('📝 为用户创建个人打卡规则...');
+
+  const ruleData = {
+    user_id: userId,
+    rule_type: 'personal',
+    rule_name: '测试打卡规则',
+    icon_url: 'https://example.com/icon/test.png',
+    frequency_type: 0,  // 每天
+    time_slot_type: 4,  // 早上
+    custom_time: '08:00:00',
+    week_days: 127,  // 每天
+    status: 1  // 启用
+  };
+
+  const response = await apiClient.createCheckinRule(ruleData);
+
+  if (response.code === 1) {
+    console.log(`  ✅ 个人打卡规则创建成功，规则ID: ${response.data.rule_id || response.data.id || '未知'}`);
+    return response.data;
+  } else {
+    throw new Error(`创建打卡规则失败: ${response.msg || '未知错误'}`);
+  }
 }
 
 test.describe('监督邀请功能测试', () => {
@@ -327,15 +356,36 @@ test.describe('监督邀请功能测试', () => {
 
       console.log(`  找到 ${inviteButtonCount} 个邀请按钮`);
 
+      // 如果没有打卡规则，先创建一个
       if (inviteButtonCount === 0) {
         console.log('  ⚠️ 用户没有个人打卡规则');
-        console.log('  💡 此测试需要用户有个人打卡规则才能进行完整的邀请流程');
-        console.log('  ℹ️ 跳过后续测试步骤\n');
+        console.log('  📝 开始为用户创建个人打卡规则...\n');
 
-        console.log('========================================');
-        console.log('⚠️ 测试跳过：缺少个人打卡规则');
-        console.log('========================================\n');
-        return;
+        // 使用 ApiClient 创建打卡规则
+        const apiClient = new ApiClient();
+        await apiClient.loginWithPassword(inviter.phone, inviter.password);
+
+        // 获取用户信息
+        const userInfo = await apiClient.getUserInfo();
+        const userId = userInfo.data.user_id;
+
+        // 创建打卡规则
+        await createPersonalCheckinRule(apiClient, userId);
+
+        // 刷新页面重新检查
+        await page.reload();
+        await page.waitForTimeout(2000);
+
+        const newInviteButtons = page.locator('button').filter({ hasText: '邀请' });
+        const newCount = await newInviteButtons.count();
+
+        console.log(`  刷新后找到 ${newCount} 个邀请按钮`);
+
+        if (newCount === 0) {
+          console.log('  ⚠️ 仍然没有找到邀请按钮');
+          console.log('  💡 可能需要等待一段时间让前端更新\n');
+          await page.waitForTimeout(3000);
+        }
       }
 
       console.log('  ✅ 用户有个人打卡规则，继续测试\n');
