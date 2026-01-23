@@ -363,11 +363,11 @@ test.describe('监督邀请功能测试', () => {
 
         // 使用 ApiClient 创建打卡规则
         const apiClient = new ApiClient();
-        await apiClient.loginWithPassword(inviter.phone, inviter.password);
+        const loginResponse = await apiClient.loginWithPassword(inviter.phone, inviter.password);
 
-        // 获取用户信息
-        const userInfo = await apiClient.getUserInfo();
-        const userId = userInfo.data.user_id;
+        // 从登录响应中获取 user_id
+        const userId = loginResponse.data.user_id;
+        console.log(`  用户ID: ${userId}`);
 
         // 创建打卡规则
         await createPersonalCheckinRule(apiClient, userId);
