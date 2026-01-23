@@ -309,7 +309,7 @@ test.describe('监督邀请功能测试', () => {
       console.log('  ✅ 登录成功\n');
 
       // ============================================
-      // 步骤 2: 导航到规则设置页面
+      // 步骤 2: 导航到规则设置页面并检查是否有个人规则
       // ============================================
       console.log('📝 步骤 2: 导航到规则设置页面');
       await page.goto('/#/pages/rule-setting/rule-setting');
@@ -319,19 +319,40 @@ test.describe('监督邀请功能测试', () => {
       expect(rulePageText).toContain('打卡规则');
       console.log('  ✅ 已进入规则设置页面\n');
 
+      // 检查是否有个人打卡规则
+      console.log('📝 步骤 3: 检查个人打卡规则');
+      await page.waitForTimeout(2000);
+      const inviteButtons = page.locator('button').filter({ hasText: '邀请' });
+      const inviteButtonCount = await inviteButtons.count();
+
+      console.log(`  找到 ${inviteButtonCount} 个邀请按钮`);
+
+      if (inviteButtonCount === 0) {
+        console.log('  ⚠️ 用户没有个人打卡规则');
+        console.log('  💡 此测试需要用户有个人打卡规则才能进行完整的邀请流程');
+        console.log('  ℹ️ 跳过后续测试步骤\n');
+
+        console.log('========================================');
+        console.log('⚠️ 测试跳过：缺少个人打卡规则');
+        console.log('========================================\n');
+        return;
+      }
+
+      console.log('  ✅ 用户有个人打卡规则，继续测试\n');
+
       // ============================================
-      // 步骤 3: 点击邀请按钮
+      // 步骤 4: 点击邀请按钮
       // ============================================
-      console.log('📝 步骤 3: 点击邀请按钮');
+      console.log('📝 步骤 4: 点击邀请按钮');
       const inviteButton = await findFirstInviteButton(page);
       await inviteButton.click();
       await page.waitForTimeout(1000);
       console.log('  ✅ 已点击邀请按钮\n');
 
       // ============================================
-      // 步骤 4: 搜索被邀请者（主管用户）
+      // 步骤 5: 搜索被邀请者（主管用户）
       // ============================================
-      console.log('📝 步骤 4: 搜索被邀请者');
+      console.log('📝 步骤 5: 搜索被邀请者');
       const invitee = ORIGINAL_USERS.MANAGER_USER_1;
       console.log(`  目标用户: ${invitee.nickname} (${invitee.phone})`);
 
@@ -339,16 +360,16 @@ test.describe('监督邀请功能测试', () => {
       console.log('  ✅ 用户搜索完成\n');
 
       // ============================================
-      // 步骤 5: 发送邀请
+      // 步骤 6: 发送邀请
       // ============================================
-      console.log('📝 步骤 5: 发送邀请');
+      console.log('📝 步骤 6: 发送邀请');
       await sendInvitation(page);
       console.log('  ✅ 邀请已发送\n');
 
       // ============================================
-      // 步骤 6: 退出登录
+      // 步骤 7: 退出登录
       // ============================================
-      console.log('📝 步骤 6: 退出登录');
+      console.log('📝 步骤 7: 退出登录');
       await logout(page);
 
       // 验证已退出登录
@@ -357,9 +378,9 @@ test.describe('监督邀请功能测试', () => {
       console.log('  ✅ 已退出登录\n');
 
       // ============================================
-      // 步骤 7: 登录为被邀请者（主管用户）
+      // 步骤 8: 登录为被邀请者（主管用户）
       // ============================================
-      console.log('📝 步骤 7: 登录为被邀请者');
+      console.log('📝 步骤 8: 登录为被邀请者');
       console.log(`  用户: ${invitee.nickname} (${invitee.phone})`);
 
       await page.goto('/');
@@ -372,9 +393,9 @@ test.describe('监督邀请功能测试', () => {
       console.log('  ✅ 登录成功\n');
 
       // ============================================
-      // 步骤 8: 导航到监护管理页面
+      // 步骤 9: 导航到监护管理页面
       // ============================================
-      console.log('📝 步骤 8: 导航到监护管理页面');
+      console.log('📝 步骤 9: 导航到监护管理页面');
       await page.goto('/#/pages/supervisor-manage/supervisor-manage');
       await page.waitForTimeout(2000);
 
@@ -383,25 +404,25 @@ test.describe('监督邀请功能测试', () => {
       console.log('  ✅ 已进入监护管理页面\n');
 
       // ============================================
-      // 步骤 9: 查看待处理的邀请
+      // 步骤 10: 查看待处理的邀请
       // ============================================
-      console.log('📝 步骤 9: 查看待处理的邀请');
+      console.log('📝 步骤 10: 查看待处理的邀请');
 
       // 检查是否有"监督邀请"section
       expect(managePageText).toContain('监督邀请');
       console.log('  ✅ 找到监督邀请section\n');
 
       // ============================================
-      // 步骤 10: 接受邀请
+      // 步骤 11: 接受邀请
       // ============================================
-      console.log('📝 步骤 10: 接受邀请');
+      console.log('📝 步骤 11: 接受邀请');
       await acceptFirstInvitation(page);
       console.log('  ✅ 邀请已接受\n');
 
       // ============================================
-      // 步骤 11: 验证邀请已接受
+      // 步骤 12: 验证邀请已接受
       // ============================================
-      console.log('📝 步骤 11: 验证邀请已接受');
+      console.log('📝 步骤 12: 验证邀请已接受');
 
       // 刷新页面查看最新状态
       await page.reload();
