@@ -5,117 +5,148 @@ import { test, expect } from '@playwright/test';
 import { loginWithPhoneAndPassword } from '../helpers/auth.js';
 import { ORIGINAL_USERS } from '../fixtures/original_data.mjs';
 
+// 常量定义
+const PAGE_LOAD_WAIT = 2000;
+const RULE_INVITE_BUTTON_SELECTOR = '[data-testid="rule-invite-button"]';
+const SELECTOR_TIP = '.tip, .toast, [class*="message"]';
+
 /**
- * 辅助函数：退出登录
+ * 退出登录
  */
 async function logout(page) {
   console.log('📤 开始退出登录...');
 
   // 点击"我的"标签页进入个人中心
   const profileTab = page.locator('uni-tab-bar .tab-bar-item').filter({ hasText: '我的' });
-  if (await profileTab.count() > 0) {
-    await profileTab.first().click();
-    await page.waitForTimeout(1000);
+  if (await profileTab.count() === 0) return;
 
-    // 查找并点击退出登录按钮
-    const logoutButtons = page.locator('button').filter({ hasText: /退出|登出/ });
-    if (await logoutButtons.count() > 0) {
-      await logoutButtons.first().click();
-      await page.waitForTimeout(1000);
+  await profileTab.first().click();
+  await page.waitForTimeout(1000);
 
-      // 确认退出
-      const confirmButtons = page.locator('button').filter({ hasText: /确认|确定/ });
-      if (await confirmButtons.count() > 0) {
-        await confirmButtons.first().click();
-        await page.waitForTimeout(2000);
-      }
-    }
+  // 查找并点击退出登录按钮
+  const logoutButtons = page.getByRole('generic').filter({ hasText: /退出|登出/ });
+  if (await logoutButtons.count() === 0) return;
+
+  await logoutButtons.first().click();
+  await page.waitForTimeout(1000);
+
+  // 确认退出
+  const confirmButtons = page.getByRole('generic').filter({ hasText: /确认|确定/ });
+  if (await confirmButtons.count() > 0) {
+    await confirmButtons.first().click();
+    await page.waitForTimeout(2000);
   }
 
   console.log('✅ 退出登录完成');
+
+  // 清除本地存储和认证状态
+  console.log('📝 清除认证状态...');
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+  await page.waitForTimeout(500);
+
+  // 导航到登录页
+  console.log('📝 导航到登录页...');
+  await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(2000);
+
+  // 验证是否到达登录页
+  const loginPageText = await page.locator('body').textContent();
+  if (loginPageText.includes('安全守护') && (loginPageText.includes('登录') || loginPageText.includes('手机号'))) {
+    console.log('✅ 已到达登录页');
+  } else {
+    console.log('  ⚠️ 页面内容:', loginPageText.substring(0, 200));
+  }
 }
 
 /**
- * 辅助函数：查找第一个个人规则的邀请按钮
+ * 查找第一个个人规则的邀请按钮
  */
 async function findFirstInviteButton(page) {
-  console.log('🔍 查找第一个个人规则的邀请按钮...');
-  await page.waitForTimeout(2000);
+  console.log('🔍 查找邀请按钮...');
 
-  const inviteButtons = page.locator('button').filter({ hasText: '邀请' });
-  const count = await inviteButtons.count();
+  await page.waitForSelector('text=打卡规则', { timeout: 5000 });
+  await page.waitForTimeout(1000);
+
+  const allInviteButtons = page.locator(RULE_INVITE_BUTTON_SELECTOR);
+  const count = await allInviteButtons.count();
+
   console.log(`  找到 ${count} 个邀请按钮`);
 
   if (count === 0) {
+    const pageContent = await page.locator('body').textContent();
+    console.log('  页面内容（前500字符）:', pageContent.substring(0, 500));
     throw new Error('未找到邀请按钮，请确保用户有个人打卡规则');
   }
 
-  return inviteButtons.first();
+  if (count < 2) {
+    throw new Error('未找到足够的按钮，应该有"分享"和"邀请"两个按钮');
+  }
+
+  console.log('  ✅ 找到"邀请"按钮（第2个按钮）');
+  return allInviteButtons.nth(1);
 }
 
 /**
- * 辅助函数：在邀请弹窗中填写手机号并搜索用户
+ * 在邀请弹窗中搜索用户
  */
 async function searchUserInInviteModal(page, phoneNumber) {
-  console.log(`🔍 在邀请弹窗中搜索用户: ${phoneNumber}`);
+  console.log(`🔍 搜索用户: ${phoneNumber}`);
   await page.waitForTimeout(1000);
 
-  // 查找并填写手机号输入框
-  const phoneInput = page.locator('input[type="number"]');
+  const phoneInput = page.locator('input[placeholder*="搜索"]')
+    .or(page.locator('.uni-easyinput__content-textarea'))
+    .or(page.locator('[class*="easyinput"] input'))
+    .or(page.locator('input[type="text"]'));
+
   if (await phoneInput.count() === 0) {
-    throw new Error('未找到手机号输入框');
+    const pageText = await page.locator('body').textContent();
+    console.log('  ❌ 未找到搜索输入框');
+    console.log('  页面内容（前500字符）:', pageText.substring(0, 500));
+    throw new Error('未找到搜索输入框');
   }
 
   await phoneInput.first().fill(phoneNumber);
   console.log(`  ✅ 已输入手机号: ${phoneNumber}`);
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1500);
 
-  // 查找并点击搜索按钮（如果存在）
-  const searchButtons = page.locator('button').filter({ hasText: /搜索|查找/ });
-  if (await searchButtons.count() > 0) {
-    await searchButtons.first().click();
-    console.log('  ✅ 已点击搜索按钮');
-  } else {
-    console.log('  ℹ️ 未找到搜索按钮，可能自动搜索');
-  }
-
-  await page.waitForTimeout(2000);
-
-  // 检查搜索结果
-  const pageText = await page.locator('body').textContent();
-  const userItems = page.locator('.user-item, .friend-item, [class*="user"], [class*="friend"]');
+  const userItems = page.locator('.user-item');
   const userItemCount = await userItems.count();
 
-  if (userItemCount > 0) {
-    console.log(`  ✅ 找到 ${userItemCount} 个用户`);
-    return true;
+  if (userItemCount === 0) {
+    const pageText = await page.locator('body').textContent();
+    if (pageText.includes('未找到') || pageText.includes('没有找到')) {
+      throw new Error('未找到该用户');
+    }
   }
 
-  // 检查是否提示未找到用户
-  if (pageText.includes('未找到') || pageText.includes('没有找到') || pageText.includes('找不到')) {
-    throw new Error('未找到该用户');
-  }
-
-  console.log('  ℹ️ 搜索完成，准备继续');
-  return true;
+  console.log(`  ✅ 找到 ${userItemCount} 个用户`);
 }
 
 /**
- * 辅助函数：发送邀请
+ * 发送邀请
  */
 async function sendInvitation(page) {
   console.log('📨 发送邀请...');
+  await page.waitForTimeout(500);
 
-  const sendButtons = page.locator('button').filter({ hasText: /发送|邀请|确认/ });
-  if (await sendButtons.count() === 0) {
+  const confirmButton = page.getByText('确定', { exact: true })
+    .or(page.getByRole('generic').filter({ hasText: '确定' }))
+    .or(page.locator('.confirm-btn'));
+
+  if (await confirmButton.count() === 0) {
+    const modalContent = await page.locator('.modal-content, .invite-modal-container').textContent();
+    console.log('  ❌ 未找到确定按钮');
+    console.log('  弹窗内容:', modalContent);
     throw new Error('未找到发送邀请按钮');
   }
 
-  await sendButtons.first().click();
-  console.log('  ✅ 已点击发送邀请按钮');
+  await confirmButton.first().click();
+  console.log('  ✅ 已点击确定按钮');
   await page.waitForTimeout(2000);
 
-  // 检查发送结果
   const pageText = await page.locator('body').textContent();
   if (pageText.includes('邀请已发送') || pageText.includes('发送成功')) {
     console.log('  ✅ 邀请发送成功');
@@ -124,38 +155,57 @@ async function sendInvitation(page) {
   } else {
     console.log('  ℹ️ 邀请请求已发送');
   }
-
-  return true;
 }
 
 /**
- * 辅助函数：在监护管理页面查找并接受邀请
+ * 接受邀请
  */
 async function acceptFirstInvitation(page) {
-  console.log('✅ 接受第一个邀请...');
+  console.log('✅ 接受邀请...');
   await page.waitForTimeout(2000);
 
-  const acceptButtons = page.locator('button').filter({ hasText: /接受|同意/ });
-  const count = await acceptButtons.count();
+  const acceptButton = page.getByText('同意', { exact: true })
+    .or(page.locator('text=同意'))
+    .or(page.getByRole('generic').filter({ hasText: '同意' }));
+
+  const count = await acceptButton.count();
 
   if (count === 0) {
+    const pageText = await page.locator('body').textContent();
+    console.log('  ❌ 未找到接受按钮');
+    console.log('  页面内容（前500字符）:', pageText.substring(0, 500));
     throw new Error('未找到接受邀请按钮，可能没有待处理的邀请');
   }
 
   console.log(`  找到 ${count} 个接受按钮`);
-  await acceptButtons.first().click();
+  await acceptButton.first().click();
   console.log('  ✅ 已点击接受按钮');
   await page.waitForTimeout(2000);
 
-  // 检查接受结果
   const pageText = await page.locator('body').textContent();
   if (pageText.includes('已同意') || pageText.includes('已接受')) {
     console.log('  ✅ 邀请已接受');
   } else {
     console.log('  ℹ️ 接受请求已发送');
   }
+}
 
-  return true;
+/**
+ * 从搜索结果中选择第一个用户
+ */
+async function selectFirstUserFromResults(page) {
+  console.log('👆 选择用户...');
+
+  const userItems = page.locator('.user-item');
+  const count = await userItems.count();
+
+  if (count === 0) {
+    throw new Error('未找到搜索结果中的用户');
+  }
+
+  await userItems.first().click();
+  console.log('  ✅ 已选择第一个用户');
+  await page.waitForTimeout(500);
 }
 
 test.describe('监督邀请功能测试', () => {
@@ -184,8 +234,8 @@ test.describe('监督邀请功能测试', () => {
       const pageText = await page.locator('body').textContent();
       expect(pageText).toContain('打卡规则');
 
-      // 检查是否有邀请按钮
-      const inviteButtons = page.locator('button').filter({ hasText: '邀请' });
+      // 检查是否有邀请按钮（使用 data-testid）
+      const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
       const count = await inviteButtons.count();
 
       if (count > 0) {
@@ -288,6 +338,8 @@ test.describe('监督邀请功能测试', () => {
 
   test.describe('邀请流程完整测试', () => {
     test('完整流程：从邀请到接受邀请', async ({ page }) => {
+      // 增加测试超时时间（120秒）因为这个测试包含多个步骤
+      test.setTimeout(120000);
       console.log('\n========================================');
       console.log('开始完整的监督邀请流程测试');
       console.log('========================================\n');
@@ -322,7 +374,7 @@ test.describe('监督邀请功能测试', () => {
       // 检查是否有个人打卡规则
       console.log('📝 步骤 3: 检查个人打卡规则');
       await page.waitForTimeout(2000);
-      const inviteButtons = page.locator('button').filter({ hasText: '邀请' });
+      const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
       const inviteButtonCount = await inviteButtons.count();
 
       console.log(`  找到 ${inviteButtonCount} 个邀请按钮`);
@@ -364,6 +416,13 @@ test.describe('监督邀请功能测试', () => {
 
       await searchUserInInviteModal(page, invitee.phone);
       console.log('  ✅ 用户搜索完成\n');
+
+      // ============================================
+      // 步骤 5.5: 从搜索结果中选择用户
+      // ============================================
+      console.log('📝 步骤 5.5: 选择用户');
+      await selectFirstUserFromResults(page);
+      console.log('  ✅ 用户已选择\n');
 
       // ============================================
       // 步骤 6: 发送邀请
@@ -433,6 +492,14 @@ test.describe('监督邀请功能测试', () => {
       // 刷新页面查看最新状态
       await page.reload();
       await page.waitForTimeout(2000);
+
+      // 如果重定向到首页，重新导航到监护管理页
+      const finalUrl = page.url();
+      if (!finalUrl.includes('supervisor-manage')) {
+        console.log('  📝 页面已重定向到首页，重新导航到监护管理页');
+        await page.goto('/#/pages/supervisor-manage/supervisor-manage');
+        await page.waitForTimeout(2000);
+      }
 
       const finalPageText = await page.locator('body').textContent();
 
