@@ -4,7 +4,9 @@
 # 1. 检查/启动模拟器
 # 2. 构建 H5 资源
 # 3. 复制到 Android 项目
-# 4. 使用 gradle 打包并安装到模拟器
+# 4. 替换 localhost 为 10.0.2.2 (Android 模拟器访问宿主机)
+# 5. 准备 launcher 图标
+# 6. 使用 gradle 打包并安装到模拟器
 
 set -e  # 遇到错误时退出
 
@@ -134,9 +136,19 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
-# 3. 准备 launcher 图标
+# 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP
 echo ""
-echo ">>> 步骤 3: 准备 launcher 图标..."
+echo ">>> 步骤 3: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
+
+# Android 模拟器访问宿主机的特殊 IP
+find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:9999/10.0.2.2:9999/g' {} \;
+find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/127\.0\.0\.1:9999/10.0.2.2:9999/g' {} \;
+
+echo "✓ URL 已替换为 10.0.2.2:9999 (Android 模拟器访问开发机的地址)"
+
+# 4. 准备 launcher 图标
+echo ""
+echo ">>> 步骤 4: 准备 launcher 图标..."
 
 RES_PATH="$ANDROID_PROJECT_PATH/src/main/res"
 ICON_SOURCE="$RES_PATH/drawable/icon.png"
@@ -152,9 +164,9 @@ else
     echo "警告: 未找到图标文件 $ICON_SOURCE"
 fi
 
-# 4. 使用 gradle 打包并安装
+# 5. 使用 gradle 打包并安装
 echo ""
-echo ">>> 步骤 4: 构建并安装 APK..."
+echo ">>> 步骤 5: 构建并安装 APK..."
 
 cd "$ANDROID_PROJECT_PATH"
 
