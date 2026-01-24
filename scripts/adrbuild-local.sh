@@ -134,9 +134,27 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
-# 3. 使用 gradle 打包并安装
+# 3. 准备 launcher 图标
 echo ""
-echo ">>> 步骤 3: 构建并安装 APK..."
+echo ">>> 步骤 3: 准备 launcher 图标..."
+
+RES_PATH="$ANDROID_PROJECT_PATH/src/main/res"
+ICON_SOURCE="$RES_PATH/drawable/icon.png"
+
+if [ -f "$ICON_SOURCE" ]; then
+    # 创建 mipmap 目录（如果不存在）
+    for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+        mkdir -p "$RES_PATH/$dir"
+        cp "$ICON_SOURCE" "$RES_PATH/$dir/icon.png"
+    done
+    echo "✓ Launcher 图标已准备"
+else
+    echo "警告: 未找到图标文件 $ICON_SOURCE"
+fi
+
+# 4. 使用 gradle 打包并安装
+echo ""
+echo ">>> 步骤 4: 构建并安装 APK..."
 
 cd "$ANDROID_PROJECT_PATH"
 
