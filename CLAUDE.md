@@ -263,3 +263,150 @@ Treat the following guides as important as `CLAUDE.md`:
 **Test Parallelization**:
 - Unit/Integration tests: Parallel by default
 - E2E tests: `fullyParallel: false`, `workers: 1` (to avoid SQLite database locks)
+
+## Build and Deployment Scripts
+
+### Android Build Scripts
+
+#### `scripts/adrbuild-local.sh` - Android 本地构建
+
+使用 HBuilderX CLI 在本地构建 Android App 资源，并使用 Gradle 打包安装到模拟器。
+
+```bash
+# 基本用法（使用 func 环境）
+./scripts/adrbuild-local.sh
+
+# 指定环境类型
+./scripts/adrbuild-local.sh ENV_TYPE=unit   # unit 环境
+./scripts/adrbuild-local.sh ENV_TYPE=func   # func 环境（默认）
+./scripts/adrbuild-local.sh ENV_TYPE=uat    # uat 环境
+./scripts/adrbuild-local.sh ENV_TYPE=prod   # prod 环境
+```
+
+**功能流程**:
+1. 检查/启动 Android 模拟器（支持 Pixel、Pixel_ARM64、Medium_Phone_API_36.1）
+2. 使用 HBuilderX CLI 生成 App 资源 (`publish app --type appResource`)
+3. 复制资源到 Android 项目 (`HBuilder-Integrate-AS/simpleDemo`)
+4. 替换 URL 为 Android 模拟器地址 (localhost → 10.0.2.2)
+5. 生成 launcher 图标
+6. 使用 Gradle 构建并安装 APK 到模拟器
+7. 自动启动应用
+
+**注意事项**:
+- 必需条件：HBuilderX 应用程序正在运行、Android SDK/模拟器已配置
+- func/unit 环境会自动替换 API URL 为 10.0.2.2:9999（Android 模拟器访问宿主机）
+- 其他环境使用真实域名
+
+#### `scripts/adrbuild-cloud.sh` - Android 云端构建
+
+使用 HBuilderX 云打包服务构建 Android APK。
+
+```bash
+./scripts/adrbuild-cloud.sh ENV_TYPE=func
+```
+
+**功能流程**:
+1. 验证环境类型
+2. 使用 HBuilderX CLI 云打包 (`cli pack`)
+3. 轮询等待构建完成
+4. 下载 APK 到 `build/outputs/apk/`
+5. 安装到模拟器
+
+### H5/Web Build Scripts
+
+#### `scripts/h5build.sh` - H5 网站构建
+
+使用 HBuilderX CLI 构建 H5 网站应用。
+
+```bash
+# 基本用法（默认 func 环境）
+./scripts/h5build.sh
+
+# 指定环境
+./scripts/h5build.sh ENV_TYPE=unit   # unit 环境 (localhost:9999)
+./scripts/h5build.sh ENV_TYPE=func   # func 环境 (localhost:9999)
+./scripts/h5build.sh ENV_TYPE=uat    # uat 环境 (https://localhost:8080)
+./scripts/h5build.sh ENV_TYPE=prod   # prod 环境 (生产域名)
+```
+
+**输出目录**: `src/unpackage/dist/build/web/`
+
+**注意事项**:
+- 需要 HBuilderX 应用程序正在运行
+- 会临时修改配置文件以设置正确的 API URL
+- 支持 worktree 环境，自动处理符号链接
+
+#### `scripts/start-web-server.sh` - Web 服务器启动
+
+使用 Python 启动本地 HTTP 服务器提供 H5 应用服务。
+
+```bash
+# 默认端口 8081
+./scripts/start-web-server.sh
+
+# 指定端口
+WEB_PORT=8082 ./scripts/start-web-server.sh
+```
+
+**输出**:
+- 访问地址: `http://localhost:<PORT>`
+- 日志文件: `logs/web-server.log`
+
+**注意事项**:
+- 需要先运行 `h5build.sh` 构建 H5 应用
+- 端口被占用时会尝试自动终止占用进程
+
+### Mini-Program Build Scripts
+
+#### `scripts/mpbuild.sh` - 微信小程序构建
+
+使用 HBuilderX CLI 构建微信小程序。
+
+```bash
+./scripts/mpbuild.sh ENV_TYPE=func
+```
+
+**输出目录**: `src/unpackage/dist/build/mp-weixin/`
+
+**AppID**: `wx55a59cbcd4156ce4`
+
+### Testing Scripts
+
+#### `scripts/run-playwright-e2e.sh` - E2E 测试运行
+
+自动运行 Playwright 端到端测试。
+
+```bash
+# 默认无头模式
+./scripts/run-playwright-e2e.sh
+
+# UI 模式（交互式）
+./scripts/run-playwright-e2e.sh --ui
+
+# 调试模式
+./scripts/run-playwright-e2e.sh --debug
+
+# 有头模式（显示浏览器）
+./scripts/run-playwright-e2e.sh --headed
+
+# 运行特定测试文件
+./scripts/run-playwright-e2e.sh tests/e2e-playwright/specs/login.spec.js
+```
+
+**前置条件**:
+1. 后端服务运行在 `http://localhost:9999`
+2. H5 应用已构建并部署
+
+**功能流程**:
+1. 检查/安装依赖
+2. 构建 H5 应用
+3. 验证后端服务
+4. 启动/验证 Web 服务器
+5. 运行 Playwright 测试
+6. 显示测试报告
+
+### Utility Scripts
+
+#### `scripts/build-env.sh` - 环境构建脚本
+
+根据环境变量设置执行相应的构建命令。
