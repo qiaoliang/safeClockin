@@ -1,0 +1,7 @@
+<hbuilder debug="true" syncDebug="true">
+<apps>
+    <app appid="__UNI__AA79EBE" appver="1.0.0">
+        <runtime name="default" remote="false" />
+    </app>
+</apps>
+</hbuilder>

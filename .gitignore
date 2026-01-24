@@ -13,3 +13,6 @@ playwright-report/
 test-results/
 playwright-test-result/
 logs/
+HBuilder-Integrate-AS/simpleDemo/build/
+HBuilder-Integrate-AS/.idea/
+HBuilder-Integrate-AS/.gradle/
