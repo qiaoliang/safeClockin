@@ -192,6 +192,18 @@ echo "使用 gradle: $GRADLE_CMD"
 # 构建 debug APK 并安装到模拟器
 $GRADLE_CMD assembleDebug installDebug
 
+# 查找并显示 APK 路径
+APK_PATH=$(find "$ANDROID_PROJECT_PATH/build/outputs/apk" -name "*.apk" -type f 2>/dev/null | head -1)
+
+if [ -n "$APK_PATH" ]; then
+    echo ""
+    echo "========================================"
+    echo "✓ APK 构建成功!"
+    echo "========================================"
+    echo "APK 路径: $APK_PATH"
+    echo ""
+fi
+
 # 启动应用
 echo ""
 echo "启动应用..."
