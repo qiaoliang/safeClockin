@@ -157,6 +157,10 @@ echo "使用 gradle: $GRADLE_CMD"
 # 构建 debug APK 并安装到模拟器
 $GRADLE_CMD assembleDebug installDebug
 
+# 启动应用
+echo ""
+echo "启动应用..."
+adb shell am start -n com.leadagile.safeguard/io.dcloud.PandoraEntry
+
 echo ""
 echo "=== Android 构建完成 ==="
-echo "APK 已安装到模拟器"
