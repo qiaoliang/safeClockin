@@ -136,15 +136,20 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
-# 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP
-echo ""
-echo ">>> 步骤 3: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
+# 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP (仅开发环境)
+if [ "$ENV_TYPE" = "func" ] || [ "$ENV_TYPE" = "unit" ]; then
+    echo ""
+    echo ">>> 步骤 3: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
 
-# Android 模拟器访问宿主机的特殊 IP
-find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:9999/10.0.2.2:9999/g' {} \;
-find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/127\.0\.0\.1:9999/10.0.2.2:9999/g' {} \;
+    # Android 模拟器访问宿主机的特殊 IP
+    find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:9999/10.0.2.2:9999/g' {} \;
+    find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/127\.0\.0\.1:9999/10.0.2.2:9999/g' {} \;
 
-echo "✓ URL 已替换为 10.0.2.2:9999 (Android 模拟器访问开发机的地址)"
+    echo "✓ URL 已替换为 10.0.2.2:9999 (Android 模拟器访问开发机的地址)"
+else
+    echo ""
+    echo ">>> 步骤 3: 跳过 URL 替换 ($ENV_TYPE 环境使用真实域名)"
+fi
 
 # 4. 准备 launcher 图标
 echo ""
