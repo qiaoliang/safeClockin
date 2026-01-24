@@ -189,6 +189,15 @@ fi
 
 echo "使用 gradle: $GRADLE_CMD"
 
+# 检查并卸载旧版本（确保安装最新版本）
+if adb shell pm list packages | grep -q "com.leadagile.safeguard"; then
+    echo "发现旧版本应用，正在卸载..."
+    adb uninstall com.leadagile.safeguard
+    echo "✓ 已卸载旧版本"
+else
+    echo "未发现旧版本应用"
+fi
+
 # 构建 debug APK 并安装到模拟器
 $GRADLE_CMD assembleDebug installDebug
 
