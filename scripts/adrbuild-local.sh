@@ -203,7 +203,9 @@ else
 fi
 
 # 构建 debug APK 并安装到模拟器
-$GRADLE_CMD assembleDebug installDebug
+# 使用 --rerun-tasks 强制重新构建所有任务
+echo "重新构建 APK..."
+$GRADLE_CMD clean assembleDebug installDebug
 
 # 查找并显示 APK 路径
 APK_PATH=$(find "$ANDROID_PROJECT_PATH/build/outputs/apk" -name "*.apk" -type f 2>/dev/null | head -1)
