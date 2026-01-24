@@ -131,7 +131,11 @@ if [ ! -d "$H5_SOURCE_PATH" ]; then
 fi
 
 # 清空目标目录（保留 .gitkeep）
+echo "清理原有资源..."
 rm -rf "$WWW_DEST_PATH"/*
+
+# 复制新资源
+echo "复制新资源..."
 cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
