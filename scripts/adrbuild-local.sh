@@ -123,10 +123,12 @@ echo ">>> 步骤 1: 构建 H5 资源..."
 echo ""
 echo ">>> 步骤 2: 复制 H5 资源到 Android 项目..."
 
-H5_SOURCE_PATH="$FRONTEND_PATH/src/unpackage/dist/build/web"
+# 使用 App 打包所需资源目录（包含 manifest.json）
+H5_SOURCE_PATH="$FRONTEND_PATH/src/unpackage/resources/__UNI__AA79EBE/www"
 
 if [ ! -d "$H5_SOURCE_PATH" ]; then
-    echo "错误: H5 构建输出不存在: $H5_SOURCE_PATH"
+    echo "错误: App 资源目录不存在: $H5_SOURCE_PATH"
+    echo "请确保已运行 H5 构建"
     exit 1
 fi
 
