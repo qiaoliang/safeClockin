@@ -26,7 +26,17 @@ else
 
     for AVD in "${AVD_LIST[@]}"; do
         echo "尝试启动: $AVD"
-        if "$ANDROID_SDK/emulator/emulator" -avd "$AVD" &
+
+        # 检查是否有相同 AVD 的进程在运行，如果有则先关闭
+        EMULATOR_PID=$(pgrep -f "emulator.*$AVD" 2>/dev/null || true)
+        if [ -n "$EMULATOR_PID" ]; then
+            echo "  发现旧进程正在运行，关闭..."
+            kill $EMULATOR_PID 2>/dev/null || true
+            sleep 3
+        fi
+
+        # 启动模拟器（使用 -read-only 避免冲突）
+        if "$ANDROID_SDK/emulator/emulator" -avd "$AVD" -read-only &
         then
             echo "等待模拟器启动..."
             sleep 30
