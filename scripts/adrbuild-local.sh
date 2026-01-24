@@ -1,13 +1,69 @@
 #!/bin/bash
 
 # Android 构建脚本
-# 1. 构建 H5 资源
-# 2. 复制到 Android 项目
-# 3. 使用 gradlew 打包并安装到模拟器
+# 1. 检查/启动模拟器
+# 2. 构建 H5 资源
+# 3. 复制到 Android 项目
+# 4. 使用 gradle 打包并安装到模拟器
 
 set -e  # 遇到错误时退出
 
 echo "=== 开始 Android 构建 ==="
+
+# 检查模拟器
+echo ">>> 检查模拟器状态..."
+
+# 可用的模拟器列表
+AVD_LIST=("Pixel" "Pixel_ARM64" "Medium_Phone_API_36.1")
+ANDROID_SDK="$HOME/Library/Android/sdk"
+
+# 检查 adb devices 是否有模拟器运行
+if adb devices | grep -q "device$"; then
+    echo "✓ 模拟器已运行"
+else
+    echo "模拟器未运行，正在启动..."
+    SIMULATOR_STARTED=false
+
+    for AVD in "${AVD_LIST[@]}"; do
+        echo "尝试启动: $AVD"
+        if "$ANDROID_SDK/emulator/emulator" -avd "$AVD" &
+        then
+            echo "等待模拟器启动..."
+            sleep 30
+
+            # 等待 adb 连接
+            MAX_WAIT=120
+            WAIT_TIME=0
+            while [ $WAIT_TIME -lt $MAX_WAIT ]; do
+                if adb devices | grep -q "device$"; then
+                    echo "✓ 模拟器已启动: $AVD"
+                    SIMULATOR_STARTED=true
+                    break
+                fi
+                sleep 5
+                WAIT_TIME=$((WAIT_TIME + 5))
+                echo "  等待中... ($WAIT_TIME/$MAX_WAIT)s"
+            done
+
+            if [ "$SIMULATOR_STARTED" = true ]; then
+                break
+            fi
+        fi
+    done
+
+    if [ "$SIMULATOR_STARTED" = false ]; then
+        echo ""
+        echo "=========================================="
+        echo "错误: 模拟器启动失败"
+        echo ""
+        echo "请手动启动模拟器："
+        echo "1. 打开 Android Studio"
+        echo "2. Device Manager -> 点击启动按钮"
+        echo "3. 然后重新运行此脚本"
+        echo "=========================================="
+        exit 1
+    fi
+fi
 
 # 解析命令行参数
 for arg in "$@"; do
@@ -68,19 +124,28 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
-# 3. 使用 gradlew 打包并安装
+# 3. 使用 gradle 打包并安装
 echo ""
 echo ">>> 步骤 3: 构建并安装 APK..."
 
 cd "$ANDROID_PROJECT_PATH"
 
-# 检查 gradlew 权限
-if [ ! -x "./gradlew" ]; then
-    chmod +x ./gradlew
+# 检查 gradle 命令
+GRADLE_CMD=""
+if command -v gradle &> /dev/null; then
+    GRADLE_CMD="gradle"
+elif [ -n "$ANDROID_SDK_ROOT" ] && [ -x "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/gradle" ]; then
+    GRADLE_CMD="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/gradle"
+else
+    echo "错误: 未找到 gradle 命令"
+    echo "请确保已安装 Android SDK 或配置 ANDROID_SDK_ROOT"
+    exit 1
 fi
 
+echo "使用 gradle: $GRADLE_CMD"
+
 # 构建 debug APK 并安装到模拟器
-./gradlew assembleDebug installDebug
+$GRADLE_CMD assembleDebug installDebug
 
 echo ""
 echo "=== Android 构建完成 ==="
