@@ -16,6 +16,7 @@ logs/
 HBuilder-Integrate-AS/simpleDemo/build/
 HBuilder-Integrate-AS/.idea/
 HBuilder-Integrate-AS/.gradle/
+HBuilder-Integrate-AS/build/
 # 保留 www 目录结构，但忽略其中的构建输出文件
 !HBuilder-Integrate-AS/simpleDemo/src/main/assets/apps/__UNI__AA79EBE/www/.gitkeep
 HBuilder-Integrate-AS/simpleDemo/src/main/assets/apps/__UNI__AA79EBE/www/*
