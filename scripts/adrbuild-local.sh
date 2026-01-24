@@ -114,21 +114,32 @@ echo "前端项目路径: $FRONTEND_PATH"
 echo "Android 项目路径: $ANDROID_PROJECT_PATH"
 echo "目标 www 路径: $WWW_DEST_PATH"
 
-# 1. 构建 H5 资源
+# 1. 构建 App 资源（使用 HBuilderX CLI 生成本地打包资源）
 echo ""
-echo ">>> 步骤 1: 构建 H5 资源..."
-"$SCRIPT_DIR/h5build.sh" ENV_TYPE=$ENV_TYPE
+echo ">>> 步骤 1: 构建 App 资源..."
+echo "使用 HBuilderX CLI 生成本地打包资源..."
+
+# 使用 HBuilderX CLI 生成本地打包 App 资源
+HBUILDERX_CLI="/Applications/HBuilderX.app/Contents/MacOS/cli"
+$HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
+
+if [ $? -ne 0 ]; then
+    echo "错误: HBuilderX CLI 构建失败"
+    exit 1
+fi
+
+echo "✓ App 资源构建完成"
 
 # 2. 复制到 Android 项目
 echo ""
-echo ">>> 步骤 2: 复制 H5 资源到 Android 项目..."
+echo ">>> 步骤 2: 复制资源到 Android 项目..."
 
-# 使用 App 打包所需资源目录（包含 manifest.json）
+# 查找生成的 App 资源目录
 H5_SOURCE_PATH="$FRONTEND_PATH/src/unpackage/resources/__UNI__AA79EBE/www"
 
 if [ ! -d "$H5_SOURCE_PATH" ]; then
     echo "错误: App 资源目录不存在: $H5_SOURCE_PATH"
-    echo "请确保已运行 H5 构建"
+    echo "请确保 HBuilderX CLI 构建成功"
     exit 1
 fi
 
