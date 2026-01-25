@@ -145,15 +145,27 @@
           图标
         </text>
         <view class="icon-selector">
-          <view 
-            v-for="icon in iconOptions" 
-            :key="icon.value" 
+          <view
+            v-for="icon in iconOptions"
+            :key="icon.key"
             class="icon-item"
-            :class="{ active: formData.icon_url === icon.value }"
-            @click="formData.icon_url = icon.value"
+            :class="{ active: formData.icon_url === icon.url }"
+            @click="formData.icon_url = icon.url"
           >
-            <text class="icon-text">
-              {{ icon.label }}
+            <image
+              :src="icon.url"
+              class="icon-img"
+              mode="aspectFit"
+            />
+          </view>
+          <!-- 清除图标选项 -->
+          <view
+            class="icon-item icon-clear"
+            :class="{ active: formData.icon_url === '' }"
+            @click="formData.icon_url = ''"
+          >
+            <text class="icon-clear-text">
+              无
             </text>
           </view>
         </view>
@@ -225,9 +237,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { request } from '@/api/request'
+import communityResources from "@/static/community_resources.json"
 
 const formData = ref({
   rule_name: '',
@@ -236,7 +249,7 @@ const formData = ref({
   custom_time: '08:00:00', // 自定义时间，格式必须是 HH:mm:ss
   custom_start_date: '',
   custom_end_date: '',
-  icon_url: '⏰', // 默认图标
+  icon_url: '', // 默认使用第一个 rule-icon (onMounted 中会检查并设置)
   status: 1
 })
 
@@ -275,17 +288,16 @@ const onTimeChange = (e) => {
   formData.value.custom_time = e.detail.value
 }
 
-// 图标选项
-const iconOptions = ref([
-  { label: '⏰', value: '⏰' },
-  { label: '🌅', value: '🌅' },
-  { label: '🌞', value: '🌞' },
-  { label: '🌙', value: '🌙' },
-  { label: '💊', value: '💊' },
-  { label: '🍎', value: '🍎' },
-  { label: '🏃', value: '🏃' },
-  { label: '🧘', value: '🧘' }
-])
+// 图标选项 - 从 community_resources.json 获取 rule-icons
+const iconOptions = computed(() => {
+  return communityResources["rule-icons"]?.resources || [];
+})
+
+// 默认图标（第一个 rule-icon）
+const defaultRuleIcon = computed(() => {
+  const icons = communityResources["rule-icons"]?.resources || [];
+  return icons.length > 0 ? icons[0].url : "";
+})
 
 // 表单验证
 const validateForm = () => {
@@ -343,7 +355,7 @@ const watchFormChanges = () => {
 
           formData.value.custom_start_date = rule.custom_start_date || ''
           formData.value.custom_end_date = rule.custom_end_date || ''
-          formData.value.icon_url = rule.icon_url || '⏰'
+          formData.value.icon_url = rule.icon_url || ''
           formData.value.status = rule.status
         }
       } else {
@@ -500,6 +512,10 @@ onLoad((options) => {
 })
 
 onMounted(() => {
+  // 设置默认图标
+  if (!formData.value.icon_url && defaultRuleIcon.value) {
+    formData.value.icon_url = defaultRuleIcon.value
+  }
   // 监听表单变化
   watchFormChanges()
 })
@@ -670,9 +686,21 @@ onMounted(() => {
 }
 
 .icon-item.active {
-  background: #FEF3C7;
-  border-color: $uni-warning;
-  transform: scale(1.1);
+  background: rgba($uni-primary, 0.1);
+  border-color: $uni-primary;
+  transform: scale(1.05);
+}
+
+.icon-img {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.icon-item.icon-clear {
+  .icon-clear-text {
+    font-size: $uni-font-size-sm;
+    color: $uni-text-gray-600;
+  }
 }
 
 .info-section {

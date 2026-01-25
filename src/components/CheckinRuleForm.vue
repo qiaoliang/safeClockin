@@ -75,19 +75,38 @@
             </text>
           </view>
 
-          <!-- 图标URL -->
+          <!-- 图标选择 -->
           <view class="form-item">
             <text class="item-label">
-              图标URL
+              选择图标
             </text>
-            <input
-              v-model="formData.icon_url"
-              class="item-input"
-              placeholder="请输入图标URL（可选）"
-              :disabled="submitting"
-            >
+            <view class="icon-selector">
+              <view
+                v-for="icon in eventIcons"
+                :key="icon.key"
+                class="icon-option"
+                :class="{ 'icon-selected': formData.icon_url === icon.url }"
+                @click="selectIcon(icon.url)"
+              >
+                <image
+                  :src="icon.url"
+                  class="icon-preview"
+                  mode="aspectFit"
+                />
+              </view>
+              <!-- 清除图标选项 -->
+              <view
+                class="icon-option icon-clear"
+                :class="{ 'icon-selected': formData.icon_url === '' }"
+                @click="selectIcon('')"
+              >
+                <text class="icon-clear-text">
+                  无
+                </text>
+              </view>
+            </view>
             <text class="item-hint">
-              建议使用正方形图标，尺寸建议 100x100px
+              点击选择图标，或选择"无"不使用图标
             </text>
           </view>
         </view>
@@ -319,7 +338,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import communityResources from "@/static/community_resources.json";
 
 // Props
 const props = defineProps({
@@ -365,7 +385,7 @@ const isEditMode = computed(() => !!props.ruleId);
 // 表单数据
 const formData = ref({
   rule_name: "",
-  icon_url: "",
+  icon_url: "", // 先设置为空，onMounted 中会设置为默认值
   frequency_type: 0, // 0-每天, 1-每周, 2-工作日, 3-自定义日期
   time_slot_type: 4, // 1-上午, 2-下午, 3-晚上, 4-自定义时间
   custom_time: "",
@@ -400,6 +420,22 @@ const timeSlotOptions = [
 // 星期数组
 const weekDays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 
+// 从 community_resources.json 获取 rule-icons 图标列表
+const eventIcons = computed(() => {
+  return communityResources["rule-icons"]?.resources || [];
+});
+
+// 默认图标（第一个 rule-icon）
+const defaultRuleIcon = computed(() => {
+  const icons = communityResources["rule-icons"]?.resources || [];
+  return icons.length > 0 ? icons[0].url : "";
+});
+
+// 选择图标
+const selectIcon = (url) => {
+  formData.value.icon_url = url;
+};
+
 // 字段标签映射
 const fieldLabels = {
   rule_name: "规则名称",
@@ -415,7 +451,7 @@ watch(
     if (Object.keys(newData).length > 0) {
       formData.value = {
         rule_name: newData.rule_name || "",
-        icon_url: newData.icon_url || "",
+        icon_url: newData.icon_url || "", // 保持原有图标或空
         frequency_type: newData.frequency_type || 0,
         time_slot_type: newData.time_slot_type || 4,
         custom_time: newData.custom_time || "",
@@ -610,6 +646,13 @@ defineExpose({
   setSubmitting: (value) => {
     submitting.value = value;
   },
+});
+
+// 组件挂载时设置默认图标
+onMounted(() => {
+  if (!formData.value.icon_url && defaultRuleIcon.value) {
+    formData.value.icon_url = defaultRuleIcon.value;
+  }
 });
 </script>
 
@@ -944,6 +987,49 @@ defineExpose({
   font-size: $uni-font-size-sm;
   color: $uni-error;
   margin-top: $uni-spacing-xs;
+}
+
+.icon-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $uni-spacing-sm;
+  padding: $uni-spacing-sm;
+  background: $uni-white;
+  border-radius: $uni-radius-base;
+  border: 1px solid $uni-border-color;
+
+  .icon-option {
+    width: 80rpx;
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    border-radius: $uni-radius-sm;
+    background: $uni-bg-color-light;
+    transition: all 0.2s ease;
+
+    &.icon-selected {
+      border-color: $uni-primary;
+      background: rgba($uni-primary, 0.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    .icon-preview {
+      width: 60rpx;
+      height: 60rpx;
+    }
+
+    &.icon-clear {
+      .icon-clear-text {
+        font-size: $uni-font-size-sm;
+        color: $uni-text-gray-600;
+      }
+    }
+  }
 }
 
 .safe-bottom {
