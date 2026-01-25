@@ -350,14 +350,14 @@ const passwordForm = ref({
 })
 
 const displayPhone = computed(() => {
-  const phone = userStore.userInfo?.phone_number
+  const phone = userStore.userInfo?.phoneNumber
   if (!phone) return '未关联'
   if (phone.length === 11) {
     return `${phone.slice(0, 3)}****${phone.slice(-4)}`
   }
   return phone
 })
-const phoneBindText = computed(() => (userStore.userInfo?.phone_number ? '更换' : '关联'))
+const phoneBindText = computed(() => (userStore.userInfo?.phoneNumber ? '更换' : '关联'))
 
 // Phone bind modal
 const phoneModal = ref(false)
@@ -382,17 +382,17 @@ onMounted(() => {
   const userInfo = userStore.userInfo
   if (userInfo) {
     formData.value = {
-      nickname: userInfo.nickname || '',
+      nickname: userInfo.nickname || userInfo.nickName || '',
       name: userInfo.name || '',
       address: userInfo.address || '',
       motto: userInfo.motto || '',
       emergency_contact_name: userInfo.emergency_contact_name || '',
       emergency_contact_phone: userInfo.emergency_contact_phone || '',
       emergency_contact_address: userInfo.emergency_contact_address || '',
-      avatar_url: userInfo.avatar_url || ''
+      avatar_url: userInfo.avatarUrl || userInfo.avatar_url || ''
     }
   }
-  
+
   // 加载病史数据
   loadMedicalHistories()
 })
@@ -548,7 +548,7 @@ async function confirmChangePassword() {
 // Medical history functions
 async function loadMedicalHistories() {
   try {
-    const userId = userStore.userInfo?.user_id
+    const userId = userStore.userInfo?.userId || userStore.userInfo?.user_id
     if (!userId) return
     
     const res = await getUserMedicalHistories(userId)
@@ -591,7 +591,7 @@ async function handleSaveMedicalHistory(formData) {
       // 添加病史
       res = await addMedicalHistory({
         ...formData,
-        user_id: userStore.userInfo?.user_id
+        user_id: userStore.userInfo?.userId || userStore.userInfo?.user_id
       })
     }
     
@@ -620,7 +620,7 @@ async function handleDeleteMedicalHistory(historyId) {
   try {
     uni.showLoading({ title: '删除中...' })
     
-    const res = await deleteMedicalHistory(historyId, userStore.userInfo?.user_id)
+    const res = await deleteMedicalHistory(historyId, userStore.userInfo?.userId || userStore.userInfo?.user_id)
     
     if (res.code === 1) {
       uni.showToast({ title: '删除成功', icon: 'none' })
