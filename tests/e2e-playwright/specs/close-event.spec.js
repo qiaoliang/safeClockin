@@ -54,9 +54,10 @@ test.describe('事件关闭功能测试', () => {
 
     // 点击一键求助按钮
     const helpButton = page.locator('.help-btn').or(page.locator('text=一键求助')).first();
+    await expect(helpButton).toBeVisible({ timeout: 15000 });
     await helpButton.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
-    await helpButton.click({ force: true });
+    await helpButton.click({ force: true, timeout: 5000 });
 
     // 等待确认对话框出现并被处理
     await page.waitForTimeout(2000);
@@ -241,9 +242,10 @@ async function createEventAndNavigateToCloseDialog(page) {
 
   // 点击一键求助按钮
   const helpButton = page.locator('.help-btn').or(page.locator('text=一键求助')).first();
+  await expect(helpButton).toBeVisible({ timeout: 15000 });
   await helpButton.scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
-  await helpButton.click({ force: true });
+  await helpButton.click({ force: true, timeout: 5000 });
 
   // 等待确认对话框出现并被处理 - 增加等待时间
   await page.waitForTimeout(2000);

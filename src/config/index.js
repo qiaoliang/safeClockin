@@ -8,7 +8,7 @@ import prodConfig from './prod.js'
 
 // 根据 ENV_TYPE 选择配置
 // #ifdef H5
-const ENV_TYPE = process.env.ENV_TYPE || 'func'
+const ENV_TYPE = process.env.ENV_TYPE || 'prod'
 // #endif
 
 // #ifdef MP-WEIXIN
@@ -18,8 +18,8 @@ const ENV_TYPE = 'prod'
 
 // #ifndef H5
 // #ifndef MP-WEIXIN
-// 其他环境（如 App）使用默认值
-const ENV_TYPE = 'func'
+// 其他环境（如 App）读取环境变量
+const ENV_TYPE = process.env.ENV_TYPE || 'prod'
 // #endif
 // #endif
 

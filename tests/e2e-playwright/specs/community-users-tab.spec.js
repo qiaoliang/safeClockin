@@ -44,7 +44,9 @@ test.describe("社区详情-用户子Tab测试", () => {
 
         console.log("步骤3: 点击'安卡大家庭'社区");
         // 点击安卡大家庭社区进入详情页
-        await page.getByText("安卡大家庭").click({ force: true });
+        const ankaCommunity = page.getByText("安卡大家庭").first();
+        await expect(ankaCommunity).toBeVisible({ timeout: 10000 });
+        await ankaCommunity.click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
@@ -65,7 +67,9 @@ test.describe("社区详情-用户子Tab测试", () => {
 
         console.log("步骤5: 点击'用户'tab");
         // 点击"用户"tab
-        await page.getByText("用户").click({ force: true });
+        const userTab = page.getByText("用户").first();
+        await expect(userTab).toBeVisible({ timeout: 10000 });
+        await userTab.click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 

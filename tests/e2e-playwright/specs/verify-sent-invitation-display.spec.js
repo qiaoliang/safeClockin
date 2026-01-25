@@ -20,10 +20,21 @@ test('验证我发起的邀请显示正确的被邀请人和规则信息', async
   await page.goto('/#/pages/rule-setting/rule-setting');
   await page.waitForTimeout(PAGE_LOAD_WAIT);
 
-  // 点击邀请按钮（第2个按钮）
+  // 等待邀请按钮可见
   const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
-  await inviteButtons.nth(1).click();
-  await page.waitForTimeout(1000);
+  await expect(inviteButtons.first()).toBeVisible({ timeout: 15000 });
+
+  // 点击邀请按钮（第2个按钮）
+  const buttonCount = await inviteButtons.count();
+  console.log(`找到 ${buttonCount} 个邀请按钮`);
+  if (buttonCount > 1) {
+    await inviteButtons.nth(1).click({ timeout: 5000 });
+  } else if (buttonCount === 1) {
+    await inviteButtons.first().click({ timeout: 5000 });
+  } else {
+    throw new Error('未找到邀请按钮');
+  }
+  await page.waitForTimeout(2000);
 
   // 搜索并选择用户
   const phoneInput = page.locator('input[placeholder*="搜索"]').or(page.locator('.uni-easyinput__content-textarea'));

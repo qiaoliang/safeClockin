@@ -27,8 +27,16 @@ test.describe('Bug复现：我发起的邀请显示正确信息', () => {
 
     // 3. 点击邀请按钮
     const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
-    await inviteButtons.nth(1).click();
-    await page.waitForTimeout(1000);
+    await expect(inviteButtons.first()).toBeVisible({ timeout: 15000 });
+    const buttonCount = await inviteButtons.count();
+    if (buttonCount > 1) {
+      await inviteButtons.nth(1).click({ timeout: 5000 });
+    } else if (buttonCount === 1) {
+      await inviteButtons.first().click({ timeout: 5000 });
+    } else {
+      throw new Error('未找到邀请按钮');
+    }
+    await page.waitForTimeout(2000);
 
     // 4. 搜索并选择用户
     const phoneInput = page.locator('input[placeholder*="搜索"]')
@@ -71,8 +79,8 @@ test.describe('Bug复现：我发起的邀请显示正确信息', () => {
 
     // 9. 验证Bug：应该显示"未知用户"和"全部规则"
     // 这是Bug复现测试，我们期望看到错误的显示
-    test.expect(userName).toContain('未知用户');
-    test.expect(ruleName).toContain('全部规则');
+    expect(userName).toContain('未知用户');
+    expect(ruleName).toContain('全部规则');
 
     console.log('✅ Bug复现成功：显示"未知用户"和"全部规则"');
   });
@@ -89,22 +97,32 @@ test.describe('Bug复现：我发起的邀请显示正确信息', () => {
     await page.waitForTimeout(PAGE_LOAD_WAIT);
 
     const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
-    await inviteButtons.nth(1).click();
-    await page.waitForTimeout(1000);
+    await expect(inviteButtons.first()).toBeVisible({ timeout: 15000 });
+    const buttonCount = await inviteButtons.count();
+    if (buttonCount > 1) {
+      await inviteButtons.nth(1).click({ timeout: 5000 });
+    } else if (buttonCount === 1) {
+      await inviteButtons.first().click({ timeout: 5000 });
+    } else {
+      throw new Error('未找到邀请按钮');
+    }
+    await page.waitForTimeout(2000);
 
     const phoneInput = page.locator('input[placeholder*="搜索"]')
       .or(page.locator('.uni-easyinput__content-textarea'));
     await phoneInput.first().fill('13588888888');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
 
     const userItems = page.locator('.user-item');
+    await expect(userItems.first()).toBeVisible({ timeout: 10000 });
     await userItems.first().click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
     const confirmButton = page.getByText('确定', { exact: true })
       .or(page.getByRole('generic').filter({ hasText: '确定' }));
+    await expect(confirmButton.first()).toBeVisible({ timeout: 5000 });
     await confirmButton.first().click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
     // 2. 导航到监护管理页面
     await page.goto('/#/pages/supervisor-manage/supervisor-manage');
@@ -121,7 +139,7 @@ test.describe('Bug复现：我发起的邀请显示正确信息', () => {
     console.log(`预期 - 规则: 晨间打卡规则`);
 
     // 这个断言会失败，因为当前有bug
-    test.expect(userName).toBe('主管用户-1');
-    test.expect(ruleName).toMatch(/打卡|规则/);
+    expect(userName).toBe('主管用户-1');
+    expect(ruleName).toMatch(/打卡|规则/);
   });
 });

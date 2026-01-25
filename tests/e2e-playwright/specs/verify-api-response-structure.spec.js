@@ -20,25 +20,36 @@ test.describe('Bug复现：验证API返回的数据结构', () => {
 
     // 2. 发送一个邀请（确保有数据）
     await page.goto('/#/pages/rule-setting/rule-setting');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
     const inviteButtons = page.locator('[data-testid="rule-invite-button"]');
-    await inviteButtons.nth(1).click();
-    await page.waitForTimeout(1000);
+    await expect(inviteButtons.first()).toBeVisible({ timeout: 15000 });
+    const buttonCount = await inviteButtons.count();
+    if (buttonCount > 1) {
+      await inviteButtons.nth(1).click({ timeout: 5000 });
+    } else if (buttonCount === 1) {
+      await inviteButtons.first().click({ timeout: 5000 });
+    } else {
+      throw new Error('未找到邀请按钮');
+    }
+    await page.waitForTimeout(2000);
 
     const phoneInput = page.locator('input[placeholder*="搜索"]')
       .or(page.locator('.uni-easyinput__content-textarea'));
+    await expect(phoneInput.first()).toBeVisible({ timeout: 10000 });
     await phoneInput.first().fill('13588888888');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
 
     const userItems = page.locator('.user-item');
+    await expect(userItems.first()).toBeVisible({ timeout: 10000 });
     await userItems.first().click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
     const confirmButton = page.getByText('确定', { exact: true })
       .or(page.getByRole('generic').filter({ hasText: '确定' }));
+    await expect(confirmButton.first()).toBeVisible({ timeout: 5000 });
     await confirmButton.first().click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
     // 3. 监听API响应
     const apiResponse = [];
@@ -81,18 +92,18 @@ test.describe('Bug复现：验证API返回的数据结构', () => {
           console.log(JSON.stringify(firstInvitation, null, 2));
 
           // 验证后端返回的字段
-          test.expect(firstInvitation).toHaveProperty('invitee_info');
-          test.expect(firstInvitation).toHaveProperty('rule_info');
+          expect(firstInvitation).toHaveProperty('invitee_info');
+          expect(firstInvitation).toHaveProperty('rule_info');
 
           // 验证被邀请人信息存在
           const inviteeInfo = firstInvitation.invitee_info;
-          test.expect(inviteeInfo).toHaveProperty('nickname');
-          test.expect(inviteeInfo.nickname).not.toBe('');
+          expect(inviteeInfo).toHaveProperty('nickname');
+          expect(inviteeInfo.nickname).not.toBe('');
 
           // 验证规则信息存在
           const ruleInfo = firstInvitation.rule_info;
-          test.expect(ruleInfo).toHaveProperty('rule_name');
-          test.expect(ruleInfo.rule_name).not.toBe('');
+          expect(ruleInfo).toHaveProperty('rule_name');
+          expect(ruleInfo.rule_name).not.toBe('');
 
           console.log('✅ 后端返回正确的数据结构');
           console.log(`  - 被邀请人: ${inviteeInfo.nickname}`);

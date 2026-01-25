@@ -406,8 +406,8 @@ export async function registerAndLoginAsUser(page, options = {}) {
     await page.locator(AUTH_SELECTORS.phoneLoginBtn).click({ force: true });
     await waitForPage(page);
 
-    // 切换到"注册"标签
-    await page.locator(AUTH_SELECTORS.passwordTab).filter({ hasText: '注册' }).click({ force: true });
+    // 切换到"注册"标签 - 使用正确的 tab-register 选择器
+    await page.locator('[data-testid="tab-register"]').click({ force: true });
     await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
 
     // 输入手机号

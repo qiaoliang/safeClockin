@@ -134,12 +134,15 @@ test.describe('一键求助功能测试', () => {
     // 使用文本选择器来定位"一键求助"按钮
     const helpButton = page.locator('.help-btn').or(page.locator('text=一键求助')).first();
 
+    // 等待按钮可见
+    await expect(helpButton).toBeVisible({ timeout: 15000 });
+
     // 先滚动页面，确保"一键求助"按钮完全可见，避免误触 tabbar
     await helpButton.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
     // 点击一键求助按钮
-    await helpButton.click({ force: true });
+    await helpButton.click({ force: true, timeout: 5000 });
 
     // 等待确认对话框出现
     await page.waitForTimeout(1000);

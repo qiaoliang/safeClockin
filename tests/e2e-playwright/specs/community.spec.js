@@ -43,7 +43,9 @@ test.describe("超级管理员社区管理测试", () => {
         console.log('步骤1: 导航到"我的"页面');
 
         // 点击底部导航栏的"我的"按钮
-        await page.getByText("我的").click({ force: true });
+        const myTab = page.getByText("我的").first();
+        await expect(myTab).toBeVisible({ timeout: 10000 });
+        await myTab.click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(2000);
 
@@ -52,9 +54,11 @@ test.describe("超级管理员社区管理测试", () => {
         // 在"社区管理" section 中点击"社区列表"菜单项
         // 先找到"社区管理" section,然后在其中找"社区列表"
         const communityManagementSection = page.locator('text=社区管理').first();
-        await expect(communityManagementSection).toBeVisible();
+        await expect(communityManagementSection).toBeVisible({ timeout: 10000 });
 
-        await page.getByText("社区列表").click({ force: true });
+        const communityList = page.getByText("社区列表").first();
+        await expect(communityList).toBeVisible({ timeout: 5000 });
+        await communityList.click({ force: true });
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(3000);
 
