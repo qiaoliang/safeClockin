@@ -129,13 +129,21 @@ echo ">>> 步骤 1: 配置环境 ($ENV_TYPE)..."
 # 备份原始配置文件
 cp src/config/index.js src/config/index.js.backup
 
-# 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
-echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
-# 替换所有可能的默认值（'func'、'prod'、'uat'、'unit'）
-sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
-sed -i '' "s/|| 'prod'/|| '$ENV_TYPE'/g" src/config/index.js
-sed -i '' "s/|| 'uat'/|| '$ENV_TYPE'/g" src/config/index.js
-sed -i '' "s/|| 'unit'/|| '$ENV_TYPE'/g" src/config/index.js
+# 临时修改配置文件以支持指定环境
+# 备份原配置文件
+cp "$FRONTEND_PATH/src/config/index.js" "$FRONTEND_PATH/src/config/index.js.backup"
+
+# 直接硬编码 ENV_TYPE 值，确保在 App 环境下使用正确的配置
+# 替换 App 环境的 ENV_TYPE 定义（第 22 行左右）
+sed -i '' "s/const ENV_TYPE = process.env.ENV_TYPE || 'prod'/const ENV_TYPE = '$ENV_TYPE'/g" "$FRONTEND_PATH/src/config/index.js"
+
+# 验证修改是否成功
+if grep -q "const ENV_TYPE = '$ENV_TYPE'" "$FRONTEND_PATH/src/config/index.js"; then
+    echo "✓ 配置文件修改成功: ENV_TYPE = $ENV_TYPE"
+else
+    echo "✗ 配置文件修改失败"
+    exit 1
+fi
 
 echo "API URL: https://www.leadagile.cn"
 echo ""

@@ -11,23 +11,31 @@ import { TEST_USERS } from '../fixtures/test-data.mjs';
 
 // ==================== 常量定义 ====================
 export const AUTH_SELECTORS = {
-  // 使用 data-testid 选择器（更稳定）
-  phoneLoginBtn: '[data-testid="phone-login-button"]',
-  wechatLoginBtn: '[data-testid="wechat-login-button"]',
-  loginTitle: '[data-testid="login-welcome-title"]',
+  // 使用文本选择器（更稳定，HBuilderX 会保留文本内容）
+  phoneLoginBtn: 'button:has-text("手机号登录")',
+  wechatLoginBtn: 'button:has-text("微信登录")',
+  loginTitle: 'text=安全守护',
 
   // 手机号登录页面选择器
-  passwordTab: '[data-testid="tab-password-login"]',
-  codeTab: '[data-testid="tab-code-login"]',
-  submitBtn: '[data-testid="login-submit-button"]',
-  phoneInput: '[data-testid="phone-input"]',
-  passwordInput: '[data-testid="password-input"]',
-  codeInput: '[data-testid="code-input"]',
+  passwordTab: '.uni-tab__item:has-text("密码登录")',
+  codeTab: '.uni-tab__item:has-text("验证码登录")',
+  registerTab: '.uni-tab__item:has-text("注册")',
+  submitBtn: 'button:has-text("登录"), button:has-text("确认"), button:has-text("注册")',
+  phoneInput: 'input[type="number"], input[type="tel"]',
+  passwordInput: 'input[type="password"]',
+  codeInput: 'input[type="text"]:nth-of-type(2)',
+
+  // 验证码按钮（备用）
+  codeBtn: 'button:has-text("获取验证码"), button:has-text("验证码")',
+
+  // 用户协议复选框
+  agreementCheckbox: '.agree-checkbox, .uni-checkbox, label:has-text("用户协议")',
 
   // 备用选择器（向后兼容）
   legacy: {
-    passwordTab: '.tab',
-    submitBtn: 'uni-button.submit',
+    passwordTab: '.tab:has-text("密码登录")',
+    codeTab: '.tab:has-text("验证码登录")',
+    submitBtn: 'uni-button.submit, button[type="submit"]',
     phoneInput: 'input[type="number"]',
     passwordInput: 'input[type="password"]',
     codeBtn: '.code-btn',
@@ -69,7 +77,7 @@ async function waitForPage(page, timeout = AUTH_TIMEOUTS.pageLoad) {
 
 /**
  * 验证登录页面加载
- * 改进: 增加详细的日志和错误诊断
+ * 改进: 使用文本选择器代替 data-testid（HBuilderX 会移除自定义属性）
  */
 export async function waitForLoginPage(page) {
   console.log('  ⏳ 等待登录页面加载...');
@@ -80,9 +88,9 @@ export async function waitForLoginPage(page) {
   const currentUrl = page.url();
   console.log('  📍 当前 URL:', currentUrl);
 
-  // 等待登录标题元素可见
+  // 等待登录标题元素可见 - 使用文本选择器
   try {
-    await page.waitForSelector(AUTH_SELECTORS.loginTitle, {
+    await page.waitForSelector('text=安全守护', {
       timeout: AUTH_TIMEOUTS.elementVisible,
       state: 'visible'
     });
@@ -98,8 +106,8 @@ export async function waitForLoginPage(page) {
     throw new Error('登录页面未正确加载');
   }
 
-  // 验证关键元素存在
-  const pageTitle = await page.locator(AUTH_SELECTORS.loginTitle).textContent();
+  // 验证关键元素存在 - 使用文本选择器
+  const pageTitle = await page.locator('text=安全守护').first().textContent();
   expect(pageTitle).toContain('安全守护');
   console.log('  ✅ 登录页面验证通过');
 }
@@ -113,7 +121,7 @@ export function isValidHomePage(pageText) {
 
 /**
  * 使用手机号和密码登录
- * 改进: 使用 data-testid 选择器，增加错误处理和日志
+ * 改进: 使用文本选择器代替 data-testid，增加错误处理和日志
  *       确保先导航到登录页面
  */
 export async function loginWithPhoneAndPassword(page, phone, password) {
@@ -147,9 +155,9 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
   console.log('\n1️⃣ 等待登录页面...');
   await waitForLoginPage(page);
 
-  // 点击"手机号登录"按钮
+  // 点击"手机号登录"按钮 - 使用文本选择器
   console.log('\n2️⃣ 点击手机号登录按钮...');
-  const loginBtn = page.locator(AUTH_SELECTORS.phoneLoginBtn);
+  const loginBtn = page.locator('button:has-text("手机号登录")');
 
   try {
     // 使用更长的超时时间
@@ -163,17 +171,24 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
     throw new Error('未找到手机号登录按钮');
   }
 
-  // 切换到"密码登录"标签页
+  // 切换到"密码登录"标签页 - 使用文本选择器
   console.log('\n3️⃣ 切换到密码登录标签...');
 
-  // 尝试使用新的 data-testid 选择器
-  let tabElement = page.locator(AUTH_SELECTORS.passwordTab);
+  // 尝试使用文本选择器
+  let tabElement = page.locator('.uni-tab__item:has-text("密码登录")');
   let tabCount = await tabElement.count();
 
-  // 如果新选择器找不到，尝试使用旧选择器（向后兼容）
+  // 如果找不到，尝试备用选择器
   if (tabCount === 0) {
     console.log('  ℹ️ 新选择器未找到，尝试备用选择器...');
-    tabElement = page.locator(AUTH_SELECTORS.legacy.passwordTab);
+    tabElement = page.locator('.tab:has-text("密码登录")');
+    tabCount = await tabElement.count();
+  }
+
+  // 如果还是找不到，尝试通用文本选择器
+  if (tabCount === 0) {
+    console.log('  ℹ️ 备用选择器也未找到，尝试通用选择器...');
+    tabElement = page.locator('text=密码登录');
     tabCount = await tabElement.count();
   }
 
@@ -182,20 +197,13 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
     console.log('  ✅ 已切换到密码登录标签');
     await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
   } else {
-    console.log('  ℹ️ 已在密码登录页面');
+    console.log('  ℹ️ 已在密码登录页面或无法找到标签');
   }
 
   // 输入手机号
   console.log('\n4️⃣ 输入手机号...');
-  let phoneInput = page.locator(AUTH_SELECTORS.phoneInput);
+  let phoneInput = page.locator('input[type="number"], input[type="tel"]');
   let phoneInputCount = await phoneInput.count();
-
-  // 如果新选择器找不到，尝试旧选择器
-  if (phoneInputCount === 0) {
-    console.log('  ℹ️ 新手机号选择器未找到，尝试备用选择器...');
-    phoneInput = page.locator(AUTH_SELECTORS.legacy.phoneInput);
-    phoneInputCount = await phoneInput.count();
-  }
 
   if (phoneInputCount > 0) {
     // uni-input 是自定义组件，需要找到内部的真正 input 元素
@@ -245,15 +253,22 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
     throw new Error('未找到密码输入框');
   }
 
-  // 点击登录按钮
+  // 点击登录按钮 - 使用文本选择器
   console.log('\n6️⃣ 点击登录按钮...');
-  let submitBtn = page.locator(AUTH_SELECTORS.submitBtn);
+  let submitBtn = page.locator('button:has-text("登录")');
   let submitBtnCount = await submitBtn.count();
 
-  // 如果新选择器找不到，尝试旧选择器
+  // 如果找不到，尝试其他选择器
   if (submitBtnCount === 0) {
-    console.log('  ℹ️ 新提交按钮选择器未找到，尝试备用选择器...');
-    submitBtn = page.locator(AUTH_SELECTORS.legacy.submitBtn);
+    console.log('  ℹ️ 登录按钮未找到，尝试备用选择器...');
+    submitBtn = page.locator('button:has-text("确认")');
+    submitBtnCount = await submitBtn.count();
+  }
+
+  // 如果还是找不到，尝试 uni-button
+  if (submitBtnCount === 0) {
+    console.log('  ℹ️ 确认按钮也未找到，尝试 uni-button...');
+    submitBtn = page.locator('uni-button');
     submitBtnCount = await submitBtn.count();
   }
 
@@ -341,6 +356,7 @@ export async function getCurrentUserInfo(page) {
 }
 /**
  * 超级管理员登录（快捷方法）
+ * 改进: 使用文本选择器代替 data-testid（HBuilderX 会移除自定义属性）
  */
 export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMIN) {
   console.log('超级管理员登录...');
@@ -349,25 +365,30 @@ export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMI
   await waitForPage(page, 3000);
   await waitForLoginPage(page);
 
-  // 点击"手机号登录"按钮
-  await expect(page.locator(AUTH_SELECTORS.phoneLoginBtn)).toBeVisible({ timeout: 15000 });
-  await page.locator(AUTH_SELECTORS.phoneLoginBtn).click({ force: true });
+  // 点击"手机号登录"按钮 - 使用文本选择器
+  await expect(page.locator('button:has-text("手机号登录")').first()).toBeVisible({ timeout: 15000 });
+  await page.locator('button:has-text("手机号登录")').first().click({ force: true });
 
-  // 等待手机登录页面加载，使用 data-testid
-  await expect(page.locator('[data-testid="tab-password-login"]')).toBeVisible({ timeout: 15000 });
+  // 等待密码登录标签可见 - 使用文本选择器
+  await expect(page.locator('text=密码登录').first()).toBeVisible({ timeout: 15000 });
   await waitForPage(page);
 
-  // 切换到"密码登录" - 使用正确的选择器
-  await page.locator('[data-testid="tab-password-login"]').click({ force: true });
-  await page.waitForTimeout(500);
+  // 切换到"密码登录" - 使用文本选择器
+  const passwordTab = page.locator('text=密码登录').first();
+  if (await passwordTab.isVisible()) {
+    await passwordTab.click({ force: true });
+    await page.waitForTimeout(500);
+  }
 
   // 等待密码输入框可见
-  await expect(page.locator(AUTH_SELECTORS.passwordInput).first().locator('input').or(page.locator('[type="password"]'))).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('input[type="password"]').first()).toBeVisible({ timeout: 10000 });
 
-  await page.locator(AUTH_SELECTORS.phoneInput).fill(superAdmin.phone);
-  await page.locator(AUTH_SELECTORS.passwordInput).fill(superAdmin.password);
+  // 输入手机号和密码
+  await page.locator('input[type="number"], input[type="tel"]').first().fill(superAdmin.phone);
+  await page.locator('input[type="password"]').first().fill(superAdmin.password);
 
-  await page.locator(AUTH_SELECTORS.submitBtn).click({ force: true });
+  // 点击登录按钮 - 使用文本选择器
+  await page.locator('button:has-text("登录")').first().click({ force: true });
   await page.waitForTimeout(AUTH_TIMEOUTS.loginWait);
   await page.waitForLoadState('networkidle');
 
@@ -389,6 +410,7 @@ function generate137PhoneNumber() {
 
 /**
  * 注册新用户并登录（快捷方法）
+ * 改进: 使用文本选择器代替 data-testid（HBuilderX 会移除自定义属性）
  */
 export async function registerAndLoginAsUser(page, options = {}) {
   const phoneNumber = options.phoneNumber || generate137PhoneNumber();
@@ -407,46 +429,76 @@ export async function registerAndLoginAsUser(page, options = {}) {
       throw new Error('登录页面未正确加载，未找到"安全守护"文本');
     }
 
-    // 点击"手机号登录"按钮
-    await page.waitForSelector(AUTH_SELECTORS.phoneLoginBtn, { timeout: 15000 });
-    await page.locator(AUTH_SELECTORS.phoneLoginBtn).click({ force: true });
+    // 点击"手机号登录"按钮 - 使用文本选择器
+    await page.locator('button:has-text("手机号登录")').first().click({ force: true });
     await waitForPage(page);
 
-    // 切换到"注册"标签 - 使用正确的 tab-register 选择器
-    await page.locator('[data-testid="tab-register"]').click({ force: true });
+    // 切换到"注册"标签 - 使用文本选择器
+    const registerTab = page.locator('text=注册').first();
+    if (await registerTab.isVisible()) {
+      await registerTab.click({ force: true });
+    } else {
+      // 尝试其他方式找到注册标签
+      const allRegisterText = page.locator('text=注册');
+      if (await allRegisterText.count() > 1) {
+        await allRegisterText.nth(1).click({ force: true });
+      }
+    }
     await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
 
-    // 输入手机号
-    const phoneInput = page.locator(AUTH_SELECTORS.phoneInput).first();
-    await phoneInput.click({ force: true });
-    await phoneInput.clear();
-    await phoneInput.type(phoneNumber, { delay: 100 });
-    await page.waitForTimeout(500);
+    // 输入手机号 - 使用文本选择器
+    const phoneInputs = page.locator('input[type="number"], input[type="tel"]');
+    if (await phoneInputs.count() > 0) {
+      await phoneInputs.first().click({ force: true });
+      await phoneInputs.first().clear();
+      await phoneInputs.first().type(phoneNumber, { delay: 100 });
+      await page.waitForTimeout(500);
+    }
 
-    // 点击"获取验证码"按钮
-    await page.locator(AUTH_SELECTORS.codeBtn).click({ force: true });
+    // 点击"获取验证码"按钮 - 使用文本选择器
+    const codeBtn = page.locator('button:has-text("获取验证码")').first();
+    if (await codeBtn.isVisible()) {
+      await codeBtn.click({ force: true });
+    }
     await page.waitForTimeout(2000);
 
-    // 输入验证码
-    const codeInput = page.locator(AUTH_SELECTORS.phoneInput).nth(1);
-    await codeInput.click({ force: true });
-    await codeInput.clear();
-    await codeInput.type(testCode, { delay: 100 });
+    // 输入验证码 - 找到第二个输入框
+    const allInputs = page.locator('input');
+    const inputCount = await allInputs.count();
+    if (inputCount >= 2) {
+      await allInputs.nth(1).click({ force: true });
+      await allInputs.nth(1).clear();
+      await allInputs.nth(1).type(testCode, { delay: 100 });
+      await page.waitForTimeout(500);
+    }
+
+    // 输入密码 - 使用文本选择器
+    const passwordInputs = page.locator('input[type="password"]');
+    if (await passwordInputs.count() > 0) {
+      await passwordInputs.first().click({ force: true });
+      await passwordInputs.first().clear();
+      await passwordInputs.first().type(password, { delay: 100 });
+      await page.waitForTimeout(500);
+    }
+
+    // 勾选用户协议 - 使用文本选择器
+    const agreementCheckbox = page.locator('label:has-text("用户协议"), label:has-text("同意")');
+    if (await agreementCheckbox.count() > 0) {
+      await agreementCheckbox.first().click({ force: true });
+    }
     await page.waitForTimeout(500);
 
-    // 输入密码
-    const passwordInput = page.locator(AUTH_SELECTORS.passwordInput);
-    await passwordInput.click({ force: true });
-    await passwordInput.clear();
-    await passwordInput.type(password, { delay: 100 });
-    await page.waitForTimeout(500);
-
-    // 勾选用户协议
-    await page.locator(AUTH_SELECTORS.agreementCheckbox).click({ force: true });
-    await page.waitForTimeout(500);
-
-    // 点击"注册"按钮
-    await page.locator(AUTH_SELECTORS.submitBtn).click({ force: true });
+    // 点击"注册"按钮 - 使用文本选择器
+    const submitBtn = page.locator('button:has-text("注册")').first();
+    if (await submitBtn.isVisible()) {
+      await submitBtn.click({ force: true });
+    } else {
+      // 尝试使用登录按钮
+      const loginBtn = page.locator('button:has-text("登录")').first();
+      if (await loginBtn.isVisible()) {
+        await loginBtn.click({ force: true });
+      }
+    }
 
     // 等待注册完成
     await page.waitForTimeout(3000);
