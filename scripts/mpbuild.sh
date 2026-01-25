@@ -172,155 +172,8 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 临时修改 index.js 文件，硬编码环境
-echo "临时修改配置文件..."
-
-
-if [ "$ENV_TYPE" = "unit" ]; then
-    echo "# unit 环境，创建unit的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - unit 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 unit 配置
-const config = unitConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-
-elif [ "$ENV_TYPE" = "func" ]; then
-    echo "# func 环境，创建func的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - func 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 func 配置
-const config = funcConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-
-elif [ "$ENV_TYPE" = "uat" ]; then
-    echo "# uat 环境类型创建 UAT的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - uat 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 uat 配置
-const config = uatConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-else
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - prod 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 prod 配置
-const config = prodConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-fi
-
-# 移动临时文件为正式文件
-mv src/config/index.js.tmp src/config/index.js
+# 现在 index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
+echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
 # 根据环境类型修改对应配置文件中的 baseURL
 if [ "$ENV_TYPE" = "unit" ]; then
@@ -336,6 +189,15 @@ elif [ "$ENV_TYPE" = "prod" ]; then
     echo "修改 prod.js 中的 baseURL..."
     sed -i.bak "s|baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com'|baseURL: '$API_URL'|g" src/config/prod.js
 fi
+
+echo ""
+echo "========================================"
+echo "  环境配置结果"
+echo "========================================"
+echo "  环境类型: $ENV_TYPE"
+echo "  API URL:  $API_URL"
+echo "  配置文件: src/config/$ENV_TYPE.js"
+echo "========================================"
 
 
 PROJECT_PATH="$FRONTEND_PATH/src"

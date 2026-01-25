@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Android 小 构建脚本
-# 动态获取当前脚本的绝对路径，并运行微信小 构建命令
+# Android 云构建脚本
+# 动态获取当前脚本的绝对路径，并运行微信小程序构建命令
 
 set -e  # 遇到错误时退出
 
-echo "=== 开始 Android 小 构建 ==="
+echo "=== 开始 Android 云构建 ==="
 
 # 解析命令行参数
 # 支持格式: ./h5build.sh ENV_TYPE=func
@@ -92,7 +92,7 @@ mkdir -p $BUILD_DIST_PATH
 
 echo "构建输出目录: $BUILD_DIST_PATH"
 
-# 检查HBuilderX主应用 是否运行
+# 检查HBuilderX主应用程序是否运行
 echo "检查HBuilderX依赖..."
 HBuilderX_MAIN_PROCESS="/Applications/HBuilderX.app/Contents/MacOS/HBuilderX"
 
@@ -100,10 +100,10 @@ HBuilderX_MAIN_PROCESS="/Applications/HBuilderX.app/Contents/MacOS/HBuilderX"
 if ! pgrep -f "$HBuilderX_MAIN_PROCESS" > /dev/null; then
     echo ""
     echo "=========================================="
-    echo "错误: HBuilderX主应用 未运行"
+    echo "错误: HBuilderX主应用程序未运行"
     echo ""
-    echo "请先启动HBuilderX应用 ："
-    echo "1. 打开HBuilderX应用 "
+    echo "请先启动HBuilderX应用程序："
+    echo "1. 打开HBuilderX应用程序"
     echo "   或者双击 /Applications/HBuilderX.app"
     echo "2. 等待HBuilderX完全启动"
     echo "3. 确保看到HBuilderX主界面"
@@ -140,155 +140,8 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 临时修改 index.js 文件，硬编码环境
-echo "临时修改配置文件..."
-
-
-if [ "$ENV_TYPE" = "unit" ]; then
-    echo "# unit 环境，创建unit的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - unit 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 unit 配置
-const config = unitConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-
-elif [ "$ENV_TYPE" = "func" ]; then
-    echo "# func 环境，创建func的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - func 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 func 配置
-const config = funcConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-
-elif [ "$ENV_TYPE" = "uat" ]; then
-    echo "# uat 环境类型创建 UAT的配置文件"
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - uat 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 uat 配置
-const config = uatConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-else
-    cat > src/config/index.js.tmp << 'EOF'
-// 配置文件入口 - prod 环境
-// 导入各环境配置
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-// 直接返回 prod 配置
-const config = prodConfig
-
-// 导出环境信息
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-
-// 导出配置对象
-export default config
-
-// 便捷的配置获取函数
-export function getAPIBaseURL() {
-  return config.api.baseURL
-}
-
-export function getAPITimeout() {
-  return config.api.timeout
-}
-
-export function isFeatureEnabled(feature) {
-  return config.features[feature] || false
-}
-EOF
-fi
-
-# 移动临时文件为正式文件
-mv src/config/index.js.tmp src/config/index.js
+# 现在 index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
+echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
 # 根据环境类型修改对应配置文件中的 baseURL
 if [ "$ENV_TYPE" = "unit" ]; then
@@ -305,11 +158,20 @@ elif [ "$ENV_TYPE" = "prod" ]; then
     sed -i.bak "s|baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com'|baseURL: '$API_URL'|g" src/config/prod.js
 fi
 
+echo ""
+echo "========================================"
+echo "  环境配置结果"
+echo "========================================"
+echo "  环境类型: $ENV_TYPE"
+echo "  API URL:  $API_URL"
+echo "  配置文件: src/config/$ENV_TYPE.js"
+echo "========================================"
+
 
 PROJECT_PATH="$FRONTEND_PATH/src"
 # Use the correct output path based on environment
 BUILD_OUTPUT_PATH="$PROJECT_PATH/unpackage/dist/$BUILD_OUTPUT_DIR/android"
-# 运行 Android 小 构建命令
+# 运行 Android 云构建命令
 echo "正在构建Android 网站..."
 echo "构建参数："
 echo "  平台: android"
@@ -348,21 +210,21 @@ echo "下载链接 HTTP 状态: $HTTP_CODE"
 
 if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "403" ]; then
     echo "下载链接尚未就绪 (HTTP $HTTP_CODE)，开始智能轮询检查..."
-    
+
     # 轮询检查下载链接
     MAX_ATTEMPTS=60  # 最多检查 60 次
     ATTEMPT=0
     CHECK_INTERVAL=60  # 默认每 60 秒检查一次
-    
+
     while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
         ATTEMPT=$((ATTEMPT + 1))
         echo "[$ATTEMPT/$MAX_ATTEMPTS] 检查打包状态..."
-        
+
         sleep $CHECK_INTERVAL
-        
+
         HTTP_CODE=$(curl -s -I -o /dev/null -w "%{http_code}" "$DOWNLOAD_URL")
         echo "  HTTP 状态: $HTTP_CODE"
-        
+
         if [ "$HTTP_CODE" = "200" ]; then
             echo "✓ 打包完成！下载链接已就绪"
             break
@@ -373,7 +235,7 @@ if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "403" ]; then
             echo "  打包尚未完成 (HTTP $HTTP_CODE)，等待 $CHECK_INTERVAL 秒..."
         fi
     done
-    
+
     if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
         echo "错误: 超过最大等待时间，打包可能失败"
         exit 1
@@ -402,7 +264,7 @@ if ! adb devices | grep -q "device$"; then
     $HOME/Library/Android/sdk/emulator/emulator -avd Pixel &
     echo "等待模拟器启动..."
     sleep 30
-    
+
     # 等待模拟器完全启动
     MAX_WAIT=120
     WAIT_TIME=0
@@ -414,7 +276,7 @@ if ! adb devices | grep -q "device$"; then
         sleep 5
         WAIT_TIME=$((WAIT_TIME + 5))
     done
-    
+
     if [ $WAIT_TIME -ge $MAX_WAIT ]; then
         echo "错误: 模拟器启动超时"
         exit 1
@@ -446,7 +308,6 @@ fi
 # 验证构建结果
 
 
-
 # 恢复原始配置文件
 echo "恢复原始配置文件..."
 mv src/config/index.js.backup src/config/index.js
@@ -465,4 +326,4 @@ if [ -f "src/config/prod.js.bak" ]; then
     mv src/config/prod.js.bak src/config/prod.js
 fi
 
-echo "=== Android  构建完成 ==="
+echo "=== Android 云构建完成 ==="

@@ -97,6 +97,14 @@ else
         echo "使用方法: $0 ENV_TYPE=<unit|func|uat|prod>"
         exit 1
     fi
+
+    # Android 构建不支持 unit 环境
+    if [ "$ENV_TYPE" = "unit" ]; then
+        echo "错误: Android 构建不支持 unit 环境"
+        echo "请使用: func、uat 或 prod"
+        exit 1
+    fi
+
     echo "使用环境类型: $ENV_TYPE"
 fi
 
@@ -114,12 +122,49 @@ echo "前端项目路径: $FRONTEND_PATH"
 echo "Android 项目路径: $ANDROID_PROJECT_PATH"
 echo "目标 www 路径: $WWW_DEST_PATH"
 
-# 1. 构建 App 资源（使用 HBuilderX CLI 生成本地打包资源）
+# 1. 根据环境类型修改配置文件
 echo ""
-echo ">>> 步骤 1: 构建 App 资源..."
-echo "使用 HBuilderX CLI 生成本地打包资源..."
+echo ">>> 步骤 1: 配置环境 ($ENV_TYPE)..."
+
+# 备份原始配置文件
+cp src/config/index.js src/config/index.js.backup
+
+# 根据 ENV_TYPE 设置 API URL
+# index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
+if [ "$ENV_TYPE" = "unit" ]; then
+    API_URL="http://localhost:9999"
+    echo "配置 unit 环境..."
+    sed -i.bak "s|baseURL: 'http://localhost:9999'|baseURL: '$API_URL'|g" src/config/unit.js
+
+elif [ "$ENV_TYPE" = "func" ]; then
+    API_URL="http://localhost:9999"
+    echo "配置 func 环境..."
+    sed -i.bak "s|baseURL: 'http://localhost:8080'|baseURL: '$API_URL'|g" src/config/func.js
+
+elif [ "$ENV_TYPE" = "uat" ]; then
+    API_URL="https://localhost:8080"
+    echo "配置 uat 环境..."
+    sed -i.bak "s|baseURL: 'https://uat-safeguard-api.example.com'|baseURL: '$API_URL'|g" src/config/uat.js
+
+elif [ "$ENV_TYPE" = "prod" ]; then
+    API_URL="https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com"
+    echo "配置 prod 环境..."
+    sed -i.bak "s|baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com'|baseURL: '$API_URL'|g" src/config/prod.js
+fi
+
+echo "API URL: $API_URL"
+echo ""
+echo "========================================"
+echo "  环境配置结果"
+echo "========================================"
+echo "  环境类型: $ENV_TYPE"
+echo "  API URL:  $API_URL"
+echo "  配置文件: src/config/$ENV_TYPE.js"
+echo "========================================"
 
 # 使用 HBuilderX CLI 生成本地打包 App 资源
+echo ""
+echo ">>> 步骤 2: 构建 App 资源..."
 HBUILDERX_CLI="/Applications/HBuilderX.app/Contents/MacOS/cli"
 $HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
 
@@ -132,7 +177,7 @@ echo "✓ App 资源构建完成"
 
 # 2. 复制到 Android 项目
 echo ""
-echo ">>> 步骤 2: 复制资源到 Android 项目..."
+echo ">>> 步骤 3: 复制资源到 Android 项目..."
 
 # 查找生成的 App 资源目录
 H5_SOURCE_PATH="$FRONTEND_PATH/src/unpackage/resources/__UNI__AA79EBE/www"
@@ -153,10 +198,10 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
-# 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP (仅开发环境)
-if [ "$ENV_TYPE" = "func" ] || [ "$ENV_TYPE" = "unit" ]; then
+# 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP (func/uat 环境)
+if [ "$ENV_TYPE" = "func" ] || [ "$ENV_TYPE" = "uat" ]; then
     echo ""
-    echo ">>> 步骤 3: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
+    echo ">>> 步骤 4: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
 
     # Android 模拟器访问宿主机的特殊 IP
     find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:9999/10.0.2.2:9999/g' {} \;
@@ -165,12 +210,12 @@ if [ "$ENV_TYPE" = "func" ] || [ "$ENV_TYPE" = "unit" ]; then
     echo "✓ URL 已替换为 10.0.2.2:9999 (Android 模拟器访问开发机的地址)"
 else
     echo ""
-    echo ">>> 步骤 3: 跳过 URL 替换 ($ENV_TYPE 环境使用真实域名)"
+    echo ">>> 步骤 4: 跳过 URL 替换 (使用配置文件中的 URL)"
 fi
 
 # 4. 准备 launcher 图标
 echo ""
-echo ">>> 步骤 4: 准备 launcher 图标..."
+echo ">>> 步骤 5: 准备 launcher 图标..."
 
 RES_PATH="$ANDROID_PROJECT_PATH/src/main/res"
 ICON_SOURCE="$RES_PATH/drawable/icon.png"
@@ -188,7 +233,7 @@ fi
 
 # 5. 使用 gradle 打包并安装
 echo ""
-echo ">>> 步骤 5: 构建并安装 APK..."
+echo ">>> 步骤 6: 构建并安装 APK..."
 
 cd "$ANDROID_PROJECT_PATH"
 
@@ -236,6 +281,34 @@ fi
 echo ""
 echo "启动应用..."
 adb shell am start -n com.leadagile.safeguard/io.dcloud.PandoraEntry
+
+# 6. 恢复原始配置文件
+echo ""
+echo ">>> 步骤 7: 恢复原始配置文件..."
+
+# 恢复 index.js
+if [ -f "src/config/index.js.backup" ]; then
+    mv src/config/index.js.backup src/config/index.js
+    echo "✓ 已恢复 src/config/index.js"
+fi
+
+# 恢复环境配置文件备份
+if [ -f "src/config/unit.js.bak" ]; then
+    mv src/config/unit.js.bak src/config/unit.js
+    echo "✓ 已恢复 src/config/unit.js"
+fi
+if [ -f "src/config/func.js.bak" ]; then
+    mv src/config/func.js.bak src/config/func.js
+    echo "✓ 已恢复 src/config/func.js"
+fi
+if [ -f "src/config/uat.js.bak" ]; then
+    mv src/config/uat.js.bak src/config/uat.js
+    echo "✓ 已恢复 src/config/uat.js"
+fi
+if [ -f "src/config/prod.js.bak" ]; then
+    mv src/config/prod.js.bak src/config/prod.js
+    echo "✓ 已恢复 src/config/prod.js"
+fi
 
 echo ""
 echo "=== Android 构建完成 ==="
