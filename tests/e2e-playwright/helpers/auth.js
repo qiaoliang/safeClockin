@@ -350,13 +350,19 @@ export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMI
   await waitForLoginPage(page);
 
   // 点击"手机号登录"按钮
+  await expect(page.locator(AUTH_SELECTORS.phoneLoginBtn)).toBeVisible({ timeout: 15000 });
   await page.locator(AUTH_SELECTORS.phoneLoginBtn).click({ force: true });
-  await page.waitForSelector(AUTH_SELECTORS.passwordTab, { timeout: 10000 });
+
+  // 等待手机登录页面加载，使用 data-testid
+  await expect(page.locator('[data-testid="tab-password-login"]')).toBeVisible({ timeout: 15000 });
   await waitForPage(page);
 
-  // 切换到"密码登录"并登录
-  await page.locator(AUTH_SELECTORS.passwordTab).filter({ hasText: '密码登录' }).click({ force: true });
+  // 切换到"密码登录" - 使用正确的选择器
+  await page.locator('[data-testid="tab-password-login"]').click({ force: true });
   await page.waitForTimeout(500);
+
+  // 等待密码输入框可见
+  await expect(page.locator(AUTH_SELECTORS.passwordInput).first().locator('input').or(page.locator('[type="password"]'))).toBeVisible({ timeout: 10000 });
 
   await page.locator(AUTH_SELECTORS.phoneInput).fill(superAdmin.phone);
   await page.locator(AUTH_SELECTORS.passwordInput).fill(superAdmin.password);
