@@ -145,11 +145,11 @@ echo "  配置文件: src/config/index.js (已修改)"
 echo "========================================"
 
 # 使用 HBuilderX CLI 生成本地打包 App 资源
-# 传递 VITE_ENV_TYPE 环境变量给 HBuilderX CLI
+# 传递 ENV_TYPE 环境变量给 HBuilderX CLI
 echo ""
 echo ">>> 步骤 2: 构建 App 资源..."
 HBUILDERX_CLI="/Applications/HBuilderX.app/Contents/MacOS/cli"
-VITE_ENV_TYPE=$ENV_TYPE $HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
+ENV_TYPE=$ENV_TYPE $HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
 
 if [ $? -ne 0 ]; then
     echo "错误: HBuilderX CLI 构建失败"
