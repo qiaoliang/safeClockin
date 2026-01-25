@@ -159,7 +159,7 @@ elif [ "$ENV_TYPE" = "uat" ]; then
     API_URL="https://localhost:8080"
 elif [ "$ENV_TYPE" = "prod" ]; then
     ENV_TYPE="prod"
-    API_URL="https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com"
+    API_URL="https://www.leadagile.cn"
 elif [ "$ENV_TYPE" = "func" ]; then
     ENV_TYPE="func"
     API_URL="http://localhost:9999"
@@ -187,7 +187,7 @@ elif [ "$ENV_TYPE" = "uat" ]; then
     sed -i.bak "s|baseURL: 'https://uat-safeguard-api.example.com'|baseURL: '$API_URL'|g" src/config/uat.js
 elif [ "$ENV_TYPE" = "prod" ]; then
     echo "修改 prod.js 中的 baseURL..."
-    sed -i.bak "s|baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com'|baseURL: '$API_URL'|g" src/config/prod.js
+    sed -i.bak "s|baseURL: 'https://www.leadagile.cn'|baseURL: '$API_URL'|g" src/config/prod.js
 fi
 
 echo ""

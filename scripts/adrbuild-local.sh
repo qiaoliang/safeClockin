@@ -147,9 +147,9 @@ elif [ "$ENV_TYPE" = "uat" ]; then
     sed -i.bak "s|baseURL: 'https://uat-safeguard-api.example.com'|baseURL: '$API_URL'|g" src/config/uat.js
 
 elif [ "$ENV_TYPE" = "prod" ]; then
-    API_URL="https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com"
+    API_URL="https://www.leadagile.cn"
     echo "配置 prod 环境..."
-    sed -i.bak "s|baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com'|baseURL: '$API_URL'|g" src/config/prod.js
+    sed -i.bak "s|baseURL: 'https://www.leadagile.cn'|baseURL: '$API_URL'|g" src/config/prod.js
 fi
 
 echo "API URL: $API_URL"
