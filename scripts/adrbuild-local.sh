@@ -131,8 +131,11 @@ cp src/config/index.js src/config/index.js.backup
 
 # 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
 echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
-# 替换 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'prod'
+# 替换所有可能的默认值（'func'、'prod'、'uat'、'unit'）
 sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
+sed -i '' "s/|| 'prod'/|| '$ENV_TYPE'/g" src/config/index.js
+sed -i '' "s/|| 'uat'/|| '$ENV_TYPE'/g" src/config/index.js
+sed -i '' "s/|| 'unit'/|| '$ENV_TYPE'/g" src/config/index.js
 
 echo "API URL: https://www.leadagile.cn"
 echo ""
