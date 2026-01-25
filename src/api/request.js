@@ -349,7 +349,7 @@ export const request = (options) => {
       }
       
       console.log('🔍 Layer 4调试仪表 - 请求取证上下文:')
-      console.table(debugContext)
+      console.log(JSON.stringify(debugContext, null, 2))
       
       // 敏感数据脱敏记录
       const sanitizedData = {}
