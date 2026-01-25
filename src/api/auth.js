@@ -73,6 +73,14 @@ export const authApi = {
             transformedData['communityName'] = value
           } else if (key === 'role_name') {
             transformedData['roleName'] = value
+          } else if (key === 'birth_date') {
+            transformedData['birthDate'] = value
+          } else if (key === 'emergency_contact_name') {
+            transformedData['emergencyContactName'] = value
+          } else if (key === 'emergency_contact_phone') {
+            transformedData['emergencyContactPhone'] = value
+          } else if (key === 'emergency_contact_address') {
+            transformedData['emergencyContactAddress'] = value
           } else {
             transformedData[key] = value
           }
@@ -90,6 +98,14 @@ export const authApi = {
         transformedData['avatar_url'] = value
       } else if (key === 'nickName') {
         transformedData['nickname'] = value
+      } else if (key === 'birthDate') {
+        transformedData['birth_date'] = value
+      } else if (key === 'emergencyContactName') {
+        transformedData['emergency_contact_name'] = value
+      } else if (key === 'emergencyContactPhone') {
+        transformedData['emergency_contact_phone'] = value
+      } else if (key === 'emergencyContactAddress') {
+        transformedData['emergency_contact_address'] = value
       } else {
         transformedData[key] = value
       }

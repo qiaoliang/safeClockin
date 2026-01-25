@@ -118,6 +118,38 @@
           maxlength="100"
         />
       </view>
+
+      <!-- 性别 -->
+      <view class="row">
+        <text class="label">
+          性别
+        </text>
+        <picker
+          :value="genderIndex"
+          :range="genderOptions"
+          @change="onGenderChange"
+        >
+          <view class="picker-value">
+            {{ formData.gender ? genderText(formData.gender) : '请选择性别' }}
+          </view>
+        </picker>
+      </view>
+
+      <!-- 出生日期 -->
+      <view class="row">
+        <text class="label">
+          出生日期
+        </text>
+        <picker
+          mode="date"
+          :value="formData.birth_date"
+          @change="onBirthDateChange"
+        >
+          <view class="picker-value">
+            {{ formData.birth_date || '请选择出生日期' }}
+          </view>
+        </picker>
+      </view>
     </view>
 
     <!-- 紧急联系人区域 -->
@@ -337,11 +369,36 @@ const formData = ref({
   name: '',
   address: '',
   motto: '',
+  gender: '',
+  birth_date: '',
   emergency_contact_name: '',
   emergency_contact_phone: '',
   emergency_contact_address: '',
   avatar_url: ''
 })
+
+// 性别选项
+const genderOptions = ['男', '女', '其他']
+
+function genderText(value) {
+  const map = { male: '男', female: '女', other: '其他' }
+  return map[value] || value || ''
+}
+
+const genderIndex = computed(() => {
+  const map = { male: 0, female: 1, other: 2 }
+  return map[formData.value.gender] ?? -1
+})
+
+function onGenderChange(e) {
+  const index = parseInt(e.detail.value)
+  const values = ['male', 'female', 'other']
+  formData.value.gender = values[index]
+}
+
+function onBirthDateChange(e) {
+  formData.value.birth_date = e.detail.value
+}
 
 const passwordForm = ref({
   old_password: '',
@@ -386,9 +443,11 @@ onMounted(() => {
       name: userInfo.name || '',
       address: userInfo.address || '',
       motto: userInfo.motto || '',
-      emergency_contact_name: userInfo.emergency_contact_name || '',
-      emergency_contact_phone: userInfo.emergency_contact_phone || '',
-      emergency_contact_address: userInfo.emergency_contact_address || '',
+      gender: userInfo.gender || '',
+      birth_date: userInfo.birth_date || userInfo.birthDate || '',
+      emergency_contact_name: userInfo.emergency_contact_name || userInfo.emergencyContactName || '',
+      emergency_contact_phone: userInfo.emergency_contact_phone || userInfo.emergencyContactPhone || '',
+      emergency_contact_address: userInfo.emergency_contact_address || userInfo.emergencyContactAddress || '',
       avatar_url: userInfo.avatarUrl || userInfo.avatar_url || ''
     }
   }
@@ -413,13 +472,15 @@ async function saveNickname() {
 
 async function saveAll() {
   if (!formData.value.nickname.trim()) return uni.showToast({ title: '请输入昵称', icon: 'none' })
-  
+
   try {
     saving.value = true
     const res = await authApi.updateUserProfile({
       name: formData.value.name,
       address: formData.value.address,
       motto: formData.value.motto,
+      gender: formData.value.gender,
+      birth_date: formData.value.birth_date,
       emergency_contact_name: formData.value.emergency_contact_name,
       emergency_contact_phone: formData.value.emergency_contact_phone,
       emergency_contact_address: formData.value.emergency_contact_address
@@ -822,11 +883,18 @@ async function handleDeleteMedicalHistory(historyId) {
 }
 
 .picker {
-  width: 160rpx;
+  flex: 1;
   padding: 16rpx;
   border: 2rpx solid #ddd;
   border-radius: 8rpx;
   text-align: center;
+}
+
+.picker-value {
+  flex: 1;
+  padding: 16rpx;
+  color: #333;
+  font-size: 28rpx;
 }
 
 .editing-container {
