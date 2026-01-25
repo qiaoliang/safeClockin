@@ -7,7 +7,21 @@ import uatConfig from './uat.js'
 import prodConfig from './prod.js'
 
 // 根据 ENV_TYPE 选择配置
-const ENV_TYPE = process.env.ENV_TYPE || 'prod'
+// #ifdef H5
+const ENV_TYPE = process.env.ENV_TYPE || 'func'
+// #endif
+
+// #ifdef MP-WEIXIN
+// 微信小程序没有 process 对象，使用默认值
+const ENV_TYPE = 'prod'
+// #endif
+
+// #ifndef H5
+// #ifndef MP-WEIXIN
+// 其他环境（如 App）使用默认值
+const ENV_TYPE = 'func'
+// #endif
+// #endif
 
 const configMap = {
   unit: unitConfig,
