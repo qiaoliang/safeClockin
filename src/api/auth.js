@@ -28,7 +28,7 @@ export const authApi = {
           } else if (key === 'wechat_openid') {
             transformedData['wechatOpenid'] = value
           } else if (key === 'phone_number') {
-            transformedData['phone_number'] = value
+            transformedData['phoneNumber'] = value
           } else if (key === 'avatar_url') {
             transformedData['avatarUrl'] = value
           } else if (key === 'refresh_token') {
@@ -260,7 +260,7 @@ export const authApi = {
         } else if (key === 'wechat_openid') {
           transformedData['wechatOpenid'] = value
         } else if (key === 'phone_number') {
-          transformedData['phone_number'] = value
+          transformedData['phoneNumber'] = value
         } else if (key === 'avatar_url') {
           transformedData['avatarUrl'] = value
         } else if (key === 'refresh_token') {
@@ -294,7 +294,7 @@ export const authApi = {
         } else if (key === 'wechat_openid') {
           transformedData['wechatOpenid'] = value
         } else if (key === 'phone_number') {
-          transformedData['phone_number'] = value
+          transformedData['phoneNumber'] = value
         } else if (key === 'avatar_url') {
           transformedData['avatarUrl'] = value
         } else if (key === 'refresh_token') {
@@ -333,7 +333,7 @@ export const authApi = {
         } else if (key === 'wechat_openid') {
           transformedData['wechatOpenid'] = value
         } else if (key === 'phone_number') {
-          transformedData['phone_number'] = value
+          transformedData['phoneNumber'] = value
         } else if (key === 'avatar_url') {
           transformedData['avatarUrl'] = value
         } else if (key === 'refresh_token') {
