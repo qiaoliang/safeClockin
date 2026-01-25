@@ -1,12 +1,13 @@
-// 配置文件入口 - 构建时已选择环境配置
-// Environment: prod
+// 配置文件入口 - 根据 ENV_TYPE 自动选择环境配置
+// ENV_TYPE: unit (单元测试), func (功能测试), uat (用户验收测试), prod (生产环境)
 
 import unitConfig from './unit.js'
 import funcConfig from './func.js'
 import uatConfig from './uat.js'
 import prodConfig from './prod.js'
 
-const ENV_TYPE = 'prod'
+// 根据 ENV_TYPE 选择配置
+const ENV_TYPE = process.env.ENV_TYPE || 'prod'
 
 const configMap = {
   unit: unitConfig,

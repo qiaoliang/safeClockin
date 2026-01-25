@@ -128,42 +128,11 @@ echo ">>> 步骤 1: 配置环境 ($ENV_TYPE)..."
 
 # 备份原始配置文件
 cp src/config/index.js src/config/index.js.backup
-cp "src/config/$ENV_TYPE.js" "src/config/$ENV_TYPE.js.bak"
 
-# 直接用目标环境的配置替换 index.js（确保构建时使用正确的配置）
-echo "使用 $ENV_TYPE 环境配置..."
-cat > src/config/index.js << 'INDEXEOF'
-// 配置文件入口 - 构建时已选择环境配置
-// Environment: ENV_PLACEHOLDER
-
-import unitConfig from './unit.js'
-import funcConfig from './func.js'
-import uatConfig from './uat.js'
-import prodConfig from './prod.js'
-
-const ENV_TYPE = 'ENV_PLACEHOLDER'
-
-const configMap = {
-  unit: unitConfig,
-  func: funcConfig,
-  uat: uatConfig,
-  prod: prodConfig
-}
-
-const config = configMap[ENV_TYPE] || funcConfig
-
-export const currentEnv = config.env
-export const isProduction = config.env === 'prod'
-export const isDevelopment = config.env === 'func'
-export const isTesting = config.env === 'unit'
-export default config
-export function getAPIBaseURL() { return config.api.baseURL }
-export function getAPITimeout() { return config.api.timeout }
-export function isFeatureEnabled(feature) { return config.features[feature] || false }
-INDEXEOF
-
-# 替换占位符
-sed -i '' "s|ENV_PLACEHOLDER|$ENV_TYPE|g" src/config/index.js
+# 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
+echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
+# 替换 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'prod'
+sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
 
 echo "API URL: https://www.leadagile.cn"
 echo ""
@@ -172,7 +141,7 @@ echo "  环境配置结果"
 echo "========================================"
 echo "  环境类型: $ENV_TYPE"
 echo "  API URL:  https://www.leadagile.cn"
-echo "  配置文件: src/config/index.js (已替换)"
+echo "  配置文件: src/config/index.js (已修改)"
 echo "========================================"
 
 # 使用 HBuilderX CLI 生成本地打包 App 资源
@@ -316,24 +285,6 @@ echo ">>> 步骤 7: 恢复原始配置文件..."
 if [ -f "src/config/index.js.backup" ]; then
     mv src/config/index.js.backup src/config/index.js
     echo "✓ 已恢复 src/config/index.js"
-fi
-
-# 恢复环境配置文件备份
-if [ -f "src/config/unit.js.bak" ]; then
-    mv src/config/unit.js.bak src/config/unit.js
-    echo "✓ 已恢复 src/config/unit.js"
-fi
-if [ -f "src/config/func.js.bak" ]; then
-    mv src/config/func.js.bak src/config/func.js
-    echo "✓ 已恢复 src/config/func.js"
-fi
-if [ -f "src/config/uat.js.bak" ]; then
-    mv src/config/uat.js.bak src/config/uat.js
-    echo "✓ 已恢复 src/config/uat.js"
-fi
-if [ -f "src/config/prod.js.bak" ]; then
-    mv src/config/prod.js.bak src/config/prod.js
-    echo "✓ 已恢复 src/config/prod.js"
 fi
 
 echo ""

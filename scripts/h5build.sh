@@ -145,8 +145,8 @@ cp src/config/index.js src/config/index.js.backup
 
 # 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
 echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
-sed -i '' "s/|| 'func')/|| '$ENV_TYPE')/g" src/config/index.js
-sed -i '' "s/|| 'func'\]\)/|| '$ENV_TYPE'])/g" src/config/index.js
+# 替换 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'prod'
+sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
 
 echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
