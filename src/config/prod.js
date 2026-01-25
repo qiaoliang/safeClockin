@@ -5,7 +5,7 @@ export default {
 
   // API 配置
   api: {
-    baseURL: 'https://flask-7pin-202852-6-1383741966.sh.run.tcloudbase.com', // 生产环境API地址
+    baseURL: 'https://www.leadagile.cn', // 生产环境API地址
     timeout: 20000
   },
 
