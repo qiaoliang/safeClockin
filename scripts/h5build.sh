@@ -143,7 +143,11 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 现在 index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
+# 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
+echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
+sed -i '' "s/|| 'func')/|| '$ENV_TYPE')/g" src/config/index.js
+sed -i '' "s/|| 'func'\]\)/|| '$ENV_TYPE'])/g" src/config/index.js
+
 echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
 # 根据环境类型修改对应配置文件中的 baseURL
@@ -195,8 +199,9 @@ else
 fi
 
 # 运行 HBuilderX CLI 构建
+# 传递 VITE_ENV_TYPE 环境变量给 HBuilderX CLI
 echo "运行 HBuilderX CLI 构建..."
-NODE_ENV=development /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
+VITE_ENV_TYPE=$ENV_TYPE NODE_ENV=development /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
 
 # HBuilderX CLI 在 worktree 中可能会将构建输出到主仓库路径
 # 检查并处理这种情况

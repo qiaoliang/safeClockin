@@ -172,7 +172,11 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 现在 index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
+# 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
+echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
+sed -i '' "s/|| 'func')/|| '$ENV_TYPE')/g" src/config/index.js
+sed -i '' "s/|| 'func'\]\)/|| '$ENV_TYPE'])/g" src/config/index.js
+
 echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
 # 根据环境类型修改对应配置文件中的 baseURL

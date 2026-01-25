@@ -128,45 +128,59 @@ echo ">>> 步骤 1: 配置环境 ($ENV_TYPE)..."
 
 # 备份原始配置文件
 cp src/config/index.js src/config/index.js.backup
+cp "src/config/$ENV_TYPE.js" "src/config/$ENV_TYPE.js.bak"
 
-# 根据 ENV_TYPE 设置 API URL
-# index.js 会根据 ENV_TYPE 自动选择配置，无需临时修改
-if [ "$ENV_TYPE" = "unit" ]; then
-    API_URL="http://localhost:9999"
-    echo "配置 unit 环境..."
-    sed -i.bak "s|baseURL: 'http://localhost:9999'|baseURL: '$API_URL'|g" src/config/unit.js
+# 直接用目标环境的配置替换 index.js（确保构建时使用正确的配置）
+echo "使用 $ENV_TYPE 环境配置..."
+cat > src/config/index.js << 'INDEXEOF'
+// 配置文件入口 - 构建时已选择环境配置
+// Environment: ENV_PLACEHOLDER
 
-elif [ "$ENV_TYPE" = "func" ]; then
-    API_URL="http://localhost:9999"
-    echo "配置 func 环境..."
-    sed -i.bak "s|baseURL: 'http://localhost:8080'|baseURL: '$API_URL'|g" src/config/func.js
+import unitConfig from './unit.js'
+import funcConfig from './func.js'
+import uatConfig from './uat.js'
+import prodConfig from './prod.js'
 
-elif [ "$ENV_TYPE" = "uat" ]; then
-    API_URL="https://localhost:8080"
-    echo "配置 uat 环境..."
-    sed -i.bak "s|baseURL: 'https://uat-safeguard-api.example.com'|baseURL: '$API_URL'|g" src/config/uat.js
+const ENV_TYPE = 'ENV_PLACEHOLDER'
 
-elif [ "$ENV_TYPE" = "prod" ]; then
-    API_URL="https://www.leadagile.cn"
-    echo "配置 prod 环境..."
-    sed -i.bak "s|baseURL: 'https://www.leadagile.cn'|baseURL: '$API_URL'|g" src/config/prod.js
-fi
+const configMap = {
+  unit: unitConfig,
+  func: funcConfig,
+  uat: uatConfig,
+  prod: prodConfig
+}
 
-echo "API URL: $API_URL"
+const config = configMap[ENV_TYPE] || funcConfig
+
+export const currentEnv = config.env
+export const isProduction = config.env === 'prod'
+export const isDevelopment = config.env === 'func'
+export const isTesting = config.env === 'unit'
+export default config
+export function getAPIBaseURL() { return config.api.baseURL }
+export function getAPITimeout() { return config.api.timeout }
+export function isFeatureEnabled(feature) { return config.features[feature] || false }
+INDEXEOF
+
+# 替换占位符
+sed -i '' "s|ENV_PLACEHOLDER|$ENV_TYPE|g" src/config/index.js
+
+echo "API URL: https://www.leadagile.cn"
 echo ""
 echo "========================================"
 echo "  环境配置结果"
 echo "========================================"
 echo "  环境类型: $ENV_TYPE"
-echo "  API URL:  $API_URL"
-echo "  配置文件: src/config/$ENV_TYPE.js"
+echo "  API URL:  https://www.leadagile.cn"
+echo "  配置文件: src/config/index.js (已替换)"
 echo "========================================"
 
 # 使用 HBuilderX CLI 生成本地打包 App 资源
+# 传递 VITE_ENV_TYPE 环境变量给 HBuilderX CLI
 echo ""
 echo ">>> 步骤 2: 构建 App 资源..."
 HBUILDERX_CLI="/Applications/HBuilderX.app/Contents/MacOS/cli"
-$HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
+VITE_ENV_TYPE=$ENV_TYPE $HBUILDERX_CLI publish app --type appResource --project "$FRONTEND_PATH/src"
 
 if [ $? -ne 0 ]; then
     echo "错误: HBuilderX CLI 构建失败"
@@ -254,8 +268,20 @@ echo "使用 gradle: $GRADLE_CMD"
 # 检查并卸载旧版本（确保安装最新版本）
 if adb shell pm list packages | grep -q "com.leadagile.safeguard"; then
     echo "发现旧版本应用，正在卸载..."
-    adb uninstall com.leadagile.safeguard
-    echo "✓ 已卸载旧版本"
+    if adb uninstall com.leadagile.safeguard; then
+        echo "✓ 已卸载旧版本"
+    else
+        echo "✗ 卸载旧版本失败，尝试强制卸载..."
+        # 尝试使用 -k 参数卸载（保留数据）
+        adb uninstall -k com.leadagile.safeguard || true
+        # 再次尝试卸载
+        if adb uninstall com.leadagile.safeguard; then
+            echo "✓ 强制卸载成功"
+        else
+            echo "✗ 卸载失败，检查是否有权限问题"
+            exit 1
+        fi
+    fi
 else
     echo "未发现旧版本应用"
 fi
