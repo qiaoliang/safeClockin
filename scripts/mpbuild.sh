@@ -174,8 +174,14 @@ cp src/config/index.js src/config/index.js.backup
 
 # 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
 echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
-# 替换 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'prod'
+# 替换 H5 部分的 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'xxx'
 sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
+
+# 微信小程序没有 process 对象，需要直接修改 MP-WEIXIN 部分的 ENV_TYPE 值
+if [ "$ENV_TYPE" != "prod" ]; then
+    echo "修改 MP-WEIXIN 部分的 ENV_TYPE 值为 $ENV_TYPE..."
+    sed -i '' "s/const ENV_TYPE = 'prod'/const ENV_TYPE = '$ENV_TYPE'/g" src/config/index.js
+fi
 
 echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
 
