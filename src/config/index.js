@@ -29,6 +29,9 @@ config = { env: 'prod', api: { baseURL: 'https://www.leadagile.cn' }, app: { nam
 // 非 H5 环境使用运行时配置
 
 // #ifdef MP-WEIXIN
+// 微信小程序：构建时根据 ENV_TYPE 替换整行 config 赋值
+// 注意：mpbuild.sh 会将此行替换为具体的配置对象
+// #define ENV_TYPE_PROD
 config = configMap['prod']
 // #endif
 
