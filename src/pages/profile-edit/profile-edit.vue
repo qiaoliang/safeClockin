@@ -471,23 +471,36 @@ async function saveNickname() {
 }
 
 async function saveAll() {
-  if (!formData.value.nickname.trim()) return uni.showToast({ title: '请输入昵称', icon: 'none' })
+  if (!formData.value.nickname.trim() && !formData.value.nickName.trim()) {
+    return uni.showToast({ title: '请输入昵称', icon: 'none' })
+  }
 
   try {
     saving.value = true
-    const res = await authApi.updateUserProfile({
+
+    const updateData = {
+      // 同时传递 nickname 和 nickName，兼容后端和 store 的不同字段名
+      nickname: formData.value.nickname || formData.value.nickName || '',
+      nickName: formData.value.nickName || formData.value.nickname || '',
       name: formData.value.name,
       address: formData.value.address,
       motto: formData.value.motto,
       gender: formData.value.gender,
-      birth_date: formData.value.birth_date,
-      emergency_contact_name: formData.value.emergency_contact_name,
-      emergency_contact_phone: formData.value.emergency_contact_phone,
-      emergency_contact_address: formData.value.emergency_contact_address
-    })
-    
+      birthDate: formData.value.birth_date,
+      emergencyContactName: formData.value.emergency_contact_name,
+      emergencyContactPhone: formData.value.emergency_contact_phone,
+      emergencyContactAddress: formData.value.emergency_contact_address
+    }
+
+    console.log('saveAll() - 发送的数据:', updateData)
+
+    const res = await authApi.updateUserProfile(updateData)
+
+    console.log('saveAll() - 接收的响应:', res)
+
     if (res.code === 1) {
       await userStore.fetchUserInfo()
+      console.log('saveAll() - 刷新后的用户信息:', userStore.userInfo)
       uni.showToast({ title: '保存成功', icon: 'none' })
       setTimeout(() => {
         uni.navigateBack()
@@ -643,11 +656,14 @@ function handleEditMedicalHistory(history) {
 async function handleSaveMedicalHistory(formData) {
   try {
     saving.value = true
-    
+
     let res
     if (editingMedicalHistory.value.id) {
       // 更新病史
-      res = await updateMedicalHistory(editingMedicalHistory.value.id, formData)
+      res = await updateMedicalHistory(editingMedicalHistory.value.id, {
+        ...formData,
+        user_id: userStore.userInfo?.userId || userStore.userInfo?.user_id
+      })
     } else {
       // 添加病史
       res = await addMedicalHistory({

@@ -23,11 +23,21 @@ export const useUserStore = defineStore("user", {
                 profile: {
                     userId: null,
                     nickname: null,
+                    nickName: null, // 兼容 getUserProfile 转换
                     avatarUrl: null,
                     role: null,
                     phoneNumber: null,
                     wechatOpenid: null,
                     isVerified: false,
+                    // 扩展用户信息字段
+                    name: null,
+                    gender: null,
+                    birthDate: null, // 出生日期
+                    address: null, // 个人地址
+                    motto: null, // 座右铭
+                    emergencyContactName: null, // 紧急联系人姓名
+                    emergencyContactPhone: null, // 紧急联系人电话
+                    emergencyContactAddress: null, // 紧急联系人地址
                     // 社区角色信息：支持用户在多个社区担任不同角色
                     communityRoles: {}, // { communityId: role } 格式
                     communityRole: null, // 保持向后兼容，存储当前社区的角色
@@ -194,11 +204,22 @@ export const useUserStore = defineStore("user", {
                     profile: {
                         userId: null,
                         nickname: null,
+                        nickName: null,
                         avatarUrl: null,
                         role: null,
                         phoneNumber: null,
                         wechatOpenid: null,
                         isVerified: false,
+                        name: null,
+                        gender: null,
+                        birthDate: null,
+                        address: null,
+                        motto: null,
+                        emergencyContactName: null,
+                        emergencyContactPhone: null,
+                        emergencyContactAddress: null,
+                        communityRoles: {},
+                        communityRole: null,
                     },
                     cache: {
                         checkinData: null,
@@ -266,13 +287,23 @@ export const useUserStore = defineStore("user", {
                                 expiresAt: null,
                             },
                             profile: savedState.profile || {
-                                                    userId: null,
-                                                    nickname: null,
-                                                    avatarUrl: null,
-                                                    role: null,
-                                                    phoneNumber: null,
-                                                    wechatOpenid: null,
-                                                    isVerified: false,                                communityRoles: {},
+                                userId: null,
+                                nickname: null,
+                                nickName: null,
+                                avatarUrl: null,
+                                role: null,
+                                phoneNumber: null,
+                                wechatOpenid: null,
+                                isVerified: false,
+                                name: null,
+                                gender: null,
+                                birthDate: null,
+                                address: null,
+                                motto: null,
+                                emergencyContactName: null,
+                                emergencyContactPhone: null,
+                                emergencyContactAddress: null,
+                                communityRoles: {},
                                 communityRole: null,
                             },
                             cache: savedState.cache || {
@@ -573,11 +604,22 @@ export const useUserStore = defineStore("user", {
                 profile: {
                     userId: null,
                     nickname: null,
+                    nickName: null,
                     avatarUrl: null,
                     role: null,
                     phoneNumber: null,
                     wechatOpenid, // 保留微信OpenID用于快速登录
                     isVerified: false,
+                    name: null,
+                    gender: null,
+                    birthDate: null,
+                    address: null,
+                    motto: null,
+                    emergencyContactName: null,
+                    emergencyContactPhone: null,
+                    emergencyContactAddress: null,
+                    communityRoles: {},
+                    communityRole: null,
                 },
                 cache: {
                     checkinData: null,
@@ -804,11 +846,22 @@ export const useUserStore = defineStore("user", {
                 profile: {
                     userId: null,
                     nickname: null,
+                    nickName: null,
                     avatarUrl: null,
                     role: null,
                     phoneNumber: null,
                     wechatOpenid: null,
                     isVerified: false,
+                    name: null,
+                    gender: null,
+                    birthDate: null,
+                    address: null,
+                    motto: null,
+                    emergencyContactName: null,
+                    emergencyContactPhone: null,
+                    emergencyContactAddress: null,
+                    communityRoles: {},
+                    communityRole: null,
                 },
                 cache: {
                     checkinData: null,

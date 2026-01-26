@@ -92,25 +92,41 @@ export const authApi = {
   },
   updateUserProfile:(data) => {
     // 将前端的驼峰命名转换为后端的下划线命名
+    console.log('updateUserProfile - 接收到的原始数据:', data)
+    
     const transformedData = {}
     for (const [key, value] of Object.entries(data)) {
       if (key === 'avatarUrl') {
         transformedData['avatar_url'] = value
+        console.log(`转换: ${key} -> avatar_url = ${value}`)
       } else if (key === 'nickName') {
         transformedData['nickname'] = value
+        console.log(`转换: ${key} -> nickname = ${value}`)
+      } else if (key === 'name') {
+        transformedData['name'] = value
+        console.log(`保留: ${key} = ${value}`)
       } else if (key === 'birthDate') {
         transformedData['birth_date'] = value
+        console.log(`转换: ${key} -> birth_date = ${value}`)
       } else if (key === 'emergencyContactName') {
         transformedData['emergency_contact_name'] = value
+        console.log(`转换: ${key} -> emergency_contact_name = ${value}`)
       } else if (key === 'emergencyContactPhone') {
         transformedData['emergency_contact_phone'] = value
+        console.log(`转换: ${key} -> emergency_contact_phone = ${value}`)
       } else if (key === 'emergencyContactAddress') {
         transformedData['emergency_contact_address'] = value
+        console.log(`转换: ${key} -> emergency_contact_address = ${value}`)
+      } else if (key === 'name') {
+        transformedData['name'] = value
+        console.log(`原样保留: ${key} = ${value}`)
       } else {
         transformedData[key] = value
+        console.log(`原样保留: ${key} = ${value}`)
       }
     }
-    console.log('updateUserProfile - 发送的数据:', transformedData)
+    console.log('updateUserProfile - 转换后的数据:', transformedData)
+    
     return request({
       url: '/api/user/profile',
       method: 'POST',

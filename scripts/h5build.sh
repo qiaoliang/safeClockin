@@ -143,12 +143,14 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 直接修改 index.js 中的 ENV_TYPE 默认值，确保构建时使用正确的配置
-echo "修改 index.js 中的 ENV_TYPE 默认值为 $ENV_TYPE..."
-# 替换 process.env.ENV_TYPE || 'func' 为 process.env.ENV_TYPE || 'prod'
-sed -i '' "s/|| 'func'/|| '$ENV_TYPE'/g" src/config/index.js
+# 修改 index.js 中的 ENV_TYPE，H5 条件编译块内的代码需要硬编码
+echo "修改 index.js 中的 H5 条件编译配置为 $ENV_TYPE..."
 
-echo "配置将根据 ENV_TYPE=$ENV_TYPE 自动选择"
+# 只修改 H5 条件编译块内的代码（第10-14行之间）
+# 使用 sed 的地址范围功能: /start/,/end/s/pattern/replacement/
+sed -i '' '/#ifdef H5/,/#endif/s/const ENV_TYPE = process\.env\.ENV_TYPE || '\''prod'\''/const ENV_TYPE = '\''$ENV_TYPE'\''/g' src/config/index.js
+
+echo "H5 条件编译块内的 ENV_TYPE 已设置为: $ENV_TYPE"
 
 # 根据环境类型修改对应配置文件中的 baseURL
 if [ "$ENV_TYPE" = "unit" ]; then
@@ -199,9 +201,9 @@ else
 fi
 
 # 运行 HBuilderX CLI 构建
-# 传递 VITE_ENV_TYPE 环境变量给 HBuilderX CLI
+# 传递 ENV_TYPE 环境变量给 HBuilderX CLI
 echo "运行 HBuilderX CLI 构建..."
-VITE_ENV_TYPE=$ENV_TYPE NODE_ENV=development /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
+ENV_TYPE=$ENV_TYPE NODE_ENV=development /Applications/HBuilderX.app/Contents/MacOS/cli publish --platform h5 --project $PROJECT_PATH
 
 # HBuilderX CLI 在 worktree 中可能会将构建输出到主仓库路径
 # 检查并处理这种情况
