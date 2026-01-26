@@ -150,10 +150,10 @@ case "$ENV_TYPE" in
     ;;
 esac
 
-# 使用行号精确匹配（只替换 App 环境行，不影响 MP-WEIXIN 行）
-# App 环境的 config = configMap['prod'] 在第 42 行
+# 使用标记定位（只替换 App 环境行，不影响 MP-WEIXIN 行）
+# 查找 // APP_CONFIG_LINE 标记，替换下一行的配置
 echo "替换 App 配置为 $ENV_TYPE..."
-sed -i "42s/.*/config = configMap['$ENV_TYPE']/" "$FRONTEND_PATH/src/config/index.js"
+perl -i -0pe "s|// APP_CONFIG_LINE\nconfig = .*\n|// APP_CONFIG_LINE\n${APP_CONFIG_LINE}\n|" "$FRONTEND_PATH/src/config/index.js"
 
 echo ""
 echo "========================================"
