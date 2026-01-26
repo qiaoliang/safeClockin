@@ -8,13 +8,13 @@ import prodConfig from './prod.js'
 
 // 根据 ENV_TYPE 选择配置
 // #ifdef H5
-// H5 平台：构建时通过 h5build.sh 脚本将此行修改为硬编码值
-// 例如: const ENV_TYPE = 'func' 或 const ENV_TYPE = 'prod'
-const ENV_TYPE = process.env.ENV_TYPE || 'prod'
+// H5 平台：构建时通过 h5build.sh 脚本修改 ENV_TYPE 值
+// 注意：HBuilderX 条件编译会保留此行
+const ENV_TYPE = 'prod'
 // #endif
 
 // #ifdef MP-WEIXIN
-// 微信小程序没有 process 对象，使用默认值
+// 微信小程序使用默认值
 const ENV_TYPE = 'prod'
 // #endif
 
