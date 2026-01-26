@@ -143,28 +143,9 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 修改 index.js 中的 H5 条件编译块内的 ENV_TYPE 值
-echo "修改 index.js 中的 ENV_TYPE 为 $ENV_TYPE..."
-
-# 只修改 H5 条件编译块内的 const ENV_TYPE = 'prod'
-sed -i '' '/#ifdef H5/,/#endif/s/const ENV_TYPE = '\''prod'\''/const ENV_TYPE = '\''$ENV_TYPE'\''/g' src/config/index.js
-
-echo "H5 条件编译块内的 ENV_TYPE 已设置为: $ENV_TYPE"
-
-# 根据环境类型修改对应配置文件中的 baseURL
-if [ "$ENV_TYPE" = "unit" ]; then
-    echo "修改 unit.js 中的 baseURL..."
-    sed -i.bak "s|baseURL: 'http://localhost:9999'|baseURL: '$API_URL'|g" src/config/unit.js
-elif [ "$ENV_TYPE" = "func" ]; then
-    echo "修改 func.js 中的 baseURL..."
-    sed -i.bak "s|baseURL: 'http://localhost:8080'|baseURL: '$API_URL'|g" src/config/func.js
-elif [ "$ENV_TYPE" = "uat" ]; then
-    echo "修改 uat.js 中的 baseURL..."
-    sed -i.bak "s|baseURL: 'https://uat-safeguard-api.example.com'|baseURL: '$API_URL'|g" src/config/uat.js
-elif [ "$ENV_TYPE" = "prod" ]; then
-    echo "修改 prod.js 中的 baseURL..."
-    sed -i.bak "s|baseURL: 'https://www.leadagile.cn'|baseURL: '$API_URL'|g" src/config/prod.js
-fi
+# 修改 index.js 中的条件编译定义
+echo "修改条件编译为: ENV_TYPE_$ENV_TYPE"
+sed -i '' "s/#define ENV_TYPE_PROD/#define ENV_TYPE_$ENV_TYPE/g" src/config/index.js
 
 echo ""
 echo "========================================"
@@ -172,7 +153,6 @@ echo "  环境配置结果"
 echo "========================================"
 echo "  环境类型: $ENV_TYPE"
 echo "  API URL:  $API_URL"
-echo "  配置文件: src/config/$ENV_TYPE.js"
 echo "========================================"
 
 PROJECT_PATH="$FRONTEND_PATH/src"
@@ -254,22 +234,8 @@ fi
 
 
 
-# 恢复原始配置文件
+# 恢复原始配置文件（只恢复 index.js）
 echo "恢复原始配置文件..."
 mv src/config/index.js.backup src/config/index.js
-
-# 根据环境类型恢复对应的配置文件备份
-if [ -f "src/config/unit.js.bak" ]; then
-    mv src/config/unit.js.bak src/config/unit.js
-fi
-if [ -f "src/config/func.js.bak" ]; then
-    mv src/config/func.js.bak src/config/func.js
-fi
-if [ -f "src/config/uat.js.bak" ]; then
-    mv src/config/uat.js.bak src/config/uat.js
-fi
-if [ -f "src/config/prod.js.bak" ]; then
-    mv src/config/prod.js.bak src/config/prod.js
-fi
 
 echo "=== H5 小程序构建完成 ==="

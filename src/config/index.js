@@ -8,9 +8,8 @@ import prodConfig from './prod.js'
 
 // 根据 ENV_TYPE 选择配置
 // #ifdef H5
-// H5 平台：构建时通过 h5build.sh 脚本修改 ENV_TYPE 值
-// 注意：HBuilderX 条件编译会保留此行
-const ENV_TYPE = 'prod'
+// H5 平台：构建时根据 ENV_TYPE 修改 #define 来选择环境
+// #define ENV_TYPE_FUNC
 // #endif
 
 // #ifdef MP-WEIXIN
@@ -25,6 +24,7 @@ const ENV_TYPE = process.env.ENV_TYPE || 'prod'
 // #endif
 // #endif
 
+// 配置映射
 const configMap = {
   unit: unitConfig,
   func: funcConfig,
@@ -32,8 +32,24 @@ const configMap = {
   prod: prodConfig
 }
 
-const config = configMap[ENV_TYPE] || funcConfig
+// 根据条件编译选择配置
+// #ifdef ENV_TYPE_PROD
+const config = configMap['prod']
+// #endif
 
+// #ifdef ENV_TYPE_FUNC
+const config = configMap['func']
+// #endif
+
+// #ifdef ENV_TYPE_UAT
+const config = configMap['uat']
+// #endif
+
+// #ifdef ENV_TYPE_UNIT
+const config = configMap['unit']
+// #endif
+
+// 导出配置
 export const currentEnv = config.env
 export const isProduction = config.env === 'prod'
 export const isDevelopment = config.env === 'func'
