@@ -36,7 +36,10 @@ config = configMap['prod']
 // #endif
 
 // #ifndef MP-WEIXIN
-config = configMap[process.env.ENV_TYPE || 'prod'] || configMap['prod']
+// App 环境：构建时根据 ENV_TYPE 替换整行 config 赋值
+// 注意：adrbuild-local.sh 会将此行替换为具体的配置对象
+// #define ENV_TYPE_PROD
+config = configMap['prod']
 // #endif
 
 // #endif

@@ -127,31 +127,40 @@ echo ""
 echo ">>> 步骤 1: 配置环境 ($ENV_TYPE)..."
 
 # 备份原始配置文件
-cp src/config/index.js src/config/index.js.backup
-
-# 临时修改配置文件以支持指定环境
-# 备份原配置文件
 cp "$FRONTEND_PATH/src/config/index.js" "$FRONTEND_PATH/src/config/index.js.backup"
 
-# 直接硬编码 ENV_TYPE 值，确保在 App 环境下使用正确的配置
-# 替换 App 环境的 ENV_TYPE 定义（第 22 行左右）
-sed -i '' "s/const ENV_TYPE = process.env.ENV_TYPE || 'prod'/const ENV_TYPE = '$ENV_TYPE'/g" "$FRONTEND_PATH/src/config/index.js"
+# 定义每个环境的配置字符串（使用 configMap 方式）
+case "$ENV_TYPE" in
+  prod)
+    APP_CONFIG_LINE='config = configMap['\''prod'\'']'
+    ANDROID_API_URL="https://www.leadagile.cn"
+    ;;
+  func)
+    APP_CONFIG_LINE='config = configMap['\''func'\'']'
+    ANDROID_API_URL="http://10.0.2.2:9999"
+    ;;
+  uat)
+    APP_CONFIG_LINE='config = configMap['\''uat'\'']'
+    ANDROID_API_URL="http://10.0.2.2:8080"
+    ;;
+  *)
+    echo "未知的环境类型: $ENV_TYPE，使用 prod 配置"
+    APP_CONFIG_LINE='config = configMap['\''prod'\'']'
+    ANDROID_API_URL="https://www.leadagile.cn"
+    ;;
+esac
 
-# 验证修改是否成功
-if grep -q "const ENV_TYPE = '$ENV_TYPE'" "$FRONTEND_PATH/src/config/index.js"; then
-    echo "✓ 配置文件修改成功: ENV_TYPE = $ENV_TYPE"
-else
-    echo "✗ 配置文件修改失败"
-    exit 1
-fi
+# 使用行号精确匹配（只替换 App 环境行，不影响 MP-WEIXIN 行）
+# App 环境的 config = configMap['prod'] 在第 42 行
+echo "替换 App 配置为 $ENV_TYPE..."
+sed -i "42s/.*/config = configMap['$ENV_TYPE']/" "$FRONTEND_PATH/src/config/index.js"
 
-echo "API URL: https://www.leadagile.cn"
 echo ""
 echo "========================================"
 echo "  环境配置结果"
 echo "========================================"
 echo "  环境类型: $ENV_TYPE"
-echo "  API URL:  https://www.leadagile.cn"
+echo "  API URL:  $ANDROID_API_URL"
 echo "  配置文件: src/config/index.js (已修改)"
 echo "========================================"
 
@@ -193,18 +202,27 @@ cp -R "$H5_SOURCE_PATH"/* "$WWW_DEST_PATH/"
 echo "✓ H5 资源已复制到: $WWW_DEST_PATH"
 
 # 3. 替换 Android 模拟器中的 localhost 为宿主机的 IP (func/uat 环境)
-if [ "$ENV_TYPE" = "func" ] || [ "$ENV_TYPE" = "uat" ]; then
+if [ "$ENV_TYPE" = "func" ]; then
     echo ""
-    echo ">>> 步骤 4: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost)..."
+    echo ">>> 步骤 4: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost:9999)..."
 
-    # Android 模拟器访问宿主机的特殊 IP
+    # Android 模拟器访问宿主机的特殊 IP (func 环境: 9999 端口)
     find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:9999/10.0.2.2:9999/g' {} \;
     find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/127\.0\.0\.1:9999/10.0.2.2:9999/g' {} \;
 
     echo "✓ URL 已替换为 10.0.2.2:9999 (Android 模拟器访问开发机的地址)"
+elif [ "$ENV_TYPE" = "uat" ]; then
+    echo ""
+    echo ">>> 步骤 4: 替换 URL (Android 模拟器需要 10.0.2.2 替代 localhost:8080)..."
+
+    # Android 模拟器访问宿主机的特殊 IP (uat 环境: 8080 端口)
+    find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/localhost:8080/10.0.2.2:8080/g' {} \;
+    find "$WWW_DEST_PATH" -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i '' 's/127\.0\.0\.1:8080/10.0.2.2:8080/g' {} \;
+
+    echo "✓ URL 已替换为 10.0.2.2:8080 (Android 模拟器访问开发机的地址)"
 else
     echo ""
-    echo ">>> 步骤 4: 跳过 URL 替换 (使用配置文件中的 URL)"
+    echo ">>> 步骤 4: 跳过 URL 替换 (使用配置文件中的 URL: $ANDROID_API_URL)"
 fi
 
 # 4. 准备 launcher 图标
