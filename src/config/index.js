@@ -9,7 +9,7 @@ import prodConfig from './prod.js'
 // 根据 ENV_TYPE 选择配置
 // #ifdef H5
 // H5 平台：构建时根据 ENV_TYPE 修改 #define 来选择环境
-// #define ENV_TYPE_FUNC
+// #define ENV_TYPE_PROD
 // #endif
 
 // #ifdef MP-WEIXIN
@@ -32,21 +32,35 @@ const configMap = {
   prod: prodConfig
 }
 
-// 根据条件编译选择配置
+// 预先声明 config 变量，确保所有条件编译块都能访问
+var config
+
+// H5 平台根据条件编译选择配置
 // #ifdef ENV_TYPE_PROD
-const config = configMap['prod']
+config = configMap['prod']
 // #endif
 
 // #ifdef ENV_TYPE_FUNC
-const config = configMap['func']
+config = configMap['func']
 // #endif
 
 // #ifdef ENV_TYPE_UAT
-const config = configMap['uat']
+config = configMap['uat']
 // #endif
 
 // #ifdef ENV_TYPE_UNIT
-const config = configMap['unit']
+config = configMap['unit']
+// #endif
+
+// #ifndef ENV_TYPE_PROD
+// #ifndef ENV_TYPE_FUNC
+// #ifndef ENV_TYPE_UAT
+// #ifndef ENV_TYPE_UNIT
+// 其他环境（如 App）使用运行时环境变量
+config = configMap[ENV_TYPE] || configMap['prod']
+// #endif
+// #endif
+// #endif
 // #endif
 
 // 导出配置
