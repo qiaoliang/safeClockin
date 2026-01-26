@@ -143,9 +143,29 @@ echo "Environment: $ENV_TYPE"
 echo "备份原始配置文件..."
 cp src/config/index.js src/config/index.js.backup
 
-# 修改 index.js 中的条件编译定义
-echo "修改条件编译为: ENV_TYPE_$ENV_TYPE"
-sed -i '' "s/#define ENV_TYPE_PROD/#define ENV_TYPE_$ENV_TYPE/g" src/config/index.js
+# 定义每个环境的配置字符串
+case "$ENV_TYPE" in
+  prod)
+    CONFIG_LINE='config = { env: '\''prod'\'', api: { baseURL: '\''https://www.leadagile.cn'\'' }, app: { name: '\''安全守护'\'', version: '\''1.0.0'\'', debug: false }, map: { key: '\''EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP'\'', secret: '\''oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp'\'' }, features: { enableMockData: false, enableDebugLog: false, enableErrorReporting: true } }'
+    ;;
+  func)
+    CONFIG_LINE='config = { env: '\''func'\'', api: { baseURL: '\''http://localhost:9999'\'' }, app: { name: '\''安全守护'\'', version: '\''1.0.0'\'', debug: true }, map: { key: '\''EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP'\'', secret: '\''oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp'\'' }, features: { enableMockData: false, enableDebugLog: true, enableErrorReporting: true } }'
+    ;;
+  uat)
+    CONFIG_LINE='config = { env: '\''uat'\'', api: { baseURL: '\''http://localhost:8080'\'' }, app: { name: '\''安全守护'\'', version: '\''1.0.0'\'', debug: true }, map: { key: '\''EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP'\'', secret: '\''oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp'\'' }, features: { enableMockData: false, enableDebugLog: true, enableErrorReporting: true } }'
+    ;;
+  unit)
+    CONFIG_LINE='config = { env: '\''unit'\'', api: { baseURL: '\''http://localhost:8080'\'' }, app: { name: '\''安全守护'\'', version: '\''1.0.0'\'', debug: true }, map: { key: '\''EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP'\'', secret: '\''oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp'\'' }, features: { enableMockData: true, enableDebugLog: true, enableErrorReporting: false } }'
+    ;;
+  *)
+    echo "未知的环境类型: $ENV_TYPE，使用 prod 配置"
+    CONFIG_LINE='config = { env: '\''prod'\'', api: { baseURL: '\''https://www.leadagile.cn'\'' }, app: { name: '\''安全守护'\'', version: '\''1.0.0'\'', debug: false }, map: { key: '\''EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP'\'', secret: '\''oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp'\'' }, features: { enableMockData: false, enableDebugLog: false, enableErrorReporting: true } }'
+    ;;
+esac
+
+# 使用 sed 替换 config 赋值行
+echo "替换 H5 配置为 $ENV_TYPE..."
+sed -i '' "s|^config = { env: 'prod'|${CONFIG_LINE}|g" src/config/index.js
 
 echo ""
 echo "========================================"

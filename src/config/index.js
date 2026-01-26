@@ -18,30 +18,17 @@ const configMap = {
 var config
 
 // #ifdef H5
-// H5 平台：构建时根据 ENV_TYPE 修改 #define 来选择环境
+// H5 平台：构建时根据 ENV_TYPE 替换整行 config 赋值
+// 注意：h5build.sh 会将此行替换为具体的配置对象
+// 默认使用 prod 配置
 // #define ENV_TYPE_PROD
-
-// #ifdef ENV_TYPE_PROD
-config = configMap['prod']
+config = { env: 'prod', api: { baseURL: 'https://www.leadagile.cn' }, app: { name: '安全守护', version: '1.0.0', debug: false }, map: { key: 'EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP', secret: 'oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp' }, features: { enableMockData: false, enableDebugLog: false, enableErrorReporting: true } }
 // #endif
 
-// #ifdef ENV_TYPE_FUNC
-config = configMap['func']
-// #endif
-
-// #ifdef ENV_TYPE_UAT
-config = configMap['uat']
-// #endif
-
-// #ifdef ENV_TYPE_UNIT
-config = configMap['unit']
-// #endif
-
-// #else
-// 非 H5 环境（如 App、微信小程序）使用运行时环境变量
+// #ifndef H5
+// 非 H5 环境使用运行时配置
 
 // #ifdef MP-WEIXIN
-// 微信小程序使用默认值
 config = configMap['prod']
 // #endif
 
