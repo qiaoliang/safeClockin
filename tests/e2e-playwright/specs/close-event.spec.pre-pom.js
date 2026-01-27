@@ -16,30 +16,21 @@
  * 4. 验证关闭信息正确显示
  */
 import { test, expect } from '@playwright/test';
-import { registerAndLoginAsUser, cleanupAuthState } from '../helpers/auth.js';
+import { registerAndLoginAsUser } from '../helpers/auth.js';
 
 test.describe('事件关闭功能测试', () => {
   // 增加测试超时时间，因为关闭事件涉及多个异步操作
   test.setTimeout(120000);
-
-  // 每个测试后清理认证状态
-  test.afterEach(async ({ page }) => {
-    await cleanupAuthState(page);
-  });
-
   test.beforeEach(async ({ page }) => {
     console.log('开始测试：事件关闭功能');
-
-    // 清理之前的状态
-    await cleanupAuthState(page);
-
+    
     // 每个测试开始时，注册并登录一个新用户
     const user = await registerAndLoginAsUser(page);
     console.log(`测试用户已创建并登录: ${user.phone}`);
-
+    
     // 等待首页完全加载
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(2000);
   });
 
   test('用户发起求助后，应该能够关闭事件', async ({ page }) => {

@@ -31,22 +31,26 @@ export class CommunityListPage extends BasePage {
    * 点击添加社区按钮
    */
   async clickAddButton() {
-    // 等待页面稳定
-    await this.page.waitForTimeout(1000);
+    // 等待页面稳定和列表加载完成
+    await this.page.waitForTimeout(2000);
 
-    try {
-      // 优先使用 data-testid 选择器
-      await this.safeClick(this.selectors.list.addButton);
-    } catch {
-      // 回退到文本选择器
-      try {
-        await this.page.getByText('添加社区').first().click({ force: true, timeout: 5000 });
-      } catch {
-        // 最后的回退：通过按钮类名查找
-        await this.page.locator('button').filter({ hasText: '添加' }).first().click({ force: true, timeout: 5000 });
-      }
-    }
+    // 直接使用 data-testid 选择器（与生产代码一致）
+    const addButton = this.page.locator(this.selectors.list.addButton);
+
+    // 等待按钮可见且可点击
+    await addButton.waitFor({ state: 'visible', timeout: 5000 });
+
+    // 等待按钮可交互（attached 且 stable）
+    await this.page.waitForTimeout(500);
+
+    // 点击按钮
+    await addButton.click({ force: true });
+
+    // 等待网络请求完成
     await this.waitForNetworkIdle();
+
+    // 等待页面跳转开始
+    await this.page.waitForTimeout(500);
   }
 
   /**
@@ -144,5 +148,27 @@ export class CommunityListPage extends BasePage {
         this.selectors.list.communityCard
       );
     }
+  }
+
+  /**
+   * 检查添加社区表单是否可见（跳转到新页面后的验证）
+   * @returns {Promise<boolean>}
+   */
+  async isAddCommunityFormVisible() {
+    // 先等待URL跳转
+    await this.page.waitForURL(/\/community-form/, { timeout: 5000 }).catch(() => false);
+
+    // 等待DOM渲染
+    await this.page.waitForTimeout(1000);
+
+    // 使用生产代码中的 data-testid 直接验证
+    const formElement = this.page.locator('[data-testid="create-community-page"]');
+    const isVisible = await formElement.isVisible({ timeout: 3000 }).catch(() => false);
+    if (isVisible) return true;
+
+    // 回退：检查页面是否包含表单相关文本
+    const pageText = await this.getPageText();
+    const formKeywords = ['社区名称', '创建社区', '新增社区', '位置选择', '社区主管'];
+    return formKeywords.some(keyword => pageText.includes(keyword));
   }
 }

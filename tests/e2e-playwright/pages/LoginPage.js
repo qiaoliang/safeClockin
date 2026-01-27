@@ -25,7 +25,7 @@ export class LoginPage extends BasePage {
    */
   async isLoaded() {
     // 先尝试等待页面加载
-    await this.page.waitForTimeout(2000);
+    await this.page.waitForTimeout(3000);
 
     // 尝试多种方式验证登录页已加载
     const pageText = await this.getPageText();

@@ -1,13 +1,18 @@
 <template>
-  <view class="batch-actions-toolbar" v-if="showToolbar">
+  <view
+    v-if="showToolbar"
+    class="batch-actions-toolbar"
+  >
     <view class="toolbar-content">
       <view class="selection-info">
         <checkbox
           :checked="isAllSelected"
-          @change="handleSelectAll"
           class="select-all-checkbox"
+          @change="handleSelectAll"
         />
-        <text class="selected-count">已选择 {{ selectedCount }} 项</text>
+        <text class="selected-count">
+          已选择 {{ selectedCount }} 项
+        </text>
       </view>
 
       <view class="action-buttons">

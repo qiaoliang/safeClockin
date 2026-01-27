@@ -47,8 +47,12 @@
       v-if="!hasHistories"
       class="empty"
     >
-      <text class="empty-text">无病史信息</text>
-      <text class="empty-hint">可点击下方按钮添加</text>
+      <text class="empty-text">
+        无病史信息
+      </text>
+      <text class="empty-hint">
+        可点击下方按钮添加
+      </text>
     </view>
 
     <!-- 添加按钮始终显示 -->

@@ -7,27 +7,42 @@
         mode="aspectFill"
       />
       <view class="user-info">
-        <text class="user-name">{{ user.nickname }}</text>
-        <text class="rules-count">{{ user.rules.length }} 条规则</text>
+        <text class="user-name">
+          {{ user.nickname }}
+        </text>
+        <text class="rules-count">
+          {{ user.rules.length }} 条规则
+        </text>
       </view>
       <view
-        class="expand-btn"
         v-if="user.rules.length > 1"
+        class="expand-btn"
         @click="toggleExpand"
       >
-        <text class="expand-text">{{ isExpanded ? '收起' : '更多' }}</text>
-        <text class="expand-icon">{{ isExpanded ? '▲' : '▼' }}</text>
+        <text class="expand-text">
+          {{ isExpanded ? '收起' : '更多' }}
+        </text>
+        <text class="expand-icon">
+          {{ isExpanded ? '▲' : '▼' }}
+        </text>
       </view>
     </view>
 
-    <view class="rules-list" v-if="isExpanded || user.rules.length === 1">
+    <view
+      v-if="isExpanded || user.rules.length === 1"
+      class="rules-list"
+    >
       <view
         v-for="rule in (isExpanded ? user.rules : [user.rules[0]])"
         :key="rule.rule_id"
         class="rule-item"
       >
-        <text class="rule-icon">{{ rule.rule_icon }}</text>
-        <text class="rule-name">{{ rule.rule_name }}</text>
+        <text class="rule-icon">
+          {{ rule.rule_icon }}
+        </text>
+        <text class="rule-name">
+          {{ rule.rule_name }}
+        </text>
       </view>
     </view>
   </view>

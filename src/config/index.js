@@ -22,7 +22,7 @@ var config
 // 注意：h5build.sh 会将此行替换为具体的配置对象
 // 默认使用 prod 配置
 // #define ENV_TYPE_PROD
-config = { env: 'prod', api: { baseURL: 'https://www.leadagile.cn' }, app: { name: '安全守护', version: '1.0.0', debug: false }, map: { key: 'EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP', secret: 'oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp' }, features: { enableMockData: false, enableDebugLog: false, enableErrorReporting: true } }
+config = { env: 'func', api: { baseURL: 'http://localhost:9999' }, app: { name: '安全守护', version: '1.0.0', debug: true }, map: { key: 'EY7BZ-WB5WL-B3PPE-MK6FU-MHQ3T-Y2FFP', secret: 'oWjfgcA2ismvRGAksDhL8w4qjUIdtkBp' }, features: { enableMockData: false, enableDebugLog: true, enableErrorReporting: true } }
 // #endif
 
 // #ifndef H5

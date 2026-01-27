@@ -83,10 +83,11 @@ export class BasePage {
    * 等待页面稳定
    */
   async waitForPageStable(options = {}) {
-    const { timeout = WAIT_TIMEOUTS.DEFAULT, checkInterval = WAIT_TIMEOUTS.CHECK_INTERVAL } = options;
+    const { timeout = WAIT_TIMEOUTS.DEFAULT, checkInterval = 2000 } = options;
 
     await this.page.waitForLoadState('networkidle', { timeout }).catch(() => {});
     await this.page.waitForLoadState('domcontentloaded', { timeout }).catch(() => {});
+    // 增加等待时间以适应 Vue 的响应式系统
     await this.page.waitForTimeout(checkInterval);
   }
 

@@ -24,8 +24,13 @@
           :rules="person.rules"
           @click="goToSupervisorDetail(person)"
         />
-        <view v-if="mySupervised.length === 0" class="empty-state">
-          <text class="empty-text">暂无监护对象</text>
+        <view
+          v-if="mySupervised.length === 0"
+          class="empty-state"
+        >
+          <text class="empty-text">
+            暂无监护对象
+          </text>
         </view>
       </view>
     </view>
@@ -53,8 +58,13 @@
           @accept="handleAcceptInvitation"
           @reject="handleRejectInvitation"
         />
-        <view v-if="receivedInvitations.length === 0" class="empty-state">
-          <text class="empty-text">暂无监督邀请</text>
+        <view
+          v-if="receivedInvitations.length === 0"
+          class="empty-state"
+        >
+          <text class="empty-text">
+            暂无监督邀请
+          </text>
         </view>
       </view>
     </view>
@@ -89,7 +99,10 @@
             </text>
           </view>
           <view class="sent-inv-actions">
-            <text class="sent-inv-status" :class="getStatusClass(inv.status)">
+            <text
+              class="sent-inv-status"
+              :class="getStatusClass(inv.status)"
+            >
               {{ getStatusText(inv.status) }}
             </text>
             <button
@@ -101,8 +114,13 @@
             </button>
           </view>
         </view>
-        <view v-if="sentInvitations.length === 0" class="empty-state">
-          <text class="empty-text">暂无发起的邀请</text>
+        <view
+          v-if="sentInvitations.length === 0"
+          class="empty-state"
+        >
+          <text class="empty-text">
+            暂无发起的邀请
+          </text>
         </view>
       </view>
     </view>
@@ -128,7 +146,10 @@
       class="modal-overlay"
       @click="hideShareModal"
     >
-      <view class="modal-content" @click.stop>
+      <view
+        class="modal-content"
+        @click.stop
+      >
         <view class="modal-header">
           <text class="modal-title">
             邀请链接

@@ -7,13 +7,22 @@
         mode="aspectFill"
       />
       <view class="invitation-info">
-        <text class="inviter-name">{{ invitation.inviter_info?.nickname }}</text>
-        <text class="rule-name">{{ invitation.rule_info?.rule_name }}</text>
-        <text class="invite-time">{{ formatTime(invitation.created_at) }}</text>
+        <text class="inviter-name">
+          {{ invitation.inviter_info?.nickname }}
+        </text>
+        <text class="rule-name">
+          {{ invitation.rule_info?.rule_name }}
+        </text>
+        <text class="invite-time">
+          {{ formatTime(invitation.created_at) }}
+        </text>
       </view>
     </view>
 
-    <view class="invitation-actions" v-if="showActions">
+    <view
+      v-if="showActions"
+      class="invitation-actions"
+    >
       <button
         class="action-btn accept-btn"
         @click="$emit('accept', invitation.relation_id)"
@@ -28,8 +37,14 @@
       </button>
     </view>
 
-    <view class="invitation-status" v-else>
-      <text class="status-text" :class="statusClass">
+    <view
+      v-else
+      class="invitation-status"
+    >
+      <text
+        class="status-text"
+        :class="statusClass"
+      >
         {{ statusText }}
       </text>
     </view>

@@ -1,30 +1,57 @@
 <template>
-  <view class="invite-modal-container" v-if="visible">
-    <view class="modal-overlay" @click="handleClose">
-      <view class="modal-content" @click.stop>
+  <view
+    v-if="visible"
+    class="invite-modal-container"
+  >
+    <view
+      class="modal-overlay"
+      @click="handleClose"
+    >
+      <view
+        class="modal-content"
+        @click.stop
+      >
         <view class="modal-header">
-          <text class="modal-title">邀请监护人</text>
-          <view class="close-btn" @click="handleClose">
-            <text class="close-icon">×</text>
+          <text class="modal-title">
+            邀请监护人
+          </text>
+          <view
+            class="close-btn"
+            @click="handleClose"
+          >
+            <text class="close-icon">
+              ×
+            </text>
           </view>
         </view>
 
         <view class="modal-body">
           <view class="rule-info">
-            <text class="rule-label">规则：</text>
-            <text class="rule-name">{{ ruleName }}</text>
+            <text class="rule-label">
+              规则：
+            </text>
+            <text class="rule-name">
+              {{ ruleName }}
+            </text>
           </view>
 
           <view class="search-section">
-            <text class="search-label">选择监护人：</text>
+            <text class="search-label">
+              选择监护人：
+            </text>
             <UserSearch
-              @user-select="handleUserSelect"
               :auto-focus="true"
+              @user-select="handleUserSelect"
             />
           </view>
 
-          <view class="selected-users" v-if="selectedUsers.length > 0">
-            <text class="selected-label">已选择：</text>
+          <view
+            v-if="selectedUsers.length > 0"
+            class="selected-users"
+          >
+            <text class="selected-label">
+              已选择：
+            </text>
             <view class="user-list">
               <view
                 v-for="(user, index) in selectedUsers"
@@ -36,9 +63,16 @@
                   class="user-avatar"
                   mode="aspectFill"
                 />
-                <text class="user-nickname">{{ user.nickname }}</text>
-                <view class="remove-btn" @click="handleRemoveUser(index)">
-                  <text class="remove-icon">×</text>
+                <text class="user-nickname">
+                  {{ user.nickname }}
+                </text>
+                <view
+                  class="remove-btn"
+                  @click="handleRemoveUser(index)"
+                >
+                  <text class="remove-icon">
+                    ×
+                  </text>
                 </view>
               </view>
             </view>
@@ -46,7 +80,12 @@
         </view>
 
         <view class="modal-footer">
-          <button class="cancel-btn" @click="handleClose">取消</button>
+          <button
+            class="cancel-btn"
+            @click="handleClose"
+          >
+            取消
+          </button>
           <button
             class="confirm-btn"
             :disabled="selectedUsers.length === 0 || loading"

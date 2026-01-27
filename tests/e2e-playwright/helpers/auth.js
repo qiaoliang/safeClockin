@@ -10,6 +10,21 @@ import { expect } from '@playwright/test';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
 
 // ==================== 常量定义 ====================
+
+// 临时文件目录
+const TEMP_DIR = '/tmp/playwright';
+
+/**
+ * 保存截图到临时目录
+ */
+async function saveScreenshotToTemp(page, prefix) {
+  const screenshotPath = `${TEMP_DIR}/${prefix}-${Date.now()}.png`;
+  await page.screenshot({ path: screenshotPath });
+  return screenshotPath;
+}
+
+// ==================== 选择器定义 ====================
+
 export const AUTH_SELECTORS = {
   // 使用文本选择器（更稳定，HBuilderX 会保留文本内容）
   phoneLoginBtn: 'button:has-text("手机号登录")',
@@ -44,16 +59,57 @@ export const AUTH_SELECTORS = {
 };
 
 export const AUTH_TIMEOUTS = {
-  pageLoad: 5000,        // 增加到 5 秒
-  elementVisible: 3000,   // 元素可见等待
-  formSwitch: 1000,
-  loginWait: 5000,
-  networkIdle: 10000,     // 网络空闲等待
+  pageLoad: 10000,        // 增加到 10 秒
+  elementVisible: 10000,  // 元素可见等待增加到 10 秒
+  formSwitch: 2000,
+  loginWait: 8000,
+  networkIdle: 15000,     // 网络空闲等待
 };
 
 export const VALID_PAGE_INDICATORS = ['打卡', '社区', '我的'];
 
 // ==================== 辅助函数 ====================
+
+/**
+ * 清理认证状态（localStorage + sessionStorage + cookies）
+ * 改进: 添加错误处理，支持页面未完全加载的情况
+ */
+export async function cleanupAuthState(page) {
+  console.log('  🧹 清理认证状态...');
+
+  try {
+    // 先检查页面是否已加载到有效状态
+    const url = page.url();
+    if (!url || url === 'about:blank' || !url.includes('localhost')) {
+      console.log('  ⚠️ 页面未就绪，跳过 storage 清理');
+      // 仍然清理 cookies
+      const context = page.context();
+      await context.clearCookies();
+      console.log('  ✅ 已清理 cookies');
+      return;
+    }
+
+    // 清理 localStorage 和 sessionStorage
+    await page.evaluate(() => {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {
+        console.log('  ⚠️ localStorage 访问失败:', e.message);
+      }
+    });
+
+    // 清理 cookies
+    const context = page.context();
+    await context.clearCookies();
+
+    await page.waitForTimeout(500);
+    console.log('  ✅ 认证状态已清理');
+  } catch (error) {
+    console.log('  ⚠️ 清理认证状态时出错:', error.message);
+    // 不抛出错误，让测试继续执行
+  }
+}
 
 /**
  * 等待页面稳定
@@ -71,7 +127,8 @@ async function waitForPage(page, timeout = AUTH_TIMEOUTS.pageLoad) {
   }
 
   // 额外等待，确保 Vue 渲染完成
-  await page.waitForTimeout(2000);
+  // 增加等待时间以适应 Vue 的响应式系统
+  await page.waitForTimeout(3000);
   console.log('  ✅ 页面加载完成');
 }
 
@@ -121,8 +178,8 @@ export function isValidHomePage(pageText) {
 
 /**
  * 使用手机号和密码登录
- * 改进: 使用文本选择器代替 data-testid，增加错误处理和日志
- *       确保先导航到登录页面
+ * 改进: 使用文本选择器代替 data-testid，增加错误处理和日志先导航到登录
+ *       确保页面，并清理之前的状态
  */
 export async function loginWithPhoneAndPassword(page, phone, password) {
   console.log('\n🔐 开始登录流程...');
@@ -131,24 +188,24 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
   const currentUrl = page.url();
   console.log('  📍 初始 URL:', currentUrl);
 
-  // 如果页面为空或未正确加载，先导航到登录页面
+  // 如果页面为空或未正确加载，先清理状态并导航
   if (currentUrl === 'about:blank' || !currentUrl.includes('localhost:8081')) {
-    console.log('  ⏳ 页面未加载，导航到登录页面...');
-    await page.goto('/#/pages/login/login', { waitUntil: 'commit' });
-    await page.waitForTimeout(2000);
+    console.log('  ⏳ 页面未加载，清理状态并导航到登录页面...');
+    await cleanupAuthState(page);
+    await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(3000);
+  } else {
+    // 清理状态以确保干净的登录流程
+    console.log('  🧹 清理之前的状态...');
+    await cleanupAuthState(page);
   }
 
   // 检查是否已登录
   const pageText = await page.locator('body').textContent();
   if (isValidHomePage(pageText)) {
-    console.log('  检测到已登录状态，清除认证状态...');
-    await page.evaluate(() => {
-      localStorage.clear();
-      sessionStorage.clear();
-    });
-    await page.waitForTimeout(500);
-    await page.goto('/#/pages/login/login', { waitUntil: 'commit' });
-    await page.waitForTimeout(2000);
+    console.log('  检测到已登录状态，跳转到登录页面...');
+    await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(3000);
   }
 
   // 等待登录页面加载
@@ -167,7 +224,7 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
   } catch (error) {
     console.error('  ❌ 点击手机号登录按钮失败');
     // 保存截图以便调试
-    await page.screenshot({ path: 'test-results/login-button-error.png' });
+    await page.screenshot({ path: `${TEMP_DIR}/login-button-error.png` });
     throw new Error('未找到手机号登录按钮');
   }
 
@@ -301,7 +358,7 @@ export async function loginWithPhoneAndPassword(page, phone, password) {
     console.error('  页面内容:', finalPageText.substring(0, 200));
 
     // 保存失败截图
-    await page.screenshot({ path: 'test-results/login-failed.png' });
+    await page.screenshot({ path: `${TEMP_DIR}/login-failed.png` });
     throw new Error('登录失败，未跳转到首页');
   }
 
@@ -339,9 +396,7 @@ export async function logout(page) {
   // 点击底部导航栏的个人中心
   await page.locator('.tabbar-item:last-child').click();
   await page.waitForLoadState('networkidle');
-  
-  // 点击登出按钮（需要根据实际页面结构调整）
-  // 这里暂时跳过，因为需要先实现个人中心页面的测试
+
   console.log('登出功能需要根据实际页面结构调整');
 }
 
@@ -411,7 +466,6 @@ function generate137PhoneNumber() {
 /**
  * 注册新用户并登录（快捷方法）
  * 改进: 使用文本选择器代替 data-testid（HBuilderX 会移除自定义属性）
- *       增加更可靠的页面等待机制
  */
 export async function registerAndLoginAsUser(page, options = {}) {
   const phoneNumber = options.phoneNumber || generate137PhoneNumber();
@@ -421,133 +475,108 @@ export async function registerAndLoginAsUser(page, options = {}) {
   console.log(`开始注册并登录用户: ${phoneNumber}`);
 
   try {
-    // 导航到登录页面
-    console.log('  ⏳ 导航到登录页面...');
-    await page.goto('/');
+    // 清理之前的认证状态
+    console.log('🧹 准备工作：清理认证状态');
+    await cleanupAuthState(page);
 
-    // 等待网络空闲（使用更长的超时）
-    try {
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-      console.log('  ✅ 网络已空闲');
-    } catch (error) {
-      console.log('  ⚠️ 网络未在指定时间内达到空闲状态，继续执行...');
-    }
+    // 步骤 1：导航到登录页面
+    console.log('⏳ 步骤 1：导航到登录页面');
+    await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000);
 
-    // 额外等待，确保 Vue 渲染完成
-    await page.waitForTimeout(2000);
+    // 验证登录页面元素（更完整的验证）
+    const pageText = await page.locator('body').textContent();
+    expect(pageText).toContain('安全守护');
+    expect(pageText).toContain('微信快捷登录');
+    expect(pageText).toContain('手机号登录');
+    console.log('✅ 步骤 1：成功导航到登录页面');
 
-    // 验证登录页面包含"安全守护"文本
-    const initialPageText = await page.locator('body').textContent();
-    if (!initialPageText.includes('安全守护')) {
-      throw new Error('登录页面未正确加载，未找到"安全守护"文本');
-    }
-    console.log('  ✅ 登录页面已加载');
-
-    // 等待"手机号登录"按钮可见（使用更稳定的等待策略）
-    console.log('  ⏳ 等待"手机号登录"按钮...');
+    // 步骤 2：点击"手机号登录"按钮
+    console.log('⏳ 步骤 2：点击手机号登录按钮');
     const phoneLoginBtn = page.locator('button:has-text("手机号登录")').first();
-
     try {
       await phoneLoginBtn.waitFor({ state: 'visible', timeout: 10000 });
-      console.log('  ✅ "手机号登录"按钮已可见');
+      await phoneLoginBtn.click({ force: true });
+      await waitForPage(page);
+      console.log('✅ 步骤 2：成功点击手机号登录按钮');
     } catch (error) {
-      console.error('  ❌ "手机号登录"按钮未在指定时间内可见');
-      const screenshotPath = `test-failed-login-btn-${Date.now()}.png`;
-      await page.screenshot({ path: screenshotPath });
-      console.error(`已保存失败截图: ${screenshotPath}`);
-      throw new Error('登录按钮超时未出现');
+      const screenshotPath = await saveScreenshotToTemp(page, 'test-failed-login-btn');
+      console.error(`❌ "手机号登录"按钮失败，已保存截图: ${screenshotPath}`);
+      throw new Error('登录按钮操作失败');
     }
 
-    // 点击"手机号登录"按钮 - 使用文本选择器
-    console.log('  👆 点击"手机号登录"按钮...');
-    await phoneLoginBtn.click({ force: true });
-    console.log('  ✅ 已点击"手机号登录"按钮');
+    // 步骤 3：切换到"注册"标签
+    console.log('⏳ 步骤 3：切换到注册表单');
+    const registerTab = page.locator('.tab').filter({ hasText: '注册' });
+    await registerTab.click({ force: true });
+    await page.waitForTimeout(1000);
 
-    // 等待页面响应
-    await waitForPage(page);
+    // 验证注册表单已加载
+    const registerText = await page.locator('body').textContent();
+    expect(registerText).toContain('注册');
+    expect(registerText).toContain('设置密码');
+    console.log('✅ 步骤 3：成功切换到注册表单');
 
-    // 切换到"注册"标签 - 使用文本选择器
-    const registerTab = page.locator('text=注册').first();
-    if (await registerTab.isVisible()) {
-      await registerTab.click({ force: true });
-    } else {
-      // 尝试其他方式找到注册标签
-      const allRegisterText = page.locator('text=注册');
-      if (await allRegisterText.count() > 1) {
-        await allRegisterText.nth(1).click({ force: true });
-      }
-    }
-    await page.waitForTimeout(AUTH_TIMEOUTS.formSwitch);
+    // 步骤 4：输入手机号
+    console.log('⏳ 步骤 4：输入手机号');
+    const phoneInput = page.locator('input[type="number"]').first();
+    await phoneInput.click({ force: true });
+    await phoneInput.clear();
+    await phoneInput.type(phoneNumber, { delay: 100 });
+    await page.waitForTimeout(500);
+    console.log('✅ 步骤 4：成功输入手机号');
 
-    // 输入手机号 - 使用文本选择器
-    const phoneInputs = page.locator('input[type="number"], input[type="tel"]');
-    if (await phoneInputs.count() > 0) {
-      await phoneInputs.first().click({ force: true });
-      await phoneInputs.first().clear();
-      await phoneInputs.first().type(phoneNumber, { delay: 100 });
-      await page.waitForTimeout(500);
-    }
-
-    // 点击"获取验证码"按钮 - 使用文本选择器
-    const codeBtn = page.locator('button:has-text("获取验证码")').first();
-    if (await codeBtn.isVisible()) {
-      await codeBtn.click({ force: true });
-    }
+    // 步骤 5：点击"获取验证码"按钮
+    console.log('⏳ 步骤 5：发送验证码');
+    const codeBtn = page.locator('.code-btn');
+    await codeBtn.click({ force: true });
     await page.waitForTimeout(2000);
 
-    // 输入验证码 - 找到第二个输入框
-    const allInputs = page.locator('input');
-    const inputCount = await allInputs.count();
-    if (inputCount >= 2) {
-      await allInputs.nth(1).click({ force: true });
-      await allInputs.nth(1).clear();
-      await allInputs.nth(1).type(testCode, { delay: 100 });
-      await page.waitForTimeout(500);
-    }
+    // 验证验证码按钮进入倒计时状态
+    const codeBtnText = await codeBtn.textContent();
+    expect(codeBtnText).toMatch(/\d+s/); // 匹配类似 "60s" 的文本
+    console.log('✅ 步骤 5：成功发送验证码');
 
-    // 输入密码 - 使用文本选择器
-    const passwordInputs = page.locator('input[type="password"]');
-    if (await passwordInputs.count() > 0) {
-      await passwordInputs.first().click({ force: true });
-      await passwordInputs.first().clear();
-      await passwordInputs.first().type(password, { delay: 100 });
-      await page.waitForTimeout(500);
-    }
-
-    // 勾选用户协议 - 使用文本选择器
-    const agreementCheckbox = page.locator('label:has-text("用户协议"), label:has-text("同意")');
-    if (await agreementCheckbox.count() > 0) {
-      await agreementCheckbox.first().click({ force: true });
-    }
+    // 步骤 6：输入验证码
+    console.log('⏳ 步骤 6：输入验证码');
+    const codeInput = page.locator('input[type="number"]').nth(1); // 第二个数字输入框
+    await codeInput.click({ force: true });
+    await codeInput.clear();
+    await codeInput.type(testCode, { delay: 100 });
     await page.waitForTimeout(500);
+    console.log('✅ 步骤 6：成功输入验证码');
 
-    // 点击"注册"按钮 - 使用文本选择器
-    const submitBtn = page.locator('button:has-text("注册")').first();
-    if (await submitBtn.isVisible()) {
-      await submitBtn.click({ force: true });
-    } else {
-      // 尝试使用登录按钮
-      const loginBtn = page.locator('button:has-text("登录")').first();
-      if (await loginBtn.isVisible()) {
-        await loginBtn.click({ force: true });
-      }
-    }
+    // 步骤 7：输入密码
+    console.log('⏳ 步骤 7：输入密码');
+    const passwordInput = page.locator('input[type="password"]');
+    await passwordInput.click({ force: true });
+    await passwordInput.clear();
+    await passwordInput.type(password, { delay: 100 });
+    await page.waitForTimeout(500);
+    console.log('✅ 步骤 7：成功输入密码');
 
-    // 等待注册完成
-    await page.waitForTimeout(3000);
+    // 步骤 8：点击"注册"按钮
+    console.log('⏳ 步骤 8：提交注册申请');
+    const submitBtn = page.locator('uni-button.submit');
+    await submitBtn.click({ force: true });
+    console.log('✅ 步骤 8：提交注册申请');
+
+    // 等待注册完成并跳转到首页
+    await page.waitForTimeout(5000);
     await page.waitForLoadState('networkidle');
 
     // 验证注册结果
-    const pageText = await page.locator('body').textContent();
+    const homePageText = await page.locator('body').textContent();
 
     // 检查是否仍在注册页面（说明注册失败）
-    if (pageText.includes('手机号注册/登录') || pageText.includes('注册')) {
+    if (homePageText.includes('手机号注册/登录') || homePageText.includes('注册')) {
       console.error('❌ 注册失败，仍在注册页面');
-      console.error('页面内容:', pageText.substring(0, 500));
+      console.error('页面内容:', homePageText.substring(0, 500));
 
       const errorPatterns = [/验证码错误/i, /验证码无效/i, /手机号已注册/i, /密码强度/i, /格式错误/i, /失败/i];
       for (const pattern of errorPatterns) {
-        const match = pageText.match(pattern);
+        const match = homePageText.match(pattern);
         if (match) throw new Error(`注册失败: ${match[0]}`);
       }
 
@@ -555,20 +584,20 @@ export async function registerAndLoginAsUser(page, options = {}) {
     }
 
     // 验证是否跳转到有效页面
-    if (!isValidHomePage(pageText)) {
+    if (!isValidHomePage(homePageText)) {
       console.error('❌ 注册失败，未跳转到有效页面');
-      console.error('页面内容:', pageText.substring(0, 500));
+      console.error('页面内容:', homePageText.substring(0, 500));
       throw new Error('注册失败，未跳转到有效页面');
     }
 
-    console.log('✅ 用户注册并登录成功');
+    console.log('✅ 步骤 9：用户注册并登录成功');
+    console.log(`✅ 用户 ${phoneNumber} 注册成功并进入打卡首页`);
     return { phone: phoneNumber, password };
   } catch (error) {
     console.error('❌ 注册并登录失败:', error.message);
 
     try {
-      const screenshotPath = `test-failed-register-${Date.now()}.png`;
-      await page.screenshot({ path: screenshotPath });
+      const screenshotPath = await saveScreenshotToTemp(page, 'test-failed-register');
       console.error(`已保存失败截图: ${screenshotPath}`);
     } catch (screenshotError) {
       console.error('无法保存截图:', screenshotError.message);

@@ -47,33 +47,17 @@ test.describe('首页社区名称显示', () => {
       await phoneLoginPage.fillCode('123456');
       await phoneLoginPage.fillPassword('Test123456');
 
-      // 勾选协议
-      try {
-        await page.locator('.agree-label').or(page.locator('.agreement')).click({ force: true });
-      } catch {
-        // 继续测试
-      }
-
       await phoneLoginPage.clickSubmit();
 
       // 等待首页加载
       await page.waitForTimeout(3000);
 
-      // 验证 API 返回了社区信息（如果是新注册）
-      // 对于已有用户，直接验证页面显示
-
       // 验证首页显示社区名称
       const pageText = await page.locator('body').textContent();
 
-      // TEST_USERS.SUPER_ADMIN 应该属于某个社区
-      // 至少验证页面正常显示
       expect(pageText.length).toBeGreaterThan(0);
-
-      // 检查是否有用户信息卡片
       const hasUserGreeting = pageText.match(/(早上好|下午好|晚上好)/);
-      if (hasUserGreeting) {
-        console.log('✅ 页面包含问候语');
-      }
+      expect(hasUserGreeting).toBeTruthy()
 
       // 检查社区信息元素
       const communityTextElement = page.locator('.community-text');

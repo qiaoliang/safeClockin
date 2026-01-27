@@ -8,10 +8,17 @@ import { HomePage } from '../pages/HomePage.js';
 import { ProfilePage } from '../pages/ProfilePage.js';
 import { CommunityListPage } from '../pages/CommunityListPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
+import { cleanupAuthState } from '../helpers/auth.js';
 
 test.describe('超级管理员社区管理测试', () => {
+  // 每个测试后清理认证状态
+  test.afterEach(async ({ page }) => {
+    await cleanupAuthState(page);
+  });
+
   // 每个测试前清理浏览器状态
   test.beforeEach(async ({ page, context }) => {
+    await cleanupAuthState(page);
     await context.clearCookies();
   });
 
