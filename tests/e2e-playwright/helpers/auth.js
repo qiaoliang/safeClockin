@@ -49,6 +49,7 @@ export const AUTH_SELECTORS = {
   // data-testid 选择器
   tabPasswordLogin: '[data-testid="tab-password-login"]',
   tabCodeLogin: '[data-testid="tab-code-login"]',
+  tabRegister: '[data-testid="tab-register"]',
   phoneInput: '[data-testid="phone-input"]',
   passwordInput: '[data-testid="password-input"]',
   codeInput: '[data-testid="code-input"]',
@@ -61,6 +62,19 @@ export const AUTH_SELECTORS = {
   modalBody: '.uni-modal__bd',
   numberInput: 'input[type="number"]',
   textInput: 'input[type="text"]',
+
+  // 文本常量（用于页面内容验证）
+  TEXT: {
+    TITLE: '安全守护',
+    WECHAT_LOGIN: '微信快捷登录',
+    PHONE_LOGIN: '手机号登录',
+    PROFILE: '我的',
+    REGISTER: '注册',
+    PASSWORD_LOGIN: '密码登录',
+    CODE_LOGIN: '验证码登录',
+    PHONE_REGISTER_LOGIN: '手机号注册/登录',
+    LOGOUT: '退出登录',
+  },
 };
 
 export const AUTH_TIMEOUTS = {
@@ -215,7 +229,7 @@ async function clickProfileTab(page) {
   }));
   console.log(`  📏 窗口高度: ${scrollInfo.windowHeight}px, 文档高度: ${scrollInfo.documentHeight}px, 滚动位置: ${scrollInfo.scrollTop}px`);
 
-  const profileTab = page.locator(AUTH_SELECTORS.tabbar).filter({ hasText: '我的' }).or(
+  const profileTab = page.locator(AUTH_SELECTORS.tabbar).filter({ hasText: AUTH_SELECTORS.TEXT.PROFILE }).or(
     page.locator(AUTH_SELECTORS.profileTab)
   );
 
@@ -315,9 +329,9 @@ async function verifyBackToLoginPage(page) {
   console.log('  📄 当前页面内容长度:', pageText.length);
   console.log('  📄 当前页面内容预览:', pageText.substring(0, 200));
 
-  const hasTitle = pageText.includes('安全守护');
-  const hasWechatLogin = pageText.includes('微信快捷登录');
-  const hasPhoneLogin = pageText.includes('手机号登录');
+  const hasTitle = pageText.includes(AUTH_SELECTORS.TEXT.TITLE);
+  const hasWechatLogin = pageText.includes(AUTH_SELECTORS.TEXT.WECHAT_LOGIN);
+  const hasPhoneLogin = pageText.includes(AUTH_SELECTORS.TEXT.PHONE_LOGIN);
   console.log('  🔍 检查结果:', { hasTitle, hasWechatLogin, hasPhoneLogin });
 
   expect(hasTitle).toBeTruthy();
@@ -480,7 +494,7 @@ async function waitForLoginAndVerify(page) {
   console.log('  📄 页面内容长度:', pageText.length);
   console.log('  📄 当前URL:', page.url());
 
-  const hasMyPage = pageText.includes('我的');
+  const hasMyPage = pageText.includes(AUTH_SELECTORS.TEXT.PROFILE);
   console.log('  🔍 页面是否包含"我的":', hasMyPage);
 
   if (!hasMyPage) {
@@ -637,7 +651,7 @@ export async function registerAndLoginAsUser(page, options = {}) {
     }
 
     console.log('⏳ 步骤 3：切换到注册表单');
-    const registerTab = page.locator('.tab').filter({ hasText: '注册' });
+    const registerTab = page.locator('.tab').filter({ hasText: AUTH_SELECTORS.TEXT.REGISTER });
     await registerTab.click({ force: true });
     await page.waitForTimeout(WAIT.MEDIUM);
 
@@ -705,7 +719,7 @@ export async function registerAndLoginAsUser(page, options = {}) {
 
     const homePageText = await page.locator('body').textContent();
 
-    if (homePageText.includes('手机号注册/登录') || homePageText.includes('注册')) {
+    if (homePageText.includes(AUTH_SELECTORS.TEXT.PHONE_REGISTER_LOGIN) || homePageText.includes(AUTH_SELECTORS.TEXT.REGISTER)) {
       console.error('❌ 注册失败，仍在注册页面');
       console.error('页面内容:', homePageText.substring(0, 500));
 
