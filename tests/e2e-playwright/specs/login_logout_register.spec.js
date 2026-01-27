@@ -10,7 +10,7 @@ import { navigateToPhoneLoginPage } from '../helpers/navigation.js';
 import { TEST_USERS, ENV_CONFIG } from '../fixtures/test-data.mjs';
 import {registerAndLoginAsUser,logout,loginAsSuperAdmin} from '../helpers/auth.js'
 
-test.describe('超级管理员登录与退出测试',async ({ page }) => {
+test.describe('超级管理员登录与退出测试', () => {
   const superAdmin = TEST_USERS.SUPER_ADMIN;
 
   test.beforeEach(async ({ page }) => {
@@ -24,10 +24,10 @@ test.describe('超级管理员登录与退出测试',async ({ page }) => {
 
   test('超级管理员 登录 并 退出 成功。', async ({ page }) => {
     // 使用文本内容验证页面元素
-    await loginAsSuperAdmin();
+    await loginAsSuperAdmin(page);
     console.log('✅ 步骤A: 超级管理员登录 验证通过');
-    await logout();
-    console.log('✅ 步骤　: 超级管理员 退出 验证通过');
+    await logout(page);
+    console.log('✅ 步骤B: 超级管理员 退出 验证通过');
 
   });
 
@@ -71,9 +71,11 @@ test.describe('超级管理员登录与退出测试',async ({ page }) => {
 });
 
 test.describe('普通用户注册，登录与退出测试', () => {
-  test('应该在不同视口尺寸下正常显示', async ({ page }) => {
+  test('普通用户注册，登录与退出测试', async ({ page }) => {
     const regularUser = await registerAndLoginAsUser(page);
     console.log(`普通用户已创建并登录: ${regularUser.phone}`);
-    await logoutUser(page);
+    // 等待页面完全加载
+    await page.waitForTimeout(2000);
+    await logout(page);
   });
 });

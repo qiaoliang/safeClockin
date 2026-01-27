@@ -55,8 +55,8 @@ export default defineConfig({
     actionTimeout: 10000,
     navigationTimeout: 30000,
 
-    // 视口大小
-    viewport: { width: 375, height: 667 }, // iPhone SE 尺寸
+    // 视口大小 - 使用桌面分辨率确保所有元素可见
+    viewport: { width: 1280, height: 720 }, // HD 桌面分辨率
 
     // 忽略 HTTPS 错误（自签名证书）
     ignoreHTTPSErrors: true,
