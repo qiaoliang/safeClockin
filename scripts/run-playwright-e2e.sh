@@ -31,6 +31,9 @@ FRONTEND_PATH="$(dirname "$SCRIPT_DIR")"
 # 进入前端目录
 cd "$FRONTEND_PATH"
 
+# 记录整个脚本的开始时间
+SCRIPT_START_TIME=$(date +%s)
+
 echo "=== 开始运行 Playwright E2E 测试 ==="
 
 # 检查是否安装了依赖
@@ -158,20 +161,28 @@ TEST_DURATION=$((TEST_END_TIME - TEST_START_TIME))
 TEST_MINUTES=$((TEST_DURATION / 60))
 TEST_SECONDS=$((TEST_DURATION % 60))
 
+# 计算整个脚本的总时长
+SCRIPT_END_TIME=$(date +%s)
+SCRIPT_DURATION=$((SCRIPT_END_TIME - SCRIPT_START_TIME))
+SCRIPT_MINUTES=$((SCRIPT_DURATION / 60))
+SCRIPT_SECONDS=$((SCRIPT_DURATION % 60))
+
 # 检查测试结果
 TEST_RESULT=$?
 
 if [ $TEST_RESULT -eq 0 ]; then
     log_info "✅ 所有测试通过"
-    log_info "⏱️  测试集总用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
-    
+    log_info "⏱️  测试用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
+    log_info "⏱️  脚本总用时: ${SCRIPT_MINUTES}分${SCRIPT_SECONDS}秒"
+
     # 显示测试报告
     log_info "测试报告: playwright-report/index.html"
     log_info "查看报告: npx playwright show-report"
 else
     log_error "❌ 测试失败"
-    log_info "⏱️  测试集总用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
-    
+    log_info "⏱️  测试用时: ${TEST_MINUTES}分${TEST_SECONDS}秒"
+    log_info "⏱️  脚本总用时: ${SCRIPT_MINUTES}分${SCRIPT_SECONDS}秒"
+
     # 显示测试报告
     log_info "测试报告: playwright-report/index.html"
     log_info "查看报告: npx playwright show-report"
