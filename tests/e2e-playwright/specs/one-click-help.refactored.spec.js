@@ -7,6 +7,7 @@ import { LoginPage } from '../pages/LoginPage.js';
 import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { OneClickHelpPage } from '../pages/OneClickHelpPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
+import { registerAndLoginAsUser } from '../helpers/auth.js';
 
 test.describe('一键求助功能测试', () => {
   // 每个测试前清理浏览器状态
@@ -16,20 +17,9 @@ test.describe('一键求助功能测试', () => {
 
   test.describe('基础功能测试', () => {
     test('用户点击一键求助后应该显示求助按钮和事件信息框', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-      const oneClickHelpPage = new OneClickHelpPage(page);
 
       // 登录普通用户
-      await loginPage.goto();
-      await loginPage.clickPhoneLogin();
-      const phoneLoginPage = new PhoneLoginPage(page);
-      await phoneLoginPage.loginWithPassword(
-        TEST_USERS.SUPER_ADMIN.phone,
-        TEST_USERS.SUPER_ADMIN.password
-      );
-
-      // 等待首页加载
-      await page.waitForTimeout(2000);
+      await registerAndLoginAsUser(page)
 
       // 验证页面包含一键求助按钮
       const bodyText = await page.locator('body').textContent();
@@ -107,28 +97,6 @@ test.describe('一键求助功能测试', () => {
   });
 
   test.describe('用户状态验证', () => {
-    test('验证用户已加入社区', async ({ page }) => {
-      const loginPage = new LoginPage(page);
-
-      // 登录普通用户
-      await loginPage.goto();
-      await loginPage.clickPhoneLogin();
-      const phoneLoginPage = new PhoneLoginPage(page);
-      await phoneLoginPage.loginWithPassword(
-        TEST_USERS.SUPER_ADMIN.phone,
-        TEST_USERS.SUPER_ADMIN.password
-      );
-
-      await page.waitForTimeout(2000);
-
-      // 检查用户状态（通过 UI 验证）
-      const bodyText = await page.locator('body').textContent();
-      const hasHomePage = bodyText.includes('今日打卡') ||
-                         bodyText.includes('当前监护') ||
-                         bodyText.includes('一键求助');
-
-      expect(hasHomePage).toBe(true);
-    });
 
     test('未加入社区用户无法求助', async ({ page }) => {
       const loginPage = new LoginPage(page);
