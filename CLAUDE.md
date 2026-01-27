@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 SafeGuard Frontend is a uni-app based cross-platform safety monitoring application for elderly care communities.
 
 **Tech Stack**:
+
 - **Framework**: uni-app (supports WeChat Mini Program, H5, and App)
 - **Vue**: Vue 3 with Composition API
 - **State Management**: Pinia (modular store architecture)
@@ -34,12 +35,14 @@ npm run lint:fix        # Fix linting issues
 ### Testing
 
 **Quick Commands (Makefile)**:
+
 ```bash
 make ut                 # Run unit tests
 npm run test:playwright # Headless mode
 ```
 
 **NPM Scripts**:
+
 ```bash
 # Unit tests (Vitest + jsdom)
 npm run test            # Watch mode
@@ -147,6 +150,7 @@ Modular store architecture with these core modules:
 **3. API Layer Architecture**
 
 Centralized request handling in `src/api/request.js`:
+
 - Automatic token refresh (5min buffer before expiry)
 - Concurrent request queueing during token refresh
 - Snake_case ↔ camelCase field name conversion
@@ -155,6 +159,7 @@ Centralized request handling in `src/api/request.js`:
 **4. Security Architecture**
 
 Custom encryption system (`src/utils/secure.js`):
+
 - XOR encryption + Base64 encoding
 - Multi-level seed backup mechanism
 - Automatic seed recovery
@@ -163,6 +168,7 @@ Custom encryption system (`src/utils/secure.js`):
 **5. Multi-Environment Configuration**
 
 Four environments managed via `src/config/`:
+
 - **unit**: Unit testing (ENV_TYPE=unit)
 - **func**: Functional testing (current default, localhost:9999)
 - **uat**: User acceptance testing
@@ -173,6 +179,7 @@ Switch environments by modifying `src/config/index.js` import.
 **6. Cross-Platform Adaptation**
 
 Use uni-app conditional compilation:
+
 ```javascript
 // #ifdef MP-WEIXIN
 // WeChat Mini Program specific code
@@ -191,20 +198,23 @@ Role-based page navigation after login
 
 ### Important Conventions
 
-**CSS**: ALL CSS MUST use variables from `@/uni.scss`. This includes colors, spacing, border-radius, shadows, and animations. Hardcoded values are prohibited.
-**API**: ALL API  契约文档都放在 `backend/api-contract` 目录下，并以不同的领域名，放在不同的文件中。
+**CSS**: ALL CSS MUST use variables from `@/src/uni.scss`. This includes colors, spacing, border-radius, shadows, and animations. Hardcoded values are prohibited.
+**API**: ALL API 契约文档都放在 `backend/api-contract` 目录下，并以不同的领域名，放在不同的文件中。
 
 **Color Scheme**:
+
 - Primary: Orange (#f48224)
 - Background: Beige (#fae9db)
 - Accent: Dark brown (#624731)
 
 **Authentication**:
+
 - Always use `request()` wrapper for API calls
 - Token refresh is automatic; never manually refresh
 - Handle token expiry through user store methods
 
 **Testing**:
+
 - Unit tests should mock all external dependencies
 - Integration tests use MSW handlers defined in `tests/setup.integration.js`
 - E2E playwright tests use `data-testid` attributes for element selection
@@ -212,24 +222,25 @@ Role-based page navigation after login
 - e2e test is for H5 webapp, elements in pages are NOT always in uni-app styles.
 
 **Error Handling**:
+
 - Network errors are centrally intercepted in `request.js`
 - Token expiry triggers automatic logout
 - User not found triggers automatic state cleanup
 
 ## Key Files Reference
 
-| File | Purpose |
-|------|---------|
-| `src/main.js` | Application entry point |
-| `src/App.vue` | Root component |
-| `src/pages.json` | Page routing configuration |
-| `src/uni.scss` | Global style variables (MANDATORY for all CSS) |
-| `src/store/modules/user.js` | Core user state and auth management |
-| `src/api/request.js` | HTTP request wrapper with token refresh |
-| `src/utils/secure.js` | Encryption/decryption utilities |
-| `src/config/index.js` | Current environment configuration |
-| `tests/setup.integration.js` | MSW API mocks for integration tests |
-| `playwright.config.js` | Playwright E2E test configuration |
+| File                         | Purpose                                        |
+| ---------------------------- | ---------------------------------------------- |
+| `src/main.js`                | Application entry point                        |
+| `src/App.vue`                | Root component                                 |
+| `src/pages.json`             | Page routing configuration                     |
+| `src/uni.scss`               | Global style variables (MANDATORY for all CSS) |
+| `src/store/modules/user.js`  | Core user state and auth management            |
+| `src/api/request.js`         | HTTP request wrapper with token refresh        |
+| `src/utils/secure.js`        | Encryption/decryption utilities                |
+| `src/config/index.js`        | Current environment configuration              |
+| `tests/setup.integration.js` | MSW API mocks for integration tests            |
+| `playwright.config.js`       | Playwright E2E test configuration              |
 
 ## Special Developing Considerations
 
@@ -245,22 +256,26 @@ Treat the following guides as important as `CLAUDE.md`:
 ## Special Testing Considerations
 
 **E2E Test Prerequisites**:
+
 1. Backend service must be running on `http://localhost:9999`
 2. H5 app must be built and served on `https://localhost:8081`
 3. Use `scripts/run-playwright-e2e.sh` which handles build and server startup
 
 **E2E Test Data**:
+
 - Automatic cleanup after each test
 - Use helper functions in `tests/e2e-playwright/helpers/` for data creation
 - Never hardcode user IDs or test data
 
 **Playwright Modes**:
+
 - Default: Headless (CI/CD friendly)
 - `--ui`: Interactive UI mode for test development
 - `--debug`: Step-by-step debugging with inspector
 - `--headed`: Show browser window (useful for debugging)
 
 **Test Parallelization**:
+
 - Unit/Integration tests: Parallel by default
 - E2E tests: `fullyParallel: false`, `workers: 1` (to avoid SQLite database locks)
 
@@ -284,6 +299,7 @@ Treat the following guides as important as `CLAUDE.md`:
 ```
 
 **功能流程**:
+
 1. 检查/启动 Android 模拟器（支持 Pixel、Pixel_ARM64、Medium_Phone_API_36.1）
 2. 使用 HBuilderX CLI 生成 App 资源 (`publish app --type appResource`)
 3. 复制资源到 Android 项目 (`HBuilder-Integrate-AS/simpleDemo`)
@@ -293,6 +309,7 @@ Treat the following guides as important as `CLAUDE.md`:
 7. 自动启动应用
 
 **注意事项**:
+
 - 必需条件：HBuilderX 应用程序正在运行、Android SDK/模拟器已配置
 - func/unit 环境会自动替换 API URL 为 10.0.2.2:9999（Android 模拟器访问宿主机）
 - 其他环境使用真实域名
@@ -306,6 +323,7 @@ Treat the following guides as important as `CLAUDE.md`:
 ```
 
 **功能流程**:
+
 1. 验证环境类型
 2. 使用 HBuilderX CLI 云打包 (`cli pack`)
 3. 轮询等待构建完成
@@ -332,6 +350,7 @@ Treat the following guides as important as `CLAUDE.md`:
 **输出目录**: `src/unpackage/dist/build/web/`
 
 **注意事项**:
+
 - 需要 HBuilderX 应用程序正在运行
 - 会临时修改配置文件以设置正确的 API URL
 - 支持 worktree 环境，自动处理符号链接
@@ -349,10 +368,12 @@ WEB_PORT=8082 ./scripts/start-web-server.sh
 ```
 
 **输出**:
+
 - 访问地址: `http://localhost:<PORT>`
 - 日志文件: `logs/web-server.log`
 
 **注意事项**:
+
 - 需要先运行 `h5build.sh` 构建 H5 应用
 - 端口被占用时会尝试自动终止占用进程
 
@@ -394,10 +415,12 @@ WEB_PORT=8082 ./scripts/start-web-server.sh
 ```
 
 **前置条件**:
+
 1. 后端服务运行在 `http://localhost:9999`
 2. H5 应用已构建并部署
 
 **功能流程**:
+
 1. 检查/安装依赖
 2. 构建 H5 应用
 3. 验证后端服务

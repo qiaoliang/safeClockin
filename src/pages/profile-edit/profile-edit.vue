@@ -8,6 +8,10 @@
 
     <!-- 基本信息区域 -->
     <view class="card">
+      <view class="card-title">
+        个人信息
+      </view>
+
       <!-- 头像 -->
       <view class="row avatar-row">
         <text class="label">
@@ -39,13 +43,6 @@
           placeholder="请输入昵称"
           maxlength="20"
         >
-        <button
-          class="btn"
-          :disabled="saving"
-          @click="saveNickname"
-        >
-          保存
-        </button>
       </view>
 
       <!-- 真实姓名 -->
@@ -150,14 +147,12 @@
           </view>
         </picker>
       </view>
-    </view>
 
-    <!-- 紧急联系人区域 -->
-    <view class="card">
-      <view class="card-title">
+      <!-- 紧急联系人 -->
+      <view class="section-title">
         紧急联系人
       </view>
-      
+
       <view class="row">
         <text class="label">
           姓名
@@ -194,22 +189,42 @@
           maxlength="100"
         />
       </view>
+
+      <!-- 保存基本信息按钮 -->
+      <view class="save-section">
+        <button
+          class="save-btn"
+          :disabled="savingBasic"
+          @click="saveBasicInfo"
+        >
+          {{ savingBasic ? '保存中...' : '保存基本信息' }}
+        </button>
+      </view>
     </view>
 
     <!-- 病史信息区域 -->
     <view class="card">
       <view class="card-title">
-        病史信息
+        病史记录
       </view>
-      
+
+      <view
+        v-if="loadingMedicalHistory"
+        class="loading-state"
+      >
+        <text class="loading-text">
+          加载中...
+        </text>
+      </view>
+
       <MedicalHistoryList
-        v-if="!isEditingMedicalHistory"
+        v-else-if="!isEditingMedicalHistory"
         :histories="medicalHistories"
         @add="handleAddMedicalHistory"
         @edit="handleEditMedicalHistory"
         @delete="handleDeleteMedicalHistory"
       />
-      
+
       <view
         v-else
         class="editing-container"
@@ -220,17 +235,15 @@
           @cancel="handleCancelEditMedicalHistory"
         />
       </view>
-    </view>
 
-    <!-- 底部保存按钮 -->
-    <view class="footer">
-      <button
-        class="save-btn"
-        :disabled="saving"
-        @click="saveAll"
+      <view
+        v-if="medicalHistories.length === 0 && !isEditingMedicalHistory"
+        class="empty-state"
       >
-        {{ saving ? '保存中...' : '保存' }}
-      </button>
+        <text class="empty-text">
+          暂无病史记录
+        </text>
+      </view>
     </view>
 
     <!-- 手机号绑定弹窗 -->
@@ -362,8 +375,12 @@ import MedicalHistoryList from '@/components/medical-history/MedicalHistoryList.
 import MedicalHistoryForm from '@/components/medical-history/MedicalHistoryForm.vue'
 
 const userStore = useUserStore()
-const saving = ref(false)
 
+// 保存状态
+const savingBasic = ref(false)
+const savingMedical = ref(false)
+
+// 表单数据
 const formData = ref({
   nickname: '',
   name: '',
@@ -431,6 +448,7 @@ const changingPassword = ref(false)
 
 // Medical history management
 const medicalHistories = ref([])
+const loadingMedicalHistory = ref(false)
 const isEditingMedicalHistory = ref(false)
 const editingMedicalHistory = ref(null)
 
@@ -456,32 +474,20 @@ onMounted(() => {
   loadMedicalHistories()
 })
 
-async function saveNickname() {
-  if (!formData.value.nickname.trim()) return uni.showToast({ title: '请输入昵称', icon: 'none' })
-  try {
-    saving.value = true
-    const res = await authApi.updateUserProfile({ nickname: formData.value.nickname })
-    if (res.code === 1) {
-      await userStore.fetchUserInfo()
-      uni.showToast({ title: '昵称已更新', icon: 'none' })
-    } else {
-      uni.showToast({ title: res.msg || '更新失败', icon: 'none' })
-    }
-  } finally { saving.value = false }
-}
-
-async function saveAll() {
-  if (!formData.value.nickname.trim() && !formData.value.nickName.trim()) {
+/**
+ * 保存基本信息
+ */
+async function saveBasicInfo() {
+  if (!formData.value.nickname.trim()) {
     return uni.showToast({ title: '请输入昵称', icon: 'none' })
   }
 
   try {
-    saving.value = true
+    savingBasic.value = true
 
     const updateData = {
-      // 同时传递 nickname 和 nickName，兼容后端和 store 的不同字段名
-      nickname: formData.value.nickname || formData.value.nickName || '',
-      nickName: formData.value.nickName || formData.value.nickname || '',
+      nickname: formData.value.nickname || '',
+      nickName: formData.value.nickname || '',
       name: formData.value.name,
       address: formData.value.address,
       motto: formData.value.motto,
@@ -492,23 +498,20 @@ async function saveAll() {
       emergencyContactAddress: formData.value.emergency_contact_address
     }
 
-    console.log('saveAll() - 发送的数据:', updateData)
-
     const res = await authApi.updateUserProfile(updateData)
-
-    console.log('saveAll() - 接收的响应:', res)
 
     if (res.code === 1) {
       await userStore.fetchUserInfo()
-      console.log('saveAll() - 刷新后的用户信息:', userStore.userInfo)
-      uni.showToast({ title: '保存成功', icon: 'none' })
-      setTimeout(() => {
-        uni.navigateBack()
-      }, 1500)
+      uni.showToast({ title: '基本信息已保存', icon: 'none' })
     } else {
       uni.showToast({ title: res.msg || '保存失败', icon: 'none' })
     }
-  } finally { saving.value = false }
+  } catch (error) {
+    console.error('保存基本信息失败:', error)
+    uni.showToast({ title: '保存失败', icon: 'none' })
+  } finally {
+    savingBasic.value = false
+  }
 }
 
 // 头像上传
@@ -621,21 +624,28 @@ async function confirmChangePassword() {
 
 // Medical history functions
 async function loadMedicalHistories() {
-  try {
-    const userId = userStore.userInfo?.userId || userStore.userInfo?.user_id
-    if (!userId) return
+  const userId = userStore.userInfo?.userId || userStore.userInfo?.user_id
+  if (!userId) {
+    return
+  }
 
-    console.log('[病史] 开始加载病史数据, userId:', userId)
+  try {
+    loadingMedicalHistory.value = true
     const res = await getUserMedicalHistories(userId)
-    console.log('[病史] API响应:', res)
 
     if (res.code === 1) {
-      console.log('[病史] res.data:', res.data, '类型:', typeof res.data, '是否为数组:', Array.isArray(res.data))
-      medicalHistories.value = Array.isArray(res.data) ? res.data : []
-      console.log('[病史] medicalHistories:', medicalHistories.value, '长度:', medicalHistories.value.length)
+      if (Array.isArray(res.data)) {
+        medicalHistories.value = res.data
+      } else if (res.data && typeof res.data === 'object') {
+        medicalHistories.value = res.data.histories || res.data.list || res.data.items || res.data.medical_history || []
+      } else {
+        medicalHistories.value = []
+      }
     }
   } catch (error) {
     console.error('加载病史失败:', error)
+  } finally {
+    loadingMedicalHistory.value = false
   }
 }
 
@@ -660,7 +670,7 @@ function handleEditMedicalHistory(history) {
 
 async function handleSaveMedicalHistory(formData) {
   try {
-    saving.value = true
+    savingMedical.value = true
 
     let res
     if (editingMedicalHistory.value.id) {
@@ -676,9 +686,9 @@ async function handleSaveMedicalHistory(formData) {
         user_id: userStore.userInfo?.userId || userStore.userInfo?.user_id
       })
     }
-    
+
     if (res.code === 1) {
-      uni.showToast({ title: '保存成功', icon: 'none' })
+      uni.showToast({ title: '病史已保存', icon: 'none' })
       await loadMedicalHistories()
       isEditingMedicalHistory.value = false
       editingMedicalHistory.value = null
@@ -689,7 +699,7 @@ async function handleSaveMedicalHistory(formData) {
     console.error('保存病史失败:', error)
     uni.showToast({ title: '保存失败', icon: 'none' })
   } finally {
-    saving.value = false
+    savingMedical.value = false
   }
 }
 
@@ -719,46 +729,57 @@ async function handleDeleteMedicalHistory(historyId) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/uni.scss';
+
 .container {
-  padding: 24rpx;
+  padding: $uni-spacing-xl;
   min-height: 100vh;
-  background: #FAE9DB;
-  padding-bottom: 120rpx;
+  background: $uni-bg-primary;
+  padding-bottom: $uni-spacing-xl;
 }
 
 .header {
-  padding: 24rpx 0;
+  padding: $uni-spacing-xl 0;
   text-align: center;
 }
 
 .title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #624731;
+  font-size: $uni-font-size-xl;
+  font-weight: $uni-font-weight-bold;
+  color: $uni-accent;
 }
 
 .card {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
+  background: $uni-white;
+  border-radius: $uni-radius-xl;
+  padding: $uni-spacing-xl;
+  margin-bottom: $uni-spacing-xl;
 }
 
 .card-title {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #624731;
-  margin-bottom: 24rpx;
-  padding-bottom: 16rpx;
-  border-bottom: 2rpx solid #f0f0f0;
+  font-size: $uni-font-size-lg;
+  font-weight: $uni-font-weight-bold;
+  color: $uni-accent;
+  margin-bottom: $uni-spacing-xl;
+  padding-bottom: $uni-spacing-base;
+  border-bottom: 2rpx solid $uni-border-1;
+}
+
+.section-title {
+  font-size: $uni-font-size-base;
+  font-weight: $uni-font-weight-base;
+  color: $uni-accent;
+  margin: $uni-spacing-xxl 0 $uni-spacing-xl 0;
+  padding-top: $uni-spacing-base;
+  border-top: 2rpx solid $uni-border-1;
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  margin-bottom: 24rpx;
+  gap: $uni-spacing-md;
+  margin-bottom: $uni-spacing-xl;
 }
 
 .row:last-child {
@@ -771,44 +792,44 @@ async function handleDeleteMedicalHistory(historyId) {
 
 .label {
   width: 160rpx;
-  color: #624731;
-  font-size: 28rpx;
+  color: $uni-accent;
+  font-size: $uni-font-size-base;
 }
 
 .input {
   flex: 1;
-  padding: 16rpx;
-  border: 2rpx solid #ddd;
-  border-radius: 8rpx;
-  font-size: 28rpx;
+  padding: $uni-spacing-base;
+  border: 2rpx solid $uni-border-input;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-base;
 }
 
 .textarea {
   flex: 1;
-  padding: 16rpx;
-  border: 2rpx solid #ddd;
-  border-radius: 8rpx;
-  font-size: 28rpx;
+  padding: $uni-spacing-base;
+  border: 2rpx solid $uni-border-input;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-base;
   min-height: 80rpx;
 }
 
 .value {
   flex: 1;
-  color: #333;
-  font-size: 28rpx;
+  color: $uni-main-color;
+  font-size: $uni-font-size-base;
 }
 
 .btn {
-  padding: 16rpx 24rpx;
-  background: #eee;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  color: #333;
+  padding: $uni-spacing-base $uni-spacing-lg;
+  background: $uni-bg-color-grey;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-base;
+  color: $uni-main-color;
 }
 
 .btn.primary {
-  background: #F48224;
-  color: #fff;
+  background: $uni-primary;
+  color: $uni-white;
 }
 
 .btn:disabled {
@@ -816,8 +837,8 @@ async function handleDeleteMedicalHistory(historyId) {
 }
 
 .link {
-  color: #F48224;
-  font-size: 28rpx;
+  color: $uni-primary;
+  font-size: $uni-font-size-base;
   background: none;
   border: none;
   padding: 0;
@@ -833,7 +854,7 @@ async function handleDeleteMedicalHistory(historyId) {
   width: 120rpx;
   height: 120rpx;
   border-radius: 60rpx;
-  border: 4rpx solid #F48224;
+  border: 4rpx solid $uni-primary;
 }
 
 .avatar-hint {
@@ -841,33 +862,23 @@ async function handleDeleteMedicalHistory(historyId) {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 20rpx;
+  background: $uni-bg-overlay;
+  color: $uni-white;
+  font-size: $uni-font-size-xxs;
   text-align: center;
-  padding: 8rpx 0;
+  padding: $uni-spacing-xs 0;
   border-bottom-left-radius: 60rpx;
   border-bottom-right-radius: 60rpx;
-}
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24rpx;
-  background: #fff;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 .save-btn {
   width: 100%;
   height: 88rpx;
-  background: #F48224;
-  color: #fff;
-  border-radius: 44rpx;
-  font-size: 32rpx;
-  font-weight: 600;
+  background: $uni-primary;
+  color: $uni-white;
+  border-radius: $uni-radius-xxl;
+  font-size: $uni-font-size-xl;
+  font-weight: $uni-font-weight-bold;
 }
 
 .save-btn:disabled {
@@ -880,7 +891,7 @@ async function handleDeleteMedicalHistory(historyId) {
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: $uni-mask-light;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -889,36 +900,64 @@ async function handleDeleteMedicalHistory(historyId) {
 
 .modal-card {
   width: 90%;
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
+  background: $uni-white;
+  border-radius: $uni-radius-md;
+  padding: $uni-spacing-xl;
 }
 
 .modal-title {
   display: block;
   text-align: center;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 32rpx;
+  font-size: $uni-font-size-lg;
+  font-weight: $uni-font-weight-bold;
+  color: $uni-main-color;
+  margin-bottom: $uni-spacing-xxl;
 }
 
 .picker {
   flex: 1;
-  padding: 16rpx;
-  border: 2rpx solid #ddd;
-  border-radius: 8rpx;
+  padding: $uni-spacing-base;
+  border: 2rpx solid $uni-border-input;
+  border-radius: $uni-radius-sm;
   text-align: center;
 }
 
 .picker-value {
   flex: 1;
-  padding: 16rpx;
-  color: #333;
-  font-size: 28rpx;
+  padding: $uni-spacing-base;
+  color: $uni-main-color;
+  font-size: $uni-font-size-base;
 }
 
 .editing-container {
-  padding: 20rpx;
+  padding: $uni-spacing-lg;
+}
+
+.save-section {
+  margin-top: $uni-spacing-xxl;
+  padding-top: $uni-spacing-xl;
+  border-top: 2rpx solid $uni-border-1;
+}
+
+.loading-state {
+  padding: $uni-spacing-xxxl;
+  text-align: center;
+}
+
+.loading-text {
+  color: $uni-text-secondary;
+  font-size: $uni-font-size-base;
+}
+
+.empty-state {
+  padding: $uni-spacing-xxxl;
+  text-align: center;
+}
+
+.empty-text {
+  display: block;
+  color: $uni-text-secondary;
+  font-size: $uni-font-size-base;
+  margin-bottom: $uni-spacing-sm;
 }
 </style>

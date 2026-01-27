@@ -1,45 +1,46 @@
 <template>
   <view class="medical-history-list">
     <!-- 有病史时显示列表 -->
-    <view
-      v-for="item in histories"
-      v-if="hasHistories"
-      :key="item.id"
-      class="history-item"
-    >
-      <view class="history-header">
-        <text class="condition-name">
-          {{ item.condition_name }}
-        </text>
-        <view class="actions">
-          <text @click="handleEdit(item)">
-            编辑
+    <template v-if="hasHistories">
+      <view
+        v-for="item in histories"
+        :key="item.id"
+        class="history-item"
+      >
+        <view class="history-header">
+          <text class="condition-name">
+            {{ item.condition_name }}
           </text>
-          <text @click="handleDelete(item.id)">
-            删除
+          <view class="actions">
+            <text @click="handleEdit(item)">
+              编辑
+            </text>
+            <text @click="handleDelete(item.id)">
+              删除
+            </text>
+          </view>
+        </view>
+
+        <view
+          v-if="item.treatment_plan"
+          class="treatment-info"
+        >
+          <text v-if="item.treatment_plan.type">
+            类型: {{ item.treatment_plan.type.join(', ') }}
+          </text>
+          <text v-if="item.treatment_plan.medication">
+            药品: {{ item.treatment_plan.medication }}
+          </text>
+          <text v-if="item.treatment_plan.frequency">
+            频率: {{ item.treatment_plan.frequency }}
           </text>
         </view>
-      </view>
 
-      <view
-        v-if="item.treatment_plan"
-        class="treatment-info"
-      >
-        <text v-if="item.treatment_plan.type">
-          类型: {{ item.treatment_plan.type.join(', ') }}
-        </text>
-        <text v-if="item.treatment_plan.medication">
-          药品: {{ item.treatment_plan.medication }}
-        </text>
-        <text v-if="item.treatment_plan.frequency">
-          频率: {{ item.treatment_plan.frequency }}
-        </text>
+        <view class="visibility-badge">
+          <text>{{ item.visibility === 1 ? '仅工作人员' : '工作人员和监护人' }}</text>
+        </view>
       </view>
-
-      <view class="visibility-badge">
-        <text>{{ item.visibility === 1 ? '仅工作人员' : '工作人员和监护人' }}</text>
-      </view>
-    </view>
+    </template>
 
     <!-- 无病史时显示空状态 -->
     <view

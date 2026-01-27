@@ -40,7 +40,7 @@ config = configMap['prod']
 // 注意：adrbuild-local.sh 会将此行替换为具体的配置对象
 // #define ENV_TYPE_PROD
 // APP_CONFIG_LINE
-config = configMap['prod']
+config = configMap['func']
 // #endif
 
 // #endif

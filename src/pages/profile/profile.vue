@@ -20,39 +20,6 @@
       </text>
     </view>
 
-    <!-- 用户统计区域 -->
-    <view
-      v-if="userInfo"
-      class="user-stats-section"
-    >
-      <view class="user-stats-card">
-        <view class="stat-item">
-          <text class="stat-value success-color">
-            {{ getConsecutiveCheckins() }}
-          </text>
-          <text class="stat-label">
-            连续打卡
-          </text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-value warning-color">
-            {{ getCompletionRate() }}%
-          </text>
-          <text class="stat-label">
-            完成率
-          </text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-value accent-color">
-            {{ getSupervisorCount() }}
-          </text>
-          <text class="stat-label">
-            监督人
-          </text>
-        </view>
-      </view>
-    </view>
-
     <!-- 功能菜单列表 -->
     <!-- 打卡选项管理：社区相关角色不显示 -->
     <view
@@ -311,27 +278,6 @@ const userInfo = computed(() => {
   return user;
 });
 
-// 获取连续打卡天数（对于新用户显示0）
-const getConsecutiveCheckins = () => {
-  // TODO: 从后端API获取实际的连续打卡天数
-  // 临时返回0，直到实现实际的打卡功能
-  return 0;
-};
-
-// 获取完成率百分比（对于新用户显示0）
-const getCompletionRate = () => {
-  // TODO: 从后端API获取实际的完成率
-  // 临时返回0，直到实现实际的打卡功能
-  return 0;
-};
-
-// 获取监督人数量（对于新用户显示0或根据实际关系显示）
-const getSupervisorCount = () => {
-  // TODO: 从后端API获取实际的监督人数量
-  // 临时返回0，直到实现实际的监护关系功能
-  return 0;
-};
-
 const navigateTo = (url) => {
   // 如果是社区列表，则跳转到使用managed-communities API的页面
   if (url === "/pages/community-manage/community-manage") {
@@ -464,48 +410,6 @@ onShow(() => {
 .edit-icon {
   font-size: $uni-font-size-xs;
   color: $uni-white;
-}
-
-.user-stats-section {
-  background: $uni-bg-color-white;
-  border-radius: $uni-radius-lg;
-  padding: $uni-spacing-xxl;
-  margin-bottom: $uni-spacing-xxl;
-  box-shadow: $uni-shadow-card;
-}
-
-.user-stats-card {
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-value {
-  font-size: $uni-font-size-xl;
-  font-weight: bold;
-  margin-bottom: $uni-spacing-sm;
-}
-
-.stat-label {
-  font-size: $uni-font-size-sm;
-  color: $uni-base-color;
-}
-
-.success-color {
-  color: $uni-success;
-}
-
-.warning-color {
-  color: $uni-warning;
-}
-
-.accent-color {
-  color: $uni-accent;
 }
 
 .user-avatar {
