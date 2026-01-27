@@ -71,47 +71,6 @@ export const VALID_PAGE_INDICATORS = ['打卡', '社区', '我的'];
 // ==================== 辅助函数 ====================
 
 /**
- * 清理认证状态（localStorage + sessionStorage + cookies）
- * 改进: 添加错误处理，支持页面未完全加载的情况
- */
-export async function cleanupAuthState(page) {
-  console.log('  🧹 清理认证状态...');
-
-  try {
-    // 先检查页面是否已加载到有效状态
-    const url = page.url();
-    if (!url || url === 'about:blank' || !url.includes('localhost')) {
-      console.log('  ⚠️ 页面未就绪，跳过 storage 清理');
-      // 仍然清理 cookies
-      const context = page.context();
-      await context.clearCookies();
-      console.log('  ✅ 已清理 cookies');
-      return;
-    }
-
-    // 清理 localStorage 和 sessionStorage
-    await page.evaluate(() => {
-      try {
-        localStorage.clear();
-        sessionStorage.clear();
-      } catch (e) {
-        console.log('  ⚠️ localStorage 访问失败:', e.message);
-      }
-    });
-
-    // 清理 cookies
-    const context = page.context();
-    await context.clearCookies();
-
-    await page.waitForTimeout(500);
-    console.log('  ✅ 认证状态已清理');
-  } catch (error) {
-    console.log('  ⚠️ 清理认证状态时出错:', error.message);
-    // 不抛出错误，让测试继续执行
-  }
-}
-
-/**
  * 等待页面稳定
  * 改进: 增加等待时间，更好的网络状态检查
  */
@@ -391,23 +350,92 @@ export async function verifyLoginSuccess(page) {
 
 /**
  * 登出
+ * 流程：
+ * 1. 点击底部导航栏的"我的"tab
+ * 2. 下拉窗口以显示退出登录按钮
+ * 3. 点击"退出登录"按钮
+ * 4. 在弹出的对话框中点击"确定"
+ * 5. 验证已返回到登录首页
  */
 export async function logout(page) {
-  // 点击底部导航栏的个人中心
-  await page.locator('.tabbar-item:last-child').click();
-  await page.waitForLoadState('networkidle');
+  console.log('\n🚪 开始登出流程...');
 
-  console.log('登出功能需要根据实际页面结构调整');
-}
+  // 步骤 1: 点击底部导航栏的"我的"tab
+  console.log('\n1️⃣ 点击"我的"tab...');
+  const profileTab = page.locator('text=我的').or(page.locator('.tabbar-item:last-child'));
+  await profileTab.click();
+  await page.waitForTimeout(1000);
+  console.log('  ✅ 已点击"我的"tab');
 
-/**
- * 获取当前登录用户信息
- */
-export async function getCurrentUserInfo(page) {
-  // 根据实际页面结构调整选择器
-  // 这里暂时返回空对象，需要根据实际首页结构调整
-  console.log('获取用户信息需要根据实际页面结构调整');
-  return { nickname: '', role: '' };
+  // 步骤 2: 下拉窗口以显示退出登录按钮
+  console.log('\n2️⃣ 下拉窗口...');
+  const viewportSize = page.viewportSize();
+  const scrollHeight = viewportSize ? viewportSize.height : 800;
+  await page.evaluate((height) => {
+    window.scrollBy(0, height);
+  }, scrollHeight);
+  await page.waitForTimeout(500);
+  console.log('  ✅ 已下拉窗口');
+
+  // 步骤 3: 找到并点击"退出登录"按钮
+  console.log('\n3️⃣ 点击"退出登录"按钮...');
+  // 使用 data-testid 或文本选择器
+  const logoutBtn = page.locator('[data-testid="logout-button"]').or(
+    page.locator('button:has-text("退出登录")')
+  ).or(
+    page.locator('text=退出登录')
+  );
+
+  // 等待按钮可见
+  await logoutBtn.waitFor({ state: 'visible', timeout: 5000 });
+  await logoutBtn.click();
+  await page.waitForTimeout(500);
+  console.log('  ✅ 已点击"退出登录"按钮');
+
+  // 步骤 4: 在弹出的对话框中点击"确定"按钮
+  console.log('\n4️⃣ 在确认对话框中点击"确定"...');
+  // uni.showModal 会创建一个对话框，需要点击确定按钮
+  const confirmBtn = page.locator('button:has-text("确定")').or(
+    page.locator('.uni-modal__btn:has-text("确定")')
+  ).or(
+    page.locator('text=确定')
+  );
+
+  // 等待对话框出现
+  await page.waitForTimeout(500);
+  await confirmBtn.first().click();
+  console.log('  ✅ 已点击"确定"按钮');
+
+  // 步骤 5: 等待跳转并验证已返回到登录首页
+  console.log('\n5️⃣ 验证返回到登录首页...');
+  await page.waitForTimeout(2000);
+  await page.waitForLoadState('networkidle', { timeout: 10000 });
+
+  // 验证登录页面关键元素
+  const pageText = await page.locator('body').textContent();
+
+  // 检查是否包含登录页面的关键文本
+  const hasTitle = pageText.includes('安全守护');
+  const hasWechatLogin = pageText.includes('微信快捷登录');
+  const hasPhoneLogin = pageText.includes('手机号登录');
+  expect(hasTitle).toBeTruthy();
+  expect(hasWechatLogin).toBeTruthy();
+  expect(hasWechatLogin).toBeTruthy();
+
+  if (!hasTitle || !hasWechatLogin || !hasPhoneLogin) {
+    console.error('  ❌ 未正确返回到登录页面');
+    console.error('  页面内容:', pageText.substring(0, 300));
+
+    // 保存失败截图
+    const screenshotPath = `${TEMP_DIR}/logout-failed-${Date.now()}.png`;
+    await page.screenshot({ path: screenshotPath });
+    console.error(`  已保存失败截图: ${screenshotPath}`);
+
+    throw new Error('登出失败，未返回到登录页面');
+  }
+
+  console.log('  ✅ 已成功返回到登录页面');
+  console.log('\n✅ 登出流程完成\n');
 }
 /**
  * 超级管理员登录（快捷方法）
