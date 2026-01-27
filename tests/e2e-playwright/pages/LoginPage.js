@@ -89,6 +89,10 @@ export class LoginPage extends BasePage {
    * 自动完成从欢迎页到登录后的完整流程
    */
   async loginAsSuperAdmin() {
+    // 先导航到登录页面并等待加载完成
+    await this.goto();
+    await this.isLoaded();
+
     const user = TEST_USERS.SUPER_ADMIN;
     await this.clickPhoneLogin();
 
@@ -102,6 +106,9 @@ export class LoginPage extends BasePage {
    * 使用社区管理员账号登录
    */
   async loginAsCommunityAdmin() {
+    await this.goto();
+    await this.isLoaded();
+
     const user = TEST_USERS.COMMUNITY_ADMIN;
     await this.clickPhoneLogin();
 
@@ -114,6 +121,9 @@ export class LoginPage extends BasePage {
    * 使用普通员工账号登录
    */
   async loginAsStaff() {
+    await this.goto();
+    await this.isLoaded();
+
     const user = TEST_USERS.STAFF;
     await this.clickPhoneLogin();
 
@@ -126,6 +136,9 @@ export class LoginPage extends BasePage {
    * 使用普通用户账号登录
    */
   async loginAsNormalUser() {
+    await this.goto();
+    await this.isLoaded();
+
     const user = TEST_USERS.NORMAL;
     await this.clickPhoneLogin();
 
@@ -140,6 +153,9 @@ export class LoginPage extends BasePage {
    * @param {string} password - 密码
    */
   async login(phone, password) {
+    await this.goto();
+    await this.isLoaded();
+
     await this.clickPhoneLogin();
 
     const { PhoneLoginPage } = await import('./PhoneLoginPage.js');

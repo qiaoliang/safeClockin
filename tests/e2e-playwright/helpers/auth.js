@@ -411,6 +411,7 @@ function generate137PhoneNumber() {
 /**
  * 注册新用户并登录（快捷方法）
  * 改进: 使用文本选择器代替 data-testid（HBuilderX 会移除自定义属性）
+ *       增加更可靠的页面等待机制
  */
 export async function registerAndLoginAsUser(page, options = {}) {
   const phoneNumber = options.phoneNumber || generate137PhoneNumber();
@@ -420,17 +421,49 @@ export async function registerAndLoginAsUser(page, options = {}) {
   console.log(`开始注册并登录用户: ${phoneNumber}`);
 
   try {
-    // 导航到登录页面并验证
+    // 导航到登录页面
+    console.log('  ⏳ 导航到登录页面...');
     await page.goto('/');
-    await waitForPage(page, 3000);
 
+    // 等待网络空闲（使用更长的超时）
+    try {
+      await page.waitForLoadState('networkidle', { timeout: 15000 });
+      console.log('  ✅ 网络已空闲');
+    } catch (error) {
+      console.log('  ⚠️ 网络未在指定时间内达到空闲状态，继续执行...');
+    }
+
+    // 额外等待，确保 Vue 渲染完成
+    await page.waitForTimeout(2000);
+
+    // 验证登录页面包含"安全守护"文本
     const initialPageText = await page.locator('body').textContent();
     if (!initialPageText.includes('安全守护')) {
       throw new Error('登录页面未正确加载，未找到"安全守护"文本');
     }
+    console.log('  ✅ 登录页面已加载');
+
+    // 等待"手机号登录"按钮可见（使用更稳定的等待策略）
+    console.log('  ⏳ 等待"手机号登录"按钮...');
+    const phoneLoginBtn = page.locator('button:has-text("手机号登录")').first();
+
+    try {
+      await phoneLoginBtn.waitFor({ state: 'visible', timeout: 10000 });
+      console.log('  ✅ "手机号登录"按钮已可见');
+    } catch (error) {
+      console.error('  ❌ "手机号登录"按钮未在指定时间内可见');
+      const screenshotPath = `test-failed-login-btn-${Date.now()}.png`;
+      await page.screenshot({ path: screenshotPath });
+      console.error(`已保存失败截图: ${screenshotPath}`);
+      throw new Error('登录按钮超时未出现');
+    }
 
     // 点击"手机号登录"按钮 - 使用文本选择器
-    await page.locator('button:has-text("手机号登录")').first().click({ force: true });
+    console.log('  👆 点击"手机号登录"按钮...');
+    await phoneLoginBtn.click({ force: true });
+    console.log('  ✅ 已点击"手机号登录"按钮');
+
+    // 等待页面响应
     await waitForPage(page);
 
     // 切换到"注册"标签 - 使用文本选择器
