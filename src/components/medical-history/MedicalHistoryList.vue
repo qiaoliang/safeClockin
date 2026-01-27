@@ -43,7 +43,8 @@
       v-if="histories.length === 0"
       class="empty"
     >
-      <text>暂无病史记录</text>
+      <text class="empty-text">无病史信息</text>
+      <text class="empty-hint">可点击下方按钮添加</text>
     </view>
 
     <button @click="handleAdd">
@@ -84,44 +85,64 @@ const handleDelete = (id) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
+
 .medical-history-list {
-  padding: 20rpx;
+  padding: $uni-spacing-lg;
 }
 
 .history-item {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
+  background: $uni-bg-color-white;
+  border-radius: $uni-radius-md;
+  padding: $uni-spacing-xl;
+  margin-bottom: $uni-spacing-lg;
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16rpx;
+  margin-bottom: $uni-spacing-base;
 }
 
 .condition-name {
-  font-size: 32rpx;
-  font-weight: bold;
+  font-size: $uni-font-size-lg;
+  font-weight: $uni-font-weight-bold;
 }
 
 .actions {
   display: flex;
-  gap: 24rpx;
+  gap: $uni-spacing-xl;
 }
 
 .actions text {
-  color: #F48224;
-  font-size: 28rpx;
+  color: $uni-primary;
+  font-size: $uni-font-size-base;
 }
 
 .visibility-badge {
   display: inline-block;
-  padding: 8rpx 16rpx;
-  background: #f0f0f0;
-  border-radius: 8rpx;
-  font-size: 24rpx;
+  padding: $uni-spacing-xs $uni-spacing-base;
+  background: $uni-bg-color-grey;
+  border-radius: $uni-radius-sm;
+  font-size: $uni-font-size-sm;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $uni-spacing-xxxl 0;
+}
+
+.empty-text {
+  font-size: $uni-font-size-base;
+  color: $uni-text-secondary;
+  margin-bottom: $uni-spacing-sm;
+}
+
+.empty-hint {
+  font-size: $uni-font-size-sm;
+  color: $uni-text-light;
 }
 </style>
