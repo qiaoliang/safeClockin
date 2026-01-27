@@ -1,7 +1,9 @@
 <template>
   <view class="medical-history-list">
+    <!-- 有病史时显示列表 -->
     <view
       v-for="item in histories"
+      v-if="hasHistories"
       :key="item.id"
       class="history-item"
     >
@@ -39,14 +41,16 @@
       </view>
     </view>
 
+    <!-- 无病史时显示空状态 -->
     <view
-      v-if="histories.length === 0"
+      v-if="!hasHistories"
       class="empty"
     >
       <text class="empty-text">无病史信息</text>
       <text class="empty-hint">可点击下方按钮添加</text>
     </view>
 
+    <!-- 添加按钮始终显示 -->
     <button @click="handleAdd">
       添加病史
     </button>
@@ -54,6 +58,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   histories: {
     type: Array,
@@ -62,6 +68,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['add', 'edit', 'delete'])
+
+// 安全计算是否有数据
+const hasHistories = computed(() => {
+  return Array.isArray(props.histories) && props.histories.length > 0
+})
 
 const handleAdd = () => {
   emit('add')

@@ -624,10 +624,15 @@ async function loadMedicalHistories() {
   try {
     const userId = userStore.userInfo?.userId || userStore.userInfo?.user_id
     if (!userId) return
-    
+
+    console.log('[病史] 开始加载病史数据, userId:', userId)
     const res = await getUserMedicalHistories(userId)
+    console.log('[病史] API响应:', res)
+
     if (res.code === 1) {
-      medicalHistories.value = res.data || []
+      console.log('[病史] res.data:', res.data, '类型:', typeof res.data, '是否为数组:', Array.isArray(res.data))
+      medicalHistories.value = Array.isArray(res.data) ? res.data : []
+      console.log('[病史] medicalHistories:', medicalHistories.value, '长度:', medicalHistories.value.length)
     }
   } catch (error) {
     console.error('加载病史失败:', error)
