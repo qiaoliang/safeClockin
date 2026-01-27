@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 
 // 所有临时文件都保存在 /tmp 目录下
-const TEMP_DIR = '/tmp/playwright';
+export const TEMP_DIR = '/tmp/playwright';
 
 export default defineConfig({
   testDir: './tests/e2e-playwright',

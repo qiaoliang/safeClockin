@@ -8,11 +8,12 @@
  */
 import { expect } from '@playwright/test';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
+import { TEMP_DIR } from '../../../playwright.config.js';
 
 // ==================== 常量定义 ====================
 
-// 临时文件目录
-const TEMP_DIR = '/tmp/playwright';
+// 测试环境固定验证码
+export const TEST_VERIFICATION_CODE = '123456';
 
 /**
  * 保存截图到临时目录
@@ -479,6 +480,123 @@ export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMI
   expect(pageText).toContain('我的');
 
   console.log('✅ 超级管理员登录成功');
+}
+
+/**
+ * 普通用户登录（使用验证码登录）
+ * 改进: 使用手机号和验证码登录，而非密码
+ *
+ * @param {Page} page - Playwright 页面对象
+ * @param {Object} normalUser - 用户信息对象，默认为 TEST_USERS.NORMAL
+ * @param {string} normalUser.phone - 手机号
+ * @param {string} normalUser.nickname - 昵称（可选）
+ *
+ * @returns {Promise<void>}
+ *
+ * @example
+ * // 使用默认普通用户登录
+ * await loginAsNormalUserByCode(page);
+ *
+ * @example
+ * // 使用社区专员登录
+ * await loginAsNormalUserByCode(page, TEST_USERS.STAFF);
+ *
+ * @example
+ * // 使用自定义用户登录
+ * await loginAsNormalUserByCode(page, {
+ *   phone: '13900000099',
+ *   nickname: '测试用户'
+ * });
+ *
+ * @throws {Error} 当登录失败时抛出错误，包括截图保存
+ */
+export async function loginAsNormalUserByCode(page, normalUser = TEST_USERS.NORMAL) {
+  console.log('普通用户登录（验证码登录）...');
+
+  await page.goto('/');
+  await waitForPage(page, 3000);
+  await waitForLoginPage(page);
+
+  // 打印当前页面URL和内容，帮助调试
+  console.log('  📍 当前URL:', page.url());
+
+  // 点击"手机号登录"按钮 - 使用文本选择器
+  await expect(page.locator('text=手机号登录').first()).toBeVisible({ timeout: 15000 });
+  await page.locator('text=手机号登录').first().click({ force: true });
+  console.log('  ✅ 已点击"手机号登录"按钮');
+
+  // 等待验证码登录标签可见 - 使用 data-testid
+  await expect(page.locator('[data-testid="tab-code-login"]').first()).toBeVisible({ timeout: 15000 });
+  await waitForPage(page);
+
+  // 切换到"验证码登录" - 使用 data-testid
+  const codeTab = page.locator('[data-testid="tab-code-login"]').first();
+  if (await codeTab.isVisible()) {
+    await codeTab.click({ force: true });
+    await page.waitForTimeout(1000); // 增加等待时间，确保切换完成
+    console.log('  ✅ 已切换到验证码登录标签');
+  } else {
+    console.log('  ⚠️ 验证码登录标签不可见，尝试直接登录');
+  }
+
+  // 等待验证码输入框可见
+  await expect(page.locator('[data-testid="code-input"]').first()).toBeVisible({ timeout: 10000 });
+
+  // 检查验证码输入框是否真的可见
+  const codeInputVisible = await page.locator('[data-testid="code-input"]').first().isVisible();
+  console.log('  🔍 验证码输入框可见性:', codeInputVisible);
+
+  // 输入手机号 - 使用 data-testid 定位
+  console.log('  📝 输入手机号:', normalUser.phone);
+  const phoneInput = page.locator('[data-testid="phone-input"]').first().locator('input[type="number"]');
+  await phoneInput.fill(normalUser.phone);
+
+  // 点击"获取验证码"按钮
+  console.log('  📱 点击"获取验证码"按钮');
+  const codeBtn = page.locator('[data-testid="get-code-button"]').first();
+  await codeBtn.click({ force: true });
+  console.log('  ✅ 已点击"获取验证码"按钮');
+
+  // 等待验证码发送
+  await page.waitForTimeout(2000);
+
+  // 输入验证码
+  console.log('  📝 输入验证码:', TEST_VERIFICATION_CODE);
+  const codeInput = page.locator('[data-testid="code-input"]').first().locator('input[type="text"]');
+  await codeInput.fill(TEST_VERIFICATION_CODE);
+
+  // 点击登录按钮 - 使用 data-testid
+  const loginBtn = page.locator('[data-testid="login-submit-button"]').first();
+  await loginBtn.click({ force: true });
+  console.log('  ✅ 已点击登录按钮');
+
+  // 等待登录完成
+  await page.waitForTimeout(AUTH_TIMEOUTS.loginWait);
+  console.log('  ⏳ 等待网络空闲...');
+  await page.waitForLoadState('networkidle');
+
+  // 验证登录成功
+  const pageText = await page.locator('body').textContent();
+  console.log('  📄 页面内容长度:', pageText.length);
+  console.log('  📄 当前URL:', page.url());
+
+  // 检查页面是否包含"我的"
+  const hasMyPage = pageText.includes('我的');
+  console.log('  🔍 页面是否包含"我的":', hasMyPage);
+
+  if (!hasMyPage) {
+    // 如果登录失败，打印页面内容并保存截图
+    console.error('  ❌ 登录可能失败，页面内容:');
+    console.error('  ', pageText.substring(0, 500));
+
+    const screenshotPath = `${TEMP_DIR}/login-failed-${Date.now()}.png`;
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+    console.error(`  已保存失败截图: ${screenshotPath}`);
+  }
+
+  expect(pageText).toContain('我的');
+
+  console.log('✅ 普通用户登录成功');
 }
 
 /**
