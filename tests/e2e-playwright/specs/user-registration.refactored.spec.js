@@ -50,15 +50,7 @@ test.describe('用户注册和登录测试', () => {
       await phoneLoginPage.fillCode(testCode);
       await phoneLoginPage.fillPassword(password);
 
-      // 步骤 5：勾选用户协议
-      try {
-        await phoneLoginPage.clickAgreement();
-      } catch {
-        // 如果没有专门的协议勾选方法，使用通用方法
-        await page.locator('.agree-label').or(page.locator('.agreement')).click({ force: true });
-      }
-
-      // 步骤 6：提交注册
+      // 步骤 5：提交注册
       await phoneLoginPage.clickSubmit();
 
       // 步骤 7：等待注册完成并跳转到首页
@@ -129,13 +121,6 @@ test.describe('用户注册和登录测试', () => {
       await phoneLoginPage.fillCode(testCode);
       await phoneLoginPage.fillPassword(password);
 
-      // 勾选协议
-      try {
-        await page.locator('.agree-label').or(page.locator('.agreement')).click({ force: true });
-      } catch {
-        // 继续测试
-      }
-
       // 提交注册
       await phoneLoginPage.clickSubmit();
       await page.waitForTimeout(2000);
@@ -163,13 +148,6 @@ test.describe('用户注册和登录测试', () => {
       await phoneLoginPage.fillPhone(phoneNumber);
       await phoneLoginPage.fillCode(testCode);
       await phoneLoginPage.fillPassword(invalidPassword);
-
-      // 勾选协议
-      try {
-        await page.locator('.agree-label').or(page.locator('.agreement')).click({ force: true });
-      } catch {
-        // 继续测试
-      }
 
       // 提交注册
       await phoneLoginPage.clickSubmit();
