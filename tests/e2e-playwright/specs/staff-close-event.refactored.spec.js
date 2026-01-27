@@ -4,6 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAsSuperAdmin, logout } from '../helpers/auth.js';
+import { AUTH_SELECTORS } from '../helpers/auth.js';
 
 test.describe('社区工作人员关闭事件测试', () => {
 
@@ -39,13 +40,12 @@ test.describe('社区工作人员关闭事件测试', () => {
 
   test.describe('社区导航', () => {
     test('能够导航到社区管理页面', async ({ page }) => {
-      // 登录超级管理员
+      //1. 登录超级管理员
       await loginAsSuperAdmin(page);
 
-      // 导航到社区管理
-      await navigateToCommunityManagement(page);
+      //2. 点击页面下方的‘社区’tab
 
-      // 验证在正确的页面
+      //3.  验证在正确的页面
       const pageText = await page.locator('body').textContent();
       expect(pageText).toMatch(/社区管理|事件|管理/);
     });
@@ -122,13 +122,17 @@ test.describe('社区工作人员关闭事件测试', () => {
 async function navigateToCommunityManagement(page) {
   console.log('辅助函数：导航到社区管理页面');
 
-
-  // 切换到"社区"tab
-  const communityTab = page.locator('.tabbar-item')
-    .filter({ hasText: '社区' })
+  // 切换到"社区"tab（使用与 clickProfileTab 相同的稳定模式）
+  const communityTab = page.locator(AUTH_SELECTORS.tabbar)
+    .filter({ hasText: AUTH_SELECTORS.TEXT.COMMUNITY })
+    .or(page.locator(`text=${AUTH_SELECTORS.TEXT.COMMUNITY}`))
     .first();
+
+  console.log(`  🔍 等待"${AUTH_SELECTORS.TEXT.COMMUNITY}"tab出现且可见...`);
+  await communityTab.waitFor({ state: 'attached', timeout: 10000 });
   await communityTab.click({ force: true });
   await page.waitForTimeout(2000);
+  console.log(`  ✅ 已点击"${AUTH_SELECTORS.TEXT.COMMUNITY}"tab`);
 
   // 查找管理按钮
   const manageButton = page.locator('.manage-button');
@@ -136,6 +140,7 @@ async function navigateToCommunityManagement(page) {
 
   if (count > 0) {
     await manageButton.first().click({ force: true });
+    console.log('  ✅ 已点击管理按钮（使用选择器）');
   } else {
     // 回退到文本搜索
     const textButton = page.locator('text=管理').first();
@@ -143,8 +148,9 @@ async function navigateToCommunityManagement(page) {
 
     if (textCount > 0) {
       await textButton.click({ force: true });
+      console.log('  ✅ 已点击管理按钮（使用文本）');
     } else {
-      console.log('⚠️ 未找到管理按钮');
+      console.log('  ⚠️ 未找到管理按钮');
     }
   }
 

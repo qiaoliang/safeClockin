@@ -69,6 +69,8 @@ export const AUTH_SELECTORS = {
     WECHAT_LOGIN: '微信快捷登录',
     PHONE_LOGIN: '手机号登录',
     PROFILE: '我的',
+    COMMUNITY: '社区',
+    CHECKIN: '打卡',
     REGISTER: '注册',
     PASSWORD_LOGIN: '密码登录',
     CODE_LOGIN: '验证码登录',
@@ -101,32 +103,31 @@ function saveScreenshotToTemp(page, prefix) {
  * 等待页面稳定
  */
 async function waitForPage(page, timeout = TIMEOUT.PAGE_LOAD) {
-  console.log('  ⏳ 等待页面加载...');
+  // console.log('  ⏳ 等待页面加载...');
 
   try {
     await page.waitForLoadState('networkidle', { timeout });
-    console.log('  ✅ 网络已空闲');
+    // console.log('  ✅ 网络已空闲');
   } catch (error) {
-    console.log('  ⚠️ 网络未能在指定时间内达到空闲状态，继续执行...');
+    // console.log('  ⚠️ 网络未能在指定时间内达到空闲状态，继续执行...');
   }
 
   await page.waitForTimeout(WAIT.XLONG);
-  console.log('  ✅ 页面加载完成');
+  // console.log('  ✅ 页面加载完成');
 }
 
 /**
  * 清理认证状态（localStorage + sessionStorage + cookies）
  */
 export async function cleanupAuthState(page) {
-  console.log('  🧹 清理认证状态...');
+  // console.log('  🧹 清理认证状态...');
 
   try {
     const url = page.url();
     if (!url || url === 'about:blank' || !url.includes('localhost')) {
-      console.log('  ⚠️ 页面未就绪，跳过 storage 清理');
       const context = page.context();
       await context.clearCookies();
-      console.log('  ✅ 已清理 cookies');
+      // console.log('  ✅ 已清理 cookies');
       return;
     }
 
@@ -135,7 +136,7 @@ export async function cleanupAuthState(page) {
         localStorage.clear();
         sessionStorage.clear();
       } catch (e) {
-        console.log('  ⚠️ localStorage 访问失败:', e.message);
+        // console.log('  ⚠️ localStorage 访问失败:', e.message);
       }
     });
 
@@ -143,9 +144,9 @@ export async function cleanupAuthState(page) {
     await context.clearCookies();
 
     await page.waitForTimeout(WAIT.SHORT);
-    console.log('  ✅ 认证状态已清理');
+    // console.log('  ✅ 认证状态已清理');
   } catch (error) {
-    console.log('  ⚠️ 清理认证状态时出错:', error.message);
+    // console.log('  ⚠️ 清理认证状态时出错:', error.message);
   }
 }
 
@@ -153,19 +154,19 @@ export async function cleanupAuthState(page) {
  * 验证登录页面加载
  */
 export async function waitForLoginPage(page) {
-  console.log('  ⏳ 等待登录页面加载...');
+  // console.log('  ⏳ 等待登录页面加载...');
 
   await waitForPage(page);
 
   const currentUrl = page.url();
-  console.log('  📍 当前 URL:', currentUrl);
+  // console.log('  📍 当前 URL:', currentUrl);
 
   try {
     await page.waitForSelector(AUTH_SELECTORS.loginTitle, {
       timeout: TIMEOUT.ELEMENT_VISIBLE,
       state: 'visible'
     });
-    console.log('  ✅ 登录标题已加载');
+    // console.log('  ✅ 登录标题已加载');
   } catch (error) {
     console.error('  ❌ 登录标题未加载');
 
@@ -178,7 +179,7 @@ export async function waitForLoginPage(page) {
 
   const pageTitle = await page.locator(AUTH_SELECTORS.loginTitle).first().textContent();
   expect(pageTitle).toContain('安全守护');
-  console.log('  ✅ 登录页面验证通过');
+  // console.log('  ✅ 登录页面验证通过');
 }
 
 /**
@@ -196,11 +197,11 @@ export async function verifyLoginSuccess(page) {
 
   const pageText = await page.locator('body').textContent();
   if (!isValidHomePage(pageText)) {
-    console.log('当前页面内容:', pageText.substring(0, 300));
+    // console.log('当前页面内容:', pageText.substring(0, 300));
     throw new Error('未找到首页元素，登录可能失败');
   }
 
-  console.log('✅ 登录成功验证通过');
+  // console.log('✅ 登录成功验证通过');
 }
 
 /**
@@ -216,9 +217,9 @@ async function scrollToBottom(page) {
  * 等待并点击"我的"标签
  */
 async function clickProfileTab(page) {
-  console.log('\n1️⃣ 点击"我的"tab...');
+  // console.log('\n1️⃣ 点击"我的"tab...');
 
-  console.log('  📜 向下滚动到页面底部...');
+  // console.log('  📜 向下滚动到页面底部...');
   await scrollToBottom(page);
   await page.waitForTimeout(WAIT.MEDIUM);
 
@@ -227,41 +228,41 @@ async function clickProfileTab(page) {
     documentHeight: document.body.scrollHeight,
     scrollTop: window.pageYOffset || document.documentElement.scrollTop,
   }));
-  console.log(`  📏 窗口高度: ${scrollInfo.windowHeight}px, 文档高度: ${scrollInfo.documentHeight}px, 滚动位置: ${scrollInfo.scrollTop}px`);
+  // console.log(`  📏 窗口高度: ${scrollInfo.windowHeight}px, 文档高度: ${scrollInfo.documentHeight}px, 滚动位置: ${scrollInfo.scrollTop}px`);
 
   const profileTab = page.locator(AUTH_SELECTORS.tabbar).filter({ hasText: AUTH_SELECTORS.TEXT.PROFILE }).or(
     page.locator(AUTH_SELECTORS.profileTab)
   );
 
-  console.log('  🔍 等待"我的"tab出现且可见...');
+  // console.log('  🔍 等待"我的"tab出现且可见...');
   await profileTab.first().waitFor({ state: 'attached', timeout: TIMEOUT.PAGE_LOAD });
 
   const isVisible = await profileTab.first().isVisible();
-  console.log(`  👁️ 导航栏元素是否可见: ${isVisible}`);
+  // console.log(`  👁️ 导航栏元素是否可见: ${isVisible}`);
 
   if (!isVisible) {
-    console.log('  ⚠️ 导航栏不可见，再次滚动到底部...');
+    // console.log('  ⚠️ 导航栏不可见，再次滚动到底部...');
     await scrollToBottom(page);
     await page.waitForTimeout(WAIT.SHORT);
   }
 
   const isVisibleAfterScroll = await profileTab.first().isVisible();
-  console.log(`  👁️ 第二次检查可见性: ${isVisibleAfterScroll}`);
+  // console.log(`  👁️ 第二次检查可见性: ${isVisibleAfterScroll}`);
 
   await profileTab.first().click({ force: true });
   await page.waitForTimeout(WAIT.MEDIUM + WAIT.SHORT);
-  console.log('  ✅ 已点击"我的"tab');
+  // console.log('  ✅ 已点击"我的"tab');
 }
 
 /**
  * 等待并确认模态对话框
  */
 async function confirmModal(page, expectedContent) {
-  console.log('  ⏳ 等待对话框出现...');
+  // console.log('  ⏳ 等待对话框出现...');
   await expect(page.locator(AUTH_SELECTORS.modal).first()).toBeVisible({ timeout: TIMEOUT.MODAL });
 
   const modalContent = await page.locator(AUTH_SELECTORS.modalBody).first().textContent();
-  console.log(`  📝 对话框内容: ${modalContent}`);
+  // console.log(`  📝 对话框内容: ${modalContent}`);
 
   if (expectedContent) {
     expect(modalContent).toContain(expectedContent);
@@ -269,39 +270,39 @@ async function confirmModal(page, expectedContent) {
 
   const confirmBtn = page.locator(AUTH_SELECTORS.modalConfirm).first();
   const isConfirmBtnVisible = await confirmBtn.isVisible();
-  console.log(`  🔍 确定按钮是否可见: ${isConfirmBtnVisible}`);
+  // console.log(`  🔍 确定按钮是否可见: ${isConfirmBtnVisible}`);
 
   if (!isConfirmBtnVisible) {
     throw new Error('确定按钮不可见，无法完成操作');
   }
 
   const btnText = await confirmBtn.textContent();
-  console.log(`  📝 确定按钮文本: ${btnText}`);
+  // console.log(`  📝 确定按钮文本: ${btnText}`);
 
   await confirmBtn.click({ force: true });
-  console.log('  ✅ 已点击"确定"按钮');
+  // console.log('  ✅ 已点击"确定"按钮');
 }
 
 /**
  * 检查并处理"登录已过期"提示框
  */
 async function handleExpiredLoginModal(page) {
-  console.log('\n  📋 检查是否出现"用户登录已过期"提示框...');
+  // console.log('\n  📋 检查是否出现"用户登录已过期"提示框...');
   const expiredModalVisible = await page.locator(AUTH_SELECTORS.modal).isVisible();
 
   if (!expiredModalVisible) {
-    console.log('  ℹ️ 未检测到"用户登录已过期"提示框');
+    // console.log('  ℹ️ 未检测到"用户登录已过期"提示框');
     return false;
   }
 
   const expiredModalContent = await page.locator(AUTH_SELECTORS.modalBody).first().textContent();
-  console.log(`  📝 提示框内容: ${expiredModalContent}`);
+  // console.log(`  📝 提示框内容: ${expiredModalContent}`);
 
   if (expiredModalContent.includes('用户登录已过期') || expiredModalContent.includes('请重新登录')) {
-    console.log('  ✅ 检测到"用户登录已过期"提示框，点击确定按钮');
+    // console.log('  ✅ 检测到"用户登录已过期"提示框，点击确定按钮');
     await page.locator(AUTH_SELECTORS.modalConfirm).first().click({ force: true });
     await page.waitForTimeout(WAIT.MEDIUM);
-    console.log('  ✅ 已点击"确定"按钮');
+    // console.log('  ✅ 已点击"确定"按钮');
     return true;
   }
 
@@ -312,27 +313,27 @@ async function handleExpiredLoginModal(page) {
  * 验证已返回到登录页面
  */
 async function verifyBackToLoginPage(page) {
-  console.log('\n5️⃣ 验证返回到登录首页...');
+  // console.log('\n5️⃣ 验证返回到登录首页...');
 
   const currentUrl = page.url();
-  console.log('  📍 当前 URL:', currentUrl);
+  // console.log('  📍 当前 URL:', currentUrl);
 
   if (!currentUrl.includes('login')) {
-    console.log('  ⚠️ URL未包含login，额外等待...');
+    // console.log('  ⚠️ URL未包含login，额外等待...');
     await page.waitForTimeout(WAIT.LOGIN);
 
     const newUrl = page.url();
-    console.log('  📍 重新检查 URL:', newUrl);
+    // console.log('  📍 重新检查 URL:', newUrl);
   }
 
   const pageText = await page.locator('body').textContent();
-  console.log('  📄 当前页面内容长度:', pageText.length);
-  console.log('  📄 当前页面内容预览:', pageText.substring(0, 200));
+  // console.log('  📄 当前页面内容长度:', pageText.length);
+  // console.log('  📄 当前页面内容预览:', pageText.substring(0, 200));
 
   const hasTitle = pageText.includes(AUTH_SELECTORS.TEXT.TITLE);
   const hasWechatLogin = pageText.includes(AUTH_SELECTORS.TEXT.WECHAT_LOGIN);
   const hasPhoneLogin = pageText.includes(AUTH_SELECTORS.TEXT.PHONE_LOGIN);
-  console.log('  🔍 检查结果:', { hasTitle, hasWechatLogin, hasPhoneLogin });
+  // console.log('  🔍 检查结果:', { hasTitle, hasWechatLogin, hasPhoneLogin });
 
   expect(hasTitle).toBeTruthy();
   expect(hasWechatLogin).toBeTruthy();
@@ -349,7 +350,7 @@ async function verifyBackToLoginPage(page) {
     throw new Error('登出失败，未返回到登录页面');
   }
 
-  console.log('  ✅ 已成功返回到登录页面');
+  // console.log('  ✅ 已成功返回到登录页面');
 }
 
 /**
@@ -362,16 +363,16 @@ async function verifyBackToLoginPage(page) {
  * 5. 验证已返回到登录首页
  */
 export async function logout(page) {
-  console.log('\n🚪 开始登出流程...');
+  // console.log('\n🚪 开始登出流程...');
 
   await clickProfileTab(page);
 
-  console.log('\n2️⃣ 下拉窗口...');
+  // console.log('\n2️⃣ 下拉窗口...');
   await scrollToBottom(page);
   await page.waitForTimeout(WAIT.SHORT);
-  console.log('  ✅ 已下拉窗口');
+  // console.log('  ✅ 已下拉窗口');
 
-  console.log('\n3️⃣ 点击"退出登录"按钮...');
+  // console.log('\n3️⃣ 点击"退出登录"按钮...');
   const logoutBtn = page.locator(AUTH_SELECTORS.logoutBtn).or(
     page.locator('[data-testid="logout-button"]')
   );
@@ -379,23 +380,23 @@ export async function logout(page) {
   await logoutBtn.waitFor({ state: 'visible', timeout: TIMEOUT.MODAL });
   await logoutBtn.first().click({ force: true });
   await page.waitForTimeout(WAIT.MEDIUM);
-  console.log('  ✅ 已点击"退出登录"按钮');
+  // console.log('  ✅ 已点击"退出登录"按钮');
 
-  console.log('\n4️⃣ 在确认对话框中点击"确定"...');
+  // console.log('\n4️⃣ 在确认对话框中点击"确定"...');
   await confirmModal(page, '确定要退出登录吗？');
 
-  console.log('  ⏳ 等待页面跳转...');
+  // console.log('  ⏳ 等待页面跳转...');
   try {
     await page.waitForURL(/login/i, { timeout: TIMEOUT.URL_CHANGE });
-    console.log('  ✅ URL已变化');
+    // console.log('  ✅ URL已变化');
   } catch (error) {
-    console.log('  ⚠️ URL未在预期时间内变化，继续执行...');
+    // console.log('  ⚠️ URL未在预期时间内变化，继续执行...');
   }
 
   try {
     await page.waitForLoadState('networkidle', { timeout: TIMEOUT.URL_CHANGE });
   } catch (error) {
-    console.log('  ⚠️ 网络未能在指定时间内达到空闲状态，继续执行...');
+    // console.log('  ⚠️ 网络未能在指定时间内达到空闲状态，继续执行...');
   }
 
   await page.waitForTimeout(WAIT.LONG);
@@ -403,7 +404,7 @@ export async function logout(page) {
   await handleExpiredLoginModal(page);
   await verifyBackToLoginPage(page);
 
-  console.log('\n✅ 登出流程完成\n');
+  // console.log('\n✅ 登出流程完成\n');
 }
 
 // ==================== 登录辅助函数 ====================
@@ -412,11 +413,11 @@ export async function logout(page) {
  * 点击手机号登录按钮
  */
 async function clickPhoneLoginButton(page) {
-  console.log('  📍 当前URL:', page.url());
+  // console.log('  📍 当前URL:', page.url());
 
   await expect(page.locator(AUTH_SELECTORS.phoneLoginBtn).first()).toBeVisible({ timeout: TIMEOUT.BUTTON_VISIBLE });
   await page.locator(AUTH_SELECTORS.phoneLoginBtn).first().click({ force: true });
-  console.log('  ✅ 已点击"手机号登录"按钮');
+  // console.log('  ✅ 已点击"手机号登录"按钮');
 
   await waitForPage(page);
 }
@@ -429,9 +430,9 @@ async function switchLoginTab(page, tabSelector, tabName) {
   if (await tab.isVisible()) {
     await tab.click({ force: true });
     await page.waitForTimeout(WAIT.TAB_SWITCH);
-    console.log(`  ✅ 已切换到${tabName}标签`);
+    // console.log(`  ✅ 已切换到${tabName}标签`);
   } else {
-    console.log(`  ⚠️ ${tabName}标签不可见，尝试直接登录`);
+    // console.log(`  ⚠️ ${tabName}标签不可见，尝试直接登录`);
   }
 }
 
@@ -439,7 +440,7 @@ async function switchLoginTab(page, tabSelector, tabName) {
  * 填写手机号
  */
 async function fillPhoneNumber(page, phone) {
-  console.log('  📝 输入手机号:', phone);
+  // console.log('  📝 输入手机号:', phone);
   const phoneInput = page.locator(AUTH_SELECTORS.phoneInput).first().locator(AUTH_SELECTORS.numberInput);
   await phoneInput.fill(phone);
 }
@@ -448,7 +449,7 @@ async function fillPhoneNumber(page, phone) {
  * 填写密码
  */
 async function fillPassword(page, password) {
-  console.log('  📝 输入密码');
+  // console.log('  📝 输入密码');
   const passwordInput = page.locator(AUTH_SELECTORS.passwordInput).first().locator('input[type="password"]');
   await passwordInput.fill(password);
 }
@@ -457,10 +458,10 @@ async function fillPassword(page, password) {
  * 点击获取验证码按钮
  */
 async function clickGetCodeButton(page) {
-  console.log('  📱 点击"获取验证码"按钮');
+  // console.log('  📱 点击"获取验证码"按钮');
   const codeBtn = page.locator(AUTH_SELECTORS.getCodeButton).first();
   await codeBtn.click({ force: true });
-  console.log('  ✅ 已点击"获取验证码"按钮');
+  // console.log('  ✅ 已点击"获取验证码"按钮');
   await page.waitForTimeout(WAIT.CODE_SEND);
 }
 
@@ -468,7 +469,7 @@ async function clickGetCodeButton(page) {
  * 填写验证码
  */
 async function fillVerificationCode(page, code = TEST_VERIFICATION_CODE) {
-  console.log('  📝 输入验证码:', code);
+  // console.log('  📝 输入验证码:', code);
   const codeInput = page.locator(AUTH_SELECTORS.codeInput).first().locator(AUTH_SELECTORS.textInput);
   await codeInput.fill(code);
 }
@@ -479,7 +480,7 @@ async function fillVerificationCode(page, code = TEST_VERIFICATION_CODE) {
 async function clickLoginButton(page) {
   const loginBtn = page.locator(AUTH_SELECTORS.loginSubmitButton).first();
   await loginBtn.click({ force: true });
-  console.log('  ✅ 已点击登录按钮');
+  // console.log('  ✅ 已点击登录按钮');
 }
 
 /**
@@ -487,15 +488,15 @@ async function clickLoginButton(page) {
  */
 async function waitForLoginAndVerify(page) {
   await page.waitForTimeout(WAIT.LOGIN);
-  console.log('  ⏳ 等待网络空闲...');
+  // console.log('  ⏳ 等待网络空闲...');
   await page.waitForLoadState('networkidle');
 
   const pageText = await page.locator('body').textContent();
-  console.log('  📄 页面内容长度:', pageText.length);
-  console.log('  📄 当前URL:', page.url());
+  // console.log('  📄 页面内容长度:', pageText.length);
+  // console.log('  📄 当前URL:', page.url());
 
   const hasMyPage = pageText.includes(AUTH_SELECTORS.TEXT.PROFILE);
-  console.log('  🔍 页面是否包含"我的":', hasMyPage);
+  // console.log('  🔍 页面是否包含"我的":', hasMyPage);
 
   if (!hasMyPage) {
     console.error('  ❌ 登录可能失败，页面内容:');
@@ -513,7 +514,7 @@ async function waitForLoginAndVerify(page) {
  * 密码登录的通用流程
  */
 async function loginByPassword(page, user) {
-  console.log('密码登录...');
+  // console.log('密码登录...');
 
   await page.goto('/');
   await waitForPage(page, WAIT.XLONG);
@@ -527,7 +528,7 @@ async function loginByPassword(page, user) {
   await expect(page.locator(AUTH_SELECTORS.passwordInput).first()).toBeVisible({ timeout: TIMEOUT.ELEMENT_VISIBLE });
 
   const passwordInputVisible = await page.locator(AUTH_SELECTORS.passwordInput).first().isVisible();
-  console.log('  🔍 密码输入框可见性:', passwordInputVisible);
+  // console.log('  🔍 密码输入框可见性:', passwordInputVisible);
 
   await fillPhoneNumber(page, user.phone);
   await fillPassword(page, user.password);
@@ -539,7 +540,7 @@ async function loginByPassword(page, user) {
  * 验证码登录的通用流程
  */
 async function loginByCode(page, user, code = TEST_VERIFICATION_CODE) {
-  console.log('验证码登录...');
+  // console.log('验证码登录...');
 
   await page.goto('/');
   await waitForPage(page, WAIT.XLONG);
@@ -553,7 +554,7 @@ async function loginByCode(page, user, code = TEST_VERIFICATION_CODE) {
   await expect(page.locator(AUTH_SELECTORS.codeInput).first()).toBeVisible({ timeout: TIMEOUT.ELEMENT_VISIBLE });
 
   const codeInputVisible = await page.locator(AUTH_SELECTORS.codeInput).first().isVisible();
-  console.log('  🔍 验证码输入框可见性:', codeInputVisible);
+  // console.log('  🔍 验证码输入框可见性:', codeInputVisible);
 
   await fillPhoneNumber(page, user.phone);
   await clickGetCodeButton(page);
@@ -567,7 +568,7 @@ async function loginByCode(page, user, code = TEST_VERIFICATION_CODE) {
  */
 export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMIN) {
   await loginByPassword(page, superAdmin);
-  console.log('✅ 超级管理员登录成功');
+  // console.log('✅ 超级管理员登录成功');
 }
 
 /**
@@ -599,7 +600,7 @@ export async function loginAsSuperAdmin(page, superAdmin = TEST_USERS.SUPER_ADMI
  */
 export async function loginAsNormalUserByCode(page, normalUser = TEST_USERS.NORMAL) {
   await loginByCode(page, normalUser);
-  console.log('✅ 普通用户登录成功');
+  // console.log('✅ 普通用户登录成功');
 }
 
 /**
@@ -620,13 +621,11 @@ export async function registerAndLoginAsUser(page, options = {}) {
   const password = options.password || 'F1234567';
   const testCode = options.testCode || '123456';
 
-  console.log(`开始注册并登录用户: ${phoneNumber}`);
+  // console.log(`开始注册并登录用户: ${phoneNumber}`);
 
   try {
-    console.log('🧹 准备工作：清理认证状态');
     await cleanupAuthState(page);
 
-    console.log('⏳ 步骤 1：导航到登录页面');
     await page.goto('/#/pages/login/login', { waitUntil: 'networkidle' });
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(WAIT.XLONG);
@@ -635,22 +634,20 @@ export async function registerAndLoginAsUser(page, options = {}) {
     expect(pageText).toContain('安全守护');
     expect(pageText).toContain('微信快捷登录');
     expect(pageText).toContain('手机号登录');
-    console.log('✅ 步骤 1：成功导航到登录页面');
+    // console.log('✅ 步骤 1：成功导航到登录页面');
 
-    console.log('⏳ 步骤 2：点击手机号登录按钮');
     const phoneLoginBtn = page.locator(AUTH_SELECTORS.phoneLoginBtn).first();
     try {
       await phoneLoginBtn.waitFor({ state: 'visible', timeout: TIMEOUT.ELEMENT_VISIBLE });
       await phoneLoginBtn.click({ force: true });
       await waitForPage(page);
-      console.log('✅ 步骤 2：成功点击手机号登录按钮');
+      // console.log('✅ 步骤 2：成功点击手机号登录按钮');
     } catch (error) {
       const screenshotPath = await saveScreenshotToTemp(page, 'test-failed-login-btn');
       console.error(`❌ "手机号登录"按钮失败，已保存截图: ${screenshotPath}`);
       throw new Error('登录按钮操作失败');
     }
 
-    console.log('⏳ 步骤 3：切换到注册表单');
     const registerTab = page.locator('.tab').filter({ hasText: AUTH_SELECTORS.TEXT.REGISTER });
     await registerTab.click({ force: true });
     await page.waitForTimeout(WAIT.MEDIUM);
@@ -658,61 +655,54 @@ export async function registerAndLoginAsUser(page, options = {}) {
     const registerText = await page.locator('body').textContent();
     expect(registerText).toContain('注册');
     expect(registerText).toContain('设置密码');
-    console.log('✅ 步骤 3：成功切换到注册表单');
+    // console.log('✅ 步骤 3：成功切换到注册表单');
 
-    console.log('⏳ 步骤 4：输入手机号');
     const phoneInput = page.locator(AUTH_SELECTORS.numberInput).first();
     await phoneInput.click({ force: true });
     await phoneInput.clear();
     await phoneInput.type(phoneNumber, { delay: 100 });
     await page.waitForTimeout(WAIT.SHORT);
-    console.log('✅ 步骤 4：成功输入手机号');
+    // console.log('✅ 步骤 4：成功输入手机号');
 
-    console.log('⏳ 步骤 5：发送验证码');
     const codeBtn = page.locator('.code-btn');
     await codeBtn.click({ force: true });
     await page.waitForTimeout(WAIT.CODE_SEND);
 
     const codeBtnText = await codeBtn.textContent();
     expect(codeBtnText).toMatch(/\d+s/);
-    console.log('✅ 步骤 5：成功发送验证码');
+    // console.log('✅ 步骤 5：成功发送验证码');
 
-    console.log('⏳ 步骤 6：输入验证码');
     const codeInput = page.locator(AUTH_SELECTORS.numberInput).nth(1);
     await codeInput.click({ force: true });
     await codeInput.clear();
     await codeInput.type(testCode, { delay: 100 });
     await page.waitForTimeout(WAIT.SHORT);
-    console.log('✅ 步骤 6：成功输入验证码');
+    // console.log('✅ 步骤 6：成功输入验证码');
 
-    console.log('⏳ 步骤 7：输入密码');
     const passwordInput = page.locator('input[type="password"]');
     await passwordInput.click({ force: true });
     await passwordInput.clear();
     await passwordInput.type(password, { delay: 100 });
     await page.waitForTimeout(WAIT.SHORT);
-    console.log('✅ 步骤 7：成功输入密码');
+    // console.log('✅ 步骤 7：成功输入密码');
 
-    console.log('⏳ 步骤 8：勾选用户协议');
     const agreementText = page.locator('text=用户协议').or(page.locator('text=隐私政策'));
     if (await agreementText.count() > 0) {
       await agreementText.first().click({ force: true });
       await page.waitForTimeout(WAIT.SHORT);
-      console.log('✅ 步骤 8：已勾选用户协议');
+      // console.log('✅ 步骤 8：已勾选用户协议');
     } else {
-      console.log('⚠️ 步骤 8：未找到协议文本，尝试其他方式');
       const checkbox = page.locator('.agree-checkbox, .uni-checkbox, [type="checkbox"]');
       if (await checkbox.count() > 0) {
         await checkbox.first().click({ force: true });
         await page.waitForTimeout(WAIT.SHORT);
-        console.log('✅ 步骤 8：已勾选用户协议（通过复选框）');
+        // console.log('✅ 步骤 8：已勾选用户协议（通过复选框）');
       }
     }
 
-    console.log('⏳ 步骤 9：提交注册申请');
     const submitBtn = page.locator('uni-button.submit');
     await submitBtn.click({ force: true });
-    console.log('✅ 步骤 9：提交注册申请');
+    // console.log('✅ 步骤 9：提交注册申请');
 
     await page.waitForTimeout(WAIT.LOGIN);
     await page.waitForLoadState('networkidle');
@@ -738,8 +728,8 @@ export async function registerAndLoginAsUser(page, options = {}) {
       throw new Error('注册失败，未跳转到有效页面');
     }
 
-    console.log('✅ 用户注册并登录成功');
-    console.log(`✅ 用户 ${phoneNumber} 注册成功并进入打卡首页`);
+    // console.log('✅ 用户注册并登录成功');
+    // console.log(`✅ 用户 ${phoneNumber} 注册成功并进入打卡首页`);
     return { phone: phoneNumber, password };
   } catch (error) {
     console.error('❌ 注册并登录失败:', error.message);
