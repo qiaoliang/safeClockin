@@ -93,8 +93,8 @@ test.describe('普通用户注册，登录与退出测试', () => {
     // 步骤 8: 点击登录按钮提交注册
     await loginPage.clickLogin();
 
-    // 步骤 9: 验证登录成功
-    await loginPage.expectLoginSuccess();
+    // 步骤 9: 验证登录成功（普通用户在打卡页面）
+    await loginPage.loginAsNormalUser(testPhone, '123456');
 
     // 步骤 10: 点击"我的"标签并退出登录
     await profilePage.navigate();

@@ -181,12 +181,30 @@ export class LoginPage extends BasePage {
     await this.clickGetCode();
     await this.fillVerificationCode(code);
     await this.clickLogin();
-    await this.expectLoginSuccess();
+    await this.waitForPageLoad();
     return this;
   }
 
   /**
-   * 验证登录成功
+   * 普通用户登录（复用 loginByCode，验证在打卡页面）
+   */
+  async loginAsNormalUser(phone, code = '123456') {
+    await this.loginByCode(phone, code);
+    await this.expectOnCheckinPage();
+    return this;
+  }
+
+  /**
+   * 验证在打卡页面（普通用户默认首页）
+   */
+  async expectOnCheckinPage() {
+    const pageText = await this.getPageText();
+    expect(pageText).toContain('打卡');
+    return this;
+  }
+
+  /**
+   * 验证登录成功（超级管理员在"我的"页面）
    */
   async expectLoginSuccess() {
     await this.wait(WAIT_TIMEOUTS.LONG * 2);
