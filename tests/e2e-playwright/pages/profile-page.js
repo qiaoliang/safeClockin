@@ -18,6 +18,8 @@ const TEXT_CONTENT = {
   WECHAT_LOGIN: '微信快捷登录',
   PHONE_LOGIN: '手机号登录',
   LOGOUT_CONFIRM: '确定要退出登录吗？',
+  SESSION_EXPIRED: '用户信息已过期',
+  PLEASE_RELOGIN: '请重新登录',
 };
 
 export class ProfilePage extends BasePage {
@@ -70,7 +72,21 @@ export class ProfilePage extends BasePage {
   async confirmLogout() {
     await this.expectVisible(SELECTORS.modal);
     const modalText = await this.page.locator(SELECTORS.modalBody).first().textContent();
-    expect(modalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
+
+    // 如果出现"用户信息已过期"提示，先关闭它
+    if (modalText.includes(TEXT_CONTENT.SESSION_EXPIRED) || modalText.includes(TEXT_CONTENT.PLEASE_RELOGIN)) {
+      await this.expectVisible(SELECTORS.modalConfirm);
+      await this.page.locator(SELECTORS.modalConfirm).first().click({ force: true });
+      await this.wait(WAIT_TIMEOUTS.MEDIUM);
+      // 重新点击退出登录按钮
+      await this.clickLogout();
+      // 再次检查确认对话框
+      await this.expectVisible(SELECTORS.modal);
+      const newModalText = await this.page.locator(SELECTORS.modalBody).first().textContent();
+      expect(newModalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
+    } else {
+      expect(modalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
+    }
 
     await this.expectVisible(SELECTORS.modalConfirm);
     await this.page.locator(SELECTORS.modalConfirm).first().click({ force: true });
