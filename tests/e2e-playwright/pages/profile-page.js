@@ -3,6 +3,7 @@
  */
 import { expect } from '@playwright/test';
 import { BasePage, WAIT_TIMEOUTS } from './base-page.js';
+import { WelcomePage } from './welcome-page.js';
 
 const SELECTORS = {
   profileTab: 'text=我的',
@@ -25,6 +26,7 @@ const TEXT_CONTENT = {
 export class ProfilePage extends BasePage {
   constructor(page) {
     super(page);
+    this.welcomePage = new WelcomePage(page);
   }
 
   /**
@@ -95,32 +97,12 @@ export class ProfilePage extends BasePage {
 
   /**
    * 执行完整退出流程（假设已在"我的"页面）
+   * 退出后验证返回到 WelcomePage
    */
   async logout() {
     await this.clickLogout();
     await this.confirmLogout();
-    await this.expectLoggedOut();
-    return this;
-  }
-
-  /**
-   * 验证已返回到登录页面
-   */
-  async expectLoggedOut() {
-    // 等待页面稳定
-    await this.page.waitForLoadState('networkidle');
-    await this.wait(WAIT_TIMEOUTS.LONG);
-
-    // 检查当前 URL 或页面内容
-    const pageText = await this.getPageText();
-    const hasLoginTitle = pageText.includes(TEXT_CONTENT.TITLE);
-    const hasWechatLogin = pageText.includes(TEXT_CONTENT.WECHAT_LOGIN);
-    const hasPhoneLogin = pageText.includes(TEXT_CONTENT.PHONE_LOGIN);
-
-    // 至少验证登录页面的主要元素存在
-    expect(hasLoginTitle).toBeTruthy();
-    expect(hasWechatLogin).toBeTruthy();
-    expect(hasPhoneLogin).toBeTruthy();
+    await this.welcomePage.expectOnWelcomePage();
     return this;
   }
 
