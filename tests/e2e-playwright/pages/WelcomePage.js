@@ -1,12 +1,15 @@
 /**
- * LoginPage - 登录欢迎页
+ * WelcomePage - 欢迎页面
  * 处理登录入口页面的交互
+ * 包含：欢迎页面、手机号登录按钮、微信快捷登录按钮
+ * 提供页面导航、登录入口按钮点击和验证功能
+ *
+ * 注意：登录操作由 PhoneLoginPage 处理
  */
 import { BasePage } from './BasePage.js';
 import { authSelectors } from '../utils/selectors.js';
-import { TEST_USERS } from '../fixtures/test-data.mjs';
 
-export class LoginPage extends BasePage {
+export class WelcomePage extends BasePage {
   constructor(page) {
     super(page);
     this.selectors = authSelectors;
@@ -85,85 +88,6 @@ export class LoginPage extends BasePage {
   }
 
   /**
-   * 使用超级管理员账号登录
-   * 自动完成从欢迎页到登录后的完整流程
-   */
-  async loginAsSuperAdmin() {
-    // 先导航到登录页面并等待加载完成
-    await this.goto();
-    await this.isLoaded();
-
-    const user = TEST_USERS.SUPER_ADMIN;
-    await this.clickPhoneLogin();
-
-    // 动态导入避免循环依赖
-    const { PhoneLoginPage } = await import('./PhoneLoginPage.js');
-    const phoneLoginPage = new PhoneLoginPage(this.page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
-  }
-
-  /**
-   * 使用社区管理员账号登录
-   */
-  async loginAsCommunityAdmin() {
-    await this.goto();
-    await this.isLoaded();
-
-    const user = TEST_USERS.COMMUNITY_ADMIN;
-    await this.clickPhoneLogin();
-
-    const { PhoneLoginPage } = await import('./PhoneLoginPage.js');
-    const phoneLoginPage = new PhoneLoginPage(this.page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
-  }
-
-  /**
-   * 使用普通员工账号登录
-   */
-  async loginAsStaff() {
-    await this.goto();
-    await this.isLoaded();
-
-    const user = TEST_USERS.STAFF;
-    await this.clickPhoneLogin();
-
-    const { PhoneLoginPage } = await import('./PhoneLoginPage.js');
-    const phoneLoginPage = new PhoneLoginPage(this.page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
-  }
-
-  /**
-   * 使用普通用户账号登录
-   */
-  async loginAsNormalUser() {
-    await this.goto();
-    await this.isLoaded();
-
-    const user = TEST_USERS.NORMAL;
-    await this.clickPhoneLogin();
-
-    const { PhoneLoginPage } = await import('./PhoneLoginPage.js');
-    const phoneLoginPage = new PhoneLoginPage(this.page);
-    await phoneLoginPage.loginWithPassword(user.phone, user.password);
-  }
-
-  /**
-   * 通用登录方法
-   * @param {string} phone - 手机号
-   * @param {string} password - 密码
-   */
-  async login(phone, password) {
-    await this.goto();
-    await this.isLoaded();
-
-    await this.clickPhoneLogin();
-
-    const { PhoneLoginPage } = await import('./PhoneLoginPage.js');
-    const phoneLoginPage = new PhoneLoginPage(this.page);
-    await phoneLoginPage.loginWithPassword(phone, password);
-  }
-
-  /**
    * 获取页面标题
    * @returns {Promise<string>} 页面标题文本
    */
@@ -197,5 +121,29 @@ export class LoginPage extends BasePage {
     // 回退到文本检查
     const pageText = await this.getPageText();
     return pageText.includes('手机号登录');
+  }
+
+  /**
+   * 导航到欢迎页面（首页/登录页）
+   */
+  async navigate() {
+    await this.page.goto('/');
+    await this.waitForPageLoad();
+    return this;
+  }
+
+  /**
+   * 验证在欢迎页面（登录首页）
+   */
+  async expectOnWelcomePage() {
+    const pageText = await this.getPageText();
+    const hasTitle = pageText.includes('安全守护');
+    const hasWechatLogin = pageText.includes('微信快捷登录');
+    const hasPhoneLogin = pageText.includes('手机号登录');
+
+    if (!hasTitle || !hasWechatLogin || !hasPhoneLogin) {
+      throw new Error('欢迎页未正确加载。页面缺少必要内容');
+    }
+    return this;
   }
 }

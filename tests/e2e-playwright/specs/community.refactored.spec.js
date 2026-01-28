@@ -3,7 +3,7 @@
  * 测试超级管理员的社区管理功能
  */
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+import { WelcomePage } from '../pages/WelcomePage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { ProfilePage } from '../pages/ProfilePage.js';
 import { CommunityListPage } from '../pages/CommunityListPage.js';
@@ -24,7 +24,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('导航测试', () => {
     test('超级管理员登录后自动导航到我的页面', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录超级管理员
       await loginPage.goto();
@@ -41,7 +41,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('社区列表访问', () => {
     test('访问社区列表并验证默认社区', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -63,7 +63,7 @@ test.describe('超级管理员社区管理测试', () => {
     });
 
     test('验证社区管理页面标题', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -82,7 +82,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('默认社区保护', () => {
     test('验证默认社区保护机制', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -127,7 +127,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('社区操作', () => {
     test('能够打开创建社区页面', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -148,7 +148,7 @@ test.describe('超级管理员社区管理测试', () => {
     });
 
     test('验证社区操作按钮存在', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -167,7 +167,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('完整社区管理流程', () => {
     test('端到端社区管理流程', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -222,7 +222,7 @@ test.describe('超级管理员社区管理测试', () => {
 
   test.describe('边界条件测试', () => {
     test('快速导航操作', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);
@@ -245,7 +245,7 @@ test.describe('超级管理员社区管理测试', () => {
     });
 
     test('处理页面刷新', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const homePage = new HomePage(page);
       const profilePage = new ProfilePage(page);
       const communityListPage = new CommunityListPage(page);

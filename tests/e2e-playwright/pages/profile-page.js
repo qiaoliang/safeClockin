@@ -2,8 +2,8 @@
  * "我的"页面对象 - 封装个人中心相关操作和验证
  */
 import { expect } from '@playwright/test';
-import { BasePage, WAIT_TIMEOUTS } from './base-page.js';
-import { WelcomePage } from './welcome-page.js';
+import { BasePage, WAIT_TIMEOUTS } from './BasePage.js';
+import { WelcomePage } from './WelcomePage.js';
 
 const SELECTORS = {
   profileTab: 'text=我的',

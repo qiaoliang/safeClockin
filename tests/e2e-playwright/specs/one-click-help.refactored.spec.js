@@ -3,7 +3,7 @@
  * 测试用户点击一键求助后的界面变化
  */
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+import { WelcomePage } from '../pages/WelcomePage.js';
 import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { OneClickHelpPage } from '../pages/OneClickHelpPage.js';
 import { TEST_USERS } from '../fixtures/test-data.mjs';
@@ -99,7 +99,7 @@ test.describe('一键求助功能测试', () => {
   test.describe('用户状态验证', () => {
 
     test('未加入社区用户无法求助', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录用户
       await loginPage.goto();
@@ -126,7 +126,7 @@ test.describe('一键求助功能测试', () => {
 
   test.describe('对话框处理', () => {
     test('原生确认对话框处理', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
@@ -167,7 +167,7 @@ test.describe('一键求助功能测试', () => {
     });
 
     test('取消确认对话框', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
@@ -206,7 +206,7 @@ test.describe('一键求助功能测试', () => {
 
   test.describe('定位权限处理', () => {
     test('处理定位权限弹窗', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
@@ -256,7 +256,7 @@ test.describe('一键求助功能测试', () => {
 
   test.describe('边界条件测试', () => {
     test('快速连续点击求助按钮', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
@@ -295,7 +295,7 @@ test.describe('一键求助功能测试', () => {
     });
 
     test('页面滚动后求助按钮仍可点击', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();

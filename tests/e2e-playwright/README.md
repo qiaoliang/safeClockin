@@ -16,7 +16,7 @@ Playwright E2E 测试框架用于端到端自动化测试，模拟真实用户�
 tests/e2e-playwright/
 ├── pages/                     # Page Objects
 │   ├── BasePage.js            # 基础页面类
-│   ├── LoginPage.js           # 登录页
+│   ├── WelcomePage.js         # 欢迎页面
 │   ├── PhoneLoginPage.js      # 手机登录页
 │   ├── HomePage.js            # 首页
 │   ├── ProfilePage.js         # 个人中心
@@ -135,15 +135,15 @@ npm run test:playwright
 
 ```javascript
 import { test } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+import { WelcomePage } from '../pages/WelcomePage.js';
 import { HomePage } from '../pages/HomePage.js';
 
 test('超级管理员登录', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+  const welcomePage = new WelcomePage(page);
 
   // 导航并登录
-  await loginPage.goto();
-  await loginPage.loginAsSuperAdmin();
+  await welcomePage.goto();
+  await welcomePage.loginAsSuperAdmin();
 
   // 验证
   const homePage = new HomePage(page);
@@ -155,12 +155,12 @@ test('超级管理员登录', async ({ page }) => {
 
 ```javascript
 import { test } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+import { WelcomePage } from '../pages/WelcomePage.js';
 
-test('使用自定义 fixture', async ({ loginPage }) => {
-  // loginPage 已自动注入
-  await loginPage.goto();
-  await loginPage.isLoaded();
+test('使用自定义 fixture', async ({ welcomePage }) => {
+  // welcomePage 已自动注入
+  await welcomePage.goto();
+  await welcomePage.isLoaded();
 });
 ```
 

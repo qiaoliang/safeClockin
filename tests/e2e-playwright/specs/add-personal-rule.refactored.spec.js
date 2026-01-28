@@ -3,7 +3,7 @@
  * 测试用户登录后添加、编辑、删除个人打卡规则的完整流程
  */
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+import { WelcomePage } from '../pages/WelcomePage.js';
 import { PhoneLoginPage } from '../pages/PhoneLoginPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { RuleListPage } from '../pages/RuleListPage.js';
@@ -18,7 +18,7 @@ test.describe('添加个人打卡规则测试', () => {
 
   test.describe('创建打卡规则', () => {
     test('用户登录后添加个人打卡规则', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const phoneLoginPage = new PhoneLoginPage(page);
       const ruleListPage = new RuleListPage(page);
       const ruleFormPage = new RuleFormPage(page);
@@ -85,7 +85,7 @@ test.describe('添加个人打卡规则测试', () => {
 
   test.describe('编辑打卡规则', () => {
     test('添加个人规则后能够编辑规则', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const ruleListPage = new RuleListPage(page);
       const ruleFormPage = new RuleFormPage(page);
 
@@ -149,7 +149,7 @@ test.describe('添加个人打卡规则测试', () => {
 
   test.describe('删除打卡规则', () => {
     test('添加个人规则后能够删除规则', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
       const ruleListPage = new RuleListPage(page);
       const ruleFormPage = new RuleFormPage(page);
 
@@ -204,7 +204,7 @@ test.describe('添加个人打卡规则测试', () => {
 
   test.describe('表单验证', () => {
     test('规则名称不能为空', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
@@ -259,7 +259,7 @@ test.describe('添加个人打卡规则测试', () => {
 
   test.describe('边界条件测试', () => {
     test('处理快速连续点击', async ({ page }) => {
-      const loginPage = new LoginPage(page);
+      const loginPage = new WelcomePage(page);
 
       // 登录
       await loginPage.goto();
