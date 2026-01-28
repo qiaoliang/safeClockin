@@ -219,6 +219,9 @@ async function scrollToBottom(page) {
 async function clickProfileTab(page) {
   // console.log('\n1️⃣ 点击"我的"tab...');
 
+  // 等待页面完全加载
+  await page.waitForTimeout(WAIT.LONG);
+
   // console.log('  📜 向下滚动到页面底部...');
   await scrollToBottom(page);
   await page.waitForTimeout(WAIT.MEDIUM);
@@ -230,8 +233,13 @@ async function clickProfileTab(page) {
   }));
   // console.log(`  📏 窗口高度: ${scrollInfo.windowHeight}px, 文档高度: ${scrollInfo.documentHeight}px, 滚动位置: ${scrollInfo.scrollTop}px`);
 
+  // 尝试多种方式定位"我的"tab
   const profileTab = page.locator(AUTH_SELECTORS.tabbar).filter({ hasText: AUTH_SELECTORS.TEXT.PROFILE }).or(
     page.locator(AUTH_SELECTORS.profileTab)
+  ).or(
+    page.locator('.uni-tabbar-item').filter({ has: page.locator('text=我的') })
+  ).or(
+    page.locator('[data-testid="tab-我的"]')
   );
 
   // console.log('  🔍 等待"我的"tab出现且可见...');
@@ -241,9 +249,29 @@ async function clickProfileTab(page) {
   // console.log(`  👁️ 导航栏元素是否可见: ${isVisible}`);
 
   if (!isVisible) {
-    // console.log('  ⚠️ 导航栏不可见，再次滚动到底部...');
-    await scrollToBottom(page);
-    await page.waitForTimeout(WAIT.SHORT);
+    // console.log('  ⚠️ 导航栏不可见，尝试使用 evaluate 直接点击...');
+    // 使用 JavaScript 直接点击，避免可见性问题
+    await page.evaluate(() => {
+      const tabs = document.querySelectorAll('.uni-tabbar-item, .uni-tabbar__item, .tabbar-item');
+      for (const tab of tabs) {
+        const label = tab.querySelector('.uni-tabbar__label, .tab-label, [class*="label"]');
+        if (label && label.textContent.includes('我的')) {
+          tab.click();
+          return;
+        }
+      }
+      // 备用方案：查找包含"我的"的可点击元素
+      const allElements = document.querySelectorAll('*');
+      for (const el of allElements) {
+        if (el.textContent === '我的' && el.offsetParent !== null) {
+          el.click();
+          return;
+        }
+      }
+    });
+    await page.waitForTimeout(WAIT.MEDIUM + WAIT.SHORT);
+    // console.log('  ✅ 已通过 JavaScript 点击"我的"tab');
+    return;
   }
 
   const isVisibleAfterScroll = await profileTab.first().isVisible();

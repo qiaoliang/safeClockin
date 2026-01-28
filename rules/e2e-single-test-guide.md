@@ -1,31 +1,24 @@
-# E2E 单个测试用例运行指南
+# E2E Playwright 单个测试用例运行指南
 
 ## 概述
 
-`make e2e-single` 命令允许您运行指定的 E2E 测试用例,而不是运行所有测试。这对于开发和调试特定功能非常有用。
+`make e2e` 命令允许您运行指定的 E2E 测试用例,而不是运行所有测试。这对于开发和调试特定功能非常有用。
 
 ## 基本用法
 
 ### 运行指定的测试文件
 
+这将运行 `supervision-qrcode.spec.js` 文件中的所有测试用例。
 ```bash
-make e2e-single TEST=supervision-qrcode.spec.js
+make e2e TEST=tests/e2eplaywright/specs/supervision-qrcode.spec.js
 ```
 
-这将运行 `supervision-qrcode.spec.js` 文件中的所有测试用例。
 
 ### 运行指定文件中的特定测试用例
 
-```bash
-make e2e-single TEST=supervision-qrcode.spec.js:10
-```
-
 这将运行 `supervision-qrcode.spec.js` 文件中第 10 行的测试用例。
-
-### 使用调试模式运行
-
 ```bash
-make e2e-single TEST=supervision-qrcode.spec.js MODE=--debug
+make e2e TEST=tests/e2eplaywright/specs/supervision-qrcode.spec.js:10
 ```
 
 这将使用 Playwright 的调试模式运行测试,可以逐步执行并检查页面状态。
@@ -46,23 +39,20 @@ make e2e-single TEST=supervision-qrcode.spec.js MODE=--headed
 
 这将显示浏览器窗口,便于观察测试执行过程。
 
-## 可用的测试文件
 
-当前可用的 E2E 测试文件:
+## 修复 Playwright 测试用例失败的工作流
 
-- `add-personal-rule.spec.js` - 添加个人打卡规则测试
-- `api-community-response.spec.js` - 社区 API 响应测试
-- `basic.spec.js` - 基础功能测试
-- `checkin-page-community-name.spec.js` - 打卡页面社区名称测试
-- `close-event.spec.js` - 关闭事件测试
-- `community.spec.js` - 社区功能测试
-- `login.spec.js` - 登录功能测试
-- `one-click-help.spec.js` - 一键求助测试
-- `staff-close-event.spec.js` - 工作人员关闭事件测试
-- `super-admin-helper.spec.js` - 超级管理员辅助功能测试
-- `supervision-qrcode.spec.js` - 监督二维码功能测试
-- `user-community-info.spec.js` - 用户社区信息测试
-- `user-registration.spec.js` - 用户注册测试
+
+1. 读取用户的输入，找到关键信息，例如：哪个测试失败了？ error log 是什么？哪一行失败了？是否有截屏图片？是否有录屏？并查看它们
+2. 经过判断，如果需要更多的失败信息，就只运行单个测试用例
+3. 进行修复
+4. 修复完成后，再次运行该测试用例
+5. 根据测试结果做出响应
+	- 如果该测试成功，则提交代码后，选择下一个失败的测试用例，回到第 1 步执行，直到所有失败的测试都成功。
+    - 如果该测试失败，则回到第 3 步执行。如果该测试被修复 2 次，但仍旧没有成功。回到第 1 步，使用 `hard thinking` 系统化调试方法进行修复。
+6. 所有已知失败的测试都修复完成了，询问用户：是否运行全部 playwright 测试。如果用户在 5 秒内没有回复，则默认运行全部 Playwright 测试用例。
+7. 如果又发现了失败的测试用例，回到第 3 步执行。如果没有发现失败的测试用例，则提交代码变更，并总结当前的结果给用户。
+
 
 ## 示例场景
 

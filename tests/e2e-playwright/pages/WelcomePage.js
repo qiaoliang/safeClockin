@@ -136,13 +136,27 @@ export class WelcomePage extends BasePage {
    * 验证在欢迎页面（登录首页）
    */
   async expectOnWelcomePage() {
+    // 等待页面稳定
+    await this.page.waitForTimeout(2000);
+    await this.waitForNetworkIdle();
+
     const pageText = await this.getPageText();
+    // 检查页面是否包含欢迎页的关键内容
     const hasTitle = pageText.includes('安全守护');
     const hasWechatLogin = pageText.includes('微信快捷登录');
     const hasPhoneLogin = pageText.includes('手机号登录');
 
     if (!hasTitle || !hasWechatLogin || !hasPhoneLogin) {
-      throw new Error('欢迎页未正确加载。页面缺少必要内容');
+      // 如果第一次检查失败，等待后再试一次
+      await this.page.waitForTimeout(2000);
+      const retryText = await this.getPageText();
+      const retryHasTitle = retryText.includes('安全守护');
+      const retryHasWechatLogin = retryText.includes('微信快捷登录');
+      const retryHasPhoneLogin = retryText.includes('手机号登录');
+
+      if (!retryHasTitle || !retryHasWechatLogin || !retryHasPhoneLogin) {
+        throw new Error('欢迎页未正确加载。页面内容: ' + retryText.substring(0, 200));
+      }
     }
     return this;
   }

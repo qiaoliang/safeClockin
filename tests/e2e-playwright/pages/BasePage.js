@@ -119,4 +119,15 @@ export class BasePage {
     await this.waitForElementVisible(selector);
     return await this.page.locator(selector).textContent();
   }
+
+  /**
+   * 等待页面完全加载
+   * 组合多个等待条件确保页面稳定
+   */
+  async waitForPageLoad() {
+    await this.page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUTS.DEFAULT }).catch(() => {});
+    await this.page.waitForLoadState('domcontentloaded', { timeout: WAIT_TIMEOUTS.DEFAULT }).catch(() => {});
+    // 等待 Vue 应用初始化
+    await this.page.waitForTimeout(2000);
+  }
 }
