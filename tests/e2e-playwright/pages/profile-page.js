@@ -75,20 +75,17 @@ export class ProfilePage extends BasePage {
     await this.expectVisible(SELECTORS.modal);
     const modalText = await this.page.locator(SELECTORS.modalBody).first().textContent();
 
-    // 如果出现"用户信息已过期"提示，先关闭它
+    // 如果出现"用户信息已过期"提示，关闭后已退出，直接验证在欢迎页
     if (modalText.includes(TEXT_CONTENT.SESSION_EXPIRED) || modalText.includes(TEXT_CONTENT.PLEASE_RELOGIN)) {
       await this.expectVisible(SELECTORS.modalConfirm);
       await this.page.locator(SELECTORS.modalConfirm).first().click({ force: true });
       await this.wait(WAIT_TIMEOUTS.MEDIUM);
-      // 重新点击退出登录按钮
-      await this.clickLogout();
-      // 再次检查确认对话框
-      await this.expectVisible(SELECTORS.modal);
-      const newModalText = await this.page.locator(SELECTORS.modalBody).first().textContent();
-      expect(newModalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
-    } else {
-      expect(modalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
+      // 已自动退出到欢迎页
+      await this.welcomePage.expectOnWelcomePage();
+      return;
     }
+
+    expect(modalText).toContain(TEXT_CONTENT.LOGOUT_CONFIRM);
 
     await this.expectVisible(SELECTORS.modalConfirm);
     await this.page.locator(SELECTORS.modalConfirm).first().click({ force: true });
